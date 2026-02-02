@@ -61,8 +61,44 @@ const updateMaintenanceRequest = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Get maintenance requests assigned to me
+// @route   GET /api/maintenance/my-requests
+// @access  Private/Maintenance
+const getMyRequests = asyncHandler(async (req, res) => {
+    // Assuming user ID is passed in the request (from auth middleware)
+    const userId = req.query.userId;
+
+    const requests = await MaintenanceRequest.find({ assignedTo: userId })
+        .populate('student')
+        .populate('room')
+        .sort({ createdAt: -1 });
+
+    res.json(requests);
+});
+
+// @desc    Get maintenance statistics
+// @route   GET /api/maintenance/stats
+// @access  Private/Maintenance
+const getMaintenanceStats = asyncHandler(async (req, res) => {
+    const userId = req.query.userId;
+
+    const total = await MaintenanceRequest.countDocuments({ assignedTo: userId });
+    const pending = await MaintenanceRequest.countDocuments({ assignedTo: userId, status: 'Pending' });
+    const inProgress = await MaintenanceRequest.countDocuments({ assignedTo: userId, status: 'In Progress' });
+    const completed = await MaintenanceRequest.countDocuments({ assignedTo: userId, status: 'Completed' });
+
+    res.json({
+        total,
+        pending,
+        inProgress,
+        completed
+    });
+});
+
 module.exports = {
     getMaintenanceRequests,
     createMaintenanceRequest,
     updateMaintenanceRequest,
+    getMyRequests,
+    getMaintenanceStats,
 };
