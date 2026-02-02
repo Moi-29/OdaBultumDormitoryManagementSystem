@@ -5,13 +5,16 @@ import { useAuth } from '../../context/AuthContext';
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { login, user } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (user) {
             if (user.role === 'admin') navigate('/admin/dashboard');
-            else navigate('/admin/dashboard'); // Default for now
+            else if (user.role === 'maintenance') navigate('/maintenance/dashboard');
+            else if (user.role === 'manager') navigate('/manager/dashboard');
+            else navigate('/'); // Student or unknown role
         }
     }, [user, navigate]);
 
@@ -19,14 +22,18 @@ const Login = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        login(formData.username, formData.password).then((result) => {
+        setIsLoading(true);
+        try {
+            const result = await login(formData.username, formData.password);
             if (!result.success) {
                 setError(result.message);
             }
-        });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -61,7 +68,14 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" className="btn btn-primary mt-2">Sign In</button>
+                    <button
+                        type="submit"
+                        className="btn btn-primary mt-2"
+                        disabled={isLoading}
+                        style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+                    >
+                        {isLoading ? 'Signing In...' : 'Sign In'}
+                    </button>
                 </form>
             </div>
         </div>
