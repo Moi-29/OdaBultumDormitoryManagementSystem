@@ -9,7 +9,7 @@ const connectDB = require('./config/db');
 dotenv.config();
 connectDB();
 
-const seedData = async () => {
+const seedData = async (shouldExit = true) => {
     try {
         // Clear existing data
         await User.deleteMany();
@@ -112,15 +112,20 @@ const seedData = async () => {
         console.log('✅ Maintenance requests created');
 
         console.log('\n🎉 Database seeded successfully!');
-        console.log('\n📝 Test Credentials:');
-        console.log('   Username: admin');
-        console.log('   Password: password123');
-
-        process.exit();
+        if (shouldExit) {
+            console.log('\n📝 Test Credentials:');
+            console.log('   Username: admin');
+            console.log('   Password: password123');
+            process.exit();
+        }
     } catch (error) {
         console.error(`❌ Error: ${error}`);
-        process.exit(1);
+        if (shouldExit) process.exit(1);
     }
 };
 
-seedData();
+if (require.main === module) {
+    seedData(true);
+}
+
+module.exports = seedData;

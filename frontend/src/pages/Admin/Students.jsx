@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users, UserPlus, Search, Edit, Trash2 } from 'lucide-react';
 import axios from 'axios';
+import BulkImportAllocation from '../../components/BulkImportAllocation';
 
 const Students = () => {
     const [students, setStudents] = useState([]);
@@ -41,6 +42,11 @@ const Students = () => {
                 <button className="btn btn-primary" style={{ gap: '0.5rem' }}>
                     <UserPlus size={18} /> Add Student
                 </button>
+            </div>
+
+            {/* Import & Allocation Section */}
+            <div style={{ marginBottom: 'var(--spacing-lg)' }}>
+                <BulkImportAllocation onImportComplete={fetchStudents} onAllocationComplete={fetchStudents} />
             </div>
 
             <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
