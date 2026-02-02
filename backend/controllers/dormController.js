@@ -28,10 +28,11 @@ const getRoomById = asyncHandler(async (req, res) => {
 // @route   POST /api/dorms
 // @access  Private/Admin
 const createRoom = asyncHandler(async (req, res) => {
-    const { building, floor, roomNumber, type, capacity, gender } = req.body;
+    const { building, block, floor, roomNumber, type, capacity, gender } = req.body;
 
     const room = await Room.create({
         building,
+        block,
         floor,
         roomNumber,
         type,
@@ -115,7 +116,26 @@ const assignStudentToRoom = asyncHandler(async (req, res) => {
         throw new Error('Gender mismatch');
     }
 
-    // Add student to room
+    // Check if student is already in a room
+    if (student.room) {
+        if (student.room.toString() === room._id.toString()) {
+            res.status(400);
+            throw new Error('Student is already in this room');
+        }
+
+        // Remove from old room
+        const oldRoom = await Room.findById(student.room);
+        if (oldRoom) {
+            oldRoom.occupants = oldRoom.occupants.filter(id => id.toString() !== student._id.toString());
+            // Update status if it was full
+            if (oldRoom.occupants.length < oldRoom.capacity && oldRoom.status === 'Full') {
+                oldRoom.status = 'Available';
+            }
+            await oldRoom.save();
+        }
+    }
+
+    // Add student to new room
     room.occupants.push(student._id);
     if (room.occupants.length >= room.capacity) {
         room.status = 'Full';
@@ -130,67 +150,120 @@ const assignStudentToRoom = asyncHandler(async (req, res) => {
     res.json({ message: 'Student assigned successfully', room });
 });
 
+// @desc    Remove student from room
+// @route   POST /api/dorms/:id/remove
+// @access  Private/Admin
+const removeStudentFromRoom = asyncHandler(async (req, res) => {
+    const room = await Room.findById(req.params.id);
+    const { studentId } = req.body;
+
+    // Find student (optional verification)
+    const Student = require('../models/Student');
+    const student = await Student.findById(studentId);
+
+    if (!room) {
+        res.status(404);
+        throw new Error('Room not found');
+    }
+
+    // Remove student from room occupants
+    const initialLength = room.occupants.length;
+    room.occupants = room.occupants.filter(id => id.toString() !== studentId);
+
+    if (room.occupants.length === initialLength) {
+        res.status(400);
+        throw new Error('Student not found in this room');
+    }
+
+    // Update status
+    if (room.occupants.length < room.capacity) {
+        room.status = 'Available';
+    }
+
+    await room.save();
+
+    // Update student record if found
+    if (student) {
+        student.room = null;
+        await student.save();
+    }
+
+    res.json({ message: 'Student removed from room', room });
+});
+
 // @desc    Auto-allocate students to dorms
 // @route   POST /api/dorms/allocate
 // @access  Private/Admin
+// @desc    Auto-allocate students to dorms (with optional filters)
+// @route   POST /api/dorms/allocate
+// @access  Private/Admin
 const autoAllocate = asyncHandler(async (req, res) => {
-    // Get all unassigned students
-    const unassignedStudents = await Student.find({ room: null });
+    const { criteria, targetBuilding, targetBlock } = req.body; // Add targetBlock
+
+    // 1. Build Student Query
+    const studentQuery = { room: null };
+    if (criteria?.department) studentQuery.department = criteria.department;
+    if (criteria?.year) studentQuery.year = parseInt(criteria.year);
+    if (criteria?.gender) studentQuery.gender = criteria.gender;
+
+    // Get unassigned students matching filters
+    let unassignedStudents = await Student.find(studentQuery);
 
     if (unassignedStudents.length === 0) {
         return res.json({
             success: true,
-            message: 'No unassigned students found',
-            allocated: 0
+            message: 'No matching unassigned students found',
+            allocated: 0,
+            details: { malesAllocated: 0, femalesAllocated: 0, unallocated: 0 }
         });
     }
 
-    // Separate students by gender
+    // 2. Build Room Query
+    const roomQuery = { status: { $ne: 'Under Maintenance' }, status: { $ne: 'Full' } };
+    if (targetBuilding) roomQuery.building = targetBuilding;
+    if (targetBlock) roomQuery.block = targetBlock; // Add block filter
+
+    // 3. Separate and Sort Students
     const maleStudents = unassignedStudents.filter(s => s.gender === 'M');
     const femaleStudents = unassignedStudents.filter(s => s.gender === 'F');
 
-    // Sort function based on year
+    // Sort function (Seniors > Freshmen, Department grouping)
     const sortStudents = (students) => {
         const freshmen = students.filter(s => s.year === 1);
         const seniors = students.filter(s => s.year > 1);
 
-        // Fresh students: Sort alphabetically only
         freshmen.sort((a, b) => a.fullName.localeCompare(b.fullName));
-
-        // Senior students: Sort by department, then alphabetically
         seniors.sort((a, b) => {
-            if (a.department !== b.department) {
-                return a.department.localeCompare(b.department);
-            }
+            if (a.department !== b.department) return a.department.localeCompare(b.department);
             return a.fullName.localeCompare(b.fullName);
         });
 
-        // Combine: seniors first, then freshmen
         return [...seniors, ...freshmen];
     };
 
     const sortedMaleStudents = sortStudents(maleStudents);
     const sortedFemaleStudents = sortStudents(femaleStudents);
 
-    // Get available rooms
-    const maleRooms = await Room.find({
-        gender: 'M',
-        status: { $ne: 'Under Maintenance' }
-    }).sort({ building: 1, floor: 1, roomNumber: 1 });
+    // 4. Fetch Available Rooms
+    // We need separate queries for M and F to respect building choices + gender constraints
+    const maleRoomQuery = { ...roomQuery, gender: 'M' };
+    const femaleRoomQuery = { ...roomQuery, gender: 'F' };
 
-    const femaleRooms = await Room.find({
-        gender: 'F',
-        status: { $ne: 'Under Maintenance' }
-    }).sort({ building: 1, floor: 1, roomNumber: 1 });
+    // Note: If gender criteria was strict (e.g. only F), one list will be empty
+    const maleRooms = await Room.find(maleRoomQuery).sort({ building: 1, floor: 1, roomNumber: 1 });
+    const femaleRooms = await Room.find(femaleRoomQuery).sort({ building: 1, floor: 1, roomNumber: 1 });
 
     let allocatedCount = 0;
     const allocationDetails = [];
 
-    // Allocation function
+    // Allocation logic
     const allocateToRooms = async (students, rooms) => {
         let studentIndex = 0;
+        let assignedInThisRun = 0;
 
         for (const room of rooms) {
+            // Re-check capacity in case of concurrency (though unlikely here)
+            // But relying on in-memory object is safe for single-request sequential flow
             const availableSpace = room.capacity - room.occupants.length;
 
             if (availableSpace > 0 && studentIndex < students.length) {
@@ -201,6 +274,7 @@ const autoAllocate = asyncHandler(async (req, res) => {
                     student.room = room._id;
                     await student.save();
                     allocatedCount++;
+                    assignedInThisRun++;
 
                     allocationDetails.push({
                         studentId: student.studentId,
@@ -224,10 +298,9 @@ const autoAllocate = asyncHandler(async (req, res) => {
             if (studentIndex >= students.length) break;
         }
 
-        return studentIndex;
+        return assignedInThisRun;
     };
 
-    // Allocate male and female students
     const malesAllocated = await allocateToRooms(sortedMaleStudents, maleRooms);
     const femalesAllocated = await allocateToRooms(sortedFemaleStudents, femaleRooms);
 
@@ -292,6 +365,7 @@ module.exports = {
     updateRoom,
     deleteRoom,
     assignStudentToRoom,
+    removeStudentFromRoom,
     autoAllocate,
     getStatistics,
 };
