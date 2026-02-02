@@ -14,17 +14,22 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
     const [showFilters, setShowFilters] = useState(false);
     const [criteria, setCriteria] = useState({ department: '', year: '', gender: '' });
     const [targetBuilding, setTargetBuilding] = useState('');
+    const [targetBlock, setTargetBlock] = useState(''); // Add block state
     const [availableBuildings, setAvailableBuildings] = useState([]);
+    const [availableBlocks, setAvailableBlocks] = useState([]); // Add blocks state
     const [availableDepartments, setAvailableDepartments] = useState([]);
 
     useEffect(() => {
-        // Fetch buildings and departments for dropdowns
+        // Fetch buildings, blocks, and departments for dropdowns
         const fetchFilters = async () => {
             try {
-                // Fetch buildings from rooms
+                // Fetch buildings and blocks from rooms
                 const { data: rooms } = await axios.get('http://localhost:5000/api/dorms');
                 const buildings = [...new Set(rooms.map(r => r.building))].sort();
                 setAvailableBuildings(buildings);
+
+                const blocks = [...new Set(rooms.map(r => r.block).filter(Boolean))].sort();
+                setAvailableBlocks(blocks);
 
                 // Fetch departments from students
                 const { data: students } = await axios.get('http://localhost:5000/api/students');
@@ -101,7 +106,8 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                     ...(criteria.year && { year: criteria.year }),
                     ...(criteria.gender && { gender: criteria.gender }),
                 },
-                targetBuilding: targetBuilding || undefined
+                targetBuilding: targetBuilding || undefined,
+                targetBlock: targetBlock || undefined  // Add block to payload
             };
 
             console.log('🚀 Starting allocation with payload:', payload);
@@ -214,6 +220,18 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                                 </select>
                             </div>
                             <div>
+                                <label style={{ fontSize: '0.8rem', display: 'block', marginBottom: '2px' }}>Target Block</label>
+                                <select
+                                    className="input-field"
+                                    style={{ padding: '0.4rem' }}
+                                    value={targetBlock}
+                                    onChange={(e) => setTargetBlock(e.target.value)}
+                                >
+                                    <option value="">Any Block</option>
+                                    {availableBlocks.map(block => <option key={block} value={block}>{block}</option>)}
+                                </select>
+                            </div>
+                            <div>
                                 <label style={{ fontSize: '0.8rem', display: 'block', marginBottom: '2px' }}>Department</label>
                                 <select
                                     className="input-field"
@@ -251,7 +269,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                             </div>
                         </div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontStyle: 'italic' }}>
-                            * Only unassigned students matching these criteria will be allocated to {targetBuilding ? `Building ${targetBuilding}` : 'any available building'}.
+                            * Only unassigned students matching these criteria will be allocated to {targetBuilding ? `Building ${targetBuilding}` : 'any available building'}{targetBlock ? ` → Block ${targetBlock}` : ''}.
                         </div>
                     </div>
                 )}

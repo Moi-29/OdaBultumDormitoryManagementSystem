@@ -28,10 +28,11 @@ const getRoomById = asyncHandler(async (req, res) => {
 // @route   POST /api/dorms
 // @access  Private/Admin
 const createRoom = asyncHandler(async (req, res) => {
-    const { building, floor, roomNumber, type, capacity, gender } = req.body;
+    const { building, block, floor, roomNumber, type, capacity, gender } = req.body;
 
     const room = await Room.create({
         building,
+        block,
         floor,
         roomNumber,
         type,
@@ -197,7 +198,7 @@ const removeStudentFromRoom = asyncHandler(async (req, res) => {
 // @route   POST /api/dorms/allocate
 // @access  Private/Admin
 const autoAllocate = asyncHandler(async (req, res) => {
-    const { criteria, targetBuilding } = req.body; // criteria: { department, year, gender }, targetBuilding: string
+    const { criteria, targetBuilding, targetBlock } = req.body; // Add targetBlock
 
     // 1. Build Student Query
     const studentQuery = { room: null };
@@ -220,6 +221,7 @@ const autoAllocate = asyncHandler(async (req, res) => {
     // 2. Build Room Query
     const roomQuery = { status: { $ne: 'Under Maintenance' }, status: { $ne: 'Full' } };
     if (targetBuilding) roomQuery.building = targetBuilding;
+    if (targetBlock) roomQuery.block = targetBlock; // Add block filter
 
     // 3. Separate and Sort Students
     const maleStudents = unassignedStudents.filter(s => s.gender === 'M');
