@@ -48,21 +48,33 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         formData.append('file', selectedFile);
 
         try {
+            console.log('📤 Uploading file:', selectedFile.name);
             const { data } = await axios.post('http://localhost:5000/api/students/import', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
+            console.log('✅ Import response:', data);
             setImportResult(data);
             setSelectedFile(null);
             // Reset file input
             const fileInput = document.querySelector('input[type="file"]');
             if (fileInput) fileInput.value = '';
 
+            // Show alert for immediate feedback
+            if (data.imported > 0) {
+                alert(`✅ Success! Imported ${data.imported} students${data.errors > 0 ? `\n⚠️ ${data.errors} errors occurred` : ''}`);
+            } else {
+                alert('⚠️ No students were imported. Check your Excel file format.');
+            }
+
             if (onImportComplete) onImportComplete();
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Import failed');
+            console.error('❌ Import error:', err);
+            const errorMsg = err.response?.data?.message || err.message || 'Import failed';
+            setError(errorMsg);
+            alert(`❌ Error: ${errorMsg}`);
         } finally {
             setImporting(false);
         }
@@ -83,11 +95,24 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                 targetBuilding: targetBuilding || undefined
             };
 
+            console.log('🚀 Starting allocation with payload:', payload);
             const { data } = await axios.post('http://localhost:5000/api/dorms/allocate', payload);
+            console.log('✅ Allocation response:', data);
             setAllocationResult(data);
+
+            // Show alert for immediate feedback
+            if (data.allocated > 0) {
+                alert(`✅ Success! Allocated ${data.allocated} students\n\nMales: ${data.details?.malesAllocated || 0}\nFemales: ${data.details?.femalesAllocated || 0}`);
+            } else {
+                alert(`ℹ️ ${data.message || 'No students were allocated'}`);
+            }
+
             if (onAllocationComplete) onAllocationComplete();
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Allocation failed');
+            console.error('❌ Allocation error:', err);
+            const errorMsg = err.response?.data?.message || err.message || 'Allocation failed';
+            setError(errorMsg);
+            alert(`❌ Error: ${errorMsg}`);
         } finally {
             setAllocating(false);
         }
@@ -121,17 +146,22 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
 
                     {importResult && (
                         <div style={{
-                            padding: '1rem',
-                            backgroundColor: 'var(--bg-secondary)',
+                            padding: '1.5rem',
+                            backgroundColor: '#e8f5e9',
+                            border: '2px solid #4caf50',
                             borderRadius: '8px',
-                            fontSize: '0.9rem'
+                            fontSize: '1rem',
+                            marginTop: '1rem'
                         }}>
-                            <div style={{ color: 'var(--color-success)', marginBottom: '0.5rem' }}>
-                                ✅ Imported: {importResult.imported} students
+                            <div style={{ color: '#2e7d32', marginBottom: '0.5rem', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                ✅ Import Successful!
+                            </div>
+                            <div style={{ color: '#1b5e20', fontSize: '0.95rem' }}>
+                                Imported: <strong>{importResult.imported}</strong> students
                             </div>
                             {importResult.errors > 0 && (
-                                <div style={{ color: 'var(--color-warning)' }}>
-                                    ⚠️ Errors: {importResult.errors}
+                                <div style={{ color: '#f57c00', marginTop: '0.5rem', fontWeight: 500 }}>
+                                    ⚠️ Errors: {importResult.errors} rows
                                 </div>
                             )}
                         </div>
@@ -235,21 +265,40 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
 
                 {allocationResult && (
                     <div style={{
-                        padding: '1rem',
-                        backgroundColor: 'var(--bg-secondary)',
+                        padding: '1.5rem',
+                        backgroundColor: allocationResult.allocated > 0 ? '#e8f5e9' : '#fff3e0',
+                        border: allocationResult.allocated > 0 ? '2px solid #4caf50' : '2px solid #ff9800',
                         borderRadius: '8px',
-                        fontSize: '0.9rem',
+                        fontSize: '1rem',
                         marginTop: '1rem'
                     }}>
-                        <div style={{ color: allocationResult.allocated > 0 ? 'var(--color-success)' : 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
-                            {allocationResult.message}
+                        <div style={{
+                            color: allocationResult.allocated > 0 ? '#2e7d32' : '#e65100',
+                            marginBottom: '0.75rem',
+                            fontWeight: 'bold',
+                            fontSize: '1.1rem'
+                        }}>
+                            {allocationResult.allocated > 0 ? '✅ Allocation Successful!' : 'ℹ️ No Allocation'}
                         </div>
-                        <div style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>
-                            <div>Males: {allocationResult.details?.malesAllocated || 0} allocated</div>
-                            <div>Females: {allocationResult.details?.femalesAllocated || 0} allocated</div>
+                        <div style={{ fontSize: '0.95rem', color: '#1b5e20', marginBottom: '0.5rem' }}>
+                            <strong>{allocationResult.message}</strong>
+                        </div>
+                        <div style={{ fontSize: '0.9rem', marginTop: '0.75rem', color: '#424242' }}>
+                            <div>👨 Males: <strong>{allocationResult.details?.malesAllocated || 0}</strong> allocated</div>
+                            <div>👩 Females: <strong>{allocationResult.details?.femalesAllocated || 0}</strong> allocated</div>
+                            <div style={{ marginTop: '0.5rem' }}>
+                                📊 Total: <strong>{allocationResult.allocated}</strong> students placed
+                            </div>
                             {allocationResult.unallocated > 0 && (
-                                <div style={{ color: 'var(--color-warning)', marginTop: '0.5rem' }}>
-                                    ⚠️ {allocationResult.unallocated} matching students could not be allocated
+                                <div style={{
+                                    color: '#f57c00',
+                                    marginTop: '0.75rem',
+                                    padding: '0.5rem',
+                                    backgroundColor: '#fff3e0',
+                                    borderRadius: '4px',
+                                    fontWeight: 500
+                                }}>
+                                    ⚠️ {allocationResult.unallocated} matching students could not be allocated (insufficient rooms)
                                 </div>
                             )}
                         </div>
