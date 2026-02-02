@@ -1,8 +1,16 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Wrench, List, Tool, LogOut } from 'lucide-react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Wrench, List, PenTool, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const MaintenanceLayout = () => {
     const location = useLocation();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
 
     const isActive = (path) => location.pathname.includes(path);
 
@@ -26,12 +34,12 @@ const MaintenanceLayout = () => {
                         <NavItem to="/maintenance/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" active={isActive('dashboard')} />
                         <NavItem to="/maintenance/my-tasks" icon={<Wrench size={20} />} label="My Tasks" active={isActive('my-tasks')} />
                         <NavItem to="/maintenance/all-requests" icon={<List size={20} />} label="All Requests" active={isActive('all-requests')} />
-                        <NavItem to="/maintenance/tools" icon={<Tool size={20} />} label="Tools" active={isActive('tools')} />
+                        <NavItem to="/maintenance/tools" icon={<PenTool size={20} />} label="Tools" active={isActive('tools')} />
                     </ul>
                 </nav>
 
                 <div style={{ padding: 'var(--spacing-md)', borderTop: '1px solid #fde047' }}>
-                    <button className="btn btn-secondary" style={{
+                    <button onClick={handleLogout} className="btn btn-secondary" style={{
                         width: '100%',
                         justifyContent: 'flex-start',
                         gap: '0.75rem',

@@ -32,6 +32,13 @@ const seedData = async (shouldExit = true) => {
             role: 'maintenance'
         });
 
+        const manager = await User.create({
+            username: 'manager',
+            password: 'password123',
+            email: 'manager@obu.edu.et',
+            role: 'manager'
+        });
+
         console.log('✅ Users created');
 
         // Create rooms
