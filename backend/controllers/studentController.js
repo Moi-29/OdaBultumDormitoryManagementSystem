@@ -24,7 +24,7 @@ const getStudentById = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Get student by University ID (e.g., UGPR...)
+// @desc    Get student by University ID (e.g., OBU/001/2023)
 // @route   POST /api/students/lookup
 // @access  Public
 const getStudentByUniversityId = asyncHandler(async (req, res) => {
@@ -32,7 +32,7 @@ const getStudentByUniversityId = asyncHandler(async (req, res) => {
 
     // Case insensitive search
     const student = await Student.findOne({
-        studentId: { $regex: new RegExp(`^${studentId}$`, 'i') }
+        studentId: { $regex: new RegExp(`^${studentId}`, 'i') }
     }).populate('room');
 
     if (student) {
