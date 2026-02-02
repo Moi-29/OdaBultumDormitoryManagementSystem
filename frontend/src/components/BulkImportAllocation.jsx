@@ -16,8 +16,10 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
     const [targetBuilding, setTargetBuilding] = useState('');
     const [targetBlock, setTargetBlock] = useState(''); // Add block state
     const [availableBuildings, setAvailableBuildings] = useState([]);
-    const [availableBlocks, setAvailableBlocks] = useState([]); // Add blocks state
+    const [availableBlocks, setAvailableBlocks] = useState([]); // All blocks
+    const [filteredBlocks, setFilteredBlocks] = useState([]); // Blocks for selected building
     const [availableDepartments, setAvailableDepartments] = useState([]);
+    const [roomsData, setRoomsData] = useState([]); // Store all rooms for filtering
 
     useEffect(() => {
         // Fetch buildings, blocks, and departments for dropdowns
@@ -25,11 +27,14 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             try {
                 // Fetch buildings and blocks from rooms
                 const { data: rooms } = await axios.get('http://localhost:5000/api/dorms');
+                setRoomsData(rooms); // Store rooms data
+
                 const buildings = [...new Set(rooms.map(r => r.building))].sort();
                 setAvailableBuildings(buildings);
 
                 const blocks = [...new Set(rooms.map(r => r.block).filter(Boolean))].sort();
                 setAvailableBlocks(blocks);
+                setFilteredBlocks(blocks); // Initialize filtered blocks with all blocks
 
                 // Fetch departments from students
                 const { data: students } = await axios.get('http://localhost:5000/api/students');
@@ -41,6 +46,24 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         };
         fetchFilters();
     }, []);
+
+    // Filter blocks when building changes
+    useEffect(() => {
+        if (targetBuilding) {
+            const blocksInBuilding = roomsData
+                .filter(r => r.building === targetBuilding && r.block)
+                .map(r => r.block);
+            const uniqueBlocks = [...new Set(blocksInBuilding)].sort();
+            setFilteredBlocks(uniqueBlocks);
+
+            // Reset block if it doesn't exist in the selected building
+            if (targetBlock && !uniqueBlocks.includes(targetBlock)) {
+                setTargetBlock('');
+            }
+        } else {
+            setFilteredBlocks(availableBlocks);
+        }
+    }, [targetBuilding, roomsData, availableBlocks, targetBlock]);
 
     const handleFileSelect = (e) => {
         setSelectedFile(e.target.files[0]);
@@ -226,9 +249,10 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                                     style={{ padding: '0.4rem' }}
                                     value={targetBlock}
                                     onChange={(e) => setTargetBlock(e.target.value)}
+                                    disabled={!targetBuilding}
                                 >
-                                    <option value="">Any Block</option>
-                                    {availableBlocks.map(block => <option key={block} value={block}>{block}</option>)}
+                                    <option value="">{targetBuilding ? 'Any Block' : 'Select Building First'}</option>
+                                    {filteredBlocks.map(block => <option key={block} value={block}>{block}</option>)}
                                 </select>
                             </div>
                             <div>
