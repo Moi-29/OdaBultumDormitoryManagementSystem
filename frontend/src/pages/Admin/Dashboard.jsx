@@ -1,5 +1,5 @@
 import {
-    Users, Building, Wrench, AlertTriangle, ArrowUp, ArrowRight,
+    Users, Building, AlertTriangle, ArrowUp, ArrowRight,
     Activity, Clock, CheckCircle2, MoreHorizontal, Calendar,
     PieChart, BarChart3, UserPlus, FileText
 } from 'lucide-react';
@@ -22,7 +22,7 @@ const Dashboard = () => {
                     <div>
                         <h1 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', color: 'white' }}>Welcome back, Admin</h1>
                         <p style={{ opacity: 0.8, maxWidth: '600px' }}>
-                            Here's what's happening across the campus today. You have 3 pending maintenance requests and 12 new student registrations.
+                            Here's what's happening across the campus today. You have 12 new student registrations.
                         </p>
                     </div>
                     <div style={{ textAlign: 'right', display: 'none', md: { display: 'block' } }}>
@@ -52,12 +52,11 @@ const Dashboard = () => {
                     trend="up"
                 />
                 <StatCard
-                    title="Maintenance"
-                    value="14"
-                    change="Pending Requests"
-                    icon={<Wrench size={24} color="#ef4444" />}
-                    trend="down"
-                    alert
+                    title="Available Rooms"
+                    value="42"
+                    change="Ready for assignment"
+                    icon={<Building size={24} color="#10b981" />}
+                    trend="neutral"
                 />
                 <StatCard
                     title="Staff Active"
@@ -123,9 +122,9 @@ const Dashboard = () => {
                                 time="2 mins ago"
                             />
                             <ActivityItem
-                                icon={<Wrench size={18} color="#ef4444" />}
-                                title="Maintenance Reported"
-                                desc="Plumbing issue in Block B-201"
+                                icon={<Building size={18} color="#ca8a04" />}
+                                title="Room Assignment"
+                                desc="Block B-201 assigned to new student"
                                 time="15 mins ago"
                             />
                             <ActivityItem

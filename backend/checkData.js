@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 const User = require('./models/User');
 const Student = require('./models/Student');
 const Room = require('./models/Room');
-const MaintenanceRequest = require('./models/MaintenanceRequest');
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -37,17 +36,6 @@ const checkData = async () => {
         console.log('-'.repeat(60));
         rooms.forEach(room => {
             console.log(`   ✓ ${room.building}-${room.roomNumber.padEnd(10)} | Occupancy: ${room.occupants.length}/${room.capacity} | Status: ${room.status}`);
-        });
-
-        // Check Maintenance Requests
-        const requests = await MaintenanceRequest.find({}).populate('student room');
-        console.log(`\n🔧 MAINTENANCE REQUESTS (${requests.length} total):`);
-        console.log('-'.repeat(60));
-        requests.forEach(req => {
-            const studentName = req.student ? req.student.fullName : 'Unknown';
-            const roomInfo = req.room ? `${req.room.building}-${req.room.roomNumber}` : 'N/A';
-            console.log(`   ✓ ${req.issueType.padEnd(12)} | ${req.priority.padEnd(10)} | ${req.status.padEnd(12)} | Room: ${roomInfo}`);
-            console.log(`     Description: ${req.description}`);
         });
 
         console.log('\n' + '='.repeat(60));

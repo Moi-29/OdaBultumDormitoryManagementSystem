@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Building, Wrench, FileText, LogOut, Package } from 'lucide-react';
+import { LayoutDashboard, Users, Building, FileText, LogOut, Package } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminLayout = () => {
@@ -28,7 +28,6 @@ const AdminLayout = () => {
                         <NavItem to="/admin/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" active={isActive('dashboard')} />
                         <NavItem to="/admin/students" icon={<Users size={20} />} label="Students" active={isActive('students')} />
                         <NavItem to="/admin/dorms" icon={<Building size={20} />} label="Dormitories" active={isActive('dorms')} />
-                        <NavItem to="/admin/maintenance" icon={<Wrench size={20} />} label="Maintenance" active={isActive('maintenance')} />
                         <NavItem to="/admin/inventory" icon={<Package size={20} />} label="Inventory" active={isActive('inventory')} />
                         <NavItem to="/admin/reports" icon={<FileText size={20} />} label="Reports" active={isActive('reports')} />
                     </ul>

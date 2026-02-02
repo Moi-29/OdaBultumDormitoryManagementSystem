@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 const User = require('./models/User');
 const Student = require('./models/Student');
 const Room = require('./models/Room');
-const MaintenanceRequest = require('./models/MaintenanceRequest');
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -15,7 +14,6 @@ const seedData = async (shouldExit = true) => {
         await User.deleteMany();
         await Student.deleteMany();
         await Room.deleteMany();
-        await MaintenanceRequest.deleteMany();
 
         // Create users
         const admin = await User.create({
@@ -23,13 +21,6 @@ const seedData = async (shouldExit = true) => {
             password: 'password123',
             email: 'admin@obu.edu.et',
             role: 'admin'
-        });
-
-        const maintenance = await User.create({
-            username: 'maintenance',
-            password: 'password123',
-            email: 'maint@obu.edu.et',
-            role: 'maintenance'
         });
 
         console.log('✅ Users created');
@@ -79,37 +70,6 @@ const seedData = async (shouldExit = true) => {
         await students[2].save();
 
         console.log('✅ Students assigned to rooms');
-
-        // Create maintenance requests
-        await MaintenanceRequest.insertMany([
-            {
-                student: students[0]._id,
-                room: room1._id,
-                issueType: 'Electrical',
-                description: 'Power outlet not working',
-                priority: 'Medium',
-                status: 'Pending'
-            },
-            {
-                student: students[1]._id,
-                room: room3._id,
-                issueType: 'Plumbing',
-                description: 'Leaking faucet in bathroom',
-                priority: 'High',
-                status: 'In Progress',
-                assignedTo: maintenance._id
-            },
-            {
-                student: students[2]._id,
-                room: room3._id,
-                issueType: 'Furniture',
-                description: 'Broken chair leg',
-                priority: 'Low',
-                status: 'Completed'
-            }
-        ]);
-
-        console.log('✅ Maintenance requests created');
 
         console.log('\n🎉 Database seeded successfully!');
         if (shouldExit) {

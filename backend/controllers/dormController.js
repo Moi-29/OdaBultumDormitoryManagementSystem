@@ -249,12 +249,11 @@ const autoAllocate = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Get system-wide statistics for manager
+// @desc    Get system-wide statistics
 // @route   GET /api/dorms/statistics
-// @access  Private/Manager
+// @access  Private/Admin
 const getStatistics = asyncHandler(async (req, res) => {
     const Student = require('../models/Student');
-    const MaintenanceRequest = require('../models/MaintenanceRequest');
 
     // Room statistics
     const totalRooms = await Room.countDocuments();
@@ -266,11 +265,6 @@ const getStatistics = asyncHandler(async (req, res) => {
     const totalStudents = await Student.countDocuments();
     const assignedStudents = await Student.countDocuments({ room: { $ne: null } });
     const unassignedStudents = totalStudents - assignedStudents;
-
-    // Maintenance statistics
-    const pendingMaintenance = await MaintenanceRequest.countDocuments({ status: 'Pending' });
-    const inProgressMaintenance = await MaintenanceRequest.countDocuments({ status: 'In Progress' });
-    const completedMaintenance = await MaintenanceRequest.countDocuments({ status: 'Completed' });
 
     // Calculate occupancy rate
     const occupancyRate = totalRooms > 0 ? Math.round((fullRooms / totalRooms) * 100) : 0;
@@ -287,12 +281,6 @@ const getStatistics = asyncHandler(async (req, res) => {
             total: totalStudents,
             assigned: assignedStudents,
             unassigned: unassignedStudents
-        },
-        maintenance: {
-            pending: pendingMaintenance,
-            inProgress: inProgressMaintenance,
-            completed: completedMaintenance,
-            total: pendingMaintenance + inProgressMaintenance + completedMaintenance
         }
     });
 });

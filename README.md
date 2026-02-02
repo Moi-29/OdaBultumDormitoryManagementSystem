@@ -6,9 +6,8 @@ A comprehensive web-based dormitory management system built with the MERN stack 
 
 - **Student Management**: Register, view, edit, and delete student records
 - **Room Allocation**: Manage dormitory rooms and assign students based on gender and capacity
-- **Maintenance Requests**: Track and manage maintenance issues reported by students
-- **Dashboard Analytics**: Real-time statistics on occupancy, students, and maintenance
-- **Role-Based Access**: Different views for Admin, Student, and Maintenance staff
+- **Dashboard Analytics**: Real-time statistics on occupancy and students
+- **Role-Based Access**: Different views for Admin and Student
 - **Responsive Design**: Modern UI with a custom CSS design system
 
 ## 🛠️ Tech Stack
@@ -73,10 +72,6 @@ The frontend will run on `http://localhost:5173`
 - Username: `admin`
 - Password: `password123`
 
-**Maintenance Login:**
-- Username: `maintenance`
-- Password: `password123`
-
 ## 📁 Project Structure
 
 ```
@@ -87,18 +82,15 @@ odabultumdormitorymanagementsystem/
 │   ├── controllers/
 │   │   ├── authController.js
 │   │   ├── studentController.js
-│   │   ├── dormController.js
-│   │   └── maintenanceController.js
+│   │   └── dormController.js
 │   ├── models/
 │   │   ├── User.js
 │   │   ├── Student.js
-│   │   ├── Room.js
-│   │   └── MaintenanceRequest.js
+│   │   └── Room.js
 │   ├── routes/
 │   │   ├── authRoutes.js
 │   │   ├── studentRoutes.js
-│   │   ├── dormRoutes.js
-│   │   └── maintenanceRoutes.js
+│   │   └── dormRoutes.js
 │   ├── utils/
 │   │   └── generateToken.js
 │   ├── .env
@@ -117,7 +109,8 @@ odabultumdormitorymanagementsystem/
     │   │   │   ├── Dashboard.jsx
     │   │   │   ├── Students.jsx
     │   │   │   ├── Dorms.jsx
-    │   │   │   └── Maintenance.jsx
+    │   │   │   ├── Maintenance.jsx
+    │   │   │   └── Inventory.jsx
     │   │   └── Auth/
     │   │       └── Login.jsx
     │   ├── App.jsx
@@ -153,11 +146,6 @@ The system uses a custom CSS Variable-based design system with:
 - `PUT /api/dorms/:id` - Update room
 - `DELETE /api/dorms/:id` - Delete room
 - `POST /api/dorms/:id/assign` - Assign student to room
-
-### Maintenance
-- `GET /api/maintenance` - Get all requests
-- `POST /api/maintenance` - Create request
-- `PUT /api/maintenance/:id` - Update request
 
 ## 📝 License
 
