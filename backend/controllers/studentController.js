@@ -108,6 +108,23 @@ const deleteStudent = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Delete all students
+// @route   DELETE /api/students/bulk/all
+// @access  Private/Admin
+const deleteAllStudents = asyncHandler(async (req, res) => {
+    console.log('🗑️ Deleting all students...');
+    
+    const result = await Student.deleteMany({});
+    
+    console.log(`✅ Deleted ${result.deletedCount} students`);
+    
+    res.json({ 
+        success: true,
+        message: `Successfully deleted ${result.deletedCount} students`,
+        deletedCount: result.deletedCount 
+    });
+});
+
 // @desc    Import students from Excel or CSV
 // @route   POST /api/students/import
 // @access  Private/Admin
@@ -172,9 +189,14 @@ const importStudents = asyncHandler(async (req, res) => {
 
     const importedStudents = [];
     const errors = [];
+    
+    console.log('🔄 Starting to process rows...');
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+        
+        console.log(`\n--- Processing Row ${i + 1} ---`);
+        console.log('Raw row data:', JSON.stringify(row, null, 2));
 
         try {
             // More flexible column name matching (case-insensitive, with spaces/underscores)
@@ -193,12 +215,12 @@ const importStudents = asyncHandler(async (req, res) => {
             };
 
             const studentData = {
-                studentId: getColumnValue(row, 'studentId', 'StudentID', 'Student ID', 'student_id', 'ID', 'id'),
-                fullName: getColumnValue(row, 'fullName', 'FullName', 'Full Name', 'full_name', 'Name', 'name'),
-                gender: getColumnValue(row, 'gender', 'Gender', 'Sex', 'sex'),
-                department: getColumnValue(row, 'department', 'Department', 'dept', 'Dept'),
-                year: getColumnValue(row, 'year', 'Year', 'Level', 'level'),
-                phone: getColumnValue(row, 'phone', 'Phone', 'PhoneNumber', 'Phone Number', 'phone_number', 'Contact', 'contact'),
+                studentId: getColumnValue(row, 'ID', 'studentId', 'StudentID', 'Student ID', 'student_id', 'id', 'Student Id', 'STUDENT ID'),
+                fullName: getColumnValue(row, 'English Name', 'English name', 'english name', 'ENGLISH NAME', 'fullName', 'FullName', 'Full Name', 'full_name', 'Name', 'name', 'FULL NAME', 'Student Name', 'StudentName', 'student_name', 'STUDENT NAME'),
+                gender: getColumnValue(row, 'S', 's', 'gender', 'Gender', 'Sex', 'sex', 'GENDER', 'SEX'),
+                department: getColumnValue(row, 'Dept', 'dept', 'DEPT', 'department', 'Department', 'DEPARTMENT'),
+                year: getColumnValue(row, 'Year', 'year', 'YEAR', 'Level', 'level', 'LEVEL', 'Year Level', 'year_level'),
+                phone: getColumnValue(row, 'phone', 'Phone', 'PhoneNumber', 'Phone Number', 'phone_number', 'Contact', 'contact', 'PHONE', 'CONTACT', 'Mobile', 'mobile', 'Tel', 'tel'),
             };
 
             console.log(`Row ${i + 1} extracted:`, studentData);
@@ -215,15 +237,34 @@ const importStudents = asyncHandler(async (req, res) => {
                 continue;
             }
 
-            // Parse year as integer
-            studentData.year = parseInt(studentData.year);
-            if (isNaN(studentData.year)) {
-                errors.push({ row: i + 2, error: 'Invalid year value', data: row });
+            // Parse year - handle '1st', '2nd', '3rd', '4th', '5th' or just numbers
+            let yearValue = String(studentData.year).toLowerCase().trim();
+            if (yearValue.includes('1st') || yearValue.includes('1') || yearValue === 'first') {
+                studentData.year = 1;
+            } else if (yearValue.includes('2nd') || yearValue.includes('2') || yearValue === 'second') {
+                studentData.year = 2;
+            } else if (yearValue.includes('3rd') || yearValue.includes('3') || yearValue === 'third') {
+                studentData.year = 3;
+            } else if (yearValue.includes('4th') || yearValue.includes('4') || yearValue === 'fourth') {
+                studentData.year = 4;
+            } else if (yearValue.includes('5th') || yearValue.includes('5') || yearValue === 'fifth') {
+                studentData.year = 5;
+            } else if (yearValue.includes('6th') || yearValue.includes('6') || yearValue === 'sixth') {
+                studentData.year = 6;
+            } else if (yearValue.includes('7th') || yearValue.includes('7') || yearValue === 'seventh') {
+                studentData.year = 7;
+            } else {
+                studentData.year = parseInt(yearValue);
+            }
+            
+            if (isNaN(studentData.year) || studentData.year < 1 || studentData.year > 7) {
+                console.log(`❌ Row ${i + 2}: Invalid year: ${yearValue}`);
+                errors.push({ row: i + 2, error: `Invalid year value: ${yearValue}`, data: row });
                 continue;
             }
 
-            // Convert phone to string
-            studentData.phone = String(studentData.phone || '');
+            // Convert phone to string (optional field)
+            studentData.phone = studentData.phone ? String(studentData.phone) : '';
 
             // Normalize gender (accept M/F or Male/Female)
             const genderStr = String(studentData.gender).toUpperCase();
@@ -263,6 +304,20 @@ const importStudents = asyncHandler(async (req, res) => {
     }
 
     console.log(`✅ Import complete: ${importedStudents.length} imported, ${errors.length} errors`);
+    
+    if (errors.length > 0) {
+        console.log('\n❌ ERRORS FOUND:');
+        errors.slice(0, 5).forEach(err => {
+            console.log(`Row ${err.row}:`, err.error);
+            console.log('Data:', err.data);
+            if (err.extracted) {
+                console.log('Extracted:', err.extracted);
+            }
+        });
+        if (errors.length > 5) {
+            console.log(`... and ${errors.length - 5} more errors`);
+        }
+    }
 
     res.json({
         success: true,
@@ -384,6 +439,7 @@ module.exports = {
     createStudent,
     updateStudent,
     deleteStudent,
+    deleteAllStudents,
     importStudents,
     generatePDFReport,
     generateCSVReport,

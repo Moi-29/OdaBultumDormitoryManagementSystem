@@ -26,7 +26,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         const fetchFilters = async () => {
             try {
                 // Fetch buildings and blocks from rooms
-                const { data: rooms } = await axios.get('http://localhost:5000/api/dorms');
+                const { data: rooms } = await axios.get('/api/dorms');
                 setRoomsData(rooms); // Store rooms data
 
                 const buildings = [...new Set(rooms.map(r => r.building))].sort();
@@ -37,7 +37,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                 setFilteredBlocks(blocks); // Initialize filtered blocks with all blocks
 
                 // Fetch departments from students
-                const { data: students } = await axios.get('http://localhost:5000/api/students');
+                const { data: students } = await axios.get('/api/students');
                 const departments = [...new Set(students.map(s => s.department))].sort();
                 setAvailableDepartments(departments);
             } catch (e) {
@@ -86,7 +86,10 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
 
         try {
             console.log('📤 Uploading file:', selectedFile.name);
-            const { data } = await axios.post('http://localhost:5000/api/students/import', formData, {
+            console.log('📤 File type:', selectedFile.type);
+            console.log('📤 File size:', selectedFile.size);
+            
+            const { data } = await axios.post('/api/students/import', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -134,7 +137,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             };
 
             console.log('🚀 Starting allocation with payload:', payload);
-            const { data } = await axios.post('http://localhost:5000/api/dorms/allocate', payload);
+            const { data } = await axios.post('/api/dorms/allocate', payload);
             console.log('✅ Allocation response:', data);
             setAllocationResult(data);
 
