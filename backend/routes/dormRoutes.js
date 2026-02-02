@@ -7,5 +7,6 @@ router.route('/allocate').post(autoAllocate);
 router.route('/statistics').get(getStatistics);
 router.route('/:id').get(getRoomById).put(updateRoom).delete(deleteRoom);
 router.route('/:id/assign').post(assignStudentToRoom);
+router.route('/:id/remove').post(require('../controllers/dormController').removeStudentFromRoom);
 
 module.exports = router;
