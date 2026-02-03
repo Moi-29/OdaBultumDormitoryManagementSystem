@@ -5,7 +5,6 @@ import AdminLayout from './components/Layout/AdminLayout';
 import Dashboard from './pages/Admin/Dashboard';
 import Students from './pages/Admin/Students';
 import Dorms from './pages/Admin/Dorms';
-import Inventory from './pages/Admin/Inventory';
 import Reports from './pages/Admin/Reports';
 import Settings from './pages/Admin/Settings';
 import AdminManagement from './pages/Admin/AdminManagement';
@@ -34,7 +33,6 @@ const SmartRedirect = () => {
   if (hasPermission('dashboard.view')) return <Navigate to="/admin/dashboard" replace />;
   if (hasPermission('students.view')) return <Navigate to="/admin/students" replace />;
   if (hasPermission('dorms.view')) return <Navigate to="/admin/dorms" replace />;
-  if (hasPermission('inventory.view')) return <Navigate to="/admin/inventory" replace />;
   if (hasPermission('reports.view')) return <Navigate to="/admin/reports" replace />;
   if (hasPermission('admins.view')) return <Navigate to="/admin/admin-management" replace />;
   
@@ -81,11 +79,6 @@ function App() {
             <Route path="dorms" element={
               <ProtectedRoute requiredPermission="dorms.view">
                 <Dorms />
-              </ProtectedRoute>
-            } />
-            <Route path="inventory" element={
-              <ProtectedRoute requiredPermission="inventory.view">
-                <Inventory />
               </ProtectedRoute>
             } />
             <Route path="reports" element={

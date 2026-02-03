@@ -427,13 +427,21 @@ const generatePDFReport = asyncHandler(async (req, res) => {
         // Pipe the PDF to the response
         doc.pipe(res);
         
-        // Add header
-        doc.fontSize(20).font('Helvetica-Bold').text('Oda Bultum University', { align: 'center' });
-        doc.fontSize(16).text('Dormitory Management System', { align: 'center' });
-        doc.moveDown(0.5);
-        doc.fontSize(14).text(reportTitle, { align: 'center' });
-        doc.fontSize(10).font('Helvetica').text(`Generated on: ${new Date().toLocaleDateString()}`, { align: 'center' });
-        doc.moveDown(2);
+        // Function to add header on each page
+        const addHeader = (isFirstPage = false) => {
+            const currentY = doc.y;
+            doc.fontSize(18).font('Helvetica-Bold').text('ODA BULTUM UNIVERSITY', { align: 'center' });
+            doc.fontSize(14).font('Helvetica-Bold').text('STUDENT DORM ASSIGNMENT', { align: 'center' });
+            if (isFirstPage) {
+                doc.moveDown(0.3);
+                doc.fontSize(10).font('Helvetica').text(`Generated on: ${new Date().toLocaleDateString()}`, { align: 'center' });
+            }
+            doc.moveDown(1);
+            return doc.y;
+        };
+        
+        // Add header on first page
+        addHeader(true);
         
         // Table setup
         let yPosition = doc.y;
@@ -460,9 +468,12 @@ const generatePDFReport = asyncHandler(async (req, res) => {
             // Check if we need a new page
             if (yPosition > 720) {
                 doc.addPage();
-                yPosition = 50;
                 
-                // Redraw header on new page
+                // Add header on new page
+                addHeader(false);
+                yPosition = doc.y;
+                
+                // Redraw table header on new page
                 doc.fontSize(10).font('Helvetica-Bold');
                 doc.rect(50, yPosition, 510, rowHeight).fillAndStroke('#3b82f6', '#3b82f6');
                 doc.fillColor('white');

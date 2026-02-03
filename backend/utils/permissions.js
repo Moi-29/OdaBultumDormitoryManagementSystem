@@ -18,12 +18,6 @@ const PERMISSIONS = {
         DELETE_DORM: 'dorms.delete',
         MANAGE_BLOCKS: 'dorms.manage_blocks'
     },
-    INVENTORY: {
-        VIEW_INVENTORY: 'inventory.view',
-        CREATE_ASSET: 'inventory.create',
-        EDIT_ASSET: 'inventory.edit',
-        DELETE_ASSET: 'inventory.delete'
-    },
     REPORTS: {
         VIEW_REPORTS: 'reports.view',
         GENERATE_REPORTS: 'reports.generate',

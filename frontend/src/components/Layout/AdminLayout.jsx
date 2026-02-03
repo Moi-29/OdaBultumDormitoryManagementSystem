@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Building, FileText, LogOut, Package, Settings, Shield, AlertTriangle } from 'lucide-react';
+import { LayoutDashboard, Users, Building, FileText, LogOut, Settings, Shield, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -92,9 +92,6 @@ const AdminLayout = () => {
                         )}
                         {hasPermission('dorms.view') && (
                             <NavItem to="/admin/dorms" icon={<Building size={20} />} label="Dormitories" active={isActive('dorms')} />
-                        )}
-                        {hasPermission('inventory.view') && (
-                            <NavItem to="/admin/inventory" icon={<Package size={20} />} label="Inventory" active={isActive('inventory')} />
                         )}
                         {hasPermission('reports.view') && (
                             <NavItem to="/admin/reports" icon={<FileText size={20} />} label="Reports" active={isActive('reports')} />
