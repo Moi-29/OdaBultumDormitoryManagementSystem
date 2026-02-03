@@ -4,15 +4,15 @@ import { useAuth } from '../../context/AuthContext';
 
 const ManagerLayout = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const { logout } = useAuth();
-
-    const isActive = (path) => location.pathname.includes(path);
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
+
+    const isActive = (path) => location.pathname.includes(path);
 
     return (
         <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>

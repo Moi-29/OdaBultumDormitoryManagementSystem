@@ -115,7 +115,26 @@ const assignStudentToRoom = asyncHandler(async (req, res) => {
         throw new Error('Gender mismatch');
     }
 
-    // Add student to room
+    // Check if student is already in a room
+    if (student.room) {
+        if (student.room.toString() === room._id.toString()) {
+            res.status(400);
+            throw new Error('Student is already in this room');
+        }
+
+        // Remove from old room
+        const oldRoom = await Room.findById(student.room);
+        if (oldRoom) {
+            oldRoom.occupants = oldRoom.occupants.filter(id => id.toString() !== student._id.toString());
+            // Update status if it was full
+            if (oldRoom.occupants.length < oldRoom.capacity && oldRoom.status === 'Full') {
+                oldRoom.status = 'Available';
+            }
+            await oldRoom.save();
+        }
+    }
+
+    // Add student to new room
     room.occupants.push(student._id);
     if (room.occupants.length >= room.capacity) {
         room.status = 'Full';
@@ -128,6 +147,47 @@ const assignStudentToRoom = asyncHandler(async (req, res) => {
     await student.save();
 
     res.json({ message: 'Student assigned successfully', room });
+});
+
+// @desc    Remove student from room
+// @route   POST /api/dorms/:id/remove
+// @access  Private/Admin
+const removeStudentFromRoom = asyncHandler(async (req, res) => {
+    const room = await Room.findById(req.params.id);
+    const { studentId } = req.body;
+
+    // Find student (optional verification)
+    const Student = require('../models/Student');
+    const student = await Student.findById(studentId);
+
+    if (!room) {
+        res.status(404);
+        throw new Error('Room not found');
+    }
+
+    // Remove student from room occupants
+    const initialLength = room.occupants.length;
+    room.occupants = room.occupants.filter(id => id.toString() !== studentId);
+
+    if (room.occupants.length === initialLength) {
+        res.status(400);
+        throw new Error('Student not found in this room');
+    }
+
+    // Update status
+    if (room.occupants.length < room.capacity) {
+        room.status = 'Available';
+    }
+
+    await room.save();
+
+    // Update student record if found
+    if (student) {
+        student.room = null;
+        await student.save();
+    }
+
+    res.json({ message: 'Student removed from room', room });
 });
 
 // @desc    Auto-allocate students to dorms
@@ -304,6 +364,7 @@ module.exports = {
     updateRoom,
     deleteRoom,
     assignStudentToRoom,
+    removeStudentFromRoom,
     autoAllocate,
     getStatistics,
 };
