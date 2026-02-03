@@ -17,7 +17,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
 
     const handleImport = async () => {
         if (!selectedFile) {
-            setError('Please select an Excel file first');
+            setError('Please select an Excel or CSV file first');
             return;
         }
 
@@ -29,17 +29,25 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         formData.append('file', selectedFile);
 
         try {
+            console.log('Uploading file:', selectedFile.name);
             const { data } = await axios.post('http://localhost:5000/api/students/import', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
+            console.log('Import successful:', data);
             setImportResult(data);
             setSelectedFile(null);
+            // Reset file input
+            const fileInput = document.querySelector('input[type="file"]');
+            if (fileInput) fileInput.value = '';
+            
             if (onImportComplete) onImportComplete();
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Import failed');
+            console.error('Import error:', err);
+            const errorMessage = err.response?.data?.message || err.message || 'Import failed';
+            setError(errorMessage);
         } finally {
             setImporting(false);
         }
@@ -51,11 +59,15 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         setAllocationResult(null);
 
         try {
+            console.log('Starting auto-allocation...');
             const { data } = await axios.post('http://localhost:5000/api/dorms/allocate');
+            console.log('Allocation successful:', data);
             setAllocationResult(data);
             if (onAllocationComplete) onAllocationComplete();
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Allocation failed');
+            console.error('Allocation error:', err);
+            const errorMessage = err.response?.data?.message || err.message || 'Allocation failed';
+            setError(errorMessage);
         } finally {
             setAllocating(false);
         }
@@ -67,17 +79,22 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             <div className="card" style={{ flex: '1', minWidth: '300px' }}>
                 <h3 style={{ marginBottom: '1rem' }}>📥 Import Students</h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                    Upload an Excel file with columns: studentId, fullName, gender, department, year, phone
+                    Upload an Excel (.xlsx, .xls) or CSV file with columns: studentId, fullName, gender, department, year, phone
                 </p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input
                         type="file"
-                        accept=".xlsx,.xls"
+                        accept=".xlsx,.xls,.csv"
                         onChange={handleFileSelect}
                         className="input-field"
                         disabled={importing}
                     />
+                    {selectedFile && (
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                            Selected: {selectedFile.name}
+                        </div>
+                    )}
 
                     <button
                         onClick={handleImport}

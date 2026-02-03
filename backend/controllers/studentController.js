@@ -108,7 +108,7 @@ const deleteStudent = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Import students from Excel
+// @desc    Import students from Excel or CSV
 // @route   POST /api/students/import
 // @access  Private/Admin
 const importStudents = asyncHandler(async (req, res) => {
@@ -118,14 +118,34 @@ const importStudents = asyncHandler(async (req, res) => {
     }
 
     const xlsx = require('xlsx');
-    const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const data = xlsx.utils.sheet_to_json(sheet);
+    let data;
+
+    try {
+        // Check file extension
+        const fileName = req.file.originalname.toLowerCase();
+        
+        if (fileName.endsWith('.csv')) {
+            // Handle CSV file
+            const csvContent = req.file.buffer.toString('utf-8');
+            const workbook = xlsx.read(csvContent, { type: 'string' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            data = xlsx.utils.sheet_to_json(sheet);
+        } else {
+            // Handle Excel file
+            const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            data = xlsx.utils.sheet_to_json(sheet);
+        }
+    } catch (parseError) {
+        res.status(400);
+        throw new Error('Failed to parse file: ' + parseError.message);
+    }
 
     if (!data || data.length === 0) {
         res.status(400);
-        throw new Error('Excel file is empty');
+        throw new Error('File is empty or has no valid data');
     }
 
     const importedStudents = [];
@@ -142,12 +162,22 @@ const importStudents = asyncHandler(async (req, res) => {
                 gender: row.gender || row.Gender,
                 department: row.department || row.Department,
                 year: parseInt(row.year || row.Year),
-                phone: row.phone || row.Phone || '',
+                phone: String(row.phone || row.Phone || ''),
             };
 
             // Validate required fields
             if (!studentData.studentId || !studentData.fullName || !studentData.gender || !studentData.department || !studentData.year) {
                 errors.push({ row: i + 2, error: 'Missing required fields', data: row });
+                continue;
+            }
+
+            // Normalize gender (accept M/F or Male/Female)
+            if (studentData.gender.toUpperCase().startsWith('M')) {
+                studentData.gender = 'M';
+            } else if (studentData.gender.toUpperCase().startsWith('F')) {
+                studentData.gender = 'F';
+            } else {
+                errors.push({ row: i + 2, error: 'Invalid gender (must be M/F or Male/Female)', data: row });
                 continue;
             }
 
