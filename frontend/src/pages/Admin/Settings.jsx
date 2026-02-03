@@ -33,6 +33,14 @@ const Settings = () => {
         maxStudentsPerRoom: 4
     });
 
+    // System Info
+    const [systemInfo, setSystemInfo] = useState({
+        totalStudents: 0,
+        totalRooms: 0,
+        lastBackup: 'Never',
+        cacheStatus: 'Unknown'
+    });
+
     // Load system settings on mount
     useEffect(() => {
         const loadSystemSettings = async () => {
@@ -62,6 +70,41 @@ const Settings = () => {
 
         if (activeTab === 'system') {
             loadSystemSettings();
+        }
+    }, [activeTab]);
+
+    // Load system info for database tab
+    useEffect(() => {
+        const loadSystemInfo = async () => {
+            try {
+                const userInfo = localStorage.getItem('userInfo');
+                if (!userInfo) return;
+
+                const { token } = JSON.parse(userInfo);
+                
+                // Get backup stats
+                const backupResponse = await axios.get('http://localhost:5000/api/backup/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                // Get cache stats
+                const cacheResponse = await axios.get('http://localhost:5000/api/cache/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                setSystemInfo({
+                    totalStudents: backupResponse.data.totalStudents || 0,
+                    totalRooms: backupResponse.data.totalRooms || 0,
+                    lastBackup: backupResponse.data.lastBackup || 'Never',
+                    cacheStatus: cacheResponse.data.lastCleared || 'Never cleared'
+                });
+            } catch (error) {
+                console.error('Error loading system info:', error);
+            }
+        };
+
+        if (activeTab === 'database') {
+            loadSystemInfo();
         }
     }, [activeTab]);
 
@@ -228,37 +271,104 @@ const Settings = () => {
     const handleDatabaseBackup = async () => {
         setLoading(true);
         try {
+            const userInfo = localStorage.getItem('userInfo');
+            if (!userInfo) {
+                showMessage('error', 'Authentication required. Please login again.');
+                return;
+            }
+
+            const { token } = JSON.parse(userInfo);
+            
+            console.log('📦 Requesting database backup...');
+            
             const response = await axios.get('http://localhost:5000/api/backup/database', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 responseType: 'blob'
             });
             
+            // Create download link
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.download = `database_backup_${new Date().toISOString().split('T')[0]}.json`;
+            const filename = `database_backup_${new Date().toISOString().split('T')[0]}_${Date.now()}.json`;
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             link.remove();
             window.URL.revokeObjectURL(url);
             
-            showMessage('success', 'Database backup downloaded successfully!');
+            console.log('✅ Backup downloaded:', filename);
+            showMessage('success', `Database backup downloaded successfully! File: ${filename}`);
+            
+            // Update system info to show last backup time
+            setSystemInfo(prev => ({
+                ...prev,
+                lastBackup: new Date().toLocaleString()
+            }));
         } catch (error) {
-            showMessage('error', 'Database backup feature coming soon!');
+            console.error('❌ Backup error:', error);
+            const errorMsg = error.response?.data?.message || error.message || 'Failed to create database backup';
+            showMessage('error', errorMsg);
         } finally {
             setLoading(false);
         }
     };
 
     const handleClearCache = async () => {
-        if (!window.confirm('Are you sure you want to clear the cache?')) return;
+        if (!window.confirm('⚠️ Are you sure you want to clear the cache?\n\nThis will:\n• Clear browser cache (localStorage)\n• Clear server-side cache\n• May temporarily slow down the system\n\nContinue?')) {
+            return;
+        }
         
         setLoading(true);
         try {
-            // Clear localStorage
-            localStorage.removeItem('cachedData');
-            showMessage('success', 'Cache cleared successfully!');
+            const userInfo = localStorage.getItem('userInfo');
+            if (!userInfo) {
+                showMessage('error', 'Authentication required. Please login again.');
+                return;
+            }
+
+            const { token } = JSON.parse(userInfo);
+            
+            console.log('🧹 Clearing cache...');
+            
+            // Clear server-side cache
+            const response = await axios.post('http://localhost:5000/api/cache/clear', {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            // Clear browser cache (except userInfo for authentication)
+            const savedUserInfo = localStorage.getItem('userInfo');
+            localStorage.clear();
+            if (savedUserInfo) {
+                localStorage.setItem('userInfo', savedUserInfo);
+            }
+            
+            // Clear session storage
+            sessionStorage.clear();
+            
+            console.log('✅ Cache cleared successfully');
+            showMessage('success', 'Cache cleared successfully! Browser and server cache have been reset.');
+            
+            // Update system info
+            setSystemInfo(prev => ({
+                ...prev,
+                cacheStatus: response.data.clearedAt || new Date().toLocaleString()
+            }));
+            
+            // Optionally reload page after 2 seconds
+            setTimeout(() => {
+                if (window.confirm('Cache cleared! Would you like to refresh the page to see the changes?')) {
+                    window.location.reload();
+                }
+            }, 2000);
         } catch (error) {
-            showMessage('error', 'Failed to clear cache');
+            console.error('❌ Cache clear error:', error);
+            const errorMsg = error.response?.data?.message || error.message || 'Failed to clear cache';
+            showMessage('error', errorMsg);
         } finally {
             setLoading(false);
         }
@@ -560,13 +670,50 @@ const Settings = () => {
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            <SettingToggle
-                                label="Auto-Allocate Students"
-                                description="Automatically assign students to available rooms based on gender when they are imported or registered"
-                                checked={systemSettings.autoAllocate}
-                                onChange={(checked) => setSystemSettings({ ...systemSettings, autoAllocate: checked })}
-                                icon="🏠"
-                            />
+                            <div>
+                                <SettingToggle
+                                    label="Auto-Allocate Students"
+                                    description="Automatically assign students to available rooms based on gender when they are imported or registered"
+                                    checked={systemSettings.autoAllocate}
+                                    onChange={(checked) => setSystemSettings({ ...systemSettings, autoAllocate: checked })}
+                                    icon="🏠"
+                                />
+                                {/* Status Indicator */}
+                                <div style={{
+                                    marginTop: '0.75rem',
+                                    marginLeft: '2.5rem',
+                                    padding: '0.75rem 1rem',
+                                    background: systemSettings.autoAllocate ? '#dcfce7' : '#fef3c7',
+                                    border: `2px solid ${systemSettings.autoAllocate ? '#10b981' : '#f59e0b'}`,
+                                    borderRadius: '8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem'
+                                }}>
+                                    <span style={{ fontSize: '1.5rem' }}>
+                                        {systemSettings.autoAllocate ? '✅' : '⏸️'}
+                                    </span>
+                                    <div>
+                                        <div style={{ 
+                                            fontWeight: 600, 
+                                            fontSize: '0.9rem',
+                                            color: systemSettings.autoAllocate ? '#166534' : '#92400e'
+                                        }}>
+                                            {systemSettings.autoAllocate ? 'Auto-Allocation Active' : 'Auto-Allocation Disabled'}
+                                        </div>
+                                        <div style={{ 
+                                            fontSize: '0.8rem', 
+                                            color: systemSettings.autoAllocate ? '#15803d' : '#b45309',
+                                            marginTop: '0.25rem'
+                                        }}>
+                                            {systemSettings.autoAllocate 
+                                                ? 'Students will be automatically assigned to rooms during import'
+                                                : 'Students must be manually allocated to rooms after import'
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <SettingToggle
                                 label="Email Notifications"
@@ -663,6 +810,28 @@ const Settings = () => {
                                         Value must be between 1 and 8
                                     </p>
                                 )}
+                                {/* Info box showing impact */}
+                                <div style={{
+                                    marginTop: '1rem',
+                                    padding: '0.75rem',
+                                    background: '#eff6ff',
+                                    borderRadius: '6px',
+                                    border: '1px solid #bfdbfe'
+                                }}>
+                                    <div style={{ 
+                                        fontSize: '0.85rem', 
+                                        color: '#1e40af',
+                                        display: 'flex',
+                                        alignItems: 'start',
+                                        gap: '0.5rem'
+                                    }}>
+                                        <span style={{ fontSize: '1rem' }}>ℹ️</span>
+                                        <div>
+                                            <strong>Impact:</strong> When you create new rooms in the Dormitories section, 
+                                            the capacity field will be pre-filled with <strong>{systemSettings.maxStudentsPerRoom}</strong> as the default value.
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -774,9 +943,12 @@ const Settings = () => {
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 <InfoRow label="Version" value="1.0.0" />
-                                <InfoRow label="Database" value="MongoDB" />
-                                <InfoRow label="Last Backup" value="Never" />
-                                <InfoRow label="Status" value="Active" color="#10b981" />
+                                <InfoRow label="Database" value="MongoDB Atlas" />
+                                <InfoRow label="Total Students" value={systemInfo.totalStudents.toString()} />
+                                <InfoRow label="Total Rooms" value={systemInfo.totalRooms.toString()} />
+                                <InfoRow label="Last Backup" value={systemInfo.lastBackup} />
+                                <InfoRow label="Cache Status" value={systemInfo.cacheStatus === 'Never cleared' ? 'Active' : 'Cleared'} color={systemInfo.cacheStatus === 'Never cleared' ? '#10b981' : '#f59e0b'} />
+                                <InfoRow label="System Status" value="Active" color="#10b981" />
                             </div>
                         </div>
                     </div>

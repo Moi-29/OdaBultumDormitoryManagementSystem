@@ -102,12 +102,30 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             const fileInput = document.querySelector('input[type="file"]');
             if (fileInput) fileInput.value = '';
 
-            // Show alert for immediate feedback
-            if (data.imported > 0) {
-                alert(`✅ Success! Imported ${data.imported} students${data.errors > 0 ? `\n⚠️ ${data.errors} errors occurred` : ''}`);
-            } else {
-                alert('⚠️ No students were imported. Check your Excel file format.');
+            // Show alert for immediate feedback with auto-allocation info
+            let message = `✅ Success! Imported ${data.imported} students`;
+            
+            if (data.errors > 0) {
+                message += `\n⚠️ ${data.errors} errors occurred`;
             }
+            
+            // Add auto-allocation info
+            if (data.autoAllocation) {
+                if (data.autoAllocation.allocated > 0) {
+                    message += `\n\n🏠 Auto-Allocation:\n✅ ${data.autoAllocation.allocated} students allocated to rooms`;
+                    if (data.autoAllocation.unallocated > 0) {
+                        message += `\n⏳ ${data.autoAllocation.unallocated} students waiting for rooms`;
+                    }
+                } else if (data.autoAllocation.error) {
+                    message += `\n\n⚠️ Auto-allocation error: ${data.autoAllocation.error}`;
+                } else {
+                    message += `\n\nℹ️ No rooms available for auto-allocation`;
+                }
+            } else {
+                message += `\n\nℹ️ Auto-allocation is disabled in system settings`;
+            }
+            
+            alert(message);
 
             if (onImportComplete) onImportComplete();
         } catch (err) {

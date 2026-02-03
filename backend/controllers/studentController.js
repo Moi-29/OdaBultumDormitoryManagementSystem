@@ -327,11 +327,69 @@ const importStudents = asyncHandler(async (req, res) => {
         }
     }
 
+    // Check if auto-allocation is enabled
+    let allocationResult = null;
+    const settings = await SystemSettings.findOne();
+    
+    if (settings && settings.autoAllocate && importedStudents.length > 0) {
+        console.log('\n🏠 Auto-allocation is enabled. Allocating students to rooms...');
+        
+        try {
+            // Get unassigned students
+            const unassignedStudents = await Student.find({ room: null });
+            
+            if (unassignedStudents.length > 0) {
+                // Separate by gender
+                const maleStudents = unassignedStudents.filter(s => s.gender === 'M');
+                const femaleStudents = unassignedStudents.filter(s => s.gender === 'F');
+                
+                // Get available rooms by gender
+                const maleRooms = await Room.find({ gender: 'M' }).populate('occupants');
+                const femaleRooms = await Room.find({ gender: 'F' }).populate('occupants');
+                
+                let allocatedCount = 0;
+                
+                // Allocate males
+                for (const student of maleStudents) {
+                    const availableRoom = maleRooms.find(room => room.occupants.length < room.capacity);
+                    if (availableRoom) {
+                        student.room = availableRoom._id;
+                        await student.save();
+                        availableRoom.occupants.push(student._id);
+                        allocatedCount++;
+                    }
+                }
+                
+                // Allocate females
+                for (const student of femaleStudents) {
+                    const availableRoom = femaleRooms.find(room => room.occupants.length < room.capacity);
+                    if (availableRoom) {
+                        student.room = availableRoom._id;
+                        await student.save();
+                        availableRoom.occupants.push(student._id);
+                        allocatedCount++;
+                    }
+                }
+                
+                allocationResult = {
+                    allocated: allocatedCount,
+                    unallocated: unassignedStudents.length - allocatedCount
+                };
+                
+                console.log(`✅ Auto-allocation complete: ${allocatedCount} students allocated`);
+            }
+        } catch (allocationError) {
+            console.error('❌ Auto-allocation error:', allocationError);
+            allocationResult = { error: allocationError.message };
+        }
+    }
+
     res.json({
         success: true,
         imported: importedStudents.length,
         errors: errors.length,
-        details: { importedStudents, errors }
+        details: { importedStudents, errors },
+        autoAllocation: allocationResult
     });
 });
 

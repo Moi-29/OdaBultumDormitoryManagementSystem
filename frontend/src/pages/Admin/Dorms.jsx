@@ -8,6 +8,7 @@ const Dorms = () => {
     const [activeTab, setActiveTab] = useState('');
     const [blocks, setBlocks] = useState([]);
     const [genderFilter, setGenderFilter] = useState('M'); // New state for gender filter
+    const [defaultCapacity, setDefaultCapacity] = useState(4); // System default capacity
     
     // Modal States
     const [showBlockModal, setShowBlockModal] = useState(false);
@@ -24,6 +25,7 @@ const Dorms = () => {
 
     useEffect(() => {
         fetchRooms();
+        fetchSystemSettings();
     }, []);
 
     useEffect(() => {
@@ -65,6 +67,24 @@ const Dorms = () => {
         } catch (error) {
             console.error('Error fetching rooms:', error);
             setLoading(false);
+        }
+    };
+
+    const fetchSystemSettings = async () => {
+        try {
+            const userInfo = localStorage.getItem('userInfo');
+            if (!userInfo) return;
+
+            const { token } = JSON.parse(userInfo);
+            const { data } = await axios.get('http://localhost:5000/api/settings', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (data && data.maxStudentsPerRoom) {
+                setDefaultCapacity(data.maxStudentsPerRoom);
+            }
+        } catch (error) {
+            console.error('Error fetching system settings:', error);
         }
     };
 
@@ -155,7 +175,8 @@ const Dorms = () => {
         setRoomForm({
             building: activeTab || blockForm.name,
             roomNumber: '', floor: 1, type: 'Quad',
-            capacity: 4, gender: blockGender, status: 'Available'
+            capacity: defaultCapacity, // Use system default
+            gender: blockGender, status: 'Available'
         });
         setShowRoomModal(true);
     };
@@ -883,6 +904,9 @@ const Dorms = () => {
                                     min="1"
                                     required
                                 />
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                                    System default: {defaultCapacity} students
+                                </p>
                             </div>
                         </div>
 
