@@ -251,58 +251,71 @@ const autoAllocate = asyncHandler(async (req, res) => {
     const sortedMaleStudents = sortStudents(maleStudents);
     const sortedFemaleStudents = sortStudents(femaleStudents);
 
-    // 4. Fetch Available Rooms
+    // 4. Fetch Available Rooms with current occupants
     // We need separate queries for M and F to respect building choices + gender constraints
     const maleRoomQuery = { ...roomQuery, gender: 'M' };
     const femaleRoomQuery = { ...roomQuery, gender: 'F' };
 
-    // Note: If gender criteria was strict (e.g. only F), one list will be empty
-    const maleRooms = await Room.find(maleRoomQuery).sort({ building: 1, floor: 1, roomNumber: 1 });
-    const femaleRooms = await Room.find(femaleRoomQuery).sort({ building: 1, floor: 1, roomNumber: 1 });
+    // Populate occupants to get accurate count and sort by building → block → room number
+    const maleRooms = await Room.find(maleRoomQuery)
+        .populate('occupants')
+        .sort({ building: 1, block: 1, roomNumber: 1 });
+    const femaleRooms = await Room.find(femaleRoomQuery)
+        .populate('occupants')
+        .sort({ building: 1, block: 1, roomNumber: 1 });
 
     let allocatedCount = 0;
     const allocationDetails = [];
 
-    // Allocation logic
+    // Allocation logic - Fill each room completely before moving to next
     const allocateToRooms = async (students, rooms) => {
         let studentIndex = 0;
         let assignedInThisRun = 0;
 
         for (const room of rooms) {
-            // Re-check capacity in case of concurrency (though unlikely here)
-            // But relying on in-memory object is safe for single-request sequential flow
-            const availableSpace = room.capacity - room.occupants.length;
+            // Calculate available space in this room
+            const currentOccupants = room.occupants ? room.occupants.length : 0;
+            const availableSpace = room.capacity - currentOccupants;
 
-            if (availableSpace > 0 && studentIndex < students.length) {
-                const studentsToAssign = students.slice(studentIndex, studentIndex + availableSpace);
-
-                for (const student of studentsToAssign) {
-                    room.occupants.push(student._id);
-                    student.room = room._id;
-                    await student.save();
-                    allocatedCount++;
-                    assignedInThisRun++;
-
-                    allocationDetails.push({
-                        studentId: student.studentId,
-                        fullName: student.fullName,
-                        room: `${room.building}-${room.roomNumber}`,
-                        year: student.year,
-                        department: student.department
-                    });
-                }
-
-                if (room.occupants.length >= room.capacity) {
-                    room.status = 'Full';
-                } else {
-                    room.status = 'Available';
-                }
-
-                await room.save();
-                studentIndex += studentsToAssign.length;
+            // Skip if room is full
+            if (availableSpace <= 0) {
+                continue;
             }
 
-            if (studentIndex >= students.length) break;
+            // Skip if no more students to assign
+            if (studentIndex >= students.length) {
+                break;
+            }
+
+            // Get students to fill this room completely (or as many as available)
+            const studentsToAssign = students.slice(studentIndex, studentIndex + availableSpace);
+
+            // Assign all students to this room
+            for (const student of studentsToAssign) {
+                room.occupants.push(student._id);
+                student.room = room._id;
+                await student.save();
+                allocatedCount++;
+                assignedInThisRun++;
+
+                allocationDetails.push({
+                    studentId: student.studentId,
+                    fullName: student.fullName,
+                    room: `${room.building}-${room.roomNumber}`,
+                    year: student.year,
+                    department: student.department
+                });
+            }
+
+            // Update room status based on occupancy
+            if (room.occupants.length >= room.capacity) {
+                room.status = 'Full';
+            } else {
+                room.status = 'Available';
+            }
+
+            await room.save();
+            studentIndex += studentsToAssign.length;
         }
 
         return assignedInThisRun;
