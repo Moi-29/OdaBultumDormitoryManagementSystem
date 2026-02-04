@@ -68,8 +68,8 @@ const StudentPortal = () => {
     }, [searchParams]);
 
     return (
-        <div style={{ backgroundColor: '#f3f4f6', height: '100vh', fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            {/* Header */}
+        <div style={{ backgroundColor: '#f3f4f6', minHeight: '100vh', fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
+            {/* Header - Fixed */}
             <header style={{ 
                 background: 'linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%)',
                 padding: '1rem 2rem', 
@@ -77,7 +77,10 @@ const StudentPortal = () => {
                 display: 'flex', 
                 justifyContent: 'space-between', 
                 alignItems: 'center',
-                flexShrink: 0,
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
                 zIndex: 1000
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -123,7 +126,12 @@ const StudentPortal = () => {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
                     animation: 'slideDown 0.5s ease-out',
                     textAlign: 'center',
-                    flexWrap: 'wrap'
+                    flexWrap: 'wrap',
+                    position: 'fixed',
+                    top: '80px',
+                    left: 0,
+                    right: 0,
+                    zIndex: 999
                 }}>
                     <AlertTriangle size={32} strokeWidth={2.5} />
                     <div style={{ flex: 1, minWidth: '300px' }}>
@@ -147,60 +155,130 @@ const StudentPortal = () => {
                 alignItems: 'center', 
                 justifyContent: 'center', 
                 padding: '2rem 1.5rem',
-                overflow: 'hidden'
+                paddingTop: maintenanceMode ? 'calc(80px + 180px + 2rem)' : 'calc(80px + 2rem)',
+                paddingBottom: 'calc(60px + 2rem)',
+                overflow: 'auto',
+                background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%)',
+                minHeight: '100vh'
             }}>
-                <div style={{ width: '100%', maxWidth: '680px', height: '100%', display: 'flex', alignItems: 'center' }}>
+                <div style={{ width: '100%', maxWidth: '1100px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem 0' }}>
 
-                {/* Search Card */}
+                {/* Search Card - Modern Redesign */}
                 {!placement ? (
                     <div style={{ 
                         backgroundColor: 'white', 
-                        borderRadius: '16px', 
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                        borderRadius: '24px', 
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.12)',
                         overflow: 'hidden',
                         display: 'flex',
                         flexDirection: 'column',
-                        width: '100%'
+                        width: '100%',
+                        maxWidth: '650px',
+                        border: '1px solid rgba(16, 185, 129, 0.1)'
                     }}>
-                        {/* Green Header */}
+                        {/* Gradient Header with Logo */}
                         <div className="search-header" style={{ 
-                            background: '#10b981',
-                            padding: '3.5rem 2.5rem',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            padding: '3rem 2.5rem',
                             color: 'white',
-                            textAlign: 'center'
+                            textAlign: 'center',
+                            position: 'relative',
+                            overflow: 'hidden'
                         }}>
+                            {/* Decorative circles */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '-50px',
+                                right: '-50px',
+                                width: '200px',
+                                height: '200px',
+                                background: 'rgba(255,255,255,0.1)',
+                                borderRadius: '50%'
+                            }}></div>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '-30px',
+                                left: '-30px',
+                                width: '150px',
+                                height: '150px',
+                                background: 'rgba(255,255,255,0.08)',
+                                borderRadius: '50%'
+                            }}></div>
+                            
+                            {/* University Logo */}
+                            <div style={{
+                                width: '100px',
+                                height: '100px',
+                                background: 'white',
+                                borderRadius: '24px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                margin: '0 auto 1.5rem',
+                                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                                border: '4px solid rgba(255,255,255,0.3)',
+                                position: 'relative',
+                                zIndex: 1,
+                                padding: '0.5rem'
+                            }}>
+                                <img 
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpWVhGUfDQPtwCOjcwTE3tQiAl0obKpwvN1A&s" 
+                                    alt="OBU Logo" 
+                                    style={{ 
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'contain'
+                                    }} 
+                                />
+                            </div>
+                            
                             <h2 style={{ 
                                 margin: 0, 
-                                fontSize: '2.25rem', 
-                                fontWeight: '700',
-                                marginBottom: '1.5rem',
-                                lineHeight: '1.2'
-                            }}>Find Your Dorm Placement</h2>
+                                fontSize: '2rem', 
+                                fontWeight: '800',
+                                marginBottom: '0.75rem',
+                                lineHeight: '1.2',
+                                position: 'relative',
+                                zIndex: 1
+                            }}>Find Your Dorm</h2>
                             <p style={{ 
                                 margin: 0,
-                                fontSize: '1.15rem',
+                                fontSize: '1.05rem',
                                 opacity: 0.95,
-                                lineHeight: '1.7'
-                            }}>Enter your university ID to view your assigned accommodation</p>
+                                lineHeight: '1.6',
+                                position: 'relative',
+                                zIndex: 1
+                            }}>Enter your university ID to view your Dorm assignment</p>
                         </div>
 
-                        {/* Form Content */}
-                        <div className="search-form-content" style={{ padding: '5rem 3.5rem' }}>
+                        {/* Form Content with Modern Design */}
+                        <div className="search-form-content" style={{ padding: '3rem 2.5rem' }}>
 
                         {/* Maintenance Mode Overlay */}
                         {maintenanceMode && (
                             <div style={{
                                 backgroundColor: '#fef2f2',
                                 border: '2px solid #fca5a5',
-                                borderRadius: '12px',
+                                borderRadius: '16px',
                                 padding: '2rem',
-                                marginBottom: '1.5rem',
+                                marginBottom: '2rem',
                                 textAlign: 'center'
                             }}>
-                                <AlertTriangle size={48} color="#dc2626" style={{ marginBottom: '1rem' }} />
+                                <div style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    background: '#fee2e2',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    margin: '0 auto 1rem'
+                                }}>
+                                    <AlertTriangle size={32} color="#dc2626" />
+                                </div>
                                 <h3 style={{ 
                                     color: '#dc2626', 
-                                    fontSize: '1.3rem', 
+                                    fontSize: '1.25rem', 
                                     fontWeight: '700',
                                     marginBottom: '0.75rem'
                                 }}>
@@ -208,7 +286,7 @@ const StudentPortal = () => {
                                 </h3>
                                 <p style={{ 
                                     color: '#991b1b', 
-                                    fontSize: '1rem',
+                                    fontSize: '0.95rem',
                                     lineHeight: '1.6',
                                     marginBottom: '0.5rem'
                                 }}>
@@ -216,42 +294,90 @@ const StudentPortal = () => {
                                 </p>
                                 <p style={{ 
                                     color: '#7f1d1d', 
-                                    fontSize: '0.9rem',
+                                    fontSize: '0.85rem',
                                     fontWeight: '600'
                                 }}>
-                                    Please check back later or contact the administration office for assistance.
+                                    Please check back later or contact the administration office.
                                 </p>
                             </div>
                         )}
 
                         <form onSubmit={handleSearch}>
-                            <div style={{ marginBottom: '3.5rem' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem', fontWeight: '600', color: '#374151', marginBottom: '1.5rem' }}>
-                                    <User size={24} color="#10b981" /> University ID
+                            <div style={{ marginBottom: '2rem' }}>
+                                <label style={{ 
+                                    display: 'block',
+                                    fontSize: '0.95rem', 
+                                    fontWeight: '600', 
+                                    color: '#374151', 
+                                    marginBottom: '0.75rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+                                    <div style={{
+                                        width: '32px',
+                                        height: '32px',
+                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        borderRadius: '8px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <User size={18} color="white" />
+                                    </div>
+                                    University ID Number
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g. UGPR1209/16"
-                                    value={studentId}
-                                    onChange={(e) => setStudentId(e.target.value)}
-                                    className="search-input"
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '1.75rem 1.75rem', 
-                                        borderRadius: '12px', 
-                                        border: '2px solid #d1d5db', 
-                                        backgroundColor: maintenanceMode ? '#f3f4f6' : '#f9fafb', 
-                                        fontSize: '1.25rem', 
-                                        outline: 'none',
-                                        cursor: maintenanceMode ? 'not-allowed' : 'text',
-                                        opacity: maintenanceMode ? 0.6 : 1,
-                                        transition: 'border-color 0.2s'
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = '#10b981'}
-                                    onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                                    required
-                                    disabled={maintenanceMode}
-                                />
+                                <div style={{ position: 'relative' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., UGPR1209/16"
+                                        value={studentId}
+                                        onChange={(e) => setStudentId(e.target.value)}
+                                        className="search-input"
+                                        style={{ 
+                                            width: '100%', 
+                                            padding: '1.25rem 1.25rem 1.25rem 3.5rem', 
+                                            borderRadius: '14px', 
+                                            border: '2px solid #e5e7eb', 
+                                            backgroundColor: maintenanceMode ? '#f9fafb' : 'white', 
+                                            fontSize: '1.1rem', 
+                                            outline: 'none',
+                                            cursor: maintenanceMode ? 'not-allowed' : 'text',
+                                            opacity: maintenanceMode ? 0.6 : 1,
+                                            transition: 'all 0.3s',
+                                            fontWeight: '500',
+                                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                                        }}
+                                        onFocus={(e) => {
+                                            e.target.style.borderColor = '#10b981';
+                                            e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.1)';
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.style.borderColor = '#e5e7eb';
+                                            e.target.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+                                        }}
+                                        required
+                                        disabled={maintenanceMode}
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        left: '1.25rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        color: '#9ca3af',
+                                        pointerEvents: 'none'
+                                    }}>
+                                        <Search size={20} />
+                                    </div>
+                                </div>
+                                <p style={{
+                                    fontSize: '0.8rem',
+                                    color: '#6b7280',
+                                    marginTop: '0.5rem',
+                                    marginLeft: '0.25rem'
+                                }}>
+                                    Enter your complete university ID as shown on your ID card
+                                </p>
                             </div>
 
                             <button
@@ -260,319 +386,489 @@ const StudentPortal = () => {
                                 className="search-button"
                                 style={{
                                     width: '100%',
-                                    padding: '2rem',
-                                    backgroundColor: maintenanceMode ? '#9ca3af' : '#C5A036',
+                                    padding: '1.25rem',
+                                    background: maintenanceMode ? '#9ca3af' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '14px',
-                                    fontSize: '1.25rem',
+                                    fontSize: '1.1rem',
                                     fontWeight: '700',
                                     cursor: maintenanceMode ? 'not-allowed' : 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '0.85rem',
-                                    transition: 'all 0.2s',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.1em',
+                                    gap: '0.75rem',
+                                    transition: 'all 0.3s',
                                     opacity: (loading || maintenanceMode) ? 0.7 : 1,
-                                    position: 'relative',
-                                    zIndex: 10,
-                                    pointerEvents: (loading || maintenanceMode) ? 'none' : 'auto',
-                                    boxShadow: '0 6px 16px rgba(197, 160, 54, 0.35)'
+                                    boxShadow: maintenanceMode ? 'none' : '0 4px 14px rgba(16, 185, 129, 0.4)',
+                                    transform: 'translateY(0)'
                                 }}
-                                onMouseEnter={(e) => !loading && !maintenanceMode && (e.currentTarget.style.backgroundColor = '#b8932f')}
-                                onMouseLeave={(e) => !loading && !maintenanceMode && (e.currentTarget.style.backgroundColor = '#C5A036')}
+                                onMouseEnter={(e) => {
+                                    if (!loading && !maintenanceMode) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.5)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!loading && !maintenanceMode) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 14px rgba(16, 185, 129, 0.4)';
+                                    }
+                                }}
                             >
                                 {maintenanceMode ? (
                                     <>
-                                        <AlertTriangle size={28} /> Service Unavailable
+                                        <AlertTriangle size={24} /> Service Unavailable
                                     </>
                                 ) : loading ? (
-                                    'Searching...'
+                                    <>
+                                        <div style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            border: '3px solid rgba(255,255,255,0.3)',
+                                            borderTop: '3px solid white',
+                                            borderRadius: '50%',
+                                            animation: 'spin 0.8s linear infinite'
+                                        }}></div>
+                                        Searching...
+                                    </>
                                 ) : (
                                     <>
-                                        <Search size={28} /> View Placement
+                                        <Search size={24} /> View Placement
                                     </>
                                 )}
                             </button>
                         </form>
 
                         {error && (
-                            <div style={{ marginTop: '2rem', padding: '1.25rem', backgroundColor: '#fef2f2', color: '#ef4444', borderRadius: '8px', borderLeft: '4px solid #ef4444', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
-                                <span style={{ fontWeight: 'bold' }}>Error:</span> {error}
+                            <div style={{ 
+                                marginTop: '1.5rem', 
+                                padding: '1rem 1.25rem', 
+                                backgroundColor: '#fef2f2', 
+                                color: '#dc2626', 
+                                borderRadius: '12px', 
+                                borderLeft: '4px solid #dc2626', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '0.75rem', 
+                                fontSize: '0.95rem',
+                                boxShadow: '0 2px 8px rgba(220, 38, 38, 0.1)'
+                            }}>
+                                <AlertTriangle size={20} />
+                                <div>
+                                    <span style={{ fontWeight: '700' }}>Error:</span> {error}
+                                </div>
                             </div>
                         )}
                         </div>
                     </div>
                 ) : (
-                    /* Student Placement Result - Matching First Image Design */
+                    /* Student Placement Result - Modern Card Design */
                     <div style={{ 
                         backgroundColor: 'white', 
-                        borderRadius: '16px', 
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                        overflow: 'hidden',
+                        borderRadius: '24px', 
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.12)',
+                        overflow: 'visible',
                         display: 'flex',
                         flexDirection: 'column',
-                        height: '100%'
+                        width: '100%',
+                        maxWidth: '1000px',
+                        border: '1px solid rgba(16, 185, 129, 0.1)',
+                        marginBottom: '2rem'
                     }}>
-                        {/* Header - Green with title and back button */}
+                        {/* Header with Gradient */}
                         <div className="placement-header" style={{ 
-                            background: '#10b981',
-                            padding: '1.25rem 2rem',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            padding: '1.5rem 2rem',
                             color: 'white',
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            flexShrink: 0
+                            flexShrink: 0,
+                            position: 'relative',
+                            overflow: 'hidden'
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <Building size={24} />
+                            {/* Decorative elements */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '-20px',
+                                right: '-20px',
+                                width: '100px',
+                                height: '100px',
+                                background: 'rgba(255,255,255,0.1)',
+                                borderRadius: '50%'
+                            }}></div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative', zIndex: 1 }}>
+                                <div style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    background: 'rgba(255,255,255,0.2)',
+                                    borderRadius: '12px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backdropFilter: 'blur(10px)'
+                                }}>
+                                    <Building size={26} />
+                                </div>
                                 <div>
-                                    <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '700' }}>Dormitory Placement</h2>
-                                    <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.9 }}>Student Room Assignment</p>
+                                    <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800' }}>Your Room Assignment</h2>
+                                    <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.95 }}>Dormitory Placement Details</p>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setPlacement(null)}
                                 style={{
-                                    background: 'rgba(255,255,255,0.25)',
-                                    border: '1px solid rgba(255,255,255,0.4)',
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: '1px solid rgba(255,255,255,0.3)',
                                     color: 'white',
-                                    padding: '0.5rem 1.25rem',
-                                    borderRadius: '8px',
+                                    padding: '0.65rem 1.5rem',
+                                    borderRadius: '10px',
                                     cursor: 'pointer',
-                                    fontSize: '0.85rem',
+                                    fontSize: '0.9rem',
                                     fontWeight: '600',
-                                    transition: 'all 0.2s'
+                                    transition: 'all 0.3s',
+                                    backdropFilter: 'blur(10px)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    position: 'relative',
+                                    zIndex: 1
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.35)'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
                             >
-                                ← Back to Search
+                                <RotateCcw size={16} /> New Search
                             </button>
                         </div>
 
-                        {/* Content - Two column layout */}
+                        {/* Content - Modern Card Layout */}
                         <div className="placement-content" style={{ 
-                            flex: 1, 
-                            padding: '2rem',
-                            overflow: 'hidden',
+                            padding: '2.5rem',
                             display: 'flex',
+                            flexDirection: 'column',
                             gap: '2rem'
                         }}>
-                            {/* Left: Room Number Box */}
-                            <div className="room-box" style={{ 
-                                flex: '0 0 340px',
+                            {/* Room Number - Large Featured Card */}
+                            <div className="room-featured-card" style={{ 
                                 background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                                borderRadius: '16px',
-                                padding: '2.5rem 2rem',
+                                borderRadius: '20px',
+                                padding: '2.5rem',
                                 textAlign: 'center',
                                 border: '2px solid #fbbf24',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center'
+                                boxShadow: '0 8px 24px rgba(251, 191, 36, 0.2)',
+                                position: 'relative',
+                                overflow: 'hidden'
                             }}>
-                                <p style={{ 
-                                    color: '#92400e',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '600',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.15em',
-                                    marginBottom: '1.5rem'
-                                }}>Your Assigned Room</p>
-                                <h1 style={{ 
-                                    fontSize: '6rem',
-                                    fontWeight: '800',
-                                    color: '#b45309',
-                                    margin: '0',
-                                    lineHeight: 1
-                                }}>
-                                    {placement.room?.roomNumber || 'N/A'}
-                                </h1>
-                                <p style={{ 
-                                    fontSize: '1.5rem',
-                                    fontWeight: '700',
-                                    color: '#92400e',
-                                    margin: '1rem 0 0 0'
-                                }}>
-                                    {placement.room?.building || 'Unassigned'}
-                                </p>
+                                {/* Decorative elements */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '-30px',
+                                    right: '-30px',
+                                    width: '120px',
+                                    height: '120px',
+                                    background: 'rgba(251, 191, 36, 0.15)',
+                                    borderRadius: '50%'
+                                }}></div>
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: '-20px',
+                                    left: '-20px',
+                                    width: '100px',
+                                    height: '100px',
+                                    background: 'rgba(251, 191, 36, 0.1)',
+                                    borderRadius: '50%'
+                                }}></div>
+                                
+                                <div style={{ position: 'relative', zIndex: 1 }}>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        background: 'rgba(180, 83, 9, 0.1)',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '999px',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <Home size={16} color="#92400e" />
+                                        <span style={{ 
+                                            color: '#92400e',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '700',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.1em'
+                                        }}>Your Assigned Room</span>
+                                    </div>
+                                    <h1 style={{ 
+                                        fontSize: '5rem',
+                                        fontWeight: '900',
+                                        color: '#b45309',
+                                        margin: '0.5rem 0',
+                                        lineHeight: 1,
+                                        textShadow: '0 2px 4px rgba(180, 83, 9, 0.1)'
+                                    }}>
+                                        {placement.room?.roomNumber || 'N/A'}
+                                    </h1>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        background: 'rgba(180, 83, 9, 0.1)',
+                                        padding: '0.75rem 1.5rem',
+                                        borderRadius: '12px',
+                                        marginTop: '1rem'
+                                    }}>
+                                        <Building size={20} color="#92400e" />
+                                        <p style={{ 
+                                            fontSize: '1.5rem',
+                                            fontWeight: '700',
+                                            color: '#92400e',
+                                            margin: 0
+                                        }}>
+                                            {placement.room?.building || 'Unassigned'}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Right: Student Details */}
-                            <div className="details-grid" style={{ 
-                                flex: 1,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '1rem'
+                            {/* Student Details - Modern Grid with Consistent Colors */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                                gap: '1.25rem'
                             }}>
-                                {/* University ID - Full width */}
-                                <div className="detail-box" style={{
-                                    padding: '1rem 1.25rem',
-                                    background: '#f8fafc',
-                                    borderRadius: '10px',
-                                    border: '1px solid #e2e8f0'
+                                {/* University ID */}
+                                <div className="detail-card" style={{
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe',
+                                    transition: 'all 0.3s'
                                 }}>
-                                    <p className="detail-label" style={{ 
-                                        color: '#64748b',
-                                        fontSize: '0.7rem',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.05em',
-                                        margin: '0 0 0.4rem 0'
-                                    }}>University ID</p>
-                                    <p className="detail-value" style={{ 
-                                        fontSize: '1.1rem',
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{
+                                            width: '36px',
+                                            height: '36px',
+                                            background: '#3b82f6',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <User size={20} color="white" />
+                                        </div>
+                                        <p style={{ 
+                                            color: '#1e40af',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '700',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
+                                            margin: 0
+                                        }}>University ID</p>
+                                    </div>
+                                    <p style={{ 
+                                        fontSize: '1.15rem',
                                         fontWeight: '700',
-                                        color: '#0f172a',
+                                        color: '#1e3a8a',
                                         margin: 0
                                     }}>{placement.studentId}</p>
                                 </div>
 
-                                {/* Full Name - Full width */}
-                                <div className="detail-box" style={{
-                                    padding: '1rem 1.25rem',
-                                    background: '#f8fafc',
-                                    borderRadius: '10px',
-                                    border: '1px solid #e2e8f0'
+                                {/* Full Name */}
+                                <div className="detail-card" style={{
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe',
+                                    transition: 'all 0.3s'
                                 }}>
-                                    <p className="detail-label" style={{ 
-                                        color: '#64748b',
-                                        fontSize: '0.7rem',
-                                        fontWeight: '600',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.05em',
-                                        margin: '0 0 0.4rem 0'
-                                    }}>Full Name</p>
-                                    <p className="detail-value" style={{ 
-                                        fontSize: '1.1rem',
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{
+                                            width: '36px',
+                                            height: '36px',
+                                            background: '#3b82f6',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <User size={20} color="white" />
+                                        </div>
+                                        <p style={{ 
+                                            color: '#1e40af',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '700',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
+                                            margin: 0
+                                        }}>Full Name</p>
+                                    </div>
+                                    <p style={{ 
+                                        fontSize: '1.15rem',
                                         fontWeight: '700',
-                                        color: '#0f172a',
+                                        color: '#1e3a8a',
                                         margin: 0
                                     }}>{placement.fullName}</p>
                                 </div>
 
-                                {/* Two column grid for remaining fields */}
-                                <div style={{ 
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(2, 1fr)',
-                                    gap: '1rem'
+                                {/* Gender */}
+                                <div className="detail-card" style={{
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe',
+                                    transition: 'all 0.3s'
                                 }}>
-                                    {/* Gender */}
-                                    <div className="detail-box" style={{
-                                        padding: '1rem 1.25rem',
-                                        background: '#f8fafc',
-                                        borderRadius: '10px',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <p className="detail-label" style={{ 
-                                            color: '#64748b',
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.05em',
-                                            margin: '0 0 0.4rem 0'
-                                        }}>Gender</p>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <p className="detail-value" style={{ 
-                                                fontSize: '1rem',
-                                                fontWeight: '700',
-                                                color: '#0f172a',
-                                                margin: 0
-                                            }}>{placement.gender === 'M' ? 'Male' : 'Female'}</p>
-                                            {placement.gender === 'M' ? 
-                                                <span style={{ color: '#3b82f6', fontSize: '1.2rem' }}>♂</span> : 
-                                                <span style={{ color: '#ec4899', fontSize: '1.2rem' }}>♀</span>
-                                            }
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{
+                                            width: '36px',
+                                            height: '36px',
+                                            background: '#3b82f6',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.25rem'
+                                        }}>
+                                            {placement.gender === 'M' ? '♂' : '♀'}
                                         </div>
-                                    </div>
-
-                                    {/* Department */}
-                                    <div className="detail-box" style={{
-                                        padding: '1rem 1.25rem',
-                                        background: '#f8fafc',
-                                        borderRadius: '10px',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <p className="detail-label" style={{ 
-                                            color: '#64748b',
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.05em',
-                                            margin: '0 0 0.4rem 0'
-                                        }}>Department</p>
-                                        <p className="detail-value" style={{ 
-                                            fontSize: '1rem',
+                                        <p style={{ 
+                                            color: '#1e40af',
+                                            fontSize: '0.75rem',
                                             fontWeight: '700',
-                                            color: '#0f172a',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
                                             margin: 0
-                                        }}>{placement.department}</p>
+                                        }}>Gender</p>
                                     </div>
+                                    <p style={{ 
+                                        fontSize: '1.15rem',
+                                        fontWeight: '700',
+                                        color: '#1e3a8a',
+                                        margin: 0
+                                    }}>{placement.gender === 'M' ? 'Male' : 'Female'}</p>
+                                </div>
 
-                                    {/* Campus */}
-                                    <div className="detail-box" style={{
-                                        padding: '1rem 1.25rem',
-                                        background: '#f8fafc',
-                                        borderRadius: '10px',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <p className="detail-label" style={{ 
-                                            color: '#64748b',
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
+                                {/* Department */}
+                                <div className="detail-card" style={{
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe',
+                                    transition: 'all 0.3s'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{
+                                            width: '36px',
+                                            height: '36px',
+                                            background: '#3b82f6',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <Building size={20} color="white" />
+                                        </div>
+                                        <p style={{ 
+                                            color: '#1e40af',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '700',
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.05em',
-                                            margin: '0 0 0.4rem 0'
+                                            margin: 0
+                                        }}>Department</p>
+                                    </div>
+                                    <p style={{ 
+                                        fontSize: '1.15rem',
+                                        fontWeight: '700',
+                                        color: '#1e3a8a',
+                                        margin: 0
+                                    }}>{placement.department}</p>
+                                </div>
+
+                                {/* Campus */}
+                                <div className="detail-card" style={{
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe',
+                                    transition: 'all 0.3s'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{
+                                            width: '36px',
+                                            height: '36px',
+                                            background: '#3b82f6',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <MapPin size={20} color="white" />
+                                        </div>
+                                        <p style={{ 
+                                            color: '#1e40af',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '700',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
+                                            margin: 0
                                         }}>Campus</p>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <MapPin size={16} color="#10b981" />
-                                            <p className="detail-value" style={{ 
-                                                fontSize: '1rem',
-                                                fontWeight: '700',
-                                                color: '#0f172a',
-                                                margin: 0
-                                            }}>Main Campus</p>
-                                        </div>
                                     </div>
+                                    <p style={{ 
+                                        fontSize: '1.15rem',
+                                        fontWeight: '700',
+                                        color: '#1e3a8a',
+                                        margin: 0
+                                    }}>Main Campus</p>
+                                </div>
 
-                                    {/* Room Capacity */}
-                                    <div className="detail-box" style={{
-                                        padding: '1rem 1.25rem',
-                                        background: '#f8fafc',
-                                        borderRadius: '10px',
-                                        border: '1px solid #e2e8f0'
-                                    }}>
-                                        <p className="detail-label" style={{ 
-                                            color: '#64748b',
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
+                                {/* Room Capacity */}
+                                <div className="detail-card" style={{
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe',
+                                    transition: 'all 0.3s'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                        <div style={{
+                                            width: '36px',
+                                            height: '36px',
+                                            background: '#3b82f6',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            <Users size={20} color="white" />
+                                        </div>
+                                        <p style={{ 
+                                            color: '#1e40af',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '700',
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.05em',
-                                            margin: '0 0 0.4rem 0'
+                                            margin: 0
                                         }}>Room Capacity</p>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <Users size={16} color="#10b981" />
-                                            <p className="detail-value" style={{ 
-                                                fontSize: '1rem',
-                                                fontWeight: '700',
-                                                color: '#0f172a',
-                                                margin: 0
-                                            }}>{placement.room?.capacity} Students</p>
-                                        </div>
                                     </div>
+                                    <p style={{ 
+                                        fontSize: '1.15rem',
+                                        fontWeight: '700',
+                                        color: '#1e3a8a',
+                                        margin: 0
+                                    }}>{placement.room?.capacity} Students</p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Download PDF Button - Green */}
+                        {/* Action Buttons */}
                         <div style={{ 
-                            padding: '1.25rem 2rem',
-                            borderTop: '1px solid #e2e8f0',
-                            background: '#f8fafc',
-                            flexShrink: 0
+                            padding: '1.5rem 2.5rem 2.5rem',
+                            display: 'flex',
+                            gap: '1rem',
+                            flexWrap: 'wrap'
                         }}>
                             <button
                                 onClick={() => {
@@ -646,12 +942,13 @@ const StudentPortal = () => {
                                 }}
                                 className="download-button"
                                 style={{
-                                    width: '100%',
-                                    padding: '0.9rem 2rem',
-                                    background: '#10b981',
+                                    flex: 1,
+                                    minWidth: '200px',
+                                    padding: '1rem 2rem',
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                     color: 'white',
                                     border: 'none',
-                                    borderRadius: '10px',
+                                    borderRadius: '12px',
                                     fontSize: '1rem',
                                     fontWeight: '700',
                                     cursor: 'pointer',
@@ -660,21 +957,55 @@ const StudentPortal = () => {
                                     justifyContent: 'center',
                                     gap: '0.75rem',
                                     transition: 'all 0.3s',
-                                    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+                                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = '#059669';
-                                    e.currentTarget.style.transform = 'translateY(-1px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.5)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = '#10b981';
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(16, 185, 129, 0.4)';
                                 }}
                             >
                                 <Download size={20} />
                                 Download PDF
+                            </button>
+                            
+                            <button
+                                onClick={() => {
+                                    const text = `Room Assignment - ${placement.studentId}\nRoom: ${placement.room?.roomNumber || 'N/A'}\nBuilding: ${placement.room?.building || 'Unassigned'}`;
+                                    navigator.clipboard.writeText(text);
+                                    alert('Room details copied to clipboard!');
+                                }}
+                                style={{
+                                    flex: 1,
+                                    minWidth: '200px',
+                                    padding: '1rem 2rem',
+                                    background: 'white',
+                                    color: '#10b981',
+                                    border: '2px solid #10b981',
+                                    borderRadius: '12px',
+                                    fontSize: '1rem',
+                                    fontWeight: '700',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.75rem',
+                                    transition: 'all 0.3s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = '#f0fdf4';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'white';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                <Copy size={20} />
+                                Copy Details
                             </button>
                         </div>
                     </div>
@@ -683,14 +1014,18 @@ const StudentPortal = () => {
 
             </main>
 
-            {/* Footer */}
+            {/* Footer - Fixed */}
             <footer style={{ 
                 backgroundColor: '#000000', 
                 color: 'white', 
                 textAlign: 'center', 
                 padding: '1rem 2rem',
-                flexShrink: 0,
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1000
             }}>
                 Copyright © 2026 Oda Bultum University. All rights reserved.
             </footer>
@@ -714,8 +1049,22 @@ const StudentPortal = () => {
                     }
                     to {
                         opacity: 1;
-                        transform: translateY(0);
                     }
+                }
+
+                @keyframes spin {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                /* Hover effects for detail cards */
+                .detail-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
                 }
 
                 /* Responsive Styles */
@@ -736,6 +1085,9 @@ const StudentPortal = () => {
                     header > div:last-child > div {
                         font-size: 0.8rem !important;
                     }
+                    main {
+                        padding-top: calc(70px + 2rem) !important;
+                    }
                 }
 
                 @media (max-width: 768px) {
@@ -754,18 +1106,17 @@ const StudentPortal = () => {
                         width: 100% !important;
                     }
                     
+                    main {
+                        padding-top: calc(140px + 2rem) !important;
+                    }
+                    
                     /* Placement result - stack layout */
                     .placement-content {
-                        flex-direction: column !important;
-                        gap: 1.5rem !important;
                         padding: 1.5rem !important;
                     }
-                    .room-box {
-                        flex: 1 !important;
-                        min-height: auto !important;
-                    }
-                    .details-grid {
-                        grid-template-columns: 1fr !important;
+                    
+                    .room-featured-card h1 {
+                        font-size: 4rem !important;
                     }
                 }
 
@@ -773,11 +1124,19 @@ const StudentPortal = () => {
                     /* Mobile */
                     main {
                         padding: 1rem !important;
+                        padding-top: calc(140px + 1rem) !important;
+                        padding-bottom: calc(60px + 1rem) !important;
+                        min-height: auto !important;
+                        align-items: flex-start !important;
                     }
                     
                     /* Search form responsive */
                     .search-header {
                         padding: 2rem 1.5rem !important;
+                    }
+                    .search-header > div:first-of-type {
+                        width: 80px !important;
+                        height: 80px !important;
                     }
                     .search-header h2 {
                         font-size: 1.5rem !important;
@@ -786,14 +1145,14 @@ const StudentPortal = () => {
                         font-size: 0.95rem !important;
                     }
                     .search-form-content {
-                        padding: 2.5rem 1.5rem !important;
+                        padding: 2rem 1.5rem !important;
                     }
                     .search-input {
-                        padding: 1rem 1.25rem !important;
+                        padding: 1rem 1rem 1rem 3rem !important;
                         font-size: 1rem !important;
                     }
                     .search-button {
-                        padding: 1.25rem !important;
+                        padding: 1rem !important;
                         font-size: 1rem !important;
                     }
                     
@@ -804,35 +1163,29 @@ const StudentPortal = () => {
                         padding: 1rem 1.5rem !important;
                     }
                     .placement-header h2 {
-                        font-size: 1.1rem !important;
+                        font-size: 1.2rem !important;
                     }
                     .placement-header p {
                         font-size: 0.75rem !important;
                     }
                     
-                    /* Room box responsive */
-                    .room-box h1 {
-                        font-size: 4rem !important;
+                    /* Room featured card responsive */
+                    .room-featured-card {
+                        padding: 2rem 1.5rem !important;
                     }
-                    .room-box p:last-child {
-                        font-size: 1.2rem !important;
-                    }
-                    
-                    /* Details responsive */
-                    .detail-box {
-                        padding: 0.85rem 1rem !important;
-                    }
-                    .detail-label {
-                        font-size: 0.65rem !important;
-                    }
-                    .detail-value {
-                        font-size: 0.95rem !important;
+                    .room-featured-card h1 {
+                        font-size: 3.5rem !important;
                     }
                     
-                    /* Download button responsive */
-                    .download-button {
+                    /* Detail cards responsive */
+                    .detail-card {
                         padding: 1.25rem !important;
-                        font-size: 1rem !important;
+                    }
+                    
+                    /* Download buttons responsive */
+                    .download-button {
+                        padding: 1rem 1.5rem !important;
+                        font-size: 0.95rem !important;
                     }
                     
                     footer {
@@ -849,11 +1202,8 @@ const StudentPortal = () => {
                     .search-header p {
                         font-size: 0.85rem !important;
                     }
-                    .room-box h1 {
+                    .room-featured-card h1 {
                         font-size: 3rem !important;
-                    }
-                    .room-box p:last-child {
-                        font-size: 1rem !important;
                     }
                 }
             `}</style>
