@@ -256,13 +256,33 @@ const autoAllocate = asyncHandler(async (req, res) => {
     const maleRoomQuery = { ...roomQuery, gender: 'M' };
     const femaleRoomQuery = { ...roomQuery, gender: 'F' };
 
-    // Populate occupants to get accurate count and sort by building → block → room number
-    const maleRooms = await Room.find(maleRoomQuery)
-        .populate('occupants')
-        .sort({ building: 1, block: 1, roomNumber: 1 });
-    const femaleRooms = await Room.find(femaleRoomQuery)
-        .populate('occupants')
-        .sort({ building: 1, block: 1, roomNumber: 1 });
+    // Populate occupants to get accurate count
+    const maleRooms = await Room.find(maleRoomQuery).populate('occupants');
+    const femaleRooms = await Room.find(femaleRoomQuery).populate('occupants');
+
+    // Sort rooms properly: building → block → room number (numeric)
+    const sortRoomsByOrder = (rooms) => {
+        return rooms.sort((a, b) => {
+            // Sort by building first
+            const buildingCompare = (a.building || '').localeCompare(b.building || '');
+            if (buildingCompare !== 0) return buildingCompare;
+            
+            // Sort by block second
+            const blockCompare = (a.block || '').localeCompare(b.block || '');
+            if (blockCompare !== 0) return blockCompare;
+            
+            // Sort by room number (convert to number for proper numeric sorting)
+            const roomA = parseInt(a.roomNumber) || 0;
+            const roomB = parseInt(b.roomNumber) || 0;
+            return roomA - roomB;
+        });
+    };
+
+    const sortedMaleRooms = sortRoomsByOrder(maleRooms);
+    const sortedFemaleRooms = sortRoomsByOrder(femaleRooms);
+
+    console.log('🏠 Male rooms order:', sortedMaleRooms.map(r => `${r.building}-${r.roomNumber} (${r.occupants.length}/${r.capacity})`));
+    console.log('🏠 Female rooms order:', sortedFemaleRooms.map(r => `${r.building}-${r.roomNumber} (${r.occupants.length}/${r.capacity})`));
 
     let allocatedCount = 0;
     const allocationDetails = [];
@@ -272,23 +292,32 @@ const autoAllocate = asyncHandler(async (req, res) => {
         let studentIndex = 0;
         let assignedInThisRun = 0;
 
-        for (const room of rooms) {
+        console.log(`\n📋 Starting allocation for ${students.length} students across ${rooms.length} rooms`);
+
+        for (let i = 0; i < rooms.length; i++) {
+            const room = rooms[i];
+            
             // Calculate available space in this room
             const currentOccupants = room.occupants ? room.occupants.length : 0;
             const availableSpace = room.capacity - currentOccupants;
 
+            console.log(`\n🏠 Room ${i + 1}: ${room.building}-${room.roomNumber} | Capacity: ${room.capacity} | Current: ${currentOccupants} | Available: ${availableSpace}`);
+
             // Skip if room is full
             if (availableSpace <= 0) {
+                console.log(`   ⏭️  Room is full, skipping...`);
                 continue;
             }
 
             // Skip if no more students to assign
             if (studentIndex >= students.length) {
+                console.log(`   ✅ All students allocated, stopping...`);
                 break;
             }
 
             // Get students to fill this room completely (or as many as available)
             const studentsToAssign = students.slice(studentIndex, studentIndex + availableSpace);
+            console.log(`   👥 Assigning ${studentsToAssign.length} students to this room`);
 
             // Assign all students to this room
             for (const student of studentsToAssign) {
@@ -297,6 +326,8 @@ const autoAllocate = asyncHandler(async (req, res) => {
                 await student.save();
                 allocatedCount++;
                 assignedInThisRun++;
+
+                console.log(`      ✓ ${student.studentId} - ${student.fullName}`);
 
                 allocationDetails.push({
                     studentId: student.studentId,
@@ -310,14 +341,17 @@ const autoAllocate = asyncHandler(async (req, res) => {
             // Update room status based on occupancy
             if (room.occupants.length >= room.capacity) {
                 room.status = 'Full';
+                console.log(`   🔒 Room is now FULL (${room.occupants.length}/${room.capacity})`);
             } else {
                 room.status = 'Available';
+                console.log(`   🔓 Room still available (${room.occupants.length}/${room.capacity})`);
             }
 
             await room.save();
             studentIndex += studentsToAssign.length;
         }
 
+        console.log(`\n✅ Allocation complete: ${assignedInThisRun} students assigned\n`);
         return assignedInThisRun;
     };
 
