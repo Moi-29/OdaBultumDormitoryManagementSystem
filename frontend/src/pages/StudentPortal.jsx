@@ -288,11 +288,8 @@ const StudentPortal = () => {
                             borderRadius: '20px',
                             boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
                             overflow: 'hidden',
-                            marginBottom: '0',
                             display: 'flex',
                             flexDirection: 'column'
-                        }}>
-                            marginBottom: '0'
                         }}>
                         {/* Header */}
                         <div style={{
