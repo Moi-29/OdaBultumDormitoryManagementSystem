@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, UserPlus, Search, Edit, Trash2, ExternalLink, CheckSquare, XSquare } from 'lucide-react';
+import { Users, UserPlus, Search, Edit, Trash2, ExternalLink, CheckSquare, XSquare, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import BulkImportAllocation from '../../components/BulkImportAllocation';
 import { Link } from 'react-router-dom';
@@ -10,10 +10,22 @@ const Students = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [deleting, setDeleting] = useState(false);
+    
+    // Toast notification state
+    const [toast, setToast] = useState({ show: false, type: '', title: '', message: '' });
+    
+    // Confirmation modal state
+    const [confirmModal, setConfirmModal] = useState({ show: false, step: 1 });
 
     useEffect(() => {
         fetchStudents();
     }, []);
+    
+    // Toast notification helper
+    const showToast = (type, title, message) => {
+        setToast({ show: true, type, title, message });
+        setTimeout(() => setToast({ show: false, type: '', title: '', message: '' }), 5000);
+    };
 
     const fetchStudents = async () => {
         setLoading(true);
@@ -49,30 +61,15 @@ const Students = () => {
         }
     };
 
-    const handleClearAll = async () => {
+    const handleClearAll = () => {
         console.log('Clear All clicked');
         console.log(`Total students to delete: ${students.length}`);
-        
-        if (!window.confirm(`⚠️ WARNING: This will permanently delete ALL ${students.length} students from the database!\n\nThis action CANNOT be undone!\n\nAre you absolutely sure?`)) {
-            console.log('First confirmation cancelled');
-            return;
-        }
-
-        if (!window.confirm(`🚨 FINAL CONFIRMATION\n\nYou are about to delete ${students.length} students.\n\nType YES in the next prompt to confirm.`)) {
-            console.log('Second confirmation cancelled');
-            return;
-        }
-
-        const confirmation = window.prompt('Type "DELETE ALL" to confirm (case-sensitive):');
-        console.log('User typed:', confirmation);
-        
-        if (confirmation !== 'DELETE ALL') {
-            alert('❌ Deletion cancelled. Confirmation text did not match.');
-            console.log('Confirmation text did not match');
-            return;
-        }
-
+        setConfirmModal({ show: true, step: 1 });
+    };
+    
+    const confirmClearAll = async () => {
         console.log('All confirmations passed, proceeding with deletion...');
+        setConfirmModal({ show: false, step: 1 });
         setDeleting(true);
         
         try {
@@ -80,13 +77,13 @@ const Students = () => {
             const { data } = await axios.delete('/api/students/bulk/all');
             console.log('Delete response:', data);
             
-            alert(`✅ ${data.message}`);
+            showToast('success', 'Students Deleted', `Successfully deleted ${students.length} students`);
             setStudents([]);
             setSelectedStudents([]);
             await fetchStudents();
         } catch (error) {
             console.error('Error deleting all students:', error);
-            alert('❌ Failed to delete students: ' + (error.response?.data?.message || error.message));
+            showToast('error', 'Deletion Failed', error.response?.data?.message || error.message);
         } finally {
             setDeleting(false);
         }
@@ -108,7 +105,135 @@ const Students = () => {
     if (loading) return <div>Loading...</div>;
 
     return (
-        <div>
+        <div style={{ position: 'relative' }}>
+            {/* Toast Notification */}
+            {toast.show && (
+                <div style={{
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    zIndex: 9999,
+                    minWidth: '350px',
+                    maxWidth: '500px',
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                    padding: '1.25rem',
+                    display: 'flex',
+                    gap: '1rem',
+                    alignItems: 'flex-start',
+                    animation: 'slideInRight 0.3s ease-out',
+                    border: `3px solid ${
+                        toast.type === 'success' ? '#4caf50' : 
+                        toast.type === 'error' ? '#ef4444' : 
+                        '#3b82f6'
+                    }`
+                }}>
+                    {toast.type === 'success' && <CheckCircle size={24} color="#4caf50" />}
+                    {toast.type === 'error' && <AlertCircle size={24} color="#ef4444" />}
+                    {toast.type === 'info' && <AlertCircle size={24} color="#3b82f6" />}
+                    <div style={{ flex: 1 }}>
+                        <div style={{ 
+                            fontWeight: 'bold', 
+                            fontSize: '1.1rem', 
+                            marginBottom: '0.25rem',
+                            color: toast.type === 'success' ? '#2e7d32' : 
+                                   toast.type === 'error' ? '#dc2626' : '#1e40af'
+                        }}>
+                            {toast.title}
+                        </div>
+                        <div style={{ 
+                            fontSize: '0.95rem', 
+                            color: '#4b5563',
+                            whiteSpace: 'pre-line'
+                        }}>
+                            {toast.message}
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setToast({ show: false, type: '', title: '', message: '' })}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '1.5rem',
+                            cursor: 'pointer',
+                            color: '#9ca3af',
+                            padding: 0,
+                            lineHeight: 1
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
+            
+            {/* Confirmation Modal */}
+            {confirmModal.show && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    animation: 'fadeIn 0.2s ease-out'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '12px',
+                        padding: '2rem',
+                        maxWidth: '500px',
+                        width: '90%',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+                    }}>
+                        <div style={{ fontSize: '3rem', textAlign: 'center', marginBottom: '1rem' }}>
+                            ⚠️
+                        </div>
+                        <h2 style={{ textAlign: 'center', color: '#dc2626', marginBottom: '1rem' }}>
+                            {confirmModal.step === 1 ? 'Warning!' : 'Final Confirmation'}
+                        </h2>
+                        <p style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '2rem', color: '#4b5563' }}>
+                            {confirmModal.step === 1 
+                                ? `This will permanently delete ALL ${students.length} students from the database. This action CANNOT be undone!`
+                                : `You are about to delete ${students.length} students. Are you absolutely sure?`
+                            }
+                        </p>
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                            <button
+                                onClick={() => setConfirmModal({ show: false, step: 1 })}
+                                className="btn btn-secondary"
+                                style={{ minWidth: '120px' }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (confirmModal.step === 1) {
+                                        setConfirmModal({ show: true, step: 2 });
+                                    } else {
+                                        confirmClearAll();
+                                    }
+                                }}
+                                className="btn"
+                                style={{ 
+                                    minWidth: '120px',
+                                    backgroundColor: '#ef4444',
+                                    color: 'white',
+                                    border: 'none'
+                                }}
+                            >
+                                {confirmModal.step === 1 ? 'Continue' : 'Delete All'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <div>
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--spacing-lg)' }}>
                 <div>
                     <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -251,6 +376,7 @@ const Students = () => {
                     </div>
                 )}
             </div>
+        </div>
         </div>
     );
 };
