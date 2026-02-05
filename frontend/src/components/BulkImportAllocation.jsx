@@ -289,7 +289,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             // Get final count
             let finalCount = initialCount + data.imported;
             try {
-                const { data: students } = await axios.get(/api/students);
+                const { data: students } = await axios.get(`${API_URL}/api/students`);
                 finalCount = students.length;
             } catch (err) {
                 console.error('Error getting final count:', err);
@@ -346,7 +346,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         let initialAllocated = 0;
         let totalUnallocated = 0;
         try {
-            const { data: students } = await axios.get(/api/students);
+            const { data: students } = await axios.get(`${API_URL}/api/students`);
             initialAllocated = students.filter(s => s.room).length;
             totalUnallocated = students.filter(s => !s.room).length;
         } catch (err) {
@@ -393,7 +393,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             let femalesAllocated = data.details?.femalesAllocated || 0;
             
             try {
-                const { data: students } = await axios.get(/api/students);
+                const { data: students } = await axios.get(`${API_URL}/api/students`);
                 const allocated = students.filter(s => s.room);
                 finalAllocated = allocated.length;
                 malesAllocated = allocated.filter(s => s.gender === 'M').length;
