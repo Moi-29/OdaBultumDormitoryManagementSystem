@@ -39,7 +39,7 @@ const initializeDatabase = async () => {
         // Wait a bit for connection to stabilize
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Auto-seed database if empty (for production deployment)
+        // Check if admin data exists
         const Admin = require('./models/Admin');
         const adminCount = await Admin.countDocuments();
         
@@ -49,9 +49,26 @@ const initializeDatabase = async () => {
             console.log('📦 Database is empty. Starting auto-seed...');
             const seedAdmin = require('./seedAdminSystem');
             await seedAdmin();
-            console.log('✅ Database seeded successfully!');
+            console.log('✅ Admin system seeded successfully!');
         } else {
-            console.log('✅ Database already has data. Skipping seed.');
+            console.log('✅ Admin data exists. Skipping admin seed.');
+        }
+        
+        // Check if student/room data exists
+        const Student = require('./models/Student');
+        const Room = require('./models/Room');
+        const studentCount = await Student.countDocuments();
+        const roomCount = await Room.countDocuments();
+        
+        console.log(`📊 Found ${studentCount} students and ${roomCount} rooms in database`);
+        
+        if (studentCount === 0 && roomCount === 0) {
+            console.log('📦 No students/rooms found. Seeding sample data...');
+            const seedData = require('./seeder');
+            await seedData(false); // false = don't exit process
+            console.log('✅ Sample students and rooms seeded successfully!');
+        } else {
+            console.log('✅ Student/room data exists. Skipping data seed.');
         }
     } catch (error) {
         console.error('❌ Database initialization error:', error);
