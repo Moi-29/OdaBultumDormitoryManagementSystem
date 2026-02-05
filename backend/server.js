@@ -129,6 +129,28 @@ app.get('/check-admins', async (req, res) => {
     }
 });
 
+// Check students endpoint (for debugging)
+app.get('/check-students', async (req, res) => {
+    try {
+        const Student = require('./models/Student');
+        const Room = require('./models/Room');
+        const students = await Student.find({});
+        const rooms = await Room.find({});
+        res.json({ 
+            success: true, 
+            studentCount: students.length,
+            roomCount: rooms.length,
+            students: students.slice(0, 5), // First 5 students
+            rooms: rooms.slice(0, 5) // First 5 rooms
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
+});
+
 // Define Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
