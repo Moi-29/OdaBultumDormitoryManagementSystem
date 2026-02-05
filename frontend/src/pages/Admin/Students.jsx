@@ -3,6 +3,7 @@ import { Users, UserPlus, Search, Edit, Trash2, ExternalLink, CheckSquare, XSqua
 import axios from 'axios';
 import BulkImportAllocation from '../../components/BulkImportAllocation';
 import { Link } from 'react-router-dom';
+import API_URL from '../../config/api';
 
 const Students = () => {
     const [students, setStudents] = useState([]);
@@ -30,7 +31,7 @@ const Students = () => {
     const fetchStudents = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('/api/students');
+            const { data } = await axios.get(`${API_URL}/api/students`);
             
             // Sort students: First by department, then alphabetically by name within each department
             const sortedStudents = data.sort((a, b) => {
@@ -74,7 +75,7 @@ const Students = () => {
         
         try {
             console.log('Sending DELETE request to /api/students/bulk/all');
-            const { data } = await axios.delete('/api/students/bulk/all');
+            const { data } = await axios.delete(`${API_URL}/api/students/bulk/all`);
             console.log('Delete response:', data);
             
             showToast('success', 'Students Deleted', `Successfully deleted ${students.length} students`);
