@@ -19,7 +19,10 @@ const connectDB = async () => {
 
 const seedAdminSystem = async () => {
     try {
-        await connectDB();
+        // Skip DB connection if already connected
+        if (mongoose.connection.readyState !== 1) {
+            await connectDB();
+        }
         
         console.log('🌱 Seeding Admin Management System...\n');
         
@@ -163,11 +166,19 @@ const seedAdminSystem = async () => {
         console.log('   Viewer: jane@obu.edu.et / Admin@123\n');
         console.log('⚠️  IMPORTANT: Use username "admin" (not email) for Super Admin login\n');
         
-        process.exit(0);
+        return true; // Success
     } catch (error) {
         console.error('❌ Error seeding admin system:', error);
-        process.exit(1);
+        throw error;
     }
 };
 
-seedAdminSystem();
+// Export the function for use in server.js
+module.exports = seedAdminSystem;
+
+// Only run directly if this file is executed directly
+if (require.main === module) {
+    seedAdminSystem()
+        .then(() => process.exit(0))
+        .catch(() => process.exit(1));
+}

@@ -33,6 +33,28 @@ app.use(express.json());
 // Database Connection
 connectDB();
 
+// Auto-seed database if empty (for production deployment)
+const autoSeedDatabase = async () => {
+    try {
+        const Admin = require('./models/Admin');
+        const adminCount = await Admin.countDocuments();
+        
+        if (adminCount === 0) {
+            console.log('📦 Database is empty. Auto-seeding...');
+            const seedAdmin = require('./seedAdminSystem');
+            await seedAdmin();
+            console.log('✅ Database seeded successfully!');
+        } else {
+            console.log('✅ Database already has data. Skipping seed.');
+        }
+    } catch (error) {
+        console.error('❌ Auto-seed error:', error.message);
+    }
+};
+
+// Run auto-seed after a short delay to ensure DB connection
+setTimeout(autoSeedDatabase, 2000);
+
 // Routes Placeholder
 app.get('/', (req, res) => {
     res.send('API is running...');
