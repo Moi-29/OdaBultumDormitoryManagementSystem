@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Filter, Building, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import API_URL from '../config/api';
 
 const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -266,7 +267,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         try {
             console.log('📤 Uploading file:', selectedFile.name);
             
-            const { data } = await axios.post('/api/students/import', formData, {
+            const { data } = await axios.post(`${API_URL}/api/students/import`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
