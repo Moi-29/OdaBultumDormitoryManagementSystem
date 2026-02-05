@@ -80,7 +80,7 @@ initializeDatabase();
 
 // Routes Placeholder
 app.get('/', (req, res) => {
-    res.send('API is running...');
+    res.send('API is running... v1.0');
 });
 
 // Manual seed endpoint (for production setup)
