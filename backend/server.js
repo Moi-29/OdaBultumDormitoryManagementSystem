@@ -66,6 +66,34 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
+// Manual seed endpoint (for production setup)
+app.get('/seed-database', async (req, res) => {
+    try {
+        const Admin = require('./models/Admin');
+        const adminCount = await Admin.countDocuments();
+        
+        if (adminCount > 0) {
+            return res.json({ 
+                success: false, 
+                message: `Database already has ${adminCount} admins. Seeding skipped.` 
+            });
+        }
+        
+        const seedAdmin = require('./seedAdminSystem');
+        await seedAdmin();
+        
+        res.json({ 
+            success: true, 
+            message: 'Database seeded successfully! Login with username: admin, password: password123' 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: 'Seeding failed: ' + error.message 
+        });
+    }
+});
+
 // Define Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
