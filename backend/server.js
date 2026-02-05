@@ -30,11 +30,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Database Connection
-connectDB();
-
-// Auto-seed database if empty (for production deployment)
-const autoSeedDatabase = async () => {
+// Database Connection and Auto-seed
+const initializeDatabase = async () => {
+    await connectDB();
+    
+    // Auto-seed database if empty (for production deployment)
     try {
         const Admin = require('./models/Admin');
         const adminCount = await Admin.countDocuments();
@@ -52,8 +52,8 @@ const autoSeedDatabase = async () => {
     }
 };
 
-// Run auto-seed after a short delay to ensure DB connection
-setTimeout(autoSeedDatabase, 2000);
+// Initialize database
+initializeDatabase();
 
 // Routes Placeholder
 app.get('/', (req, res) => {
