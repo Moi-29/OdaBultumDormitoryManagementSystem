@@ -205,6 +205,7 @@ const removeStudentFromRoom = asyncHandler(async (req, res) => {
 // @route   POST /api/dorms/allocate
 // @access  Private/Admin
 const autoAllocate = asyncHandler(async (req, res) => {
+    console.log('🎯 Allocate endpoint hit!', req.body);
     const { criteria, targetBuilding, targetBlock } = req.body; // Add targetBlock
 
     // 1. Build Student Query
