@@ -19,7 +19,18 @@ const Students = () => {
         setLoading(true);
         try {
             const { data } = await axios.get('/api/students');
-            setStudents(data);
+            
+            // Sort students: First by department, then alphabetically by name within each department
+            const sortedStudents = data.sort((a, b) => {
+                // First, sort by department
+                if (a.department !== b.department) {
+                    return a.department.localeCompare(b.department);
+                }
+                // Then, sort alphabetically by full name within the same department
+                return a.fullName.localeCompare(b.fullName);
+            });
+            
+            setStudents(sortedStudents);
         } catch (error) {
             console.error('Error fetching students:', error);
         } finally {
@@ -81,10 +92,18 @@ const Students = () => {
         }
     };
 
-    const filteredStudents = students.filter(student =>
-        student.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredStudents = students
+        .filter(student =>
+            student.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            // Maintain sorting: First by department, then alphabetically by name
+            if (a.department !== b.department) {
+                return a.department.localeCompare(b.department);
+            }
+            return a.fullName.localeCompare(b.fullName);
+        });
 
     if (loading) return <div>Loading...</div>;
 
