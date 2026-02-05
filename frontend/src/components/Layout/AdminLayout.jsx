@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Building, FileText, LogOut, Settings, Shield, AlertTriangle } from 'lucide-react';
+import { LayoutDashboard, Users, Building, FileText, LogOut, Settings, Shield, AlertTriangle, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -9,6 +9,7 @@ const AdminLayout = () => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const [maintenanceMode, setMaintenanceMode] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Get user permissions
     const userPermissions = user?.permissions || [];
@@ -63,8 +64,59 @@ const AdminLayout = () => {
 
     return (
         <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+            {/* Mobile Menu Button */}
+            <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                style={{
+                    position: 'fixed',
+                    top: '1rem',
+                    left: '1rem',
+                    zIndex: 1001,
+                    display: 'none',
+                    padding: '0.75rem',
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+                className="mobile-menu-btn"
+            >
+                {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+
+            {/* Backdrop for mobile */}
+            {sidebarOpen && (
+                <div
+                    onClick={() => setSidebarOpen(false)}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 999,
+                        display: 'none'
+                    }}
+                    className="mobile-backdrop"
+                />
+            )}
+
             {/* Sidebar */}
-            <aside style={{ width: '260px', backgroundColor: 'var(--surface-color)', borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
+            <aside 
+                style={{ 
+                    width: '260px', 
+                    backgroundColor: 'var(--surface-color)', 
+                    borderRight: '1px solid var(--border-color)', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    transition: 'transform 0.3s ease-in-out',
+                    zIndex: 1000
+                }}
+                className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}
+            >
                 <div style={{ padding: 'var(--spacing-lg)', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <img 
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpWVhGUfDQPtwCOjcwTE3tQiAl0obKpwvN1A&s" 
@@ -82,25 +134,25 @@ const AdminLayout = () => {
                     </div>
                 </div>
 
-                <nav style={{ flex: 1, padding: 'var(--spacing-md)' }}>
+                <nav style={{ flex: 1, padding: 'var(--spacing-md)', overflowY: 'auto' }}>
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         {hasPermission('dashboard.view') && (
-                            <NavItem to="/admin/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" active={isActive('dashboard')} />
+                            <NavItem to="/admin/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" active={isActive('dashboard')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('students.view') && (
-                            <NavItem to="/admin/students" icon={<Users size={20} />} label="Students" active={isActive('students')} />
+                            <NavItem to="/admin/students" icon={<Users size={20} />} label="Students" active={isActive('students')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('dorms.view') && (
-                            <NavItem to="/admin/dorms" icon={<Building size={20} />} label="Dormitories" active={isActive('dorms')} />
+                            <NavItem to="/admin/dorms" icon={<Building size={20} />} label="Dormitories" active={isActive('dorms')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('reports.view') && (
-                            <NavItem to="/admin/reports" icon={<FileText size={20} />} label="Reports" active={isActive('reports')} />
+                            <NavItem to="/admin/reports" icon={<FileText size={20} />} label="Reports" active={isActive('reports')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('admins.view') && (
-                            <NavItem to="/admin/admin-management" icon={<Shield size={20} />} label="Admin Management" active={isActive('admin-management')} />
+                            <NavItem to="/admin/admin-management" icon={<Shield size={20} />} label="Admin Management" active={isActive('admin-management')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('dashboard.view') && (
-                            <NavItem to="/admin/settings" icon={<Settings size={20} />} label="Settings" active={isActive('settings')} />
+                            <NavItem to="/admin/settings" icon={<Settings size={20} />} label="Settings" active={isActive('settings')} onClick={() => setSidebarOpen(false)} />
                         )}
                     </ul>
                 </nav>
@@ -125,10 +177,13 @@ const AdminLayout = () => {
                         alignItems: 'center',
                         gap: '1rem',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                        animation: 'slideDown 0.3s ease-out'
-                    }}>
+                        animation: 'slideDown 0.3s ease-out',
+                        flexWrap: 'wrap'
+                    }}
+                    className="maintenance-banner"
+                    >
                         <AlertTriangle size={24} />
-                        <div style={{ flex: 1 }}>
+                        <div style={{ flex: 1, minWidth: '200px' }}>
                             <strong style={{ fontSize: '1rem' }}>⚠️ MAINTENANCE MODE ACTIVE</strong>
                             <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', opacity: 0.95 }}>
                                 The system is in maintenance mode. Only administrators can access the system.
@@ -155,7 +210,7 @@ const AdminLayout = () => {
                     </div>
                 )}
                 
-                <div style={{ flex: 1, padding: 'var(--spacing-xl)' }}>
+                <div style={{ flex: 1, padding: 'var(--spacing-xl)' }} className="main-content">
                     <Outlet />
                 </div>
 
@@ -170,16 +225,67 @@ const AdminLayout = () => {
                             transform: translateY(0);
                         }
                     }
+
+                    /* Responsive Styles */
+                    @media (max-width: 768px) {
+                        .mobile-menu-btn {
+                            display: flex !important;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        .mobile-backdrop {
+                            display: block !important;
+                        }
+
+                        .sidebar {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            transform: translateX(-100%);
+                        }
+
+                        .sidebar-open {
+                            transform: translateX(0);
+                        }
+
+                        .main-content {
+                            padding: 1rem !important;
+                            padding-top: 4rem !important;
+                        }
+
+                        .maintenance-banner {
+                            padding: 0.75rem 1rem !important;
+                            font-size: 0.85rem !important;
+                        }
+
+                        .maintenance-banner strong {
+                            font-size: 0.9rem !important;
+                        }
+
+                        .maintenance-banner p {
+                            font-size: 0.8rem !important;
+                        }
+                    }
+
+                    @media (max-width: 480px) {
+                        .main-content {
+                            padding: 0.75rem !important;
+                            padding-top: 4rem !important;
+                        }
+                    }
                 `}</style>
             </main>
         </div>
     );
 };
 
-const NavItem = ({ to, icon, label, active }) => (
+const NavItem = ({ to, icon, label, active, onClick }) => (
     <li>
         <Link
             to={to}
+            onClick={onClick}
             style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -188,7 +294,8 @@ const NavItem = ({ to, icon, label, active }) => (
                 borderRadius: 'var(--radius-md)',
                 backgroundColor: active ? 'var(--color-primary-light)' : 'transparent',
                 color: active ? 'var(--color-primary)' : 'var(--text-main)',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                textDecoration: 'none'
             }}
         >
             {icon}

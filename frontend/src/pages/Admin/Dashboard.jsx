@@ -280,6 +280,58 @@ const Dashboard = () => {
                     from { opacity: 0; transform: translateY(10px); }
                     to { opacity: 1; transform: translateY(0); }
                 }
+
+                /* Responsive Styles */
+                @media (max-width: 768px) {
+                    h1 {
+                        font-size: 1.5rem !important;
+                    }
+
+                    .card {
+                        padding: 1rem !important;
+                    }
+
+                    /* Make stat cards stack on mobile */
+                    div[style*="gridTemplateColumns"] {
+                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+                        gap: 1rem !important;
+                    }
+
+                    /* Adjust welcome banner */
+                    div[style*="linear-gradient(135deg, #0f172a"] {
+                        padding: 1.5rem 1rem !important;
+                    }
+
+                    /* Make quick actions responsive */
+                    div[style*="repeat(auto-fit, minmax(200px"] {
+                        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+                    }
+
+                    /* Make bottom grid single column on mobile */
+                    div[style*="repeat(auto-fit, minmax(400px"] {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    h1 {
+                        font-size: 1.25rem !important;
+                    }
+
+                    /* Stack stat cards in single column on very small screens */
+                    div[style*="gridTemplateColumns"] {
+                        grid-template-columns: 1fr !important;
+                    }
+
+                    /* Smaller text in welcome banner */
+                    div[style*="linear-gradient(135deg, #0f172a"] h1 {
+                        font-size: 1.3rem !important;
+                    }
+
+                    div[style*="linear-gradient(135deg, #0f172a"] p {
+                        font-size: 0.85rem !important;
+                    }
+                }
             `}</style>
         </div>
     );

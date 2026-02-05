@@ -325,58 +325,138 @@ const Students = () => {
             </div>
 
             <div className="card">
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                        <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Student ID</th>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Full Name</th>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Gender</th>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Department</th>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Year</th>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Room</th>
-                            <th style={{ padding: 'var(--spacing-sm)' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredStudents.map((student) => (
-                            <tr key={student._id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                                <td style={{ padding: 'var(--spacing-sm)' }}>{student.studentId}</td>
-                                <td style={{ padding: 'var(--spacing-sm)' }}>{student.fullName}</td>
-                                <td style={{ padding: 'var(--spacing-sm)' }}>{student.gender}</td>
-                                <td style={{ padding: 'var(--spacing-sm)' }}>{student.department}</td>
-                                <td style={{ padding: 'var(--spacing-sm)' }}>Year {student.year}</td>
-                                <td style={{ padding: 'var(--spacing-sm)' }}>
-                                    {student.room ? `${student.room.building}-${student.room.roomNumber}` : 'Not Assigned'}
-                                </td>
-                                <td style={{ padding: 'var(--spacing-sm)', display: 'flex', gap: '0.5rem' }}>
-                                    <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>
-                                        <Edit size={16} />
-                                    </button>
-                                    <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', color: 'var(--color-danger)' }}>
-                                        <Trash2 size={16} />
-                                    </button>
-                                    {/* Preview Portal Button */}
-                                    <Link
-                                        to={`/student-portal?studentId=${student.studentId}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-secondary"
-                                        style={{ padding: '0.25rem 0.5rem', color: '#ca8a04', textDecoration: 'none' }}
-                                        title="Preview Student Portal"
-                                    >
-                                        <ExternalLink size={16} />
-                                    </Link>
-                                </td>
+                <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                        <thead>
+                            <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Student ID</th>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Full Name</th>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Gender</th>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Department</th>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Year</th>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Room</th>
+                                <th style={{ padding: 'var(--spacing-sm)' }}>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredStudents.map((student) => (
+                                <tr key={student._id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                    <td style={{ padding: 'var(--spacing-sm)' }}>{student.studentId}</td>
+                                    <td style={{ padding: 'var(--spacing-sm)' }}>{student.fullName}</td>
+                                    <td style={{ padding: 'var(--spacing-sm)' }}>{student.gender}</td>
+                                    <td style={{ padding: 'var(--spacing-sm)' }}>{student.department}</td>
+                                    <td style={{ padding: 'var(--spacing-sm)' }}>Year {student.year}</td>
+                                    <td style={{ padding: 'var(--spacing-sm)' }}>
+                                        {student.room ? `${student.room.building}-${student.room.roomNumber}` : 'Not Assigned'}
+                                    </td>
+                                    <td style={{ padding: 'var(--spacing-sm)', display: 'flex', gap: '0.5rem' }}>
+                                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>
+                                            <Edit size={16} />
+                                        </button>
+                                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', color: 'var(--color-danger)' }}>
+                                            <Trash2 size={16} />
+                                        </button>
+                                        {/* Preview Portal Button */}
+                                        <Link
+                                            to={`/student-portal?studentId=${student.studentId}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-secondary"
+                                            style={{ padding: '0.25rem 0.5rem', color: '#ca8a04', textDecoration: 'none' }}
+                                            title="Preview Student Portal"
+                                        >
+                                            <ExternalLink size={16} />
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 {filteredStudents.length === 0 && (
                     <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
                         No students found
                     </div>
                 )}
             </div>
+            
+            <style>{`
+                @keyframes slideInRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                    }
+                    to {
+                        opacity: 1;
+                    }
+                }
+
+                /* Responsive Styles */
+                @media (max-width: 768px) {
+                    h1 {
+                        font-size: 1.5rem !important;
+                    }
+
+                    .card {
+                        padding: 1rem !important;
+                    }
+
+                    /* Make bulk actions stack on mobile */
+                    div[style*="flexWrap: wrap"] {
+                        flex-direction: column !important;
+                        align-items: stretch !important;
+                    }
+
+                    /* Stack buttons vertically on mobile */
+                    div[style*="display: flex"][style*="gap: 0.75rem"] button {
+                        width: 100%;
+                    }
+
+                    /* Make table scrollable */
+                    table {
+                        font-size: 0.85rem !important;
+                    }
+
+                    table th,
+                    table td {
+                        padding: 0.5rem !important;
+                        white-space: nowrap;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    h1 {
+                        font-size: 1.25rem !important;
+                    }
+
+                    .card {
+                        padding: 0.75rem !important;
+                    }
+
+                    table {
+                        font-size: 0.75rem !important;
+                    }
+
+                    table th,
+                    table td {
+                        padding: 0.35rem !important;
+                    }
+
+                    button {
+                        font-size: 0.85rem !important;
+                    }
+                }
+            `}</style>
         </div>
         </div>
     );
