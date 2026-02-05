@@ -94,6 +94,24 @@ app.get('/seed-database', async (req, res) => {
     }
 });
 
+// Check admins endpoint (for debugging)
+app.get('/check-admins', async (req, res) => {
+    try {
+        const Admin = require('./models/Admin');
+        const admins = await Admin.find({}).select('email fullName status');
+        res.json({ 
+            success: true, 
+            count: admins.length,
+            admins: admins 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
+});
+
 // Define Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
