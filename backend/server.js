@@ -8,8 +8,22 @@ dotenv.config();
 const app = express();
 
 // Middleware
+// CORS Configuration - supports both development and production
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [process.env.ALLOWED_ORIGIN || 'https://your-frontend-url.onrender.com']
+    : ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173'];
+
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
