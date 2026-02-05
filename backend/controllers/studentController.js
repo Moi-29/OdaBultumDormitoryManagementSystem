@@ -207,36 +207,90 @@ const importStudents = asyncHandler(async (req, res) => {
         console.log('Raw row data:', JSON.stringify(row, null, 2));
 
         try {
-            // More flexible column name matching (case-insensitive, with spaces/underscores)
+            // Enhanced flexible column name matching (case-insensitive, with spaces/underscores/special chars)
             const getColumnValue = (row, ...possibleNames) => {
                 for (const name of possibleNames) {
                     // Try exact match
                     if (row[name] !== undefined && row[name] !== '') return row[name];
                     
-                    // Try case-insensitive match
+                    // Try case-insensitive match with normalization (remove spaces, underscores, dashes, dots)
+                    const normalizedName = name.toLowerCase().replace(/[_\s\-\.]/g, '');
                     const key = Object.keys(row).find(k => 
-                        k.toLowerCase().replace(/[_\s]/g, '') === name.toLowerCase().replace(/[_\s]/g, '')
+                        k.toLowerCase().replace(/[_\s\-\.]/g, '') === normalizedName
                     );
                     if (key && row[key] !== undefined && row[key] !== '') return row[key];
                 }
                 return null;
             };
 
+            // Helper to trim and clean string values
+            const cleanValue = (value) => {
+                if (!value) return null;
+                const cleaned = String(value).trim();
+                return cleaned === '' ? null : cleaned;
+            };
+
             const studentData = {
-                studentId: getColumnValue(row, 'ID', 'studentId', 'StudentID', 'Student ID', 'student_id', 'id', 'Student Id', 'STUDENT ID'),
-                fullName: getColumnValue(row, 'English Name', 'English name', 'english name', 'ENGLISH NAME', 'fullName', 'FullName', 'Full Name', 'full_name', 'Name', 'name', 'FULL NAME', 'Student Name', 'StudentName', 'student_name', 'STUDENT NAME'),
-                gender: getColumnValue(row, 'S', 's', 'gender', 'Gender', 'Sex', 'sex', 'GENDER', 'SEX'),
-                department: getColumnValue(row, 'Dept', 'dept', 'DEPT', 'department', 'Department', 'DEPARTMENT'),
-                year: getColumnValue(row, 'Year', 'year', 'YEAR', 'Level', 'level', 'LEVEL', 'Year Level', 'year_level'),
-                phone: getColumnValue(row, 'phone', 'Phone', 'PhoneNumber', 'Phone Number', 'phone_number', 'Contact', 'contact', 'PHONE', 'CONTACT', 'Mobile', 'mobile', 'Tel', 'tel'),
-                listNumber: getColumnValue(row, 'No', 'no', 'NO', 'Number', 'number', 'NUMBER', 'List Number', 'list_number', 'ListNumber', 'LIST NUMBER', 'List No', 'list_no', 'LIST NO', '#', 'S/N', 's/n', 'SN', 'sn', 'Serial', 'serial', 'SERIAL', 'Order', 'order', 'ORDER'),
+                studentId: cleanValue(getColumnValue(row, 
+                    'ID', 'studentId', 'StudentID', 'Student ID', 'student_id', 'id', 'Student Id', 'STUDENT ID',
+                    'Student.ID', 'Student-ID', 'Std ID', 'StdID', 'std_id', 'Matric No', 'MatricNo', 'Matric Number',
+                    'Registration Number', 'Reg No', 'RegNo', 'reg_no', 'Admission Number', 'Admission No'
+                )),
+                fullName: cleanValue(getColumnValue(row, 
+                    'English Name', 'English name', 'english name', 'ENGLISH NAME', 
+                    'fullName', 'FullName', 'Full Name', 'full_name', 'Name', 'name', 'FULL NAME', 
+                    'Student Name', 'StudentName', 'student_name', 'STUDENT NAME',
+                    'Complete Name', 'Full.Name', 'Student.Name'
+                )),
+                gender: cleanValue(getColumnValue(row, 
+                    'S', 's', 'gender', 'Gender', 'Sex', 'sex', 'GENDER', 'SEX',
+                    'G', 'g', 'Gen', 'gen', 'M/F', 'Male/Female'
+                )),
+                department: cleanValue(getColumnValue(row, 
+                    'Dept', 'dept', 'DEPT', 'department', 'Department', 'DEPARTMENT',
+                    'Dept.', 'Department Name', 'Faculty', 'faculty', 'Program', 'program',
+                    'Course', 'course', 'Major', 'major', 'Field of Study'
+                )),
+                year: cleanValue(getColumnValue(row, 
+                    'Year', 'year', 'YEAR', 'Level', 'level', 'LEVEL', 'Year Level', 'year_level',
+                    'Yr', 'yr', 'YR', 'Class', 'class', 'Grade', 'grade', 'Academic Year',
+                    'Study Year', 'Year of Study', 'Semester', 'semester'
+                )),
+                phone: cleanValue(getColumnValue(row, 
+                    'phone', 'Phone', 'PhoneNumber', 'Phone Number', 'phone_number', 'PHONE', 
+                    'Contact', 'contact', 'CONTACT', 'Mobile', 'mobile', 'Tel', 'tel', 'Telephone',
+                    'Cell', 'cell', 'Phone No', 'PhoneNo', 'Contact Number', 'Mobile Number',
+                    'Cell Phone', 'Cellphone'
+                )),
+                listNumber: cleanValue(getColumnValue(row, 
+                    'No', 'no', 'NO', 'Number', 'number', 'NUMBER', 
+                    'List Number', 'list_number', 'ListNumber', 'LIST NUMBER', 
+                    'List No', 'list_no', 'LIST NO', '#', 'S/N', 's/n', 'SN', 'sn', 
+                    'Serial', 'serial', 'SERIAL', 'Order', 'order', 'ORDER',
+                    'Index', 'index', 'Seq', 'seq', 'Sequence'
+                )),
             };
 
             // Check if fullName is empty, try to construct from separate name columns
             if (!studentData.fullName) {
-                const firstName = getColumnValue(row, 'First Name', 'FirstName', 'first_name', 'firstname', 'FIRST NAME', 'First name', 'first name', 'Given Name', 'given_name', 'GIVEN NAME');
-                const middleName = getColumnValue(row, 'Middle Name', 'MiddleName', 'middle_name', 'middlename', 'MIDDLE NAME', 'Middle name', 'middle name', 'Father Name', 'father_name', 'FATHER NAME', 'Fathers Name', 'fathers_name');
-                const lastName = getColumnValue(row, 'Last Name', 'LastName', 'last_name', 'lastname', 'LAST NAME', 'Last name', 'last name', 'Surname', 'surname', 'SURNAME', 'Family Name', 'family_name', 'FAMILY NAME', 'Grand Father Name', 'grandfather_name', 'GRAND FATHER NAME');
+                const firstName = cleanValue(getColumnValue(row, 
+                    'First Name', 'FirstName', 'first_name', 'firstname', 'FIRST NAME', 'First name', 'first name',
+                    'Given Name', 'given_name', 'GIVEN NAME', 'First.Name', 'fname', 'FName', 'F.Name'
+                ));
+                
+                const middleName = cleanValue(getColumnValue(row, 
+                    'Middle Name', 'MiddleName', 'middle_name', 'middlename', 'MIDDLE NAME', 'Middle name', 'middle name',
+                    'Father Name', 'father_name', 'FATHER NAME', "Father's Name", 'Fathers Name', 'fathers_name',
+                    'Patronymic', 'patronymic', 'Middle.Name', 'mname', 'MName', 'M.Name',
+                    'Second Name', 'SecondName', 'second_name'
+                ));
+                
+                const lastName = cleanValue(getColumnValue(row, 
+                    'Last Name', 'LastName', 'last_name', 'lastname', 'LAST NAME', 'Last name', 'last name',
+                    'Surname', 'surname', 'SURNAME', 'Family Name', 'family_name', 'FAMILY NAME',
+                    'Grand Father Name', 'grandfather_name', 'GRAND FATHER NAME', "Grandfather's Name",
+                    'Last.Name', 'lname', 'LName', 'L.Name'
+                ));
                 
                 // Construct full name from parts
                 const nameParts = [firstName, middleName, lastName].filter(part => part && part.trim());

@@ -5,6 +5,11 @@ A comprehensive web-based dormitory management system built with the MERN stack 
 ## 🎯 Features
 
 - **Student Management**: Register, view, edit, and delete student records
+- **Flexible Import System**: Import students from Excel/CSV with intelligent column mapping
+  - Automatically recognizes various column name formats
+  - Merges separate name columns (firstName + fatherName + lastName)
+  - Handles extra columns gracefully
+  - See [FLEXIBLE_IMPORT_GUIDE.md](FLEXIBLE_IMPORT_GUIDE.md) for details
 - **Room Allocation**: Manage dormitory rooms and assign students based on gender and capacity
 - **Dashboard Analytics**: Real-time statistics on occupancy and students
 - **Role-Based Access**: Different views for Admin and Student

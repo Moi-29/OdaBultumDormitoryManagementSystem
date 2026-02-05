@@ -1,0 +1,6 @@
+S/N,English Name,Matric No,Gender,Faculty,Level,Contact,Extra Column 1,Extra Column 2,Random Data
+1,Mohammed Ahmed Hassan,REG/2024/001,M,Computer Science,1,0911111111,Some Data,More Data,Ignored
+2,Sara Ibrahim Ali,REG/2024/002,F,Engineering,2,0922222222,Extra Info,Additional,Not Used
+3,Abdi Yusuf Omar,REG/2024/003,Male,Business,1st,0933333333,Column,Data,Skipped
+4,Hawa Khalid Ahmed,REG/2024/004,Female,Medicine,3,0944444444,Test,Value,Ignored
+5,Hassan Mustafa Ibrahim,REG/2024/005,M,Law,2nd,0955555555,Random,Info,Not Imported

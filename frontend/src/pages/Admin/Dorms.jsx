@@ -27,13 +27,6 @@ const Dorms = () => {
     useEffect(() => {
         fetchRooms();
         fetchSystemSettings();
-        
-        // Auto-refresh every 5 seconds to catch updates from student assignments
-        const refreshInterval = setInterval(() => {
-            fetchRooms(true); // Pass true to indicate auto-refresh
-        }, 5000);
-        
-        return () => clearInterval(refreshInterval);
     }, []);
 
     useEffect(() => {
@@ -269,31 +262,9 @@ const Dorms = () => {
                     <div>
                         <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
                             <Building size={32} /> Dormitory Management
-                            {refreshing && (
-                                <span style={{
-                                    fontSize: '0.75rem',
-                                    color: '#10b981',
-                                    background: '#dcfce7',
-                                    padding: '0.25rem 0.75rem',
-                                    borderRadius: '999px',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem'
-                                }}>
-                                    <span style={{
-                                        width: '8px',
-                                        height: '8px',
-                                        background: '#10b981',
-                                        borderRadius: '50%',
-                                        animation: 'pulse 1.5s ease-in-out infinite'
-                                    }}></span>
-                                    Auto-updating...
-                                </span>
-                            )}
                         </h1>
                         <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                            Manage blocks, rooms, and occupancy • Auto-refreshes every 5 seconds
+                            Manage blocks, rooms, and occupancy
                         </p>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -303,7 +274,7 @@ const Dorms = () => {
                             style={{ gap: '0.5rem' }}
                             disabled={refreshing}
                         >
-                            <Settings size={18} /> {refreshing ? 'Refreshing...' : 'Refresh Now'}
+                            <Settings size={18} /> {refreshing ? 'Refreshing...' : 'Refresh'}
                         </button>
                         <button onClick={handleAddBlock} className="btn btn-primary" style={{ gap: '0.5rem' }}>
                             <Plus size={18} /> Add Block
