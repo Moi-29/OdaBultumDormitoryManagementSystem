@@ -375,6 +375,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             };
 
             console.log('🚀 Starting allocation with payload:', payload);
+            console.log('🔗 Allocate URL:', `${API_URL}/api/dorms/allocate`);
             
             const { data } = await axios.post(`${API_URL}/api/dorms/allocate`, payload);
             
