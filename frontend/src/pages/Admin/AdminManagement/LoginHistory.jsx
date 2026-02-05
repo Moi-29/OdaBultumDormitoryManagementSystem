@@ -21,7 +21,7 @@ const LoginHistory = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('http://localhost:5000/api/admin/login-history', {
+            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/login-history', {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: pagination.page,

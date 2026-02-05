@@ -72,7 +72,7 @@ const Dorms = () => {
             if (isAutoRefresh) {
                 setRefreshing(true);
             }
-            const { data } = await axios.get('http://localhost:5000/api/dorms');
+            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms');
             
             // Auto-update room status based on occupancy
             const updatedRooms = data.map(room => {
@@ -109,7 +109,7 @@ const Dorms = () => {
             if (!userInfo) return;
 
             const { token } = JSON.parse(userInfo);
-            const { data } = await axios.get('http://localhost:5000/api/settings', {
+            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -146,7 +146,7 @@ const Dorms = () => {
                 const blockRooms = rooms.filter(r => r.building === editingBlock.name);
                 await Promise.all(
                     blockRooms.map(room => 
-                        axios.put(`http://localhost:5000/api/dorms/${room._id}`, {
+                        axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${room._id}`, {
                             ...room,
                             building: blockForm.name,
                             gender: blockForm.gender
@@ -164,7 +164,7 @@ const Dorms = () => {
             // Create a new block by creating a placeholder room
             try {
                 // Create first room in the new block
-                await axios.post('http://localhost:5000/api/dorms', {
+                await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', {
                     building: blockForm.name,
                     roomNumber: '101',
                     floor: 1,
@@ -191,7 +191,7 @@ const Dorms = () => {
                 return;
             }
             try {
-                await Promise.all(blockRooms.map(room => axios.delete(`http://localhost:5000/api/dorms/${room._id}`)));
+                await Promise.all(blockRooms.map(room => axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${room._id}`)));
                 fetchRooms();
                 setActiveTab(blocks[0]?.name || '');
             } catch (error) {
@@ -232,9 +232,9 @@ const Dorms = () => {
         e.preventDefault();
         try {
             if (editingRoom) {
-                await axios.put(`http://localhost:5000/api/dorms/${editingRoom._id}`, roomForm);
+                await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${editingRoom._id}`, roomForm);
             } else {
-                await axios.post('http://localhost:5000/api/dorms', roomForm);
+                await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', roomForm);
             }
             fetchRooms();
             setShowRoomModal(false);
@@ -246,7 +246,7 @@ const Dorms = () => {
     const handleDeleteRoom = async (roomId) => {
         if (window.confirm('Are you sure you want to delete this room?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/dorms/${roomId}`);
+                await axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${roomId}`);
                 fetchRooms();
             } catch (error) {
                 alert('Failed to delete room');

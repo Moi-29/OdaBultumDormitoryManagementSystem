@@ -42,14 +42,14 @@ const Reports = () => {
             const token = localStorage.getItem('token');
             
             // Fetch students to get unique departments
-            const studentsRes = await axios.get('http://localhost:5000/api/students', {
+            const studentsRes = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/students', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const uniqueDepts = [...new Set(studentsRes.data.map(s => s.department))].filter(Boolean).sort();
             setDepartments(uniqueDepts);
             
             // Fetch rooms to get blocks - use correct endpoint
-            const roomsRes = await axios.get('http://localhost:5000/api/dorms', {
+            const roomsRes = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
@@ -107,7 +107,7 @@ const Reports = () => {
         try {
             const queryString = buildQueryString();
             console.log('Generating PDF with query:', queryString);
-            const response = await fetch(`http://localhost:5000/api/students/report/pdf${queryString}`, {
+            const response = await fetch(`https://odabultumdormitorymanagementsystem.onrender.com/api/students/report/pdf${queryString}`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/pdf' }
             });
@@ -148,7 +148,7 @@ const Reports = () => {
         try {
             const queryString = buildQueryString();
             console.log('Generating CSV with query:', queryString);
-            const response = await fetch(`http://localhost:5000/api/students/report/csv${queryString}`, {
+            const response = await fetch(`https://odabultumdormitorymanagementsystem.onrender.com/api/students/report/csv${queryString}`, {
                 method: 'GET',
                 headers: { 'Accept': 'text/csv' }
             });

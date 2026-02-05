@@ -23,7 +23,7 @@ const AdminLayout = () => {
                 if (!userInfo) return;
 
                 const { token } = JSON.parse(userInfo);
-                const response = await axios.get('http://localhost:5000/api/settings', {
+                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

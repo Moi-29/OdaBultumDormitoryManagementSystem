@@ -22,7 +22,7 @@ const StudentPortal = () => {
     useEffect(() => {
         const checkMaintenanceMode = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/settings');
+                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings');
                 if (response.data) {
                     setMaintenanceMode(response.data.maintenanceMode);
                 }
@@ -46,7 +46,7 @@ const StudentPortal = () => {
         setLoading(true);
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/students/lookup', {
+            const { data } = await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/students/lookup', {
                 studentId
             });
 

@@ -30,10 +30,10 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
         try {
             // Fetch students
-            const { data: students } = await axios.get('http://localhost:5000/api/students');
+            const { data: students } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/students');
             
             // Fetch rooms
-            const { data: rooms } = await axios.get('http://localhost:5000/api/dorms');
+            const { data: rooms } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms');
 
             // Calculate statistics
             const assignedStudents = students.filter(s => s.room).length;
