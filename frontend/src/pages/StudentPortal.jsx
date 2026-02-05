@@ -162,6 +162,8 @@ const StudentPortal = () => {
                 justifyContent: 'center',
                 padding: '2rem',
                 paddingTop: '100px', // Header height + padding
+                paddingBottom: '80px', // Footer height + padding
+                overflow: 'hidden' // Prevent scrolling
             }}>
 
                 {!placement ? (
@@ -281,27 +283,33 @@ const StudentPortal = () => {
                         style={{
                             width: '100%',
                             maxWidth: '600px',
+                            maxHeight: 'calc(100vh - 200px)',
                             backgroundColor: 'white',
                             borderRadius: '20px',
                             boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
                             overflow: 'hidden',
-                            marginBottom: '2rem'
+                            marginBottom: '0',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}>
+                            marginBottom: '0'
                         }}>
                         {/* Header */}
                         <div style={{
-                            backgroundColor: '#0f172a', // Dark blue
+                            backgroundColor: '#0f172a',
                             color: 'white',
-                            padding: '1.5rem',
+                            padding: '1rem 1.5rem',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.75rem',
-                            borderBottom: '3px solid #cca300' // Gold accent
+                            gap: '0.5rem',
+                            borderBottom: '3px solid #cca300',
+                            flexShrink: 0
                         }}>
-                            <FileText size={24} color="#cca300" />
+                            <FileText size={20} color="#cca300" />
                             <h2 style={{
                                 margin: 0,
                                 fontFamily: '"Playfair Display", serif',
-                                fontSize: '1.25rem',
+                                fontSize: '1.1rem',
                                 fontWeight: '600',
                                 letterSpacing: '0.025em',
                                 color: 'white'
@@ -309,63 +317,63 @@ const StudentPortal = () => {
                         </div>
 
                         {/* Content */}
-                        <div style={{ padding: '2rem' }}>
+                        <div style={{ padding: '1.25rem', flex: 1, overflow: 'hidden' }}>
                             {/* Room Featured Card */}
                             <div style={{
                                 backgroundColor: '#f8f9fa',
-                                borderRadius: '16px',
-                                padding: '2rem',
+                                borderRadius: '12px',
+                                padding: '1.25rem',
                                 textAlign: 'center',
                                 border: '1px solid #e5e7eb',
-                                marginBottom: '2rem'
+                                marginBottom: '1.25rem'
                             }}>
-                                <p style={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Your Room</p>
+                                <p style={{ color: '#6b7280', fontSize: '0.8rem', marginBottom: '0.25rem' }}>Your Room</p>
                                 <h1 style={{
                                     fontFamily: '"Playfair Display", serif',
-                                    fontSize: '3.5rem',
-                                    color: '#d97706', // Gold
+                                    fontSize: '2.5rem',
+                                    color: '#d97706',
                                     fontWeight: '700',
                                     margin: '0',
                                     lineHeight: '1'
                                 }}>{placement.room?.roomNumber}</h1>
                                 <p style={{
-                                    fontSize: '1.1rem',
+                                    fontSize: '0.95rem',
                                     fontWeight: '600',
                                     color: '#1f2937',
-                                    marginTop: '0.5rem'
+                                    marginTop: '0.25rem'
                                 }}>{placement.room?.building}</p>
                             </div>
 
                             {/* Details List */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 {/* University ID */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>University ID</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>University ID</span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ fontWeight: '700', color: '#111827' }}>{placement.studentId}</span>
+                                        <span style={{ fontWeight: '700', color: '#111827', fontSize: '0.9rem' }}>{placement.studentId}</span>
                                         <button
                                             onClick={() => navigator.clipboard.writeText(placement.studentId)}
                                             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#9ca3af' }}
                                         >
-                                            <Copy size={16} />
+                                            <Copy size={14} />
                                         </button>
                                     </div>
                                 </div>
 
                                 {/* Full Name */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Full Name</span>
-                                    <span style={{ fontWeight: '700', color: '#111827' }}>{placement.fullName}</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Full Name</span>
+                                    <span style={{ fontWeight: '700', color: '#111827', fontSize: '0.9rem' }}>{placement.fullName}</span>
                                 </div>
 
                                 {/* Sex */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Sex</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Sex</span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ fontWeight: '700', color: '#111827' }}>{placement.gender === 'M' ? 'M' : 'F'}</span>
+                                        <span style={{ fontWeight: '700', color: '#111827', fontSize: '0.9rem' }}>{placement.gender === 'M' ? 'M' : 'F'}</span>
                                         <div style={{
-                                            width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#f3f4f6',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', fontSize: '0.8rem'
+                                            width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#f3f4f6',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', fontSize: '0.75rem'
                                         }}>
                                             {placement.gender === 'M' ? '♂' : '♀'}
                                         </div>
@@ -373,42 +381,42 @@ const StudentPortal = () => {
                                 </div>
 
                                 {/* Department */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Department</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Department</span>
                                     <span style={{
-                                        backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: '600'
+                                        backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.2rem 0.6rem', borderRadius: '999px', fontSize: '0.8rem', fontWeight: '600'
                                     }}>
                                         {placement.department}
                                     </span>
                                 </div>
 
                                 {/* Building */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Building</span>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827', fontWeight: '700' }}>
-                                        <Building2 size={16} color="#d97706" /> {placement.room?.building}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Building</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827', fontWeight: '700', fontSize: '0.9rem' }}>
+                                        <Building2 size={14} color="#d97706" /> {placement.room?.building}
                                     </div>
                                 </div>
 
                                 {/* Room Number */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Room Number</span>
-                                    <span style={{ color: '#d97706', fontWeight: '700', fontSize: '1.2rem' }}>{placement.room?.roomNumber}</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Room Number</span>
+                                    <span style={{ color: '#d97706', fontWeight: '700', fontSize: '1.1rem' }}>{placement.room?.roomNumber}</span>
                                 </div>
 
                                 {/* Campus */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Campus</span>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827', fontWeight: '700' }}>
-                                        <MapPin size={16} color="#d97706" /> Main Campus
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem' }}>
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Campus</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827', fontWeight: '700', fontSize: '0.9rem' }}>
+                                        <MapPin size={14} color="#d97706" /> Main Campus
                                     </div>
                                 </div>
 
                                 {/* Capacity */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>Capacity</span>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827', fontWeight: '700' }}>
-                                        <Users size={16} color="#d97706" /> {placement.room?.capacity} Students
+                                    <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>Capacity</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#111827', fontWeight: '700', fontSize: '0.9rem' }}>
+                                        <Users size={14} color="#d97706" /> {placement.room?.capacity} Students
                                     </div>
                                 </div>
                             </div>
@@ -416,22 +424,23 @@ const StudentPortal = () => {
 
 
                             {/* Action Buttons */}
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
                                 <button style={{
                                     flex: 1,
                                     backgroundColor: '#0f172a',
                                     color: 'white',
                                     border: 'none',
-                                    padding: '0.75rem',
+                                    padding: '0.65rem',
                                     borderRadius: '8px',
                                     fontWeight: '600',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     gap: '0.5rem',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    fontSize: '0.85rem'
                                 }} onClick={() => window.print()}>
-                                    <Printer size={18} /> Print
+                                    <Printer size={16} /> Print
                                 </button>
                                 <button
                                     onClick={handleDownloadPDF}
@@ -440,16 +449,17 @@ const StudentPortal = () => {
                                         backgroundColor: '#f3f4f6',
                                         color: '#1f2937',
                                         border: '1px solid #e5e7eb',
-                                        padding: '0.75rem',
+                                        padding: '0.65rem',
                                         borderRadius: '8px',
                                         fontWeight: '600',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         gap: '0.5rem',
-                                        cursor: 'pointer'
+                                        cursor: 'pointer',
+                                        fontSize: '0.85rem'
                                     }}>
-                                    <Download size={18} /> Save PDF
+                                    <Download size={16} /> Save PDF
                                 </button>
                             </div>
                         </div>
