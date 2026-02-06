@@ -507,9 +507,32 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                 {/* Import Section */}
             <div className="card" style={{ flex: '1', minWidth: '300px' }}>
                 <h3 style={{ marginBottom: '1rem' }}>📥 Import Students</h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                    Upload an Excel (.xlsx, .xls) or CSV file with columns: studentId, fullName, gender, department, year, phone
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                    Upload an Excel (.xlsx, .xls) or CSV file with student data. The system intelligently maps columns.
                 </p>
+                <details style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                    <summary style={{ cursor: 'pointer', fontWeight: '500', color: 'var(--color-primary)' }}>
+                        📋 Supported Column Names
+                    </summary>
+                    <div style={{ marginTop: '0.5rem', paddingLeft: '1rem', lineHeight: '1.6' }}>
+                        <strong>Required columns:</strong>
+                        <ul style={{ marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                            <li><strong>Student ID:</strong> ID, studentId, Student ID, Matric No, Reg No, etc.</li>
+                            <li><strong>Name:</strong> fullName, Full Name, English Name, Student Name, OR separate firstName + lastName + middleName/fatherName</li>
+                            <li><strong>Gender:</strong> gender, Sex, S, M/F (accepts M/F or Male/Female)</li>
+                            <li><strong>Department:</strong> department, Dept, Faculty, Program, Course, Major</li>
+                            <li><strong>Year:</strong> year, Level, Class, Grade (accepts 1-7 or 1st, 2nd, etc.)</li>
+                        </ul>
+                        <strong>Optional columns:</strong>
+                        <ul style={{ marginTop: '0.25rem' }}>
+                            <li><strong>Phone:</strong> phone, Phone Number, Contact, Mobile, Tel</li>
+                            <li><strong>List Number:</strong> No, #, S/N, Serial, Index</li>
+                        </ul>
+                        <div style={{ marginTop: '0.5rem', padding: '0.5rem', backgroundColor: '#f0f9ff', borderRadius: '4px', fontSize: '0.8rem' }}>
+                            💡 <strong>Tip:</strong> The system automatically handles different column names, case variations, and extra columns. If your file has firstName, fatherName, and lastName columns, they'll be merged into fullName automatically!
+                        </div>
+                    </div>
+                </details>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input
