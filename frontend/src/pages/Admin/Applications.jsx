@@ -18,7 +18,26 @@ const Applications = () => {
 
     const fetchApplications = async () => {
         try {
-            // Mock data with complete information
+            const token = localStorage.getItem('token');
+            
+            // Try to fetch from API
+            try {
+                const response = await axios.get(`${API_URL}/api/applications`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                
+                if (response.data && response.data.length > 0) {
+                    setApplications(response.data);
+                    setLoading(false);
+                    return;
+                }
+            } catch (apiError) {
+                console.log('API not available, using mock data:', apiError.message);
+            }
+            
+            // Fallback to mock data if API fails or returns empty
             const mockData = [
                 {
                     _id: '1',
@@ -132,9 +151,57 @@ const Applications = () => {
     };
 
     const toggleEditPermission = async (applicationId) => {
-        setApplications(applications.map(app => 
-            app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
-        ));
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `${API_URL}/api/applications/${applicationId}/edit-permission`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            // Update local state
+            setApplications(applications.map(app => 
+                app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
+            ));
+        } catch (error) {
+            console.error('Error toggling edit permission:', error);
+            // Still update UI even if API fails (for mock data)
+            setApplications(applications.map(app => 
+                app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
+            ));
+        }
+    };
+
+    const deleteSelectedApplications = async () => {
+        if (selectedIds.length === 0) return;
+        
+        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} application(s)? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`${API_URL}/api/applications/bulk`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                data: { applicationIds: selectedIds }
+            });
+
+            // Remove from local state
+            setApplications(applications.filter(app => !selectedIds.includes(app._id)));
+            setSelectedIds([]);
+            setSelectMode(false);
+            
+            alert(`Successfully deleted ${selectedIds.length} application(s)`);
+        } catch (error) {
+            console.error('Error deleting applications:', error);
+            alert(error.response?.data?.message || 'Failed to delete applications. Please try again.');
+        }
     };
 
     const getStatusColor = (status) => {
@@ -191,20 +258,34 @@ const Applications = () => {
                         </button>
                         {selectMode && (
                             <button
-                                onClick={() => setSelectedIds([])}
+                                onClick={deleteSelectedApplications}
+                                disabled={selectedIds.length === 0}
                                 style={{
                                     padding: '0.75rem 1.5rem',
-                                    background: '#ef4444',
+                                    background: selectedIds.length === 0 ? '#9ca3af' : '#ef4444',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '8px',
-                                    cursor: 'pointer',
+                                    cursor: selectedIds.length === 0 ? 'not-allowed' : 'pointer',
                                     fontWeight: 600,
                                     fontSize: '0.95rem',
-                                    transition: 'all 0.2s'
+                                    transition: 'all 0.2s',
+                                    opacity: selectedIds.length === 0 ? 0.6 : 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (selectedIds.length > 0) {
+                                        e.currentTarget.style.background = '#dc2626';
+                                        e.currentTarget.style.transform = 'scale(1.02)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (selectedIds.length > 0) {
+                                        e.currentTarget.style.background = '#ef4444';
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                    }
                                 }}
                             >
-                                Clear ({selectedIds.length})
+                                Delete ({selectedIds.length})
                             </button>
                         )}
                     </div>

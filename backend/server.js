@@ -159,6 +159,7 @@ app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/backup', require('./routes/backupRoutes'));
 app.use('/api/cache', require('./routes/cacheRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/applications', require('./routes/applicationRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
