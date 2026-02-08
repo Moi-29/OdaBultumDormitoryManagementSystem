@@ -350,67 +350,111 @@ const Applications = () => {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'rgba(0,0,0,0.5)',
+                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)',
+                    backdropFilter: 'blur(8px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     zIndex: 10000,
-                    padding: '1rem'
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
                 }}>
                     <div style={{
-                        background: 'white',
-                        borderRadius: '16px',
-                        maxWidth: '900px',
+                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                        borderRadius: '24px',
+                        maxWidth: '950px',
                         width: '100%',
                         maxHeight: '90vh',
                         overflow: 'hidden',
                         display: 'flex',
-                        flexDirection: 'column'
+                        flexDirection: 'column',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
                     }}>
                         {/* Modal Header */}
                         <div style={{
-                            background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
                             color: 'white',
-                            padding: '1.5rem 2rem',
+                            padding: '2rem 2.5rem',
                             display: 'flex',
                             justifyContent: 'space-between',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            position: 'relative',
+                            overflow: 'hidden'
                         }}>
-                            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
-                                Application Details
-                            </h2>
+                            <div style={{
+                                position: 'absolute',
+                                top: '-50%',
+                                right: '-10%',
+                                width: '300px',
+                                height: '300px',
+                                background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+                                borderRadius: '50%'
+                            }}></div>
+                            <div style={{ position: 'relative', zIndex: 1 }}>
+                                <h2 style={{ 
+                                    margin: 0, 
+                                    fontSize: '1.75rem', 
+                                    fontWeight: 800,
+                                    letterSpacing: '-0.5px',
+                                    textShadow: '0 2px 10px rgba(0,0,0,0.1)'
+                                }}>
+                                    Application Details
+                                </h2>
+                                <p style={{ 
+                                    margin: '0.5rem 0 0 0', 
+                                    fontSize: '0.9rem', 
+                                    opacity: 0.95,
+                                    fontWeight: 400
+                                }}>
+                                    {selectedApplication.studentName} • {selectedApplication.personalInfo.idNo}
+                                </p>
+                            </div>
                             <button
                                 onClick={() => setShowDetailsModal(false)}
                                 style={{
-                                    background: 'rgba(255,255,255,0.2)',
-                                    border: 'none',
+                                    background: 'rgba(255,255,255,0.25)',
+                                    backdropFilter: 'blur(10px)',
+                                    border: '1px solid rgba(255,255,255,0.3)',
                                     color: 'white',
-                                    width: '36px',
-                                    height: '36px',
+                                    width: '44px',
+                                    height: '44px',
                                     borderRadius: '50%',
                                     cursor: 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: 'center'
+                                    justifyContent: 'center',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    position: 'relative',
+                                    zIndex: 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'rgba(255,255,255,0.35)';
+                                    e.currentTarget.style.transform = 'rotate(90deg) scale(1.1)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
+                                    e.currentTarget.style.transform = 'rotate(0deg) scale(1)';
                                 }}
                             >
-                                <X size={20} />
+                                <X size={22} strokeWidth={2.5} />
                             </button>
                         </div>
 
                         {/* Tabs */}
                         <div style={{
                             display: 'flex',
-                            gap: '0',
-                            padding: '0 2rem',
-                            borderBottom: '2px solid #e2e8f0',
-                            background: '#f8fafc'
+                            gap: '0.5rem',
+                            padding: '1.5rem 2.5rem 0 2.5rem',
+                            background: 'linear-gradient(to bottom, #fafbfc 0%, #ffffff 100%)',
+                            borderBottom: '1px solid #e5e7eb'
                         }}>
                             {[
-                                { id: 'personal', label: 'Personal', icon: <User size={18} /> },
-                                { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} /> },
-                                { id: 'school', label: 'School', icon: <Home size={18} /> },
-                                { id: 'family', label: 'Family', icon: <Users size={18} /> }
+                                { id: 'personal', label: 'Personal', icon: <User size={18} />, color: '#10b981' },
+                                { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} />, color: '#3b82f6' },
+                                { id: 'school', label: 'School', icon: <Home size={18} />, color: '#f59e0b' },
+                                { id: 'family', label: 'Family', icon: <Users size={18} />, color: '#8b5cf6' }
                             ].map(tab => (
                                 <button
                                     key={tab.id}
@@ -419,15 +463,34 @@ const Applications = () => {
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '0.5rem',
-                                        padding: '1rem 1.5rem',
+                                        padding: '1rem 1.75rem',
                                         border: 'none',
-                                        background: activeTab === tab.id ? '#10b981' : 'transparent',
+                                        background: activeTab === tab.id 
+                                            ? `linear-gradient(135deg, ${tab.color} 0%, ${tab.color}dd 100%)`
+                                            : 'transparent',
                                         color: activeTab === tab.id ? 'white' : '#64748b',
                                         cursor: 'pointer',
-                                        fontWeight: activeTab === tab.id ? 600 : 500,
-                                        fontSize: '0.9rem',
-                                        transition: 'all 0.2s',
-                                        borderRadius: '8px 8px 0 0'
+                                        fontWeight: activeTab === tab.id ? 700 : 500,
+                                        fontSize: '0.95rem',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        borderRadius: '12px 12px 0 0',
+                                        position: 'relative',
+                                        transform: activeTab === tab.id ? 'translateY(1px)' : 'translateY(0)',
+                                        boxShadow: activeTab === tab.id 
+                                            ? `0 -4px 12px -2px ${tab.color}40`
+                                            : 'none'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (activeTab !== tab.id) {
+                                            e.currentTarget.style.background = '#f1f5f9';
+                                            e.currentTarget.style.color = '#1e293b';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (activeTab !== tab.id) {
+                                            e.currentTarget.style.background = 'transparent';
+                                            e.currentTarget.style.color = '#64748b';
+                                        }
                                     }}
                                 >
                                     {tab.icon}
@@ -437,17 +500,40 @@ const Applications = () => {
                         </div>
 
                         {/* Modal Content */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }}>
+                        <div style={{ 
+                            flex: 1, 
+                            overflowY: 'auto', 
+                            padding: '2.5rem',
+                            background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)'
+                        }}>
                             {/* Personal Tab */}
                             {activeTab === 'personal' && (
                                 <div>
-                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.1rem', fontWeight: 600 }}>
-                                        I. Please fill your Full Information
-                                    </h3>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        marginBottom: '2rem',
+                                        padding: '0.75rem 1.5rem',
+                                        background: 'linear-gradient(135deg, #10b98120 0%, #10b98110 100%)',
+                                        borderRadius: '12px',
+                                        border: '1px solid #10b98130'
+                                    }}>
+                                        <User size={20} color="#10b981" />
+                                        <h3 style={{ 
+                                            margin: 0, 
+                                            color: '#1e293b', 
+                                            fontSize: '1.15rem', 
+                                            fontWeight: 700,
+                                            letterSpacing: '-0.3px'
+                                        }}>
+                                            Personal Information
+                                        </h3>
+                                    </div>
                                     <div style={{ 
                                         display: 'grid', 
                                         gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.5rem'
+                                        gap: '1.75rem'
                                     }}>
                                         <FormField label="Full Name" value={selectedApplication.personalInfo.fullName} required />
                                         <FormField label="ID No." value={selectedApplication.personalInfo.idNo} required />
@@ -467,13 +553,31 @@ const Applications = () => {
                             {/* Educational Tab */}
                             {activeTab === 'educational' && selectedApplication.educationalInfo && (
                                 <div>
-                                    <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.1rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                        Campus Related Information
-                                    </h3>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        marginBottom: '2rem',
+                                        padding: '0.75rem 1.5rem',
+                                        background: 'linear-gradient(135deg, #3b82f620 0%, #3b82f610 100%)',
+                                        borderRadius: '12px',
+                                        border: '1px solid #3b82f630'
+                                    }}>
+                                        <GraduationCap size={20} color="#3b82f6" />
+                                        <h3 style={{ 
+                                            margin: 0, 
+                                            color: '#1e293b', 
+                                            fontSize: '1.15rem', 
+                                            fontWeight: 700,
+                                            letterSpacing: '-0.3px'
+                                        }}>
+                                            Campus Related Information
+                                        </h3>
+                                    </div>
                                     <div style={{ 
                                         display: 'grid', 
                                         gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.5rem'
+                                        gap: '1.75rem'
                                     }}>
                                         <FormField label="Stream" value={selectedApplication.educationalInfo.stream} required />
                                         <FormField label="Sponsor Category" value={selectedApplication.educationalInfo.sponsorCategory} required />
@@ -491,13 +595,31 @@ const Applications = () => {
                             {/* School Tab */}
                             {activeTab === 'school' && selectedApplication.schoolInfo && (
                                 <div>
-                                    <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.1rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                        Primary School
-                                    </h3>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        marginBottom: '2rem',
+                                        padding: '0.75rem 1.5rem',
+                                        background: 'linear-gradient(135deg, #f59e0b20 0%, #f59e0b10 100%)',
+                                        borderRadius: '12px',
+                                        border: '1px solid #f59e0b30'
+                                    }}>
+                                        <Home size={20} color="#f59e0b" />
+                                        <h3 style={{ 
+                                            margin: 0, 
+                                            color: '#1e293b', 
+                                            fontSize: '1.15rem', 
+                                            fontWeight: 700,
+                                            letterSpacing: '-0.3px'
+                                        }}>
+                                            Primary School Information
+                                        </h3>
+                                    </div>
                                     <div style={{ 
                                         display: 'grid', 
                                         gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.5rem'
+                                        gap: '1.75rem'
                                     }}>
                                         <FormField label="School Name" value={selectedApplication.schoolInfo.schoolName} required />
                                         <FormField label="Region" value={selectedApplication.schoolInfo.region} />
@@ -506,21 +628,31 @@ const Applications = () => {
                                         <FormField label="School Type" value={selectedApplication.schoolInfo.schoolType} required />
                                         <FormField label="Woreda" value={selectedApplication.schoolInfo.woreda} />
                                         <div style={{ gridColumn: 'span 2' }}>
-                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151', fontSize: '0.9rem' }}>
+                                            <label style={{ 
+                                                display: 'block', 
+                                                marginBottom: '0.75rem', 
+                                                fontWeight: 600, 
+                                                color: '#1e293b', 
+                                                fontSize: '0.95rem',
+                                                letterSpacing: '-0.2px'
+                                            }}>
                                                 Attended Year (From - To E.C)
                                             </label>
-                                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                            <div style={{ display: 'flex', gap: '1.25rem' }}>
                                                 <input
                                                     type="text"
                                                     value={selectedApplication.schoolInfo.attendedYearFrom}
                                                     readOnly
                                                     style={{
                                                         flex: 1,
-                                                        padding: '0.75rem',
-                                                        border: '1px solid #e2e8f0',
-                                                        borderRadius: '6px',
-                                                        background: '#f8fafc',
-                                                        color: '#1e293b'
+                                                        padding: '0.875rem 1rem',
+                                                        border: '2px solid #e5e7eb',
+                                                        borderRadius: '10px',
+                                                        background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)',
+                                                        color: '#1e293b',
+                                                        fontSize: '0.95rem',
+                                                        fontWeight: 500,
+                                                        transition: 'all 0.2s'
                                                     }}
                                                 />
                                                 <input
@@ -529,11 +661,14 @@ const Applications = () => {
                                                     readOnly
                                                     style={{
                                                         flex: 1,
-                                                        padding: '0.75rem',
-                                                        border: '1px solid #e2e8f0',
-                                                        borderRadius: '6px',
-                                                        background: '#f8fafc',
-                                                        color: '#1e293b'
+                                                        padding: '0.875rem 1rem',
+                                                        border: '2px solid #e5e7eb',
+                                                        borderRadius: '10px',
+                                                        background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)',
+                                                        color: '#1e293b',
+                                                        fontSize: '0.95rem',
+                                                        fontWeight: 500,
+                                                        transition: 'all 0.2s'
                                                     }}
                                                 />
                                             </div>
@@ -545,13 +680,31 @@ const Applications = () => {
                             {/* Family Tab */}
                             {activeTab === 'family' && selectedApplication.familyInfo && (
                                 <div>
-                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.1rem', fontWeight: 600 }}>
-                                        II. Please fill your Birth place and Your Family Information
-                                    </h3>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        marginBottom: '2rem',
+                                        padding: '0.75rem 1.5rem',
+                                        background: 'linear-gradient(135deg, #8b5cf620 0%, #8b5cf610 100%)',
+                                        borderRadius: '12px',
+                                        border: '1px solid #8b5cf630'
+                                    }}>
+                                        <Users size={20} color="#8b5cf6" />
+                                        <h3 style={{ 
+                                            margin: 0, 
+                                            color: '#1e293b', 
+                                            fontSize: '1.15rem', 
+                                            fontWeight: 700,
+                                            letterSpacing: '-0.3px'
+                                        }}>
+                                            Birth Place & Family Information
+                                        </h3>
+                                    </div>
                                     <div style={{ 
                                         display: 'grid', 
                                         gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.5rem'
+                                        gap: '1.75rem'
                                     }}>
                                         <FormField label="Nationality" value={selectedApplication.familyInfo.nationality} required />
                                         <FormField label="Region" value={selectedApplication.familyInfo.region} required />
@@ -575,8 +728,15 @@ const Applications = () => {
 // Helper component for displaying form fields (read-only)
 const FormField = ({ label, value, required }) => (
     <div>
-        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151', fontSize: '0.9rem' }}>
-            {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
+        <label style={{ 
+            display: 'block', 
+            marginBottom: '0.75rem', 
+            fontWeight: 600, 
+            color: '#1e293b', 
+            fontSize: '0.95rem',
+            letterSpacing: '-0.2px'
+        }}>
+            {label} {required && <span style={{ color: '#ef4444', fontWeight: 700 }}>*</span>}
         </label>
         <input
             type="text"
@@ -584,12 +744,15 @@ const FormField = ({ label, value, required }) => (
             readOnly
             style={{
                 width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #e2e8f0',
-                borderRadius: '6px',
-                background: '#f8fafc',
+                padding: '0.875rem 1rem',
+                border: '2px solid #e5e7eb',
+                borderRadius: '10px',
+                background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)',
                 color: '#1e293b',
-                fontSize: '0.95rem'
+                fontSize: '0.95rem',
+                fontWeight: 500,
+                transition: 'all 0.2s',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
             }}
         />
     </div>
