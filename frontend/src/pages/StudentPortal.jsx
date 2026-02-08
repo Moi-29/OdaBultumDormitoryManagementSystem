@@ -792,17 +792,257 @@ const StudentPortal = () => {
                             overflowY: 'auto',
                             padding: '2rem'
                         }}>
-                            <div style={{
-                                textAlign: 'center',
-                                padding: '3rem 2rem',
-                                color: '#64748b'
-                            }}>
-                                <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-                                <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>
-                                    {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Section
-                                </h3>
-                                <p>This section is under development. Form fields will be added here soon.</p>
-                            </div>
+                            {/* Personal Tab */}
+                            {activeTab === 'personal' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                                        I. Please fill your Full Information
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Full Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your full name"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                ID No. <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your ID number"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Sex <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select className="input-field" style={{ width: '100%' }}>
+                                                <option value="">Select</option>
+                                                <option value="M">Male</option>
+                                                <option value="F">Female</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Meal card No.
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter meal card number"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                College <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your college"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Department <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your department"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Academic Year <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select className="input-field" style={{ width: '100%' }}>
+                                                <option value="">Select year</option>
+                                                <option value="1">1st Year</option>
+                                                <option value="2">2nd Year</option>
+                                                <option value="3">3rd Year</option>
+                                                <option value="4">4th Year</option>
+                                                <option value="5">5th Year</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Dorm No.
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter dorm number"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Your Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                className="input-field"
+                                                placeholder="Enter your phone number"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Religious
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your religion"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Your Nation
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your nation"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Educational Tab */}
+                            {activeTab === 'educational' && (
+                                <div style={{
+                                    textAlign: 'center',
+                                    padding: '3rem 2rem',
+                                    color: '#64748b'
+                                }}>
+                                    <GraduationCap size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+                                    <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>
+                                        Educational Section
+                                    </h3>
+                                    <p>Educational information fields will be added here soon.</p>
+                                </div>
+                            )}
+
+                            {/* School Tab */}
+                            {activeTab === 'school' && (
+                                <div style={{
+                                    textAlign: 'center',
+                                    padding: '3rem 2rem',
+                                    color: '#64748b'
+                                }}>
+                                    <Home size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+                                    <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>
+                                        School Section
+                                    </h3>
+                                    <p>School information fields will be added here soon.</p>
+                                </div>
+                            )}
+
+                            {/* Family Tab */}
+                            {activeTab === 'family' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                                        II. Please fill your Birth place and Your Family Information
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Nationality <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Ethiopia"
+                                                defaultValue="Ethiopia"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Region <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your region"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Zone
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your zone"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Woreda (district)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your woreda"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Kebele
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your kebele"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Your Mother Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your mother's name"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Family Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                className="input-field"
+                                                placeholder="Enter family phone number"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Modal Footer */}
