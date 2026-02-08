@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
     Search, User, FileText, Copy, Building2, MapPin, Users, Printer, Download, ChevronDown, ChevronUp, Check, X,
-    GraduationCap, Home, Phone, Heart, DollarSign, Briefcase
+    GraduationCap, Home
 } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -758,12 +758,8 @@ const StudentPortal = () => {
                             {[
                                 { id: 'personal', label: 'Personal', icon: <User size={18} /> },
                                 { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} /> },
-                                { id: 'school', label: 'School', icon: <Building2 size={18} /> },
-                                { id: 'family', label: 'Family', icon: <Users size={18} /> },
-                                { id: 'emergency', label: 'Emergency', icon: <Heart size={18} /> },
-                                { id: 'cost', label: 'Cost-Sharing', icon: <DollarSign size={18} /> },
-                                { id: 'documents', label: 'Documents', icon: <FileText size={18} /> },
-                                { id: 'agreement', label: 'Agreement', icon: <Briefcase size={18} /> }
+                                { id: 'school', label: 'School', icon: <Home size={18} /> },
+                                { id: 'family', label: 'Family', icon: <Users size={18} /> }
                             ].map(tab => (
                                 <button
                                     key={tab.id}
