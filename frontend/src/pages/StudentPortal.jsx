@@ -19,7 +19,139 @@ const StudentPortal = () => {
     const [maintenanceMode, setMaintenanceMode] = useState(false);
     const [showApplicationForm, setShowApplicationForm] = useState(false);
     const [activeTab, setActiveTab] = useState('personal');
+    const [submitting, setSubmitting] = useState(false);
+    const [notification, setNotification] = useState(null);
     const navigate = useNavigate();
+
+    // Application form data
+    const [formData, setFormData] = useState({
+        personalInfo: {
+            fullName: '',
+            idNo: '',
+            sex: '',
+            mealCardNo: '',
+            college: '',
+            department: '',
+            academicYear: '',
+            dormNo: '',
+            phone: '',
+            religious: '',
+            nation: ''
+        },
+        educationalInfo: {
+            stream: '',
+            sponsorCategory: '',
+            nationalExamYear: '',
+            entryYear: '',
+            sponsoredBy: '',
+            examinationId: '',
+            admissionDate: '',
+            checkedInDate: '',
+            nationalExamResult: ''
+        },
+        schoolInfo: {
+            schoolName: '',
+            region: '',
+            city: '',
+            zone: '',
+            schoolType: '',
+            woreda: '',
+            attendedYearFrom: '',
+            attendedYearTo: ''
+        },
+        familyInfo: {
+            nationality: '',
+            region: '',
+            zone: '',
+            woreda: '',
+            kebele: '',
+            motherName: '',
+            familyPhone: ''
+        }
+    });
+
+    // Show notification helper
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 4000);
+    };
+
+    // Handle form input changes
+    const handleInputChange = (section, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [section]: {
+                ...prev[section],
+                [field]: value
+            }
+        }));
+    };
+
+    // Handle form submission
+    const handleSubmitApplication = async () => {
+        // Validate required fields
+        const requiredFields = [
+            { section: 'personalInfo', field: 'fullName', label: 'Full Name' },
+            { section: 'personalInfo', field: 'idNo', label: 'ID No.' },
+            { section: 'personalInfo', field: 'sex', label: 'Sex' },
+            { section: 'personalInfo', field: 'college', label: 'College' },
+            { section: 'personalInfo', field: 'department', label: 'Department' },
+            { section: 'personalInfo', field: 'academicYear', label: 'Academic Year' },
+            { section: 'personalInfo', field: 'phone', label: 'Phone Number' }
+        ];
+
+        for (const { section, field, label } of requiredFields) {
+            if (!formData[section][field]) {
+                showNotification(`Please fill in ${label}`, 'error');
+                return;
+            }
+        }
+
+        setSubmitting(true);
+
+        try {
+            const applicationData = {
+                studentName: formData.personalInfo.fullName,
+                schoolName: formData.schoolInfo.schoolName || 'Not provided',
+                submittedOn: new Date().toISOString().split('T')[0],
+                canEdit: false,
+                ...formData
+            };
+
+            await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/applications', applicationData);
+
+            showNotification('Application submitted successfully!', 'success');
+            
+            // Reset form and close modal after 2 seconds
+            setTimeout(() => {
+                setShowApplicationForm(false);
+                setFormData({
+                    personalInfo: {
+                        fullName: '', idNo: '', sex: '', mealCardNo: '', college: '',
+                        department: '', academicYear: '', dormNo: '', phone: '', religious: '', nation: ''
+                    },
+                    educationalInfo: {
+                        stream: '', sponsorCategory: '', nationalExamYear: '', entryYear: '',
+                        sponsoredBy: '', examinationId: '', admissionDate: '', checkedInDate: '', nationalExamResult: ''
+                    },
+                    schoolInfo: {
+                        schoolName: '', region: '', city: '', zone: '', schoolType: '',
+                        woreda: '', attendedYearFrom: '', attendedYearTo: ''
+                    },
+                    familyInfo: {
+                        nationality: '', region: '', zone: '', woreda: '', kebele: '',
+                        motherName: '', familyPhone: ''
+                    }
+                });
+                setActiveTab('personal');
+            }, 2000);
+        } catch (error) {
+            console.error('Error submitting application:', error);
+            showNotification(error.response?.data?.message || 'Failed to submit application. Please try again.', 'error');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     // Check maintenance mode
     useEffect(() => {
@@ -104,8 +236,93 @@ const StudentPortal = () => {
             minHeight: '100vh',
             fontFamily: '"Inter", sans-serif',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative'
         }}>
+            {/* Premium Notification */}
+            {notification && (
+                <div style={{
+                    position: 'fixed',
+                    top: '2rem',
+                    right: '2rem',
+                    zIndex: 10001,
+                    minWidth: '320px',
+                    maxWidth: '500px',
+                    background: notification.type === 'success' 
+                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                        : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    color: 'white',
+                    padding: '1.25rem 1.5rem',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    animation: 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                    <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                    }}>
+                        {notification.type === 'success' ? (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        ) : (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ 
+                            fontWeight: 700, 
+                            fontSize: '1rem', 
+                            marginBottom: '0.25rem',
+                            letterSpacing: '-0.2px'
+                        }}>
+                            {notification.type === 'success' ? 'Success!' : 'Error'}
+                        </div>
+                        <div style={{ 
+                            fontSize: '0.9rem', 
+                            opacity: 0.95,
+                            lineHeight: '1.4'
+                        }}>
+                            {notification.message}
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setNotification(null)}
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: 'none',
+                            color: 'white',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    >
+                        <X size={16} />
+                    </button>
+                </div>
+            )}
             {/* Header */}
             <header style={{
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -806,6 +1023,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your full name"
+                                                value={formData.personalInfo.fullName}
+                                                onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -817,6 +1036,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your ID number"
+                                                value={formData.personalInfo.idNo}
+                                                onChange={(e) => handleInputChange('personalInfo', 'idNo', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -824,10 +1045,15 @@ const StudentPortal = () => {
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 Sex <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
-                                            <select className="input-field" style={{ width: '100%' }}>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.personalInfo.sex}
+                                                onChange={(e) => handleInputChange('personalInfo', 'sex', e.target.value)}
+                                            >
                                                 <option value="">Select</option>
-                                                <option value="M">Male</option>
-                                                <option value="F">Female</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
                                             </select>
                                         </div>
                                         <div>
@@ -838,6 +1064,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter meal card number"
+                                                value={formData.personalInfo.mealCardNo}
+                                                onChange={(e) => handleInputChange('personalInfo', 'mealCardNo', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -849,6 +1077,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your college"
+                                                value={formData.personalInfo.college}
+                                                onChange={(e) => handleInputChange('personalInfo', 'college', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -860,6 +1090,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your department"
+                                                value={formData.personalInfo.department}
+                                                onChange={(e) => handleInputChange('personalInfo', 'department', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -867,14 +1099,14 @@ const StudentPortal = () => {
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 Academic Year <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
-                                            <select className="input-field" style={{ width: '100%' }}>
-                                                <option value="">Select year</option>
-                                                <option value="1">1st Year</option>
-                                                <option value="2">2nd Year</option>
-                                                <option value="3">3rd Year</option>
-                                                <option value="4">4th Year</option>
-                                                <option value="5">5th Year</option>
-                                            </select>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 3rd Year"
+                                                value={formData.personalInfo.academicYear}
+                                                onChange={(e) => handleInputChange('personalInfo', 'academicYear', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
                                         </div>
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
@@ -884,6 +1116,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter dorm number"
+                                                value={formData.personalInfo.dormNo}
+                                                onChange={(e) => handleInputChange('personalInfo', 'dormNo', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -894,7 +1128,9 @@ const StudentPortal = () => {
                                             <input
                                                 type="tel"
                                                 className="input-field"
-                                                placeholder="Enter your phone number"
+                                                placeholder="+251911234567"
+                                                value={formData.personalInfo.phone}
+                                                onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -906,6 +1142,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your religion"
+                                                value={formData.personalInfo.religious}
+                                                onChange={(e) => handleInputChange('personalInfo', 'religious', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -916,7 +1154,9 @@ const StudentPortal = () => {
                                             <input
                                                 type="text"
                                                 className="input-field"
-                                                placeholder="Enter your nation"
+                                                placeholder="Enter your nationality"
+                                                value={formData.personalInfo.nation}
+                                                onChange={(e) => handleInputChange('personalInfo', 'nation', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1227,7 +1467,10 @@ const StudentPortal = () => {
                             backgroundColor: '#f9fafb'
                         }}>
                             <button
-                                onClick={() => setShowApplicationForm(false)}
+                                onClick={() => {
+                                    setShowApplicationForm(false);
+                                    setActiveTab('personal');
+                                }}
                                 style={{
                                     padding: '0.75rem 1.5rem',
                                     border: '2px solid #e5e7eb',
@@ -1245,22 +1488,31 @@ const StudentPortal = () => {
                                 Cancel
                             </button>
                             <button
+                                onClick={handleSubmitApplication}
+                                disabled={submitting}
                                 style={{
                                     padding: '0.75rem 2rem',
                                     border: 'none',
-                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    background: submitting 
+                                        ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
+                                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                     color: 'white',
                                     borderRadius: '8px',
-                                    cursor: 'pointer',
+                                    cursor: submitting ? 'not-allowed' : 'pointer',
                                     fontWeight: 600,
                                     fontSize: '0.95rem',
                                     transition: 'all 0.2s',
-                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                    opacity: submitting ? 0.7 : 1
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                onMouseEnter={(e) => {
+                                    if (!submitting) e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
+                                }}
                             >
-                                Save & Continue
+                                {submitting ? 'Submitting...' : 'Save & Continue'}
                             </button>
                         </div>
                     </div>
