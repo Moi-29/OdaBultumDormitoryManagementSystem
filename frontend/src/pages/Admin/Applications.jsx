@@ -9,6 +9,8 @@ const Applications = () => {
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [activeTab, setActiveTab] = useState('personal');
+    const [selectMode, setSelectMode] = useState(false);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     useEffect(() => {
         fetchApplications();
@@ -156,12 +158,57 @@ const Applications = () => {
     return (
         <div>
             <div style={{ marginBottom: '2rem' }}>
-                <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
-                    <ClipboardList size={32} /> Applications
-                </h1>
-                <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                    Manage student dormitory applications
-                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div>
+                        <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
+                            <ClipboardList size={32} /> Applications
+                        </h1>
+                        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                            Manage student dormitory applications
+                        </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                        <button
+                            onClick={() => {
+                                setSelectMode(!selectMode);
+                                if (selectMode) {
+                                    setSelectedIds([]);
+                                }
+                            }}
+                            style={{
+                                padding: '0.75rem 1.5rem',
+                                background: selectMode ? '#10b981' : '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: 600,
+                                fontSize: '0.95rem',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {selectMode ? 'Done' : 'Select'}
+                        </button>
+                        {selectMode && (
+                            <button
+                                onClick={() => setSelectedIds([])}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    background: '#ef4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                Clear ({selectedIds.length})
+                            </button>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Applications Table */}
@@ -171,7 +218,20 @@ const Applications = () => {
                         <thead>
                             <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
-                                    <input type="checkbox" style={{ cursor: 'pointer' }} />
+                                    {selectMode && (
+                                        <input 
+                                            type="checkbox" 
+                                            style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                                            checked={selectedIds.length === applications.length && applications.length > 0}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedIds(applications.map(app => app._id));
+                                                } else {
+                                                    setSelectedIds([]);
+                                                }
+                                            }}
+                                        />
+                                    )}
                                 </th>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
                                     Student Name
@@ -195,9 +255,25 @@ const Applications = () => {
                         </thead>
                         <tbody>
                             {applications.map((app) => (
-                                <tr key={app._id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                <tr key={app._id} style={{ 
+                                    borderBottom: '1px solid #e2e8f0',
+                                    background: selectedIds.includes(app._id) ? '#f0fdf4' : 'transparent'
+                                }}>
                                     <td style={{ padding: '1rem' }}>
-                                        <input type="checkbox" style={{ cursor: 'pointer' }} />
+                                        {selectMode && (
+                                            <input 
+                                                type="checkbox" 
+                                                style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                                                checked={selectedIds.includes(app._id)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedIds([...selectedIds, app._id]);
+                                                    } else {
+                                                        setSelectedIds(selectedIds.filter(id => id !== app._id));
+                                                    }
+                                                }}
+                                            />
+                                        )}
                                     </td>
                                     <td style={{ padding: '1rem', fontWeight: 500 }}>
                                         {app.studentName}
