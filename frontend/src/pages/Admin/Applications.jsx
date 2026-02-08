@@ -619,9 +619,6 @@ const Applications = () => {
                                 Save & Continue
                             </button>
                         </div>
-                                Close
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}
