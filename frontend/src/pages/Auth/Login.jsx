@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, LogIn, FileText } from 'lucide-react';
+import { Lock, User, LogIn, FileText, X, GraduationCap, Building2, Users, Heart, DollarSign, Briefcase } from 'lucide-react';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showApplicationForm, setShowApplicationForm] = useState(false);
+    const [activeTab, setActiveTab] = useState('personal');
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -95,10 +97,7 @@ const Login = () => {
 
                     {/* Right side - Application Form Button */}
                     <button
-                        onClick={() => {
-                            // Application form functionality will be added here
-                            console.log('Application Form clicked');
-                        }}
+                        onClick={() => setShowApplicationForm(true)}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -381,6 +380,176 @@ const Login = () => {
                     }
                 }
             `}</style>
+
+            {/* Application Form Modal - Same as StudentPortal */}
+            {showApplicationForm && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '16px',
+                        maxWidth: '1200px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+                    }}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: 'white',
+                            padding: '1.5rem 2rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
+                                Dormitory Application Form
+                            </h2>
+                            <button
+                                onClick={() => setShowApplicationForm(false)}
+                                style={{
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    color: 'white',
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div style={{
+                            display: 'flex',
+                            gap: '0.5rem',
+                            padding: '1rem 2rem 0',
+                            borderBottom: '2px solid #e5e7eb',
+                            overflowX: 'auto',
+                            backgroundColor: '#f9fafb'
+                        }}>
+                            {[
+                                { id: 'personal', label: 'Personal', icon: <User size={18} /> },
+                                { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} /> },
+                                { id: 'school', label: 'School', icon: <Building2 size={18} /> },
+                                { id: 'family', label: 'Family', icon: <Users size={18} /> },
+                                { id: 'emergency', label: 'Emergency', icon: <Heart size={18} /> },
+                                { id: 'cost', label: 'Cost-Sharing', icon: <DollarSign size={18} /> },
+                                { id: 'documents', label: 'Documents', icon: <FileText size={18} /> },
+                                { id: 'agreement', label: 'Agreement', icon: <Briefcase size={18} /> }
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        padding: '0.75rem 1.25rem',
+                                        border: 'none',
+                                        background: activeTab === tab.id ? '#10b981' : 'transparent',
+                                        color: activeTab === tab.id ? 'white' : '#64748b',
+                                        borderRadius: '8px 8px 0 0',
+                                        cursor: 'pointer',
+                                        fontWeight: activeTab === tab.id ? 600 : 500,
+                                        fontSize: '0.9rem',
+                                        transition: 'all 0.2s',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {tab.icon}
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div style={{
+                            flex: 1,
+                            overflowY: 'auto',
+                            padding: '2rem'
+                        }}>
+                            <div style={{
+                                textAlign: 'center',
+                                padding: '3rem 2rem',
+                                color: '#64748b'
+                            }}>
+                                <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+                                <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>
+                                    {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Section
+                                </h3>
+                                <p>This section is under development. Form fields will be added here soon.</p>
+                            </div>
+                        </div>
+
+                        <div style={{
+                            padding: '1.5rem 2rem',
+                            borderTop: '1px solid #e5e7eb',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            gap: '1rem',
+                            backgroundColor: '#f9fafb'
+                        }}>
+                            <button
+                                onClick={() => setShowApplicationForm(false)}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.borderColor = '#cbd5e1'}
+                                onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                style={{
+                                    padding: '0.75rem 2rem',
+                                    border: 'none',
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                            >
+                                Save & Continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
