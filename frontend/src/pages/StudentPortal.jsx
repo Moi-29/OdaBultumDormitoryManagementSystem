@@ -927,31 +927,215 @@ const StudentPortal = () => {
 
                             {/* Educational Tab */}
                             {activeTab === 'educational' && (
-                                <div style={{
-                                    textAlign: 'center',
-                                    padding: '3rem 2rem',
-                                    color: '#64748b'
-                                }}>
-                                    <GraduationCap size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-                                    <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>
-                                        Educational Section
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                        Campus Related Information
                                     </h3>
-                                    <p>Educational information fields will be added here soon.</p>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Stream <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select className="input-field" style={{ width: '100%' }}>
+                                                <option value="">Select stream</option>
+                                                <option value="Natural Science">Natural Science</option>
+                                                <option value="Social Science">Social Science</option>
+                                                <option value="Engineering">Engineering</option>
+                                                <option value="Health Science">Health Science</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Sponsor Category <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select className="input-field" style={{ width: '100%' }}>
+                                                <option value="">Select category</option>
+                                                <option value="Government">Government</option>
+                                                <option value="Private">Private</option>
+                                                <option value="Self-Sponsored">Self-Sponsored</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                National Exam Year (EC) <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 2015"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Entry Year <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 2016"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Sponsored By
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Family"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Examination ID
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., D1729733"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Admission Date <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="datetime-local"
+                                                className="input-field"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Checked-In Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                className="input-field"
+                                                placeholder="mm/dd/yyyy"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                National Exam Result
+                                            </label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                placeholder="e.g., 454"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
                             {/* School Tab */}
                             {activeTab === 'school' && (
-                                <div style={{
-                                    textAlign: 'center',
-                                    padding: '3rem 2rem',
-                                    color: '#64748b'
-                                }}>
-                                    <Home size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-                                    <h3 style={{ marginBottom: '0.5rem', color: '#1e293b' }}>
-                                        School Section
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                        Primary School
                                     </h3>
-                                    <p>School information fields will be added here soon.</p>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                School Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Abdi Gudina primary school"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                School Name (Amharic)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="የትምህርት ቤት ስም"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Region
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter region"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                City
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter city"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Zone
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter zone"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                School Type <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select className="input-field" style={{ width: '100%' }}>
+                                                <option value="">Select type</option>
+                                                <option value="Public">Public</option>
+                                                <option value="Private">Private</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Woreda
+                                            </label>
+                                            <select className="input-field" style={{ width: '100%' }}>
+                                                <option value="">Select woreda</option>
+                                                <option value="BECHO(SHOA SOUTH WEST)">BECHO(SHOA SOUTH WEST)</option>
+                                            </select>
+                                        </div>
+                                        <div style={{ gridColumn: 'span 2' }}>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Attended Year (From - To E.C)
+                                            </label>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                <input
+                                                    type="text"
+                                                    className="input-field"
+                                                    placeholder="From (e.g., 2004)"
+                                                    style={{ width: '100%' }}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    className="input-field"
+                                                    placeholder="To (e.g., 2011)"
+                                                    style={{ width: '100%' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
