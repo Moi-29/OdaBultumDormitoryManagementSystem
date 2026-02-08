@@ -242,9 +242,6 @@ const Applications = () => {
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
                                     Submitted On
                                 </th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
-                                    Status
-                                </th>
                                 <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569' }}>
                                     Edit Permission
                                 </th>
@@ -283,18 +280,6 @@ const Applications = () => {
                                     </td>
                                     <td style={{ padding: '1rem', color: '#64748b' }}>
                                         {app.submittedOn}
-                                    </td>
-                                    <td style={{ padding: '1rem' }}>
-                                        <span style={{
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '999px',
-                                            fontSize: '0.85rem',
-                                            fontWeight: 600,
-                                            background: `${getStatusColor(app.status)}20`,
-                                            color: getStatusColor(app.status)
-                                        }}>
-                                            {app.status}
-                                        </span>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
                                         <button
@@ -580,45 +565,6 @@ const Applications = () => {
                             )}
                         </div>
 
-                        {/* Modal Footer */}
-                        <div style={{
-                            padding: '1.5rem 2rem',
-                            borderTop: '1px solid #e2e8f0',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            gap: '1rem',
-                            background: '#f8fafc'
-                        }}>
-                            <button
-                                onClick={() => setShowDetailsModal(false)}
-                                style={{
-                                    padding: '0.75rem 1.5rem',
-                                    border: '2px solid #e2e8f0',
-                                    background: 'white',
-                                    color: '#64748b',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: 600,
-                                    fontSize: '0.95rem'
-                                }}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                style={{
-                                    padding: '0.75rem 2rem',
-                                    border: 'none',
-                                    background: '#10b981',
-                                    color: 'white',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontWeight: 600,
-                                    fontSize: '0.95rem'
-                                }}
-                            >
-                                Save & Continue
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}

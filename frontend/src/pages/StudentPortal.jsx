@@ -251,7 +251,6 @@ const StudentPortal = () => {
                         <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div style={{ textAlign: 'left' }}>
                                 <label style={{
-                                    display: 'block',
                                     marginBottom: '0.5rem',
                                     color: '#b49000', // Gold/Dark Yellow
                                     fontSize: '0.9rem',
