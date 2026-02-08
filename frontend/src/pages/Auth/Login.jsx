@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, LogIn, Mail, Phone } from 'lucide-react';
+import { Lock, User, LogIn, FileText } from 'lucide-react';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
@@ -93,22 +93,41 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* Right side - Contact Info */}
-                    <div style={{ 
-                        display: 'flex', 
-                        gap: '1.5rem',
-                        color: 'white',
-                        fontSize: '0.9rem'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Mail size={18} />
-                            <span>info@obu.edu.et</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Phone size={18} />
-                            <span>+251-25-551-1234</span>
-                        </div>
-                    </div>
+                    {/* Right side - Application Form Button */}
+                    <button
+                        onClick={() => {
+                            // Application form functionality will be added here
+                            console.log('Application Form clicked');
+                        }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.6rem 1.5rem',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: '2px solid rgba(255, 255, 255, 0.3)',
+                            borderRadius: '8px',
+                            color: 'white',
+                            fontSize: '0.95rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                            backdropFilter: 'blur(10px)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                        }}
+                    >
+                        <FileText size={18} />
+                        Application Form
+                    </button>
                 </div>
             </header>
 
