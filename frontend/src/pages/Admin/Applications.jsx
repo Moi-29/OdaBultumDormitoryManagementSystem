@@ -11,6 +11,13 @@ const Applications = () => {
     const [activeTab, setActiveTab] = useState('personal');
     const [selectMode, setSelectMode] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
+    const [notification, setNotification] = useState(null);
+
+    // Show notification helper
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 4000);
+    };
 
     useEffect(() => {
         fetchApplications();
@@ -185,7 +192,7 @@ const Applications = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`${API_URL}/api/applications/bulk`, {
+            const response = await axios.delete(`${API_URL}/api/applications/bulk`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -197,10 +204,10 @@ const Applications = () => {
             setSelectedIds([]);
             setSelectMode(false);
             
-            alert(`Successfully deleted ${selectedIds.length} application(s)`);
+            showNotification(response.data.message || `Successfully deleted ${selectedIds.length} application(s)`, 'success');
         } catch (error) {
             console.error('Error deleting applications:', error);
-            alert(error.response?.data?.message || 'Failed to delete applications. Please try again.');
+            showNotification(error.response?.data?.message || 'Failed to delete applications. Please try again.', 'error');
         }
     };
 
@@ -223,7 +230,91 @@ const Applications = () => {
     }
 
     return (
-        <div>
+        <div style={{ position: 'relative' }}>
+            {/* Premium Notification */}
+            {notification && (
+                <div style={{
+                    position: 'fixed',
+                    top: '2rem',
+                    right: '2rem',
+                    zIndex: 10001,
+                    minWidth: '320px',
+                    maxWidth: '500px',
+                    background: notification.type === 'success' 
+                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                        : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    color: 'white',
+                    padding: '1.25rem 1.5rem',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    animation: 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                    <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                    }}>
+                        {notification.type === 'success' ? (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        ) : (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ 
+                            fontWeight: 700, 
+                            fontSize: '1rem', 
+                            marginBottom: '0.25rem',
+                            letterSpacing: '-0.2px'
+                        }}>
+                            {notification.type === 'success' ? 'Success!' : 'Error'}
+                        </div>
+                        <div style={{ 
+                            fontSize: '0.9rem', 
+                            opacity: 0.95,
+                            lineHeight: '1.4'
+                        }}>
+                            {notification.message}
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setNotification(null)}
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: 'none',
+                            color: 'white',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    >
+                        <X size={16} />
+                    </button>
+                </div>
+            )}
             <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div>

@@ -52,15 +52,19 @@ const updateApplication = async (req, res) => {
         
         // Log activity if admin is making changes
         if (req.admin) {
-            await ActivityLog.create({
-                adminId: req.admin._id,
-                adminName: req.admin.username,
-                action: 'UPDATE',
-                targetType: 'Application',
-                targetId: application._id,
-                details: `Updated application for ${application.studentName}`,
-                ipAddress: req.ip
-            });
+            try {
+                await ActivityLog.create({
+                    adminId: req.admin._id,
+                    adminName: req.admin.username,
+                    action: 'UPDATE',
+                    targetType: 'Application',
+                    targetId: application._id,
+                    details: `Updated application for ${application.studentName}`,
+                    ipAddress: req.ip
+                });
+            } catch (logError) {
+                console.error('Error logging activity:', logError);
+            }
         }
         
         res.json({
@@ -88,15 +92,21 @@ const toggleEditPermission = async (req, res) => {
         await application.save();
         
         // Log activity
-        await ActivityLog.create({
-            adminId: req.admin._id,
-            adminName: req.admin.username,
-            action: 'UPDATE',
-            targetType: 'Application',
-            targetId: application._id,
-            details: `${application.canEdit ? 'Enabled' : 'Disabled'} edit permission for ${application.studentName}`,
-            ipAddress: req.ip
-        });
+        if (req.admin) {
+            try {
+                await ActivityLog.create({
+                    adminId: req.admin._id,
+                    adminName: req.admin.username,
+                    action: 'UPDATE',
+                    targetType: 'Application',
+                    targetId: application._id,
+                    details: `${application.canEdit ? 'Enabled' : 'Disabled'} edit permission for ${application.studentName}`,
+                    ipAddress: req.ip
+                });
+            } catch (logError) {
+                console.error('Error logging activity:', logError);
+            }
+        }
         
         res.json({
             message: `Edit permission ${application.canEdit ? 'enabled' : 'disabled'}`,
@@ -122,15 +132,21 @@ const deleteApplication = async (req, res) => {
         await Application.findByIdAndDelete(req.params.id);
         
         // Log activity
-        await ActivityLog.create({
-            adminId: req.admin._id,
-            adminName: req.admin.username,
-            action: 'DELETE',
-            targetType: 'Application',
-            targetId: application._id,
-            details: `Deleted application for ${application.studentName}`,
-            ipAddress: req.ip
-        });
+        if (req.admin) {
+            try {
+                await ActivityLog.create({
+                    adminId: req.admin._id,
+                    adminName: req.admin.username,
+                    action: 'DELETE',
+                    targetType: 'Application',
+                    targetId: application._id,
+                    details: `Deleted application for ${application.studentName}`,
+                    ipAddress: req.ip
+                });
+            } catch (logError) {
+                console.error('Error logging activity:', logError);
+            }
+        }
         
         res.json({ message: 'Application deleted successfully' });
     } catch (error) {
@@ -156,15 +172,22 @@ const bulkDeleteApplications = async (req, res) => {
         // Delete applications
         const result = await Application.deleteMany({ _id: { $in: applicationIds } });
         
-        // Log activity
-        await ActivityLog.create({
-            adminId: req.admin._id,
-            adminName: req.admin.username,
-            action: 'DELETE',
-            targetType: 'Application',
-            details: `Bulk deleted ${result.deletedCount} application(s): ${applications.map(a => a.studentName).join(', ')}`,
-            ipAddress: req.ip
-        });
+        // Log activity (only if admin info is available)
+        if (req.admin) {
+            try {
+                await ActivityLog.create({
+                    adminId: req.admin._id,
+                    adminName: req.admin.username,
+                    action: 'DELETE',
+                    targetType: 'Application',
+                    details: `Bulk deleted ${result.deletedCount} application(s): ${applications.map(a => a.studentName).join(', ')}`,
+                    ipAddress: req.ip
+                });
+            } catch (logError) {
+                console.error('Error logging activity:', logError);
+                // Continue even if logging fails
+            }
+        }
         
         res.json({ 
             message: `Successfully deleted ${result.deletedCount} application(s)`,
