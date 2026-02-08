@@ -1055,17 +1055,6 @@ const StudentPortal = () => {
                                         </div>
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
-                                                School Name (Amharic)
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="input-field"
-                                                placeholder="የትምህርት ቤት ስም"
-                                                style={{ width: '100%' }}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 Region
                                             </label>
                                             <input
