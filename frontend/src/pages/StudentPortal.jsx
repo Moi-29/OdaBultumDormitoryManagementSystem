@@ -21,6 +21,7 @@ const StudentPortal = () => {
     const [activeTab, setActiveTab] = useState('personal');
     const [submitting, setSubmitting] = useState(false);
     const [notification, setNotification] = useState(null);
+    const [showAgreementModal, setShowAgreementModal] = useState(false);
     const navigate = useNavigate();
 
     // Application form data
@@ -76,37 +77,43 @@ const StudentPortal = () => {
         setTimeout(() => setNotification(null), 4000);
     };
 
-    // Handle form input changes
-    const handleInputChange = (section, field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [section]: {
-                ...prev[section],
-                [field]: value
-            }
-        }));
-    };
+    // Handle Save & Continue - Navigate to next tab
+    const handleSaveAndContinue = () => {
+        const tabs = ['personal', 'educational', 'school', 'family'];
+        const currentIndex = tabs.indexOf(activeTab);
+        
+        // Validate current tab's required fields
+        if (activeTab === 'personal') {
+            const requiredFields = [
+                { field: 'fullName', label: 'Full Name' },
+                { field: 'idNo', label: 'ID No.' },
+                { field: 'sex', label: 'Sex' },
+                { field: 'college', label: 'College' },
+                { field: 'department', label: 'Department' },
+                { field: 'academicYear', label: 'Academic Year' },
+                { field: 'phone', label: 'Phone Number' }
+            ];
 
-    // Handle form submission
-    const handleSubmitApplication = async () => {
-        // Validate required fields
-        const requiredFields = [
-            { section: 'personalInfo', field: 'fullName', label: 'Full Name' },
-            { section: 'personalInfo', field: 'idNo', label: 'ID No.' },
-            { section: 'personalInfo', field: 'sex', label: 'Sex' },
-            { section: 'personalInfo', field: 'college', label: 'College' },
-            { section: 'personalInfo', field: 'department', label: 'Department' },
-            { section: 'personalInfo', field: 'academicYear', label: 'Academic Year' },
-            { section: 'personalInfo', field: 'phone', label: 'Phone Number' }
-        ];
-
-        for (const { section, field, label } of requiredFields) {
-            if (!formData[section][field]) {
-                showNotification(`Please fill in ${label}`, 'error');
-                return;
+            for (const { field, label } of requiredFields) {
+                if (!formData.personalInfo[field]) {
+                    showNotification(`Please fill in ${label}`, 'error');
+                    return;
+                }
             }
         }
 
+        // If on last tab, show agreement modal
+        if (currentIndex === tabs.length - 1) {
+            setShowAgreementModal(true);
+        } else {
+            // Move to next tab
+            setActiveTab(tabs[currentIndex + 1]);
+        }
+    };
+
+    // Handle final form submission after agreement
+    const handleFinalSubmit = async () => {
+        setShowAgreementModal(false);
         setSubmitting(true);
 
         try {
@@ -120,9 +127,9 @@ const StudentPortal = () => {
 
             await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/applications', applicationData);
 
-            showNotification('Application submitted successfully!', 'success');
+            showNotification('Application submitted successfully! Your form has been locked and sent to admin.', 'success');
             
-            // Reset form and close modal after 2 seconds
+            // Reset form and close modal after 3 seconds
             setTimeout(() => {
                 setShowApplicationForm(false);
                 setFormData({
@@ -144,13 +151,24 @@ const StudentPortal = () => {
                     }
                 });
                 setActiveTab('personal');
-            }, 2000);
+            }, 3000);
         } catch (error) {
             console.error('Error submitting application:', error);
             showNotification(error.response?.data?.message || 'Failed to submit application. Please try again.', 'error');
         } finally {
             setSubmitting(false);
         }
+    };
+
+    // Handle form input changes
+    const handleInputChange = (section, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [section]: {
+                ...prev[section],
+                [field]: value
+            }
+        }));
     };
 
     // Check maintenance mode
@@ -1488,7 +1506,7 @@ const StudentPortal = () => {
                                 Cancel
                             </button>
                             <button
-                                onClick={handleSubmitApplication}
+                                onClick={handleSaveAndContinue}
                                 disabled={submitting}
                                 style={{
                                     padding: '0.75rem 2rem',
@@ -1512,7 +1530,181 @@ const StudentPortal = () => {
                                     if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
                                 }}
                             >
-                                {submitting ? 'Submitting...' : 'Save & Continue'}
+                                {activeTab === 'family' ? 'Review & Submit' : 'Save & Continue'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Agreement Modal */}
+            {showAgreementModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10001,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        maxWidth: '500px',
+                        width: '100%',
+                        padding: '2.5rem',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        textAlign: 'center'
+                    }}>
+                        {/* Handshake Icon */}
+                        <div style={{
+                            width: '100px',
+                            height: '100px',
+                            margin: '0 auto 1.5rem',
+                            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 10px 25px rgba(245, 158, 11, 0.3)'
+                        }}>
+                            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+
+                        {/* Warning Title */}
+                        <h2 style={{
+                            fontSize: '1.75rem',
+                            fontWeight: 800,
+                            color: '#1e293b',
+                            marginBottom: '1rem',
+                            letterSpacing: '-0.5px'
+                        }}>
+                            Final Agreement
+                        </h2>
+
+                        {/* Warning Message */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                            border: '2px solid #f59e0b',
+                            borderRadius: '12px',
+                            padding: '1.5rem',
+                            marginBottom: '2rem',
+                            textAlign: 'left'
+                        }}>
+                            <div style={{
+                                display: 'flex',
+                                gap: '1rem',
+                                alignItems: 'start'
+                            }}>
+                                <div style={{
+                                    flexShrink: 0,
+                                    width: '24px',
+                                    height: '24px',
+                                    background: '#f59e0b',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginTop: '2px'
+                                }}>
+                                    <span style={{ color: 'white', fontWeight: 'bold', fontSize: '1.1rem' }}>!</span>
+                                </div>
+                                <div>
+                                    <p style={{
+                                        color: '#92400e',
+                                        fontSize: '0.95rem',
+                                        lineHeight: '1.6',
+                                        margin: 0,
+                                        fontWeight: 600
+                                    }}>
+                                        <strong>Important Notice:</strong>
+                                    </p>
+                                    <p style={{
+                                        color: '#92400e',
+                                        fontSize: '0.9rem',
+                                        lineHeight: '1.6',
+                                        margin: '0.5rem 0 0 0'
+                                    }}>
+                                        Once you submit this application, you will <strong>NOT be able to edit</strong> any information unless an administrator grants you permission. Please review all your information carefully before proceeding.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'center'
+                        }}>
+                            <button
+                                onClick={() => setShowAgreementModal(false)}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                Go Back
+                            </button>
+                            <button
+                                onClick={handleFinalSubmit}
+                                disabled={submitting}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: 'none',
+                                    background: submitting
+                                        ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
+                                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    borderRadius: '10px',
+                                    cursor: submitting ? 'not-allowed' : 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                    opacity: submitting ? 0.7 : 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (!submitting) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!submitting) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                                    }
+                                }}
+                            >
+                                {submitting ? 'Submitting...' : 'I Agree & Submit'}
                             </button>
                         </div>
                     </div>
