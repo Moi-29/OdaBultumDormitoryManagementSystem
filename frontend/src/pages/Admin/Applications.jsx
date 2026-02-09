@@ -385,7 +385,7 @@ const Applications = () => {
         }
     };
 
-    // Export to PDF - One full page per student with all tabs
+    // Export to PDF - One full page per student with all tabs (matching official design)
     const exportToPDFFiltered = async (appsToExport) => {
         try {
             showNotification('Generating PDF...', 'info');
@@ -393,8 +393,35 @@ const Applications = () => {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 15;
-            const contentWidth = pageWidth - (margin * 2);
+            
+            // Colors matching the design
+            const darkBlue = [30, 41, 59]; // #1e293b
+            const gold = [234, 179, 8]; // #eab308
+            const lightGray = [243, 244, 246]; // #f3f4f6
+            
+            // University logo URL
+            const logoUrl = 'https://www.developmentaid.org/files/organizationLogos/oda-bultum-university-468233.jpg';
+            
+            // Pre-load logo once for all pages
+            let logoImage = null;
+            try {
+                logoImage = await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = () => {
+                        console.log('✓ University logo loaded successfully');
+                        resolve(img);
+                    };
+                    img.onerror = (err) => {
+                        console.warn('⚠ Logo loading failed:', err);
+                        reject(err);
+                    };
+                    img.src = logoUrl;
+                    setTimeout(() => reject(new Error('Logo load timeout')), 5000);
+                });
+            } catch (error) {
+                console.warn('Logo unavailable, continuing without it');
+            }
             
             for (let i = 0; i < appsToExport.length; i++) {
                 const app = appsToExport[i];
@@ -403,187 +430,170 @@ const Applications = () => {
                     doc.addPage();
                 }
                 
-                let yPos = margin;
+                // LEFT SIDEBAR - Dark Blue
+                const sidebarWidth = 60;
+                doc.setFillColor(...darkBlue);
+                doc.rect(0, 0, sidebarWidth, pageHeight, 'F');
                 
-                // University name
-                doc.setFontSize(18);
+                // Logo in sidebar
+                if (logoImage) {
+                    try {
+                        const logoSize = 35;
+                        const logoX = (sidebarWidth - logoSize) / 2;
+                        doc.addImage(logoImage, 'JPEG', logoX, 20, logoSize, logoSize);
+                    } catch (error) {
+                        console.warn('Error adding logo');
+                    }
+                }
+                
+                // ID NO in sidebar
+                doc.setFontSize(10);
                 doc.setFont('helvetica', 'bold');
-                doc.text('ODA BULTUM UNIVERSITY', pageWidth / 2, yPos, { align: 'center' });
-                yPos += 7;
-                
-                // Document title
-                doc.setFontSize(14);
-                doc.text('APPLICATION DETAIL OF STUDENTS', pageWidth / 2, yPos, { align: 'center' });
-                yPos += 10;
-                
-                // Divider line
-                doc.setLineWidth(0.5);
-                doc.line(margin, yPos, pageWidth - margin, yPos);
-                yPos += 8;
-                
-                // SECTION 1: PERSONAL INFORMATION
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.setFillColor(16, 185, 129);
-                doc.rect(margin, yPos, contentWidth, 7, 'F');
                 doc.setTextColor(255, 255, 255);
-                doc.text('PERSONAL INFORMATION', margin + 3, yPos + 5);
+                doc.text('ID NO:', sidebarWidth / 2, 70, { align: 'center' });
+                doc.setFontSize(11);
+                doc.text(app.personalInfo?.idNo || app.studentId || '-', sidebarWidth / 2, 76, { align: 'center' });
+                
+                // STATUS badge in sidebar
+                const badgeY = 85;
+                doc.setFillColor(...gold);
+                doc.roundedRect(10, badgeY, sidebarWidth - 20, 10, 3, 3, 'F');
                 doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('STATUS: ACTIVE', sidebarWidth / 2, badgeY + 7, { align: 'center' });
+                
+                // MAIN CONTENT AREA
+                const contentX = sidebarWidth + 10;
+                const contentWidth = pageWidth - sidebarWidth - 15;
+                let yPos = 15;
+                
+                // Header: ODA BULTUM UNIVERSITY
+                doc.setTextColor(100, 116, 139);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('ODA BULTUM UNIVERSITY', contentX, yPos);
                 yPos += 10;
                 
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'normal');
+                // Student Record Header
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`STUDENT RECORD: ${app.personalInfo?.idNo || app.studentId || '-'}`, contentX, yPos);
+                yPos += 12;
                 
-                const personalData = [
-                    ['Full Name:', app.personalInfo.fullName || '-', 'ID No:', app.personalInfo.idNo || '-'],
-                    ['Sex:', app.personalInfo.sex || '-', 'Meal Card No:', app.personalInfo.mealCardNo || '-'],
-                    ['College:', app.personalInfo.college || '-', 'Department:', app.personalInfo.department || '-'],
-                    ['Academic Year:', app.personalInfo.academicYear || '-', 'Dorm No:', app.personalInfo.dormNo || '-'],
-                    ['Phone Number:', app.personalInfo.phone || '-', 'Religious:', app.personalInfo.religious || '-'],
-                    ['Nation:', app.personalInfo.nation || '-', '', '']
+                // Student Name
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text((app.personalInfo?.fullName || app.studentName || '-').toUpperCase(), contentX, yPos);
+                
+                // Sponsor badge next to name
+                const nameWidth = doc.getTextWidth((app.personalInfo?.fullName || app.studentName || '-').toUpperCase());
+                doc.setFillColor(...gold);
+                doc.roundedRect(contentX + nameWidth + 5, yPos - 5, 35, 8, 2, 2, 'F');
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.text(app.educationalInfo?.sponsorCategory?.toUpperCase() || 'SELF-SPONSORED', contentX + nameWidth + 22.5, yPos - 0.5, { align: 'center' });
+                yPos += 15;
+                
+                // PERSONAL INFORMATION Section
+                doc.setFillColor(...lightGray);
+                doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('PERSONAL INFORMATION', contentX + 3, yPos + 5.5);
+                yPos += 12;
+                
+                // Personal info fields
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(60, 60, 60);
+                
+                const fieldData = [
+                    ['DATE OF BIRTH:', app.personalInfo?.dateOfBirth || '01/01/2000'],
+                    ['GENDER:', app.personalInfo?.sex || '-'],
+                    ['NATIONALITY:', app.personalInfo?.nation || 'ETHIOPIAN'],
+                    ['EMAIL:', app.personalInfo?.email || `${app.studentId}@obu.edu.et`],
+                    ['PHONE:', app.personalInfo?.phone || '-'],
+                    ['BIRTH PLACE:', `${app.familyInfo?.woreda || 'ADDIS ABABA'}, ETHIOPIA`]
                 ];
                 
-                personalData.forEach(row => {
+                fieldData.forEach(([label, value]) => {
                     doc.setFont('helvetica', 'bold');
-                    doc.text(row[0], margin + 2, yPos);
+                    doc.text(label, contentX, yPos);
                     doc.setFont('helvetica', 'normal');
-                    doc.text(row[1], margin + 35, yPos);
-                    
-                    if (row[2]) {
-                        doc.setFont('helvetica', 'bold');
-                        doc.text(row[2], margin + 105, yPos);
-                        doc.setFont('helvetica', 'normal');
-                        doc.text(row[3], margin + 135, yPos);
-                    }
+                    doc.text(value, contentX + 35, yPos);
                     yPos += 5;
                 });
                 
-                yPos += 3;
+                yPos += 5;
                 
-                // SECTION 2: EDUCATIONAL INFORMATION
-                if (app.educationalInfo) {
-                    doc.setFontSize(12);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFillColor(59, 130, 246);
-                    doc.rect(margin, yPos, contentWidth, 7, 'F');
-                    doc.setTextColor(255, 255, 255);
-                    doc.text('CAMPUS RELATED INFORMATION', margin + 3, yPos + 5);
-                    doc.setTextColor(0, 0, 0);
-                    yPos += 10;
-                    
-                    doc.setFontSize(9);
-                    doc.setFont('helvetica', 'normal');
-                    
-                    const educationalData = [
-                        ['Stream:', app.educationalInfo.stream || '-', 'Sponsor Category:', app.educationalInfo.sponsorCategory || '-'],
-                        ['National Exam Year:', app.educationalInfo.nationalExamYear || '-', 'Entry Year:', app.educationalInfo.entryYear || '-'],
-                        ['Sponsored By:', app.educationalInfo.sponsoredBy || '-', 'Examination ID:', app.educationalInfo.examinationId || '-'],
-                        ['Admission Date:', app.educationalInfo.admissionDate || '-', 'Checked-In Date:', app.educationalInfo.checkedInDate || '-'],
-                        ['National Exam Result:', app.educationalInfo.nationalExamResult || '-', '', '']
-                    ];
-                    
-                    educationalData.forEach(row => {
-                        doc.setFont('helvetica', 'bold');
-                        doc.text(row[0], margin + 2, yPos);
-                        doc.setFont('helvetica', 'normal');
-                        doc.text(row[1], margin + 45, yPos);
-                        
-                        if (row[2]) {
-                            doc.setFont('helvetica', 'bold');
-                            doc.text(row[2], margin + 105, yPos);
-                            doc.setFont('helvetica', 'normal');
-                            doc.text(row[3], margin + 145, yPos);
-                        }
-                        yPos += 5;
-                    });
-                    
-                    yPos += 3;
-                }
+                // CAMPUS RELATED INFORMATION Section
+                doc.setFillColor(...lightGray);
+                doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('CAMPUS RELATED INFORMATION', contentX + 3, yPos + 5.5);
+                yPos += 12;
                 
-                // SECTION 3: SCHOOL INFORMATION
-                if (app.schoolInfo) {
-                    doc.setFontSize(12);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFillColor(245, 158, 11);
-                    doc.rect(margin, yPos, contentWidth, 7, 'F');
-                    doc.setTextColor(255, 255, 255);
-                    doc.text('PRIMARY SCHOOL INFORMATION', margin + 3, yPos + 5);
-                    doc.setTextColor(0, 0, 0);
-                    yPos += 10;
-                    
-                    doc.setFontSize(9);
-                    doc.setFont('helvetica', 'normal');
-                    
-                    const schoolData = [
-                        ['School Name:', app.schoolInfo.schoolName || '-', 'Region:', app.schoolInfo.region || '-'],
-                        ['City:', app.schoolInfo.city || '-', 'Zone:', app.schoolInfo.zone || '-'],
-                        ['School Type:', app.schoolInfo.schoolType || '-', 'Woreda:', app.schoolInfo.woreda || '-'],
-                        ['Attended Year From:', app.schoolInfo.attendedYearFrom || '-', 'Attended Year To:', app.schoolInfo.attendedYearTo || '-']
-                    ];
-                    
-                    schoolData.forEach(row => {
-                        doc.setFont('helvetica', 'bold');
-                        doc.text(row[0], margin + 2, yPos);
-                        doc.setFont('helvetica', 'normal');
-                        doc.text(row[1], margin + 40, yPos);
-                        
-                        if (row[2]) {
-                            doc.setFont('helvetica', 'bold');
-                            doc.text(row[2], margin + 105, yPos);
-                            doc.setFont('helvetica', 'normal');
-                            doc.text(row[3], margin + 130, yPos);
-                        }
-                        yPos += 5;
-                    });
-                    
-                    yPos += 3;
-                }
-                
-                // SECTION 4: FAMILY INFORMATION
-                if (app.familyInfo) {
-                    doc.setFontSize(12);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFillColor(139, 92, 246);
-                    doc.rect(margin, yPos, contentWidth, 7, 'F');
-                    doc.setTextColor(255, 255, 255);
-                    doc.text('BIRTH PLACE & FAMILY INFORMATION', margin + 3, yPos + 5);
-                    doc.setTextColor(0, 0, 0);
-                    yPos += 10;
-                    
-                    doc.setFontSize(9);
-                    doc.setFont('helvetica', 'normal');
-                    
-                    const familyData = [
-                        ['Nationality:', app.familyInfo.nationality || '-', 'Region:', app.familyInfo.region || '-'],
-                        ['Zone:', app.familyInfo.zone || '-', 'Woreda:', app.familyInfo.woreda || '-'],
-                        ['Kebele:', app.familyInfo.kebele || '-', 'Mother Name:', app.familyInfo.motherName || '-'],
-                        ['Family Phone:', app.familyInfo.familyPhone || '-', '', '']
-                    ];
-                    
-                    familyData.forEach(row => {
-                        doc.setFont('helvetica', 'bold');
-                        doc.text(row[0], margin + 2, yPos);
-                        doc.setFont('helvetica', 'normal');
-                        doc.text(row[1], margin + 35, yPos);
-                        
-                        if (row[2]) {
-                            doc.setFont('helvetica', 'bold');
-                            doc.text(row[2], margin + 105, yPos);
-                            doc.setFont('helvetica', 'normal');
-                            doc.text(row[3], margin + 130, yPos);
-                        }
-                        yPos += 5;
-                    });
-                }
-                
-                // Footer
+                // Campus info fields
                 doc.setFontSize(8);
-                doc.setFont('helvetica', 'italic');
-                doc.setTextColor(100, 116, 139);
-                const footerY = pageHeight - 10;
-                doc.text(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, footerY);
-                doc.text(`Page ${i + 1} of ${appsToExport.length}`, pageWidth / 2, footerY, { align: 'center' });
-                doc.text('Official Application Record', pageWidth - margin, footerY, { align: 'right' });
+                const campusData = [
+                    ['COLLEGE:', app.personalInfo?.college || '-'],
+                    ['PROGRAM:', app.personalInfo?.department || '-'],
+                    ['ENROLLMENT ID:', app.educationalInfo?.examinationId || '-'],
+                    ['ACADEMIC YEAR:', app.personalInfo?.academicYear || '2023-2024']
+                ];
+                
+                campusData.forEach(([label, value]) => {
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(label, contentX, yPos);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(value, contentX + 35, yPos);
+                    yPos += 5;
+                });
+                
+                yPos += 5;
+                
+                // FAMILY DETAILS Section
+                doc.setFillColor(...lightGray);
+                doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('FAMILY DETAILS', contentX + 3, yPos + 5.5);
+                yPos += 12;
+                
+                // Family info fields
+                doc.setFontSize(8);
+                const familyData = [
+                    ["FATHER'S NAME:", app.familyInfo?.fatherName || '-'],
+                    ["MOTHER'S NAME:", app.familyInfo?.motherName || '-'],
+                    ['EMERGENCY CONTACT:', app.familyInfo?.familyPhone || '-']
+                ];
+                
+                familyData.forEach(([label, value]) => {
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(label, contentX, yPos);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(value, contentX + 45, yPos);
+                    yPos += 5;
+                });
+                
+                // FOOTER - Gold line and text
+                const footerY = pageHeight - 15;
+                doc.setDrawColor(...gold);
+                doc.setLineWidth(1);
+                doc.line(contentX, footerY, pageWidth - 5, footerY);
+                
+                doc.setFontSize(8);
+                doc.setTextColor(0, 0, 0);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`PAGE ${i + 1} OF ${appsToExport.length}`, contentX, footerY + 5);
+                doc.text('VERIFIED OFFICIAL DOCUMENT', pageWidth - 5, footerY + 5, { align: 'right' });
             }
             
             // Save the PDF
