@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import API_URL from './config/api';
 
 const StudentPortal = () => {
     const [searchParams] = useSearchParams();
@@ -125,7 +126,12 @@ const StudentPortal = () => {
                 ...formData
             };
 
-            await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/applications', applicationData);
+            console.log('Submitting application to:', `${API_URL}/api/applications`);
+            console.log('Application data:', applicationData);
+
+            const response = await axios.post(`${API_URL}/api/applications`, applicationData);
+            
+            console.log('Application submitted successfully:', response.data);
 
             showNotification('Application submitted successfully! Your form has been locked and sent to admin.', 'success');
             
@@ -154,7 +160,15 @@ const StudentPortal = () => {
             }, 3000);
         } catch (error) {
             console.error('Error submitting application:', error);
-            showNotification(error.response?.data?.message || 'Failed to submit application. Please try again.', 'error');
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            
+            // Show detailed error message
+            const errorMessage = error.response?.data?.message 
+                || error.message 
+                || 'Failed to submit application. Please try again.';
+            
+            showNotification(errorMessage, 'error');
         } finally {
             setSubmitting(false);
         }
