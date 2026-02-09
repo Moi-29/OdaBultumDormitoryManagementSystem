@@ -157,10 +157,16 @@ const Applications = () => {
         }
     };
 
-    const toggleEditPermission = async (applicationId) => {
+    const toggleEditPermission = async (applicationId, event) => {
+        // Prevent any default behavior or event bubbling
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(
+            const response = await axios.patch(
                 `${API_URL}/api/applications/${applicationId}/edit-permission`,
                 {},
                 {
@@ -170,16 +176,21 @@ const Applications = () => {
                 }
             );
             
-            // Update local state
+            // Update local state with response data
             setApplications(applications.map(app => 
                 app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
             ));
+            
+            // Show success notification
+            const updatedApp = applications.find(app => app._id === applicationId);
+            const newStatus = !updatedApp.canEdit;
+            showNotification(
+                `Edit permission ${newStatus ? 'enabled' : 'disabled'} for ${updatedApp.studentName}`,
+                'success'
+            );
         } catch (error) {
             console.error('Error toggling edit permission:', error);
-            // Still update UI even if API fails (for mock data)
-            setApplications(applications.map(app => 
-                app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
-            ));
+            showNotification('Failed to toggle edit permission. Please try again.', 'error');
         }
     };
 
@@ -347,6 +358,7 @@ const Applications = () => {
                                     setSelectedIds([]);
                                 }
                             }}
+                            type="button"
                             style={{
                                 padding: '0.75rem 1.5rem',
                                 background: selectMode ? '#10b981' : '#3b82f6',
@@ -365,6 +377,7 @@ const Applications = () => {
                             <button
                                 onClick={deleteSelectedApplications}
                                 disabled={selectedIds.length === 0}
+                                type="button"
                                 style={{
                                     padding: '0.75rem 1.5rem',
                                     background: selectedIds.length === 0 ? '#9ca3af' : '#ef4444',
@@ -469,7 +482,8 @@ const Applications = () => {
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
                                         <button
-                                            onClick={() => toggleEditPermission(app._id)}
+                                            onClick={(e) => toggleEditPermission(app._id, e)}
+                                            type="button"
                                             style={{
                                                 background: 'none',
                                                 border: 'none',
@@ -493,6 +507,7 @@ const Applications = () => {
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
                                         <button
                                             onClick={() => viewDetails(app)}
+                                            type="button"
                                             style={{
                                                 padding: '0.5rem 1rem',
                                                 background: '#3b82f6',
