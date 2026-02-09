@@ -58,7 +58,7 @@ const createApplication = async (req, res) => {
 
 // @desc    Update application
 // @route   PUT /api/applications/:id
-// @access  Private (Admin or Student if canEdit is true)
+// @access  Public (if canEdit is true) or Admin
 const updateApplication = async (req, res) => {
     try {
         const application = await Application.findById(req.params.id);
@@ -67,9 +67,22 @@ const updateApplication = async (req, res) => {
             return res.status(404).json({ message: 'Application not found' });
         }
         
+        // Check if editing is allowed (either admin or canEdit is true)
+        if (!req.admin && !application.canEdit) {
+            return res.status(403).json({ 
+                message: 'You do not have permission to edit this application. Contact admin to request editing permission.' 
+            });
+        }
+        
+        // Update the application and lock it (set canEdit to false)
+        const updatedData = {
+            ...req.body,
+            canEdit: false // Lock after update
+        };
+        
         const updatedApplication = await Application.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updatedData,
             { new: true, runValidators: true }
         );
         

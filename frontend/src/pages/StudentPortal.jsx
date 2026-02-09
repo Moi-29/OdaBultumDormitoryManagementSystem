@@ -108,6 +108,11 @@ const StudentPortal = () => {
                             schoolInfo: response.data.application.schoolInfo || formData.schoolInfo,
                             familyInfo: response.data.application.familyInfo || formData.familyInfo
                         });
+                        // Store the application ID for updating
+                        setFormData(prev => ({
+                            ...prev,
+                            _id: response.data.application._id
+                        }));
                     }
                     setShowIdVerification(false);
                     setShowApplicationForm(true);
@@ -195,21 +200,35 @@ const StudentPortal = () => {
                 studentId: verificationId.toUpperCase(), // Use the verified ID
                 studentName: formData.personalInfo.fullName,
                 submittedOn: new Date().toISOString().split('T')[0],
-                canEdit: false,
+                canEdit: false, // Lock after submission
                 personalInfo: formData.personalInfo,
                 educationalInfo: formData.educationalInfo,
                 schoolInfo: formData.schoolInfo,
                 familyInfo: formData.familyInfo
             };
 
-            console.log('Submitting application to:', `${API_URL}/api/applications`);
-            console.log('Application data:', applicationData);
-
-            const response = await axios.post(`${API_URL}/api/applications`, applicationData);
+            let response;
             
-            console.log('Application submitted successfully:', response.data);
-
-            showNotification('Application submitted successfully! Your form has been locked and sent to admin.', 'success');
+            // Check if this is an update (editing existing application) or new submission
+            if (hasExistingApplication && formData._id) {
+                // UPDATE existing application
+                console.log('Updating application:', `${API_URL}/api/applications/${formData._id}`);
+                console.log('Update data:', applicationData);
+                
+                response = await axios.put(`${API_URL}/api/applications/${formData._id}`, applicationData);
+                
+                console.log('Application updated successfully:', response.data);
+                showNotification('Application updated successfully! Your changes have been saved and the form is now locked.', 'success');
+            } else {
+                // CREATE new application
+                console.log('Submitting new application to:', `${API_URL}/api/applications`);
+                console.log('Application data:', applicationData);
+                
+                response = await axios.post(`${API_URL}/api/applications`, applicationData);
+                
+                console.log('Application submitted successfully:', response.data);
+                showNotification('Application submitted successfully! Your form has been locked and sent to admin.', 'success');
+            }
             
             // Clear verification ID immediately to prevent resubmission
             setVerificationId('');

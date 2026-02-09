@@ -14,10 +14,10 @@ const { protect } = require('../middleware/authMiddleware');
 // Public routes
 router.post('/', createApplication);
 router.get('/check/:studentId', checkExistingApplication);
+router.put('/:id', updateApplication); // Allow public update if canEdit is true
 
 // Protected routes (Admin only)
 router.get('/', protect, getApplications);
-router.put('/:id', protect, updateApplication);
 router.patch('/:id/edit-permission', protect, toggleEditPermission);
 router.delete('/bulk', protect, bulkDeleteApplications);
 router.delete('/:id', protect, deleteApplication);
