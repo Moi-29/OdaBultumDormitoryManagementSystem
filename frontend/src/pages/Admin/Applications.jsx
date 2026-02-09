@@ -396,32 +396,6 @@ const Applications = () => {
             const margin = 15;
             const contentWidth = pageWidth - (margin * 2);
             
-            // University logo URL
-            const logoUrl = 'https://www.developmentaid.org/files/organizationLogos/oda-bultum-university-468233.jpg';
-            
-            // Pre-load logo once for all pages
-            let logoImage = null;
-            try {
-                logoImage = await new Promise((resolve, reject) => {
-                    const img = new Image();
-                    img.crossOrigin = 'anonymous';
-                    img.onload = () => {
-                        console.log('✓ University logo loaded successfully');
-                        resolve(img);
-                    };
-                    img.onerror = (err) => {
-                        console.warn('⚠ Logo loading failed:', err);
-                        reject(err);
-                    };
-                    img.src = logoUrl;
-                    
-                    // Timeout after 5 seconds
-                    setTimeout(() => reject(new Error('Logo load timeout')), 5000);
-                });
-            } catch (error) {
-                console.warn('Using fallback header design (logo unavailable)');
-            }
-            
             for (let i = 0; i < appsToExport.length; i++) {
                 const app = appsToExport[i];
                 
@@ -430,33 +404,6 @@ const Applications = () => {
                 }
                 
                 let yPos = margin;
-                
-                // Add logo and header
-                if (logoImage) {
-                    try {
-                        // Add logo (centered, appropriate size)
-                        const logoWidth = 30;
-                        const logoHeight = 30;
-                        const logoX = (pageWidth - logoWidth) / 2;
-                        doc.addImage(logoImage, 'JPEG', logoX, yPos, logoWidth, logoHeight);
-                        yPos += logoHeight + 5;
-                    } catch (error) {
-                        console.warn('Error adding logo to PDF:', error);
-                        yPos += 5;
-                    }
-                } else {
-                    // Fallback: decorative circle with university initials
-                    doc.setFillColor(59, 130, 246);
-                    const circleX = pageWidth / 2;
-                    const circleY = yPos + 12;
-                    doc.circle(circleX, circleY, 12, 'F');
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(14);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('OBU', circleX, circleY + 4, { align: 'center' });
-                    doc.setTextColor(0, 0, 0);
-                    yPos += 30;
-                }
                 
                 // University name
                 doc.setFontSize(18);
