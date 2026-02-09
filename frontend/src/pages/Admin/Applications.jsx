@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { ClipboardList, Eye, Lock, Unlock, X, User, GraduationCap, Home, Users, Search, Filter, Download, Trash2, CheckCircle2, Calendar, Phone, Mail, MapPin, Award, BookOpen, Building } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import { useConfirmDialog } from '../../hooks/useNotification';
 
 const Applications = () => {
+    const { confirmDialog, showConfirm } = useConfirmDialog();
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedApplication, setSelectedApplication] = useState(null);
@@ -228,9 +231,15 @@ const Applications = () => {
     const deleteSelectedApplications = async () => {
         if (selectedIds.length === 0) return;
         
-        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} application(s)? This action cannot be undone.`)) {
-            return;
-        }
+        const confirmed = await showConfirm({
+            title: 'Delete Applications',
+            message: `Are you sure you want to delete ${selectedIds.length} application(s)? This action cannot be undone.`,
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            type: 'danger'
+        });
+        
+        if (!confirmed) return;
 
         try {
             const token = localStorage.getItem('token');
@@ -371,6 +380,12 @@ const Applications = () => {
                     </button>
                 </div>
             )}
+            
+            {/* Confirm Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog {...confirmDialog} />
+            )}
+            
             <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div>
