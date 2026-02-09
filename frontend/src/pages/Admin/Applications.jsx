@@ -18,6 +18,16 @@ const Applications = () => {
     const [notification, setNotification] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
+    
+    // Export filter modal state
+    const [showExportModal, setShowExportModal] = useState(false);
+    const [exportType, setExportType] = useState(null); // 'pdf' or 'csv'
+    const [exportFilters, setExportFilters] = useState({
+        filterType: 'all', // 'all', 'batch', 'department', 'studentId', 'combined'
+        batch: '',
+        department: '',
+        studentId: ''
+    });
 
     // Show notification helper
     const showNotification = (message, type = 'success') => {
@@ -291,8 +301,92 @@ const Applications = () => {
         setShowDetailsModal(true);
     };
 
+    // Get unique batches and departments from applications
+    const getUniqueBatches = () => {
+        const batches = applications
+            .map(app => app.personalInfo?.academicYear)
+            .filter(Boolean);
+        return [...new Set(batches)].sort();
+    };
+
+    const getUniqueDepartments = () => {
+        const departments = applications
+            .map(app => app.personalInfo?.department)
+            .filter(Boolean);
+        return [...new Set(departments)].sort();
+    };
+
+    // Filter applications based on export criteria
+    const getFilteredApplications = () => {
+        let filtered = [...applications];
+
+        if (exportFilters.filterType === 'all') {
+            return filtered;
+        }
+
+        if (exportFilters.filterType === 'studentId' && exportFilters.studentId) {
+            const searchId = exportFilters.studentId.trim().toLowerCase();
+            filtered = filtered.filter(app => 
+                app.studentId?.toLowerCase().includes(searchId) ||
+                app.personalInfo?.idNo?.toLowerCase().includes(searchId)
+            );
+        } else if (exportFilters.filterType === 'batch' && exportFilters.batch) {
+            filtered = filtered.filter(app => 
+                app.personalInfo?.academicYear === exportFilters.batch
+            );
+        } else if (exportFilters.filterType === 'department' && exportFilters.department) {
+            filtered = filtered.filter(app => 
+                app.personalInfo?.department === exportFilters.department
+            );
+        } else if (exportFilters.filterType === 'combined') {
+            if (exportFilters.batch) {
+                filtered = filtered.filter(app => 
+                    app.personalInfo?.academicYear === exportFilters.batch
+                );
+            }
+            if (exportFilters.department) {
+                filtered = filtered.filter(app => 
+                    app.personalInfo?.department === exportFilters.department
+                );
+            }
+        }
+
+        return filtered;
+    };
+
+    // Open export modal
+    const openExportModal = (type) => {
+        setExportType(type);
+        setShowExportModal(true);
+        // Reset filters
+        setExportFilters({
+            filterType: 'all',
+            batch: '',
+            department: '',
+            studentId: ''
+        });
+    };
+
+    // Handle export with filters
+    const handleExportWithFilters = async () => {
+        const filteredApps = getFilteredApplications();
+
+        if (filteredApps.length === 0) {
+            showNotification('No applications match the selected filters', 'error');
+            return;
+        }
+
+        setShowExportModal(false);
+
+        if (exportType === 'pdf') {
+            await exportToPDFFiltered(filteredApps);
+        } else if (exportType === 'csv') {
+            exportToCSVFiltered(filteredApps);
+        }
+    };
+
     // Export to PDF - One full page per student with all tabs
-    const exportToPDF = async () => {
+    const exportToPDFFiltered = async (appsToExport) => {
         try {
             showNotification('Generating PDF...', 'info');
             
@@ -328,8 +422,8 @@ const Applications = () => {
                 console.warn('Using fallback header design (logo unavailable)');
             }
             
-            for (let i = 0; i < applications.length; i++) {
-                const app = applications[i];
+            for (let i = 0; i < appsToExport.length; i++) {
+                const app = appsToExport[i];
                 
                 if (i > 0) {
                     doc.addPage();
@@ -541,13 +635,13 @@ const Applications = () => {
                 doc.setTextColor(100, 116, 139);
                 const footerY = pageHeight - 10;
                 doc.text(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, footerY);
-                doc.text(`Page ${i + 1} of ${applications.length}`, pageWidth / 2, footerY, { align: 'center' });
+                doc.text(`Page ${i + 1} of ${appsToExport.length}`, pageWidth / 2, footerY, { align: 'center' });
                 doc.text('Official Application Record', pageWidth - margin, footerY, { align: 'right' });
             }
             
             // Save the PDF
             doc.save(`Applications_${new Date().toISOString().split('T')[0]}.pdf`);
-            showNotification(`Successfully exported ${applications.length} application(s) to PDF`, 'success');
+            showNotification(`Successfully exported ${appsToExport.length} application(s) to PDF`, 'success');
         } catch (error) {
             console.error('Error generating PDF:', error);
             showNotification('Failed to generate PDF. Please try again.', 'error');
@@ -555,7 +649,7 @@ const Applications = () => {
     };
 
     // Export to CSV - Complete structured dataset
-    const exportToCSV = () => {
+    const exportToCSVFiltered = (appsToExport) => {
         try {
             showNotification('Generating CSV...', 'info');
             
@@ -606,7 +700,7 @@ const Applications = () => {
             ];
             
             // Build CSV rows
-            const rows = applications.map(app => {
+            const rows = appsToExport.map(app => {
                 return [
                     // Personal Information
                     app.personalInfo?.fullName || '',
@@ -680,7 +774,7 @@ const Applications = () => {
             link.click();
             document.body.removeChild(link);
             
-            showNotification(`Successfully exported ${applications.length} application(s) to CSV`, 'success');
+            showNotification(`Successfully exported ${appsToExport.length} application(s) to CSV`, 'success');
         } catch (error) {
             console.error('Error generating CSV:', error);
             showNotification('Failed to generate CSV. Please try again.', 'error');
@@ -796,7 +890,7 @@ const Applications = () => {
                     <div style={{ display: 'flex', gap: '0.75rem' }}>
                         {/* Export Buttons */}
                         <button
-                            onClick={exportToPDF}
+                            onClick={() => openExportModal('pdf')}
                             disabled={applications.length === 0}
                             type="button"
                             style={{
@@ -832,7 +926,7 @@ const Applications = () => {
                             Export to PDF
                         </button>
                         <button
-                            onClick={exportToCSV}
+                            onClick={() => openExportModal('csv')}
                             disabled={applications.length === 0}
                             type="button"
                             style={{
@@ -1437,6 +1531,356 @@ const Applications = () => {
                             )}
                         </div>
 
+                    </div>
+                </div>
+            )}
+
+            {/* Export Filter Modal */}
+            {showExportModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        maxWidth: '600px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            background: exportType === 'pdf' 
+                                ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
+                                : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: 'white',
+                            padding: '1.5rem 2rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
+                                    Export to {exportType === 'pdf' ? 'PDF' : 'CSV'}
+                                </h2>
+                                <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
+                                    Select filters to export specific applications
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowExportModal(false)}
+                                style={{
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    color: 'white',
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div style={{ padding: '2rem', flex: 1, overflowY: 'auto' }}>
+                            {/* Filter Type Selection */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ 
+                                    display: 'block', 
+                                    marginBottom: '0.75rem', 
+                                    fontWeight: 600, 
+                                    color: '#1e293b',
+                                    fontSize: '0.95rem'
+                                }}>
+                                    Export Type
+                                </label>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    {[
+                                        { value: 'all', label: 'All Students', desc: `Export all ${applications.length} applications` },
+                                        { value: 'studentId', label: 'Specific Student', desc: 'Search by Student ID' },
+                                        { value: 'batch', label: 'By Batch', desc: 'Filter by academic year' },
+                                        { value: 'department', label: 'By Department', desc: 'Filter by department' },
+                                        { value: 'combined', label: 'Combined Filters', desc: 'Batch + Department' }
+                                    ].map(option => (
+                                        <label
+                                            key={option.value}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                padding: '1rem',
+                                                border: exportFilters.filterType === option.value 
+                                                    ? '2px solid #3b82f6' 
+                                                    : '2px solid #e5e7eb',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                                background: exportFilters.filterType === option.value 
+                                                    ? '#eff6ff' 
+                                                    : 'white'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (exportFilters.filterType !== option.value) {
+                                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (exportFilters.filterType !== option.value) {
+                                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                                }
+                                            }}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="filterType"
+                                                value={option.value}
+                                                checked={exportFilters.filterType === option.value}
+                                                onChange={(e) => setExportFilters({
+                                                    ...exportFilters,
+                                                    filterType: e.target.value,
+                                                    batch: '',
+                                                    department: '',
+                                                    studentId: ''
+                                                })}
+                                                style={{ 
+                                                    marginRight: '1rem',
+                                                    width: '18px',
+                                                    height: '18px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '0.25rem' }}>
+                                                    {option.label}
+                                                </div>
+                                                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                                                    {option.desc}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Student ID Search */}
+                            {exportFilters.filterType === 'studentId' && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.75rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Student ID
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Student ID (e.g., RU/1270/18)"
+                                        value={exportFilters.studentId}
+                                        onChange={(e) => setExportFilters({
+                                            ...exportFilters,
+                                            studentId: e.target.value
+                                        })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.875rem 1rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '10px',
+                                            fontSize: '0.95rem',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onFocus={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                                        onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Batch Selection */}
+                            {(exportFilters.filterType === 'batch' || exportFilters.filterType === 'combined') && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.75rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Academic Year (Batch)
+                                    </label>
+                                    <select
+                                        value={exportFilters.batch}
+                                        onChange={(e) => setExportFilters({
+                                            ...exportFilters,
+                                            batch: e.target.value
+                                        })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.875rem 1rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '10px',
+                                            fontSize: '0.95rem',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onFocus={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                                        onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                    >
+                                        <option value="">Select Batch</option>
+                                        {getUniqueBatches().map(batch => (
+                                            <option key={batch} value={batch}>{batch}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            {/* Department Selection */}
+                            {(exportFilters.filterType === 'department' || exportFilters.filterType === 'combined') && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.75rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Department
+                                    </label>
+                                    <select
+                                        value={exportFilters.department}
+                                        onChange={(e) => setExportFilters({
+                                            ...exportFilters,
+                                            department: e.target.value
+                                        })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.875rem 1rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '10px',
+                                            fontSize: '0.95rem',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onFocus={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                                        onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                    >
+                                        <option value="">Select Department</option>
+                                        {getUniqueDepartments().map(dept => (
+                                            <option key={dept} value={dept}>{dept}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            {/* Preview Count */}
+                            <div style={{
+                                padding: '1rem',
+                                background: '#f0f9ff',
+                                border: '2px solid #bae6fd',
+                                borderRadius: '10px',
+                                marginTop: '1.5rem'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <Filter size={18} color="#0284c7" />
+                                    <span style={{ fontWeight: 600, color: '#0c4a6e' }}>
+                                        {getFilteredApplications().length} application(s) will be exported
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            padding: '1.5rem 2rem',
+                            borderTop: '1px solid #e5e7eb',
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'flex-end'
+                        }}>
+                            <button
+                                onClick={() => setShowExportModal(false)}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    border: '2px solid #e5e7eb',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                    e.currentTarget.style.color = '#475569';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.color = '#64748b';
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleExportWithFilters}
+                                disabled={getFilteredApplications().length === 0}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    background: getFilteredApplications().length === 0 
+                                        ? '#9ca3af' 
+                                        : exportType === 'pdf'
+                                            ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
+                                            : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: getFilteredApplications().length === 0 ? 'not-allowed' : 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s',
+                                    opacity: getFilteredApplications().length === 0 ? 0.6 : 1,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (getFilteredApplications().length > 0) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (getFilteredApplications().length > 0) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                    }
+                                }}
+                            >
+                                {exportType === 'pdf' ? <FileText size={18} /> : <Download size={18} />}
+                                Export {getFilteredApplications().length} Application(s)
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
