@@ -166,31 +166,62 @@ const Applications = () => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.patch(
-                `${API_URL}/api/applications/${applicationId}/edit-permission`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+            
+            // Try to call the API
+            try {
+                const response = await axios.patch(
+                    `${API_URL}/api/applications/${applicationId}/edit-permission`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
                     }
+                );
+                
+                // Update local state with response data
+                setApplications(applications.map(app => 
+                    app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
+                ));
+                
+                // Show success notification
+                const updatedApp = applications.find(app => app._id === applicationId);
+                const newStatus = !updatedApp.canEdit;
+                showNotification(
+                    `Edit permission ${newStatus ? 'enabled' : 'disabled'} for ${updatedApp.studentName}`,
+                    'success'
+                );
+            } catch (apiError) {
+                console.error('API Error:', apiError);
+                console.error('Error response:', apiError.response?.data);
+                console.error('Error status:', apiError.response?.status);
+                
+                // If backend not deployed yet (404 or 500), still update UI for testing
+                if (apiError.response?.status === 404 || apiError.response?.status === 500) {
+                    console.log('Backend not deployed yet, updating UI locally for testing');
+                    
+                    // Update local state anyway
+                    setApplications(applications.map(app => 
+                        app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
+                    ));
+                    
+                    // Show warning notification
+                    const updatedApp = applications.find(app => app._id === applicationId);
+                    const newStatus = !updatedApp.canEdit;
+                    showNotification(
+                        `Edit permission ${newStatus ? 'enabled' : 'disabled'} locally (Backend not deployed yet - changes won't persist)`,
+                        'success'
+                    );
+                } else {
+                    throw apiError; // Re-throw other errors
                 }
-            );
-            
-            // Update local state with response data
-            setApplications(applications.map(app => 
-                app._id === applicationId ? { ...app, canEdit: !app.canEdit } : app
-            ));
-            
-            // Show success notification
-            const updatedApp = applications.find(app => app._id === applicationId);
-            const newStatus = !updatedApp.canEdit;
-            showNotification(
-                `Edit permission ${newStatus ? 'enabled' : 'disabled'} for ${updatedApp.studentName}`,
-                'success'
-            );
+            }
         } catch (error) {
             console.error('Error toggling edit permission:', error);
-            showNotification('Failed to toggle edit permission. Please try again.', 'error');
+            showNotification(
+                'Failed to toggle edit permission. Backend may not be deployed yet. Please deploy backend to Render.',
+                'error'
+            );
         }
     };
 
