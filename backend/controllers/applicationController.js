@@ -21,6 +21,20 @@ const createApplication = async (req, res) => {
     try {
         const applicationData = req.body;
         
+        // Check if application with this studentId already exists
+        if (applicationData.studentId) {
+            const existingApplication = await Application.findOne({
+                studentId: applicationData.studentId.toUpperCase()
+            });
+            
+            if (existingApplication) {
+                return res.status(409).json({ 
+                    message: 'You have already submitted an application with this Student ID. Contact admin to request editing permission.',
+                    exists: true
+                });
+            }
+        }
+        
         const application = await Application.create(applicationData);
         
         res.status(201).json({
@@ -29,6 +43,15 @@ const createApplication = async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating application:', error);
+        
+        // Handle MongoDB duplicate key error
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.studentId) {
+            return res.status(409).json({ 
+                message: 'You have already submitted an application with this Student ID. Contact admin to request editing permission.',
+                exists: true
+            });
+        }
+        
         res.status(500).json({ message: 'Server error while creating application' });
     }
 };

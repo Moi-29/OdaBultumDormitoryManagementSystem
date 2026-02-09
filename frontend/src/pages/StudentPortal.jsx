@@ -211,10 +211,13 @@ const StudentPortal = () => {
 
             showNotification('Application submitted successfully! Your form has been locked and sent to admin.', 'success');
             
+            // Clear verification ID immediately to prevent resubmission
+            setVerificationId('');
+            setHasExistingApplication(false);
+            
             // Reset form and close modal after 3 seconds
             setTimeout(() => {
                 setShowApplicationForm(false);
-                setVerificationId('');
                 setFormData({
                     personalInfo: {
                         fullName: '', idNo: '', sex: '', mealCardNo: '', college: '',
