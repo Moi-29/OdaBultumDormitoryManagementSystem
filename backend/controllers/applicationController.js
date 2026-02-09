@@ -206,12 +206,9 @@ const checkExistingApplication = async (req, res) => {
     try {
         const { studentId } = req.params;
         
-        // Find application by student ID (checking both idNo in personalInfo and studentName)
+        // Find application by student ID (case-insensitive)
         const application = await Application.findOne({
-            $or: [
-                { 'personalInfo.idNo': studentId },
-                { studentId: studentId }
-            ]
+            studentId: studentId.toUpperCase()
         });
         
         if (application) {

@@ -192,11 +192,14 @@ const StudentPortal = () => {
 
         try {
             const applicationData = {
+                studentId: verificationId.toUpperCase(), // Use the verified ID
                 studentName: formData.personalInfo.fullName,
-                schoolName: formData.schoolInfo.schoolName || 'Not provided',
                 submittedOn: new Date().toISOString().split('T')[0],
                 canEdit: false,
-                ...formData
+                personalInfo: formData.personalInfo,
+                educationalInfo: formData.educationalInfo,
+                schoolInfo: formData.schoolInfo,
+                familyInfo: formData.familyInfo
             };
 
             console.log('Submitting application to:', `${API_URL}/api/applications`);
@@ -211,6 +214,7 @@ const StudentPortal = () => {
             // Reset form and close modal after 3 seconds
             setTimeout(() => {
                 setShowApplicationForm(false);
+                setVerificationId('');
                 setFormData({
                     personalInfo: {
                         fullName: '', idNo: '', sex: '', mealCardNo: '', college: '',
@@ -237,9 +241,13 @@ const StudentPortal = () => {
             console.error('Error status:', error.response?.status);
             
             // Show detailed error message
-            const errorMessage = error.response?.data?.message 
-                || error.message 
-                || 'Failed to submit application. Please try again.';
+            let errorMessage = 'Failed to submit application. Please try again.';
+            
+            if (error.response?.status === 409 || error.response?.data?.message?.includes('duplicate')) {
+                errorMessage = 'You have already submitted an application with this Student ID.';
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
             
             showNotification(errorMessage, 'error');
         } finally {

@@ -48,10 +48,9 @@ const Applications = () => {
             const mockData = [
                 {
                     _id: '1',
+                    studentId: 'RU/1270/18',
                     studentName: 'Abebech Kebede',
-                    schoolName: 'Addis Ababa University',
                     submittedOn: '2024-05-10',
-                    status: 'Approved',
                     canEdit: false,
                     personalInfo: {
                         fullName: 'Abebech Kebede Alemu',
@@ -99,10 +98,9 @@ const Applications = () => {
                 },
                 {
                     _id: '2',
+                    studentId: 'RU/1271/18',
                     studentName: 'Addis Ketema',
-                    schoolName: 'Sec. School',
                     submittedOn: '2024-05-09',
-                    status: 'Pending',
                     canEdit: false,
                     personalInfo: {
                         fullName: 'Addis Ketema Bekele',
@@ -423,7 +421,7 @@ const Applications = () => {
                                     Student Name
                                 </th>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
-                                    School Name
+                                    Student ID
                                 </th>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
                                     Submitted On
@@ -461,8 +459,8 @@ const Applications = () => {
                                     <td style={{ padding: '1rem', fontWeight: 500 }}>
                                         {app.studentName}
                                     </td>
-                                    <td style={{ padding: '1rem', color: '#64748b' }}>
-                                        {app.schoolName}
+                                    <td style={{ padding: '1rem', color: '#3b82f6', fontWeight: 600 }}>
+                                        {app.studentId}
                                     </td>
                                     <td style={{ padding: '1rem', color: '#64748b' }}>
                                         {app.submittedOn}
