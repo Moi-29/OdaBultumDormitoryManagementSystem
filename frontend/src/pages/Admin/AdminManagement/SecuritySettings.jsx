@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Lock, Save, Shield } from 'lucide-react';
 import axios from 'axios';
+import Notification from '../../../components/Notification';
+import ConfirmDialog from '../../../components/ConfirmDialog';
+import { useNotification, useConfirmDialog } from '../../../hooks/useNotification';
 
 const SecuritySettings = () => {
+    const { notification, showNotification, hideNotification } = useNotification();
+    const { confirmDialog, showConfirm } = useConfirmDialog();
     const [settings, setSettings] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -26,7 +31,15 @@ const SecuritySettings = () => {
     };
 
     const handleSave = async () => {
-        if (!window.confirm('Are you sure you want to update security settings? This will affect all admins.')) return;
+        const confirmed = await showConfirm({
+            title: 'Update Security Settings',
+            message: 'Are you sure you want to update security settings? This will affect all admins.',
+            confirmText: 'Update',
+            cancelText: 'Cancel',
+            type: 'warning'
+        });
+        
+        if (!confirmed) return;
         
         setSaving(true);
         try {
@@ -81,6 +94,21 @@ const SecuritySettings = () => {
 
     return (
         <div>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
+            {/* Confirm Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog {...confirmDialog} />
+            )}
+            
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                     <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react';
 import { Settings as SettingsIcon, User, Lock, Bell, Database, Shield, Save, RefreshCw, Trash2, Download, Upload } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import Notification from '../../components/Notification';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import { useNotification, useConfirmDialog } from '../../hooks/useNotification';
 
 const Settings = () => {
     const { user } = useAuth();
+    const { notification, showNotification, hideNotification } = useNotification();
+    const { confirmDialog, showConfirm } = useConfirmDialog();
     const [activeTab, setActiveTab] = useState('profile');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
@@ -317,9 +322,15 @@ const Settings = () => {
     };
 
     const handleClearCache = async () => {
-        if (!window.confirm('⚠️ Are you sure you want to clear the cache?\n\nThis will:\n• Clear browser cache (localStorage)\n• Clear server-side cache\n• May temporarily slow down the system\n\nContinue?')) {
-            return;
-        }
+        const confirmed = await showConfirm({
+            title: 'Clear Cache',
+            message: '⚠️ Are you sure you want to clear the cache?\n\nThis will:\n• Clear browser cache (localStorage)\n• Clear server-side cache\n• May temporarily slow down the system\n\nContinue?',
+            confirmText: 'Clear Cache',
+            cancelText: 'Cancel',
+            type: 'warning'
+        });
+        
+        if (!confirmed) return;
         
         setLoading(true);
         try {
@@ -360,8 +371,16 @@ const Settings = () => {
             }));
             
             // Optionally reload page after 2 seconds
-            setTimeout(() => {
-                if (window.confirm('Cache cleared! Would you like to refresh the page to see the changes?')) {
+            setTimeout(async () => {
+                const reloadConfirmed = await showConfirm({
+                    title: 'Refresh Page',
+                    message: 'Cache cleared! Would you like to refresh the page to see the changes?',
+                    confirmText: 'Refresh',
+                    cancelText: 'Not Now',
+                    type: 'info'
+                });
+                
+                if (reloadConfirmed) {
                     window.location.reload();
                 }
             }, 2000);
@@ -376,6 +395,21 @@ const Settings = () => {
 
     return (
         <div style={{ animation: 'fadeIn 0.5s' }}>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
+            {/* Confirm Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog {...confirmDialog} />
+            )}
+            
             {/* Header */}
             <div style={{ marginBottom: '2rem' }}>
                 <h1 style={{ 
@@ -727,10 +761,18 @@ const Settings = () => {
                                 label="Maintenance Mode"
                                 description="Enable maintenance mode to restrict student access to the system. Admin access remains available."
                                 checked={systemSettings.maintenanceMode}
-                                onChange={(checked) => {
+                                onChange={async (checked) => {
                                     if (checked) {
                                         // Show confirmation when enabling maintenance mode
-                                        if (window.confirm('⚠️ WARNING: Enabling maintenance mode will prevent all non-admin users from accessing the system.\n\nAre you sure you want to continue?')) {
+                                        const confirmed = await showConfirm({
+                                            title: 'Enable Maintenance Mode',
+                                            message: '⚠️ WARNING: Enabling maintenance mode will prevent all non-admin users from accessing the system.\n\nAre you sure you want to continue?',
+                                            confirmText: 'Enable',
+                                            cancelText: 'Cancel',
+                                            type: 'warning'
+                                        });
+                                        
+                                        if (confirmed) {
                                             setSystemSettings({ ...systemSettings, maintenanceMode: checked });
                                         }
                                     } else {

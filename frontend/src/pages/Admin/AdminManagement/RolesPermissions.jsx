@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Users, Shield } from 'lucide-react';
 import axios from 'axios';
+import Notification from '../../../components/Notification';
+import ConfirmDialog from '../../../components/ConfirmDialog';
+import { useNotification, useConfirmDialog } from '../../../hooks/useNotification';
 
 const RolesPermissions = () => {
+    const { notification, showNotification, hideNotification } = useNotification();
+    const { confirmDialog, showConfirm } = useConfirmDialog();
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -30,7 +35,15 @@ const RolesPermissions = () => {
     };
 
     const handleDelete = async (roleId, roleName) => {
-        if (!window.confirm(`Are you sure you want to delete the role "${roleName}"?`)) return;
+        const confirmed = await showConfirm({
+            title: 'Delete Role',
+            message: `Are you sure you want to delete the role "${roleName}"?`,
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            type: 'danger'
+        });
+        
+        if (!confirmed) return;
         
         try {
             const token = localStorage.getItem('token');
@@ -49,6 +62,21 @@ const RolesPermissions = () => {
 
     return (
         <div>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
+            {/* Confirm Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog {...confirmDialog} />
+            )}
+            
             {/* Header */}
             <div style={{ 
                 display: 'flex', 
