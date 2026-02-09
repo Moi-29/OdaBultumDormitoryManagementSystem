@@ -1207,7 +1207,12 @@ const StudentPortal = () => {
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 Stream <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
-                                            <select className="input-field" style={{ width: '100%' }}>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.educationalInfo.stream}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'stream', e.target.value)}
+                                            >
                                                 <option value="">Select stream</option>
                                                 <option value="Natural Science">Natural Science</option>
                                                 <option value="Social Science">Social Science</option>
@@ -1219,7 +1224,12 @@ const StudentPortal = () => {
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 Sponsor Category <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
-                                            <select className="input-field" style={{ width: '100%' }}>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.educationalInfo.sponsorCategory}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'sponsorCategory', e.target.value)}
+                                            >
                                                 <option value="">Select category</option>
                                                 <option value="Government">Government</option>
                                                 <option value="Private">Private</option>
@@ -1234,6 +1244,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="e.g., 2015"
+                                                value={formData.educationalInfo.nationalExamYear}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'nationalExamYear', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1245,6 +1257,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="e.g., 2016"
+                                                value={formData.educationalInfo.entryYear}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'entryYear', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1256,6 +1270,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="e.g., Family"
+                                                value={formData.educationalInfo.sponsoredBy}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'sponsoredBy', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1267,6 +1283,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="e.g., D1729733"
+                                                value={formData.educationalInfo.examinationId}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'examinationId', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1275,9 +1293,41 @@ const StudentPortal = () => {
                                                 Admission Date <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <input
-                                                type="datetime-local"
+                                                type="date"
                                                 className="input-field"
+                                                value={formData.educationalInfo.admissionDate}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'admissionDate', e.target.value)}
                                                 style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Checked-In Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                className="input-field"
+                                                value={formData.educationalInfo.checkedInDate}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'checkedInDate', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                National Exam Result
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 454"
+                                                value={formData.educationalInfo.nationalExamResult}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'nationalExamResult', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                                             />
                                         </div>
                                         <div>
@@ -1321,6 +1371,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="e.g., Abdi Gudina primary school"
+                                                value={formData.schoolInfo.schoolName}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1332,6 +1384,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter region"
+                                                value={formData.schoolInfo.region}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'region', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1343,6 +1397,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter city"
+                                                value={formData.schoolInfo.city}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'city', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1354,6 +1410,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter zone"
+                                                value={formData.schoolInfo.zone}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'zone', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1361,7 +1419,12 @@ const StudentPortal = () => {
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 School Type <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
-                                            <select className="input-field" style={{ width: '100%' }}>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.schoolInfo.schoolType}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value)}
+                                            >
                                                 <option value="">Select type</option>
                                                 <option value="Public">Public</option>
                                                 <option value="Private">Private</option>
@@ -1371,10 +1434,14 @@ const StudentPortal = () => {
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                                                 Woreda
                                             </label>
-                                            <select className="input-field" style={{ width: '100%' }}>
-                                                <option value="">Select woreda</option>
-                                                <option value="BECHO(SHOA SOUTH WEST)">BECHO(SHOA SOUTH WEST)</option>
-                                            </select>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter woreda"
+                                                value={formData.schoolInfo.woreda}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
                                         </div>
                                         <div style={{ gridColumn: 'span 2' }}>
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
@@ -1385,12 +1452,16 @@ const StudentPortal = () => {
                                                     type="text"
                                                     className="input-field"
                                                     placeholder="From (e.g., 2004)"
+                                                    value={formData.schoolInfo.attendedYearFrom}
+                                                    onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value)}
                                                     style={{ width: '100%' }}
                                                 />
                                                 <input
                                                     type="text"
                                                     className="input-field"
                                                     placeholder="To (e.g., 2011)"
+                                                    value={formData.schoolInfo.attendedYearTo}
+                                                    onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value)}
                                                     style={{ width: '100%' }}
                                                 />
                                             </div>
@@ -1414,7 +1485,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="e.g., Ethiopia"
-                                                defaultValue="Ethiopia"
+                                                value={formData.familyInfo.nationality}
+                                                onChange={(e) => handleInputChange('familyInfo', 'nationality', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1426,6 +1498,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your region"
+                                                value={formData.familyInfo.region}
+                                                onChange={(e) => handleInputChange('familyInfo', 'region', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1437,6 +1511,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your zone"
+                                                value={formData.familyInfo.zone}
+                                                onChange={(e) => handleInputChange('familyInfo', 'zone', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1448,6 +1524,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your woreda"
+                                                value={formData.familyInfo.woreda}
+                                                onChange={(e) => handleInputChange('familyInfo', 'woreda', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1459,6 +1537,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your kebele"
+                                                value={formData.familyInfo.kebele}
+                                                onChange={(e) => handleInputChange('familyInfo', 'kebele', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1470,6 +1550,8 @@ const StudentPortal = () => {
                                                 type="text"
                                                 className="input-field"
                                                 placeholder="Enter your mother's name"
+                                                value={formData.familyInfo.motherName}
+                                                onChange={(e) => handleInputChange('familyInfo', 'motherName', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
@@ -1481,6 +1563,8 @@ const StudentPortal = () => {
                                                 type="tel"
                                                 className="input-field"
                                                 placeholder="Enter family phone number"
+                                                value={formData.familyInfo.familyPhone}
+                                                onChange={(e) => handleInputChange('familyInfo', 'familyPhone', e.target.value)}
                                                 style={{ width: '100%' }}
                                             />
                                         </div>
