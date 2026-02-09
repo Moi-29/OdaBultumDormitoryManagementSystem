@@ -6,12 +6,14 @@ const {
     updateApplication,
     toggleEditPermission,
     deleteApplication,
-    bulkDeleteApplications
+    bulkDeleteApplications,
+    checkExistingApplication
 } = require('../controllers/applicationController');
 const { protect } = require('../middleware/authMiddleware');
 
 // Public routes
 router.post('/', createApplication);
+router.get('/check/:studentId', checkExistingApplication);
 
 // Protected routes (Admin only)
 router.get('/', protect, getApplications);

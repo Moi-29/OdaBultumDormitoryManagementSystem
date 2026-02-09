@@ -199,11 +199,46 @@ const bulkDeleteApplications = async (req, res) => {
     }
 };
 
+// @desc    Check if student has existing application
+// @route   GET /api/applications/check/:studentId
+// @access  Public
+const checkExistingApplication = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        
+        // Find application by student ID (checking both idNo in personalInfo and studentName)
+        const application = await Application.findOne({
+            $or: [
+                { 'personalInfo.idNo': studentId },
+                { studentId: studentId }
+            ]
+        });
+        
+        if (application) {
+            res.json({
+                exists: true,
+                canEdit: application.canEdit,
+                application: application.canEdit ? application : null
+            });
+        } else {
+            res.json({
+                exists: false,
+                canEdit: false,
+                application: null
+            });
+        }
+    } catch (error) {
+        console.error('Error checking existing application:', error);
+        res.status(500).json({ message: 'Server error while checking application' });
+    }
+};
+
 module.exports = {
     getApplications,
     createApplication,
     updateApplication,
     toggleEditPermission,
     deleteApplication,
-    bulkDeleteApplications
+    bulkDeleteApplications,
+    checkExistingApplication
 };

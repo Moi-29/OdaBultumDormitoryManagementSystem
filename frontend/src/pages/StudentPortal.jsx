@@ -23,6 +23,10 @@ const StudentPortal = () => {
     const [submitting, setSubmitting] = useState(false);
     const [notification, setNotification] = useState(null);
     const [showAgreementModal, setShowAgreementModal] = useState(false);
+    const [showIdVerification, setShowIdVerification] = useState(false);
+    const [verifyingId, setVerifyingId] = useState(false);
+    const [verificationId, setVerificationId] = useState('');
+    const [hasExistingApplication, setHasExistingApplication] = useState(false);
     const navigate = useNavigate();
 
     // Application form data
@@ -76,6 +80,75 @@ const StudentPortal = () => {
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
         setTimeout(() => setNotification(null), 4000);
+    };
+
+    // Verify Student ID before showing application form
+    const handleVerifyStudentId = async () => {
+        if (!verificationId.trim()) {
+            showNotification('Please enter your Student ID', 'error');
+            return;
+        }
+
+        setVerifyingId(true);
+
+        try {
+            // Check if student has already submitted an application
+            const response = await axios.get(`${API_URL}/api/applications/check/${verificationId}`);
+            
+            if (response.data.exists) {
+                if (response.data.canEdit) {
+                    // Admin has allowed editing
+                    showNotification('You have permission to edit your application', 'success');
+                    setHasExistingApplication(true);
+                    // Pre-fill form with existing data
+                    if (response.data.application) {
+                        setFormData({
+                            personalInfo: response.data.application.personalInfo || formData.personalInfo,
+                            educationalInfo: response.data.application.educationalInfo || formData.educationalInfo,
+                            schoolInfo: response.data.application.schoolInfo || formData.schoolInfo,
+                            familyInfo: response.data.application.familyInfo || formData.familyInfo
+                        });
+                    }
+                    setShowIdVerification(false);
+                    setShowApplicationForm(true);
+                } else {
+                    // Application exists and is locked
+                    showNotification('You have already submitted an application. Contact admin to request editing permission.', 'error');
+                    setVerifyingId(false);
+                    return;
+                }
+            } else {
+                // No existing application, allow new submission
+                // Pre-fill ID in personal info
+                setFormData(prev => ({
+                    ...prev,
+                    personalInfo: {
+                        ...prev.personalInfo,
+                        idNo: verificationId
+                    }
+                }));
+                setShowIdVerification(false);
+                setShowApplicationForm(true);
+            }
+        } catch (error) {
+            console.error('Error verifying student ID:', error);
+            // If endpoint doesn't exist yet, allow access (for development)
+            if (error.response?.status === 404) {
+                setFormData(prev => ({
+                    ...prev,
+                    personalInfo: {
+                        ...prev.personalInfo,
+                        idNo: verificationId
+                    }
+                }));
+                setShowIdVerification(false);
+                setShowApplicationForm(true);
+            } else {
+                showNotification('Error verifying Student ID. Please try again.', 'error');
+            }
+        } finally {
+            setVerifyingId(false);
+        }
     };
 
     // Handle Save & Continue - Navigate to next tab
@@ -412,7 +485,7 @@ const StudentPortal = () => {
 
                     {/* Right side - Application Form Button */}
                     <button
-                        onClick={() => setShowApplicationForm(true)}
+                        onClick={() => setShowIdVerification(true)}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -932,6 +1005,175 @@ const StudentPortal = () => {
                     }
                 }
             `}</style>
+
+            {/* Student ID Verification Modal */}
+            {showIdVerification && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        maxWidth: '500px',
+                        width: '100%',
+                        padding: '2.5rem',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}>
+                        {/* Icon */}
+                        <div style={{
+                            width: '80px',
+                            height: '80px',
+                            margin: '0 auto 1.5rem',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)'
+                        }}>
+                            <User size={40} color="white" strokeWidth={2.5} />
+                        </div>
+
+                        {/* Title */}
+                        <h2 style={{
+                            fontSize: '1.75rem',
+                            fontWeight: 800,
+                            color: '#1e293b',
+                            marginBottom: '0.5rem',
+                            textAlign: 'center',
+                            letterSpacing: '-0.5px'
+                        }}>
+                            Verify Your Identity
+                        </h2>
+
+                        <p style={{
+                            color: '#64748b',
+                            fontSize: '0.95rem',
+                            textAlign: 'center',
+                            marginBottom: '2rem',
+                            lineHeight: '1.6'
+                        }}>
+                            Please enter your Student ID to access the application form
+                        </p>
+
+                        {/* Input Field */}
+                        <div style={{ marginBottom: '2rem' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '0.75rem',
+                                fontWeight: 600,
+                                color: '#1e293b',
+                                fontSize: '0.95rem'
+                            }}>
+                                Student ID <span style={{ color: '#ef4444' }}>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                value={verificationId}
+                                onChange={(e) => setVerificationId(e.target.value.toUpperCase())}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') handleVerifyStudentId();
+                                }}
+                                placeholder="e.g., UGPR1212/12 or RU/1270/18"
+                                style={{
+                                    width: '100%',
+                                    padding: '1rem',
+                                    border: '2px solid #e5e7eb',
+                                    borderRadius: '12px',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    transition: 'all 0.2s',
+                                    outline: 'none'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#10b981'}
+                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'center'
+                        }}>
+                            <button
+                                onClick={() => {
+                                    setShowIdVerification(false);
+                                    setVerificationId('');
+                                }}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleVerifyStudentId}
+                                disabled={verifyingId || !verificationId.trim()}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: 'none',
+                                    background: (verifyingId || !verificationId.trim())
+                                        ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
+                                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    borderRadius: '10px',
+                                    cursor: (verifyingId || !verificationId.trim()) ? 'not-allowed' : 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                    opacity: (verifyingId || !verificationId.trim()) ? 0.7 : 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (!verifyingId && verificationId.trim()) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!verifyingId && verificationId.trim()) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                                    }
+                                }}
+                            >
+                                {verifyingId ? 'Verifying...' : 'Continue'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Application Form Modal */}
             {showApplicationForm && (
