@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import API_URL from './config/api';
+import API_URL from '../../config/api';
 
 const StudentPortal = () => {
     const [searchParams] = useSearchParams();
