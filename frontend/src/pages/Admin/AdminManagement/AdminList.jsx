@@ -23,7 +23,7 @@ const AdminList = ({ onCreateClick }) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('http://localhost:5000/api/admin/admins', {
+            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins', {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: pagination.page,
@@ -45,7 +45,7 @@ const AdminList = ({ onCreateClick }) => {
     const fetchRoles = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('http://localhost:5000/api/admin/roles', {
+            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRoles(data.data);
@@ -59,7 +59,7 @@ const AdminList = ({ onCreateClick }) => {
         
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/admin/admins/${adminId}/suspend`, {}, {
+            await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins/${adminId}/suspend`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchAdmins();
@@ -71,7 +71,7 @@ const AdminList = ({ onCreateClick }) => {
     const handleActivate = async (adminId) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/admin/admins/${adminId}/activate`, {}, {
+            await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins/${adminId}/activate`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchAdmins();
@@ -85,7 +85,7 @@ const AdminList = ({ onCreateClick }) => {
         
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/admin/admins/${adminId}`, {
+            await axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins/${adminId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchAdmins();
@@ -97,7 +97,7 @@ const AdminList = ({ onCreateClick }) => {
     const handleResetPassword = async (newPassword) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:5000/api/admin/admins/${selectedAdmin._id}/reset-password`, 
+            await axios.post(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins/${selectedAdmin._id}/reset-password`, 
                 { newPassword },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -115,7 +115,7 @@ const AdminList = ({ onCreateClick }) => {
     const handleUpdate = async (updatedData) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/admin/admins/${selectedAdmin._id}`, 
+            await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins/${selectedAdmin._id}`, 
                 updatedData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

@@ -14,7 +14,7 @@ const SecuritySettings = () => {
     const fetchSettings = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('http://localhost:5000/api/admin/security/settings', {
+            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/security/settings', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSettings(data.data);
@@ -31,7 +31,7 @@ const SecuritySettings = () => {
         setSaving(true);
         try {
             const token = localStorage.getItem('token');
-            await axios.put('http://localhost:5000/api/admin/security/settings', settings, {
+            await axios.put('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/security/settings', settings, {
                 headers: { Authorization: `Bearer ${token}` }
             });
         } catch (error) {

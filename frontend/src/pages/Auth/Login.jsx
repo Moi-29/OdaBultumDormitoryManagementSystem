@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, LogIn, Mail, Phone } from 'lucide-react';
+import { Lock, User, LogIn } from 'lucide-react';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
@@ -90,23 +90,6 @@ const Login = () => {
                             }}>
                                 Dormitory Management System
                             </p>
-                        </div>
-                    </div>
-
-                    {/* Right side - Contact Info */}
-                    <div style={{ 
-                        display: 'flex', 
-                        gap: '1.5rem',
-                        color: 'white',
-                        fontSize: '0.9rem'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Mail size={18} />
-                            <span>info@obu.edu.et</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Phone size={18} />
-                            <span>+251-25-551-1234</span>
                         </div>
                     </div>
                 </div>

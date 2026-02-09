@@ -1,5 +1,11 @@
 node_modules
 .env
+.env.local
+.env.production
+.env.development
+.env.production.example
+*.env
+!.env.example
 npm-debug.log
 yarn-error.log
 dist/
@@ -8,3 +14,16 @@ build/
 coverage/
 .vscode/
 .idea/
+
+# Backend environment files - NEVER COMMIT THESE
+backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.production.example
+backend/.env.development
+
+# Frontend environment files - NEVER COMMIT THESE
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+frontend/.env.development

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-    Search, User, FileText, Copy, Building2, MapPin, Users, Printer, Download, ChevronDown, ChevronUp, Check
+    Search, User, FileText, Copy, Building2, MapPin, Users, Printer, Download, ChevronDown, ChevronUp, Check, X,
+    GraduationCap, Home
 } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import API_URL from '@/config/api';
 
 const StudentPortal = () => {
     const [searchParams] = useSearchParams();
@@ -16,13 +18,262 @@ const StudentPortal = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [maintenanceMode, setMaintenanceMode] = useState(false);
+    const [showApplicationForm, setShowApplicationForm] = useState(false);
+    const [activeTab, setActiveTab] = useState('personal');
+    const [submitting, setSubmitting] = useState(false);
+    const [notification, setNotification] = useState(null);
+    const [showAgreementModal, setShowAgreementModal] = useState(false);
+    const [showIdVerification, setShowIdVerification] = useState(false);
+    const [verifyingId, setVerifyingId] = useState(false);
+    const [verificationId, setVerificationId] = useState('');
+    const [hasExistingApplication, setHasExistingApplication] = useState(false);
     const navigate = useNavigate();
+
+    // Application form data
+    const [formData, setFormData] = useState({
+        personalInfo: {
+            fullName: '',
+            idNo: '',
+            sex: '',
+            mealCardNo: '',
+            college: '',
+            department: '',
+            academicYear: '',
+            dormNo: '',
+            phone: '',
+            religious: '',
+            nation: ''
+        },
+        educationalInfo: {
+            stream: '',
+            sponsorCategory: '',
+            nationalExamYear: '',
+            entryYear: '',
+            sponsoredBy: '',
+            examinationId: '',
+            admissionDate: '',
+            checkedInDate: '',
+            nationalExamResult: ''
+        },
+        schoolInfo: {
+            schoolName: '',
+            region: '',
+            city: '',
+            zone: '',
+            schoolType: '',
+            woreda: '',
+            attendedYearFrom: '',
+            attendedYearTo: ''
+        },
+        familyInfo: {
+            nationality: '',
+            region: '',
+            zone: '',
+            woreda: '',
+            kebele: '',
+            motherName: '',
+            familyPhone: ''
+        }
+    });
+
+    // Show notification helper
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 4000);
+    };
+
+    // Verify Student ID before showing application form
+    const handleVerifyStudentId = async () => {
+        if (!verificationId.trim()) {
+            showNotification('Please enter your Student ID', 'error');
+            return;
+        }
+
+        setVerifyingId(true);
+
+        try {
+            // Check if student has already submitted an application
+            const response = await axios.get(`${API_URL}/api/applications/check/${verificationId}`);
+            
+            if (response.data.exists) {
+                if (response.data.canEdit) {
+                    // Admin has allowed editing
+                    showNotification('You have permission to edit your application', 'success');
+                    setHasExistingApplication(true);
+                    // Pre-fill form with existing data
+                    if (response.data.application) {
+                        setFormData({
+                            personalInfo: response.data.application.personalInfo || formData.personalInfo,
+                            educationalInfo: response.data.application.educationalInfo || formData.educationalInfo,
+                            schoolInfo: response.data.application.schoolInfo || formData.schoolInfo,
+                            familyInfo: response.data.application.familyInfo || formData.familyInfo
+                        });
+                    }
+                    setShowIdVerification(false);
+                    setShowApplicationForm(true);
+                } else {
+                    // Application exists and is locked
+                    showNotification('You have already submitted an application. Contact admin to request editing permission.', 'error');
+                    setVerifyingId(false);
+                    return;
+                }
+            } else {
+                // No existing application, allow new submission
+                // Pre-fill ID in personal info
+                setFormData(prev => ({
+                    ...prev,
+                    personalInfo: {
+                        ...prev.personalInfo,
+                        idNo: verificationId
+                    }
+                }));
+                setShowIdVerification(false);
+                setShowApplicationForm(true);
+            }
+        } catch (error) {
+            console.error('Error verifying student ID:', error);
+            // If endpoint doesn't exist yet, allow access (for development)
+            if (error.response?.status === 404) {
+                setFormData(prev => ({
+                    ...prev,
+                    personalInfo: {
+                        ...prev.personalInfo,
+                        idNo: verificationId
+                    }
+                }));
+                setShowIdVerification(false);
+                setShowApplicationForm(true);
+            } else {
+                showNotification('Error verifying Student ID. Please try again.', 'error');
+            }
+        } finally {
+            setVerifyingId(false);
+        }
+    };
+
+    // Handle Save & Continue - Navigate to next tab
+    const handleSaveAndContinue = () => {
+        const tabs = ['personal', 'educational', 'school', 'family'];
+        const currentIndex = tabs.indexOf(activeTab);
+        
+        // Validate current tab's required fields
+        if (activeTab === 'personal') {
+            const requiredFields = [
+                { field: 'fullName', label: 'Full Name' },
+                { field: 'idNo', label: 'ID No.' },
+                { field: 'sex', label: 'Sex' },
+                { field: 'college', label: 'College' },
+                { field: 'department', label: 'Department' },
+                { field: 'academicYear', label: 'Academic Year' },
+                { field: 'phone', label: 'Phone Number' }
+            ];
+
+            for (const { field, label } of requiredFields) {
+                if (!formData.personalInfo[field]) {
+                    showNotification(`Please fill in ${label}`, 'error');
+                    return;
+                }
+            }
+        }
+
+        // If on last tab, show agreement modal
+        if (currentIndex === tabs.length - 1) {
+            setShowAgreementModal(true);
+        } else {
+            // Move to next tab
+            setActiveTab(tabs[currentIndex + 1]);
+        }
+    };
+
+    // Handle final form submission after agreement
+    const handleFinalSubmit = async () => {
+        setShowAgreementModal(false);
+        setSubmitting(true);
+
+        try {
+            const applicationData = {
+                studentId: verificationId.toUpperCase(), // Use the verified ID
+                studentName: formData.personalInfo.fullName,
+                submittedOn: new Date().toISOString().split('T')[0],
+                canEdit: false,
+                personalInfo: formData.personalInfo,
+                educationalInfo: formData.educationalInfo,
+                schoolInfo: formData.schoolInfo,
+                familyInfo: formData.familyInfo
+            };
+
+            console.log('Submitting application to:', `${API_URL}/api/applications`);
+            console.log('Application data:', applicationData);
+
+            const response = await axios.post(`${API_URL}/api/applications`, applicationData);
+            
+            console.log('Application submitted successfully:', response.data);
+
+            showNotification('Application submitted successfully! Your form has been locked and sent to admin.', 'success');
+            
+            // Clear verification ID immediately to prevent resubmission
+            setVerificationId('');
+            setHasExistingApplication(false);
+            
+            // Reset form and close modal after 3 seconds
+            setTimeout(() => {
+                setShowApplicationForm(false);
+                setFormData({
+                    personalInfo: {
+                        fullName: '', idNo: '', sex: '', mealCardNo: '', college: '',
+                        department: '', academicYear: '', dormNo: '', phone: '', religious: '', nation: ''
+                    },
+                    educationalInfo: {
+                        stream: '', sponsorCategory: '', nationalExamYear: '', entryYear: '',
+                        sponsoredBy: '', examinationId: '', admissionDate: '', checkedInDate: '', nationalExamResult: ''
+                    },
+                    schoolInfo: {
+                        schoolName: '', region: '', city: '', zone: '', schoolType: '',
+                        woreda: '', attendedYearFrom: '', attendedYearTo: ''
+                    },
+                    familyInfo: {
+                        nationality: '', region: '', zone: '', woreda: '', kebele: '',
+                        motherName: '', familyPhone: ''
+                    }
+                });
+                setActiveTab('personal');
+            }, 3000);
+        } catch (error) {
+            console.error('Error submitting application:', error);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            
+            // Show detailed error message
+            let errorMessage = 'Failed to submit application. Please try again.';
+            
+            if (error.response?.status === 409 || error.response?.data?.message?.includes('duplicate')) {
+                errorMessage = 'You have already submitted an application with this Student ID.';
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+            
+            showNotification(errorMessage, 'error');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    // Handle form input changes
+    const handleInputChange = (section, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [section]: {
+                ...prev[section],
+                [field]: value
+            }
+        }));
+    };
 
     // Check maintenance mode
     useEffect(() => {
         const checkMaintenanceMode = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/settings');
+                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings');
                 if (response.data) {
                     setMaintenanceMode(response.data.maintenanceMode);
                 }
@@ -46,7 +297,7 @@ const StudentPortal = () => {
         setLoading(true);
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/students/lookup', {
+            const { data } = await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/students/lookup', {
                 studentId
             });
 
@@ -101,8 +352,93 @@ const StudentPortal = () => {
             minHeight: '100vh',
             fontFamily: '"Inter", sans-serif',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative'
         }}>
+            {/* Premium Notification */}
+            {notification && (
+                <div style={{
+                    position: 'fixed',
+                    top: '2rem',
+                    right: '2rem',
+                    zIndex: 10001,
+                    minWidth: '320px',
+                    maxWidth: '500px',
+                    background: notification.type === 'success' 
+                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                        : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    color: 'white',
+                    padding: '1.25rem 1.5rem',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    animation: 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                    <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                    }}>
+                        {notification.type === 'success' ? (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        ) : (
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ 
+                            fontWeight: 700, 
+                            fontSize: '1rem', 
+                            marginBottom: '0.25rem',
+                            letterSpacing: '-0.2px'
+                        }}>
+                            {notification.type === 'success' ? 'Success!' : 'Error'}
+                        </div>
+                        <div style={{ 
+                            fontSize: '0.9rem', 
+                            opacity: 0.95,
+                            lineHeight: '1.4'
+                        }}>
+                            {notification.message}
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setNotification(null)}
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: 'none',
+                            color: 'white',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    >
+                        <X size={16} />
+                    </button>
+                </div>
+            )}
             {/* Header */}
             <header style={{
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -158,22 +494,38 @@ const StudentPortal = () => {
                         </div>
                     </div>
 
-                    {/* Right side - Contact Info */}
-                    <div style={{ 
-                        display: 'flex', 
-                        gap: '1.5rem',
-                        color: 'white',
-                        fontSize: '0.9rem'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <User size={18} />
-                            <span>info@obu.edu.et</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <FileText size={18} />
-                            <span>+251-25-551-1234</span>
-                        </div>
-                    </div>
+                    {/* Right side - Application Form Button */}
+                    <button
+                        onClick={() => setShowIdVerification(true)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.6rem 1.5rem',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: '2px solid rgba(255, 255, 255, 0.3)',
+                            borderRadius: '8px',
+                            color: 'white',
+                            fontSize: '0.95rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                            backdropFilter: 'blur(10px)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                        }}
+                    >
+                        <FileText size={18} />
+                        Application Form
+                    </button>
                 </div>
             </header>
 
@@ -232,7 +584,6 @@ const StudentPortal = () => {
                         <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div style={{ textAlign: 'left' }}>
                                 <label style={{
-                                    display: 'block',
                                     marginBottom: '0.5rem',
                                     color: '#b49000', // Gold/Dark Yellow
                                     fontSize: '0.9rem',
@@ -665,6 +1016,1024 @@ const StudentPortal = () => {
                     }
                 }
             `}</style>
+
+            {/* Student ID Verification Modal */}
+            {showIdVerification && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        maxWidth: '500px',
+                        width: '100%',
+                        padding: '2.5rem',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}>
+                        {/* Icon */}
+                        <div style={{
+                            width: '80px',
+                            height: '80px',
+                            margin: '0 auto 1.5rem',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)'
+                        }}>
+                            <User size={40} color="white" strokeWidth={2.5} />
+                        </div>
+
+                        {/* Title */}
+                        <h2 style={{
+                            fontSize: '1.75rem',
+                            fontWeight: 800,
+                            color: '#1e293b',
+                            marginBottom: '0.5rem',
+                            textAlign: 'center',
+                            letterSpacing: '-0.5px'
+                        }}>
+                            Verify Your Identity
+                        </h2>
+
+                        <p style={{
+                            color: '#64748b',
+                            fontSize: '0.95rem',
+                            textAlign: 'center',
+                            marginBottom: '2rem',
+                            lineHeight: '1.6'
+                        }}>
+                            Please enter your Student ID to access the application form
+                        </p>
+
+                        {/* Input Field */}
+                        <div style={{ marginBottom: '2rem' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '0.75rem',
+                                fontWeight: 600,
+                                color: '#1e293b',
+                                fontSize: '0.95rem'
+                            }}>
+                                Student ID <span style={{ color: '#ef4444' }}>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                value={verificationId}
+                                onChange={(e) => setVerificationId(e.target.value.toUpperCase())}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') handleVerifyStudentId();
+                                }}
+                                placeholder="e.g., UGPR1212/12 or RU/1270/18"
+                                style={{
+                                    width: '100%',
+                                    padding: '1rem',
+                                    border: '2px solid #e5e7eb',
+                                    borderRadius: '12px',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    transition: 'all 0.2s',
+                                    outline: 'none'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#10b981'}
+                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'center'
+                        }}>
+                            <button
+                                onClick={() => {
+                                    setShowIdVerification(false);
+                                    setVerificationId('');
+                                }}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleVerifyStudentId}
+                                disabled={verifyingId || !verificationId.trim()}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: 'none',
+                                    background: (verifyingId || !verificationId.trim())
+                                        ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
+                                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    borderRadius: '10px',
+                                    cursor: (verifyingId || !verificationId.trim()) ? 'not-allowed' : 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                    opacity: (verifyingId || !verificationId.trim()) ? 0.7 : 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (!verifyingId && verificationId.trim()) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!verifyingId && verificationId.trim()) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                                    }
+                                }}
+                            >
+                                {verifyingId ? 'Verifying...' : 'Continue'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Application Form Modal */}
+            {showApplicationForm && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '16px',
+                        maxWidth: '1200px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: 'white',
+                            padding: '1.5rem 2rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
+                                Dormitory Application Form
+                            </h2>
+                            <button
+                                onClick={() => setShowApplicationForm(false)}
+                                style={{
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    color: 'white',
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Tabs */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '0.5rem',
+                            padding: '1rem 2rem 0',
+                            borderBottom: '2px solid #e5e7eb',
+                            overflowX: 'auto',
+                            backgroundColor: '#f9fafb'
+                        }}>
+                            {[
+                                { id: 'personal', label: 'Personal', icon: <User size={18} /> },
+                                { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} /> },
+                                { id: 'school', label: 'School', icon: <Home size={18} /> },
+                                { id: 'family', label: 'Family', icon: <Users size={18} /> }
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        padding: '0.75rem 1.25rem',
+                                        border: 'none',
+                                        background: activeTab === tab.id ? '#10b981' : 'transparent',
+                                        color: activeTab === tab.id ? 'white' : '#64748b',
+                                        borderRadius: '8px 8px 0 0',
+                                        cursor: 'pointer',
+                                        fontWeight: activeTab === tab.id ? 600 : 500,
+                                        fontSize: '0.9rem',
+                                        transition: 'all 0.2s',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {tab.icon}
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Tab Content */}
+                        <div style={{
+                            flex: 1,
+                            overflowY: 'auto',
+                            padding: '2rem'
+                        }}>
+                            {/* Personal Tab */}
+                            {activeTab === 'personal' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                                        I. Please fill your Full Information
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Full Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your full name"
+                                                value={formData.personalInfo.fullName}
+                                                onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                ID No. <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your ID number"
+                                                value={formData.personalInfo.idNo}
+                                                onChange={(e) => handleInputChange('personalInfo', 'idNo', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Sex <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.personalInfo.sex}
+                                                onChange={(e) => handleInputChange('personalInfo', 'sex', e.target.value)}
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Meal card No.
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter meal card number"
+                                                value={formData.personalInfo.mealCardNo}
+                                                onChange={(e) => handleInputChange('personalInfo', 'mealCardNo', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                College <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your college"
+                                                value={formData.personalInfo.college}
+                                                onChange={(e) => handleInputChange('personalInfo', 'college', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Department <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your department"
+                                                value={formData.personalInfo.department}
+                                                onChange={(e) => handleInputChange('personalInfo', 'department', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Academic Year <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 3rd Year"
+                                                value={formData.personalInfo.academicYear}
+                                                onChange={(e) => handleInputChange('personalInfo', 'academicYear', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Dorm No.
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter dorm number"
+                                                value={formData.personalInfo.dormNo}
+                                                onChange={(e) => handleInputChange('personalInfo', 'dormNo', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Your Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                className="input-field"
+                                                placeholder="+251911234567"
+                                                value={formData.personalInfo.phone}
+                                                onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Religious
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your religion"
+                                                value={formData.personalInfo.religious}
+                                                onChange={(e) => handleInputChange('personalInfo', 'religious', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Your Nation
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your nationality"
+                                                value={formData.personalInfo.nation}
+                                                onChange={(e) => handleInputChange('personalInfo', 'nation', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Educational Tab */}
+                            {activeTab === 'educational' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                        Campus Related Information
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Stream <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.educationalInfo.stream}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'stream', e.target.value)}
+                                            >
+                                                <option value="">Select stream</option>
+                                                <option value="Natural Science">Natural Science</option>
+                                                <option value="Social Science">Social Science</option>
+                                                <option value="Engineering">Engineering</option>
+                                                <option value="Health Science">Health Science</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Sponsor Category <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.educationalInfo.sponsorCategory}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'sponsorCategory', e.target.value)}
+                                            >
+                                                <option value="">Select category</option>
+                                                <option value="Government">Government</option>
+                                                <option value="Private">Private</option>
+                                                <option value="Self-Sponsored">Self-Sponsored</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                National Exam Year (EC) <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 2015"
+                                                value={formData.educationalInfo.nationalExamYear}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'nationalExamYear', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Entry Year <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 2016"
+                                                value={formData.educationalInfo.entryYear}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'entryYear', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Sponsored By
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Family"
+                                                value={formData.educationalInfo.sponsoredBy}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'sponsoredBy', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Examination ID
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., D1729733"
+                                                value={formData.educationalInfo.examinationId}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'examinationId', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Admission Date <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="date"
+                                                className="input-field"
+                                                value={formData.educationalInfo.admissionDate}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'admissionDate', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Checked-In Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                className="input-field"
+                                                value={formData.educationalInfo.checkedInDate}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'checkedInDate', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                National Exam Result
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., 454"
+                                                value={formData.educationalInfo.nationalExamResult}
+                                                onChange={(e) => handleInputChange('educationalInfo', 'nationalExamResult', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* School Tab */}
+                            {activeTab === 'school' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                        Primary School
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                School Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Abdi Gudina primary school"
+                                                value={formData.schoolInfo.schoolName}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Region
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter region"
+                                                value={formData.schoolInfo.region}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'region', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                City
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter city"
+                                                value={formData.schoolInfo.city}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'city', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Zone
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter zone"
+                                                value={formData.schoolInfo.zone}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'zone', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                School Type <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <select 
+                                                className="input-field" 
+                                                style={{ width: '100%' }}
+                                                value={formData.schoolInfo.schoolType}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value)}
+                                            >
+                                                <option value="">Select type</option>
+                                                <option value="Public">Public</option>
+                                                <option value="Private">Private</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Woreda
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter woreda"
+                                                value={formData.schoolInfo.woreda}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div style={{ gridColumn: 'span 2' }}>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Attended Year (From - To E.C)
+                                            </label>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                <input
+                                                    type="text"
+                                                    className="input-field"
+                                                    placeholder="From (e.g., 2004)"
+                                                    value={formData.schoolInfo.attendedYearFrom}
+                                                    onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value)}
+                                                    style={{ width: '100%' }}
+                                                />
+                                                <input
+                                                    type="text"
+                                                    className="input-field"
+                                                    placeholder="To (e.g., 2011)"
+                                                    value={formData.schoolInfo.attendedYearTo}
+                                                    onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value)}
+                                                    style={{ width: '100%' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Family Tab */}
+                            {activeTab === 'family' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                                        II. Please fill your Birth place and Your Family Information
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Nationality <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Ethiopia"
+                                                value={formData.familyInfo.nationality}
+                                                onChange={(e) => handleInputChange('familyInfo', 'nationality', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Region <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your region"
+                                                value={formData.familyInfo.region}
+                                                onChange={(e) => handleInputChange('familyInfo', 'region', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Zone
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your zone"
+                                                value={formData.familyInfo.zone}
+                                                onChange={(e) => handleInputChange('familyInfo', 'zone', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Woreda (district)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your woreda"
+                                                value={formData.familyInfo.woreda}
+                                                onChange={(e) => handleInputChange('familyInfo', 'woreda', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Kebele
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your kebele"
+                                                value={formData.familyInfo.kebele}
+                                                onChange={(e) => handleInputChange('familyInfo', 'kebele', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Your Mother Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter your mother's name"
+                                                value={formData.familyInfo.motherName}
+                                                onChange={(e) => handleInputChange('familyInfo', 'motherName', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Family Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                className="input-field"
+                                                placeholder="Enter family phone number"
+                                                value={formData.familyInfo.familyPhone}
+                                                onChange={(e) => handleInputChange('familyInfo', 'familyPhone', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            padding: '1.5rem 2rem',
+                            borderTop: '1px solid #e5e7eb',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            gap: '1rem',
+                            backgroundColor: '#f9fafb'
+                        }}>
+                            <button
+                                onClick={() => {
+                                    setShowApplicationForm(false);
+                                    setActiveTab('personal');
+                                }}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.borderColor = '#cbd5e1'}
+                                onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveAndContinue}
+                                disabled={submitting}
+                                style={{
+                                    padding: '0.75rem 2rem',
+                                    border: 'none',
+                                    background: submitting 
+                                        ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
+                                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    borderRadius: '8px',
+                                    cursor: submitting ? 'not-allowed' : 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                    opacity: submitting ? 0.7 : 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (!submitting) e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                {activeTab === 'family' ? 'Review & Submit' : 'Save & Continue'}
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Agreement Modal */}
+            {showAgreementModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10001,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        maxWidth: '500px',
+                        width: '100%',
+                        padding: '2.5rem',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        textAlign: 'center'
+                    }}>
+                        {/* Handshake Icon */}
+                        <div style={{
+                            width: '100px',
+                            height: '100px',
+                            margin: '0 auto 1.5rem',
+                            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 10px 25px rgba(245, 158, 11, 0.3)'
+                        }}>
+                            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+
+                        {/* Warning Title */}
+                        <h2 style={{
+                            fontSize: '1.75rem',
+                            fontWeight: 800,
+                            color: '#1e293b',
+                            marginBottom: '1rem',
+                            letterSpacing: '-0.5px'
+                        }}>
+                            Final Agreement
+                        </h2>
+
+                        {/* Warning Message */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                            border: '2px solid #f59e0b',
+                            borderRadius: '12px',
+                            padding: '1.5rem',
+                            marginBottom: '2rem',
+                            textAlign: 'left'
+                        }}>
+                            <div style={{
+                                display: 'flex',
+                                gap: '1rem',
+                                alignItems: 'start'
+                            }}>
+                                <div style={{
+                                    flexShrink: 0,
+                                    width: '24px',
+                                    height: '24px',
+                                    background: '#f59e0b',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginTop: '2px'
+                                }}>
+                                    <span style={{ color: 'white', fontWeight: 'bold', fontSize: '1.1rem' }}>!</span>
+                                </div>
+                                <div>
+                                    <p style={{
+                                        color: '#92400e',
+                                        fontSize: '0.95rem',
+                                        lineHeight: '1.6',
+                                        margin: 0,
+                                        fontWeight: 600
+                                    }}>
+                                        <strong>Important Notice:</strong>
+                                    </p>
+                                    <p style={{
+                                        color: '#92400e',
+                                        fontSize: '0.9rem',
+                                        lineHeight: '1.6',
+                                        margin: '0.5rem 0 0 0'
+                                    }}>
+                                        Once you submit this application, you will <strong>NOT be able to edit</strong> any information unless an administrator grants you permission. Please review all your information carefully before proceeding.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'center'
+                        }}>
+                            <button
+                                onClick={() => setShowAgreementModal(false)}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                Go Back
+                            </button>
+                            <button
+                                onClick={handleFinalSubmit}
+                                disabled={submitting}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: 'none',
+                                    background: submitting
+                                        ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
+                                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    borderRadius: '10px',
+                                    cursor: submitting ? 'not-allowed' : 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                    opacity: submitting ? 0.7 : 1
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (!submitting) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!submitting) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                                    }
+                                }}
+                            >
+                                {submitting ? 'Submitting...' : 'I Agree & Submit'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

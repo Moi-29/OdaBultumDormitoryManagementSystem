@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Filter, Building, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import API_URL from '../config/api';
 
 const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -35,7 +36,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         if (importing && importProgress.show) {
             pollInterval = setInterval(async () => {
                 try {
-                    const { data: students } = await axios.get('/api/students');
+                    const { data: students } = await axios.get(`${API_URL}/api/students`);
                     const currentCount = students.length;
                     
                     setImportProgress(prev => {
@@ -65,7 +66,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         if (allocating && allocationProgress.show) {
             pollInterval = setInterval(async () => {
                 try {
-                    const { data: students } = await axios.get('/api/students');
+                    const { data: students } = await axios.get(`${API_URL}/api/students`);
                     const allocatedStudents = students.filter(s => s.room);
                     const currentAllocated = allocatedStudents.length;
                     
@@ -136,7 +137,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         const fetchFilters = async () => {
             try {
                 // Fetch buildings and blocks from rooms
-                const { data: rooms } = await axios.get('/api/dorms');
+                const { data: rooms } = await axios.get(`${API_URL}/api/dorms`);
                 setRoomsData(rooms); // Store rooms data
 
                 const buildings = [...new Set(rooms.map(r => r.building))].sort();
@@ -147,7 +148,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                 setFilteredBlocks(blocks); // Initialize filtered blocks with all blocks
 
                 // Fetch departments from students
-                const { data: students } = await axios.get('/api/students');
+                const { data: students } = await axios.get(`${API_URL}/api/students`);
                 const departments = [...new Set(students.map(s => s.department))].sort();
                 setAvailableDepartments(departments);
             } catch (e) {
@@ -244,7 +245,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         // Get initial student count
         let initialCount = 0;
         try {
-            const { data: students } = await axios.get('/api/students');
+            const { data: students } = await axios.get(`${API_URL}/api/students`);
             initialCount = students.length;
         } catch (err) {
             console.error('Error getting initial count:', err);
@@ -266,7 +267,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         try {
             console.log('📤 Uploading file:', selectedFile.name);
             
-            const { data } = await axios.post('/api/students/import', formData, {
+            const { data } = await axios.post(`${API_URL}/api/students/import`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -288,7 +289,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             // Get final count
             let finalCount = initialCount + data.imported;
             try {
-                const { data: students } = await axios.get('/api/students');
+                const { data: students } = await axios.get(`${API_URL}/api/students`);
                 finalCount = students.length;
             } catch (err) {
                 console.error('Error getting final count:', err);
@@ -345,7 +346,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
         let initialAllocated = 0;
         let totalUnallocated = 0;
         try {
-            const { data: students } = await axios.get('/api/students');
+            const { data: students } = await axios.get(`${API_URL}/api/students`);
             initialAllocated = students.filter(s => s.room).length;
             totalUnallocated = students.filter(s => !s.room).length;
         } catch (err) {
@@ -374,8 +375,9 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             };
 
             console.log('🚀 Starting allocation with payload:', payload);
+            console.log('🔗 Allocate URL:', `${API_URL}/api/dorms/allocate`);
             
-            const { data } = await axios.post('/api/dorms/allocate', payload);
+            const { data } = await axios.post(`${API_URL}/api/dorms/allocate`, payload);
             
             console.log('✅ Allocation response:', data);
             
@@ -391,7 +393,7 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
             let femalesAllocated = data.details?.femalesAllocated || 0;
             
             try {
-                const { data: students } = await axios.get('/api/students');
+                const { data: students } = await axios.get(`${API_URL}/api/students`);
                 const allocated = students.filter(s => s.room);
                 finalAllocated = allocated.length;
                 malesAllocated = allocated.filter(s => s.gender === 'M').length;

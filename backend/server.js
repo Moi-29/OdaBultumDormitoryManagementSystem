@@ -30,12 +30,125 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Database Connection
-connectDB();
+// Database Connection and Auto-seed
+const initializeDatabase = async () => {
+    try {
+        await connectDB();
+        console.log('🔍 Checking if database needs seeding...');
+        
+        // Wait a bit for connection to stabilize
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Check if admin data exists
+        const Admin = require('./models/Admin');
+        const adminCount = await Admin.countDocuments();
+        
+        console.log(`📊 Found ${adminCount} admins in database`);
+        
+        if (adminCount === 0) {
+            console.log('📦 Database is empty. Starting auto-seed...');
+            const seedAdmin = require('./seedAdminSystem');
+            await seedAdmin();
+            console.log('✅ Admin system seeded successfully!');
+        } else {
+            console.log('✅ Admin data exists. Skipping admin seed.');
+        }
+        
+        // Check if student/room data exists
+        const Student = require('./models/Student');
+        const Room = require('./models/Room');
+        const studentCount = await Student.countDocuments();
+        const roomCount = await Room.countDocuments();
+        
+        console.log(`📊 Found ${studentCount} students and ${roomCount} rooms in database`);
+        
+        if (studentCount === 0 && roomCount === 0) {
+            console.log('📦 No students/rooms found. Seeding sample data...');
+            const seedData = require('./seeder');
+            await seedData(false); // false = don't exit process
+            console.log('✅ Sample students and rooms seeded successfully!');
+        } else {
+            console.log('✅ Student/room data exists. Skipping data seed.');
+        }
+    } catch (error) {
+        console.error('❌ Database initialization error:', error);
+    }
+};
+
+// Initialize database
+initializeDatabase();
 
 // Routes Placeholder
 app.get('/', (req, res) => {
-    res.send('API is running...');
+    res.send('API is running... v1.0');
+});
+
+// Manual seed endpoint (for production setup)
+app.get('/seed-database', async (req, res) => {
+    try {
+        const Admin = require('./models/Admin');
+        const adminCount = await Admin.countDocuments();
+        
+        if (adminCount > 0) {
+            return res.json({ 
+                success: false, 
+                message: `Database already has ${adminCount} admins. Seeding skipped.` 
+            });
+        }
+        
+        const seedAdmin = require('./seedAdminSystem');
+        await seedAdmin();
+        
+        res.json({ 
+            success: true, 
+            message: 'Database seeded successfully! Login with username: admin, password: password123' 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: 'Seeding failed: ' + error.message 
+        });
+    }
+});
+
+// Check admins endpoint (for debugging)
+app.get('/check-admins', async (req, res) => {
+    try {
+        const Admin = require('./models/Admin');
+        const admins = await Admin.find({}).select('email fullName status');
+        res.json({ 
+            success: true, 
+            count: admins.length,
+            admins: admins 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
+});
+
+// Check students endpoint (for debugging)
+app.get('/check-students', async (req, res) => {
+    try {
+        const Student = require('./models/Student');
+        const Room = require('./models/Room');
+        const students = await Student.find({});
+        const rooms = await Room.find({});
+        res.json({ 
+            success: true, 
+            studentCount: students.length,
+            roomCount: rooms.length,
+            students: students.slice(0, 5), // First 5 students
+            rooms: rooms.slice(0, 5) // First 5 rooms
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
 });
 
 // Define Routes
@@ -46,6 +159,7 @@ app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/backup', require('./routes/backupRoutes'));
 app.use('/api/cache', require('./routes/cacheRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/applications', require('./routes/applicationRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
