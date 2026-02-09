@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ClipboardList, Eye, Lock, Unlock, X, User, GraduationCap, Home, Users } from 'lucide-react';
+import { ClipboardList, Eye, Lock, Unlock, X, User, GraduationCap, Home, Users, Search, Filter, Download, Trash2, CheckCircle2, Calendar, Phone, Mail, MapPin, Award, BookOpen, Building } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 
@@ -12,6 +12,8 @@ const Applications = () => {
     const [selectMode, setSelectMode] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
     const [notification, setNotification] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('all');
 
     // Show notification helper
     const showNotification = (message, type = 'success') => {
