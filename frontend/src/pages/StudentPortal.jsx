@@ -1328,33 +1328,6 @@ const StudentPortal = () => {
                                     </div>
                                 </div>
                             )}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
-                                                Checked-In Date
-                                            </label>
-                                            <input
-                                                type="date"
-                                                className="input-field"
-                                                placeholder="mm/dd/yyyy"
-                                                style={{ width: '100%' }}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
-                                                National Exam Result
-                                            </label>
-                                            <input
-                                                type="number"
-                                                className="input-field"
-                                                placeholder="e.g., 454"
-                                                style={{ width: '100%' }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
                             {/* School Tab */}
                             {activeTab === 'school' && (
@@ -1571,7 +1544,6 @@ const StudentPortal = () => {
                                     </div>
                                 </div>
                             )}
-                        </div>
 
                         {/* Modal Footer */}
                         <div style={{
@@ -1630,6 +1602,7 @@ const StudentPortal = () => {
                             >
                                 {activeTab === 'family' ? 'Review & Submit' : 'Save & Continue'}
                             </button>
+                        </div>
                         </div>
                     </div>
                 </div>
