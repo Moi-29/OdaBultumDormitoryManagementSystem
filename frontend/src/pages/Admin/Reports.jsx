@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { FileText, Filter, X, Users as UsersIcon, RefreshCw } from 'lucide-react';
 import axios from 'axios';
+import Notification from '../../components/Notification';
+import { useNotification } from '../../hooks/useNotification';
 
 const Reports = () => {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const { notification, showNotification, hideNotification } = useNotification();
     
     // Filter states
     const [filters, setFilters] = useState({
@@ -134,10 +137,10 @@ const Reports = () => {
                 window.URL.revokeObjectURL(url);
             }, 100);
             
-            alert('PDF report downloaded successfully!');
+            showNotification('PDF report downloaded successfully!', 'success');
         } catch (error) {
             console.error('Error generating PDF:', error);
-            alert('Failed to generate PDF report: ' + error.message);
+            showNotification('Failed to generate PDF report: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -175,10 +178,10 @@ const Reports = () => {
                 window.URL.revokeObjectURL(url);
             }, 100);
             
-            alert('CSV report downloaded successfully!');
+            showNotification('CSV report downloaded successfully!', 'success');
         } catch (error) {
             console.error('Error generating CSV:', error);
-            alert('Failed to generate CSV report: ' + error.message);
+            showNotification('Failed to generate CSV report: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -188,6 +191,16 @@ const Reports = () => {
 
     return (
         <div style={{ animation: 'fadeIn 0.5s' }}>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
             {/* Header */}
             <div style={{ marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

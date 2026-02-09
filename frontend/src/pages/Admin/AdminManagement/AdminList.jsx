@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Ban, CheckCircle, Key, Eye, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import Notification from '../../../components/Notification';
+import ConfirmDialog from '../../../components/ConfirmDialog';
+import { useNotification, useConfirmDialog } from '../../../hooks/useNotification';
 
 const AdminList = ({ onCreateClick }) => {
+    const { notification, showNotification, hideNotification } = useNotification();
+    const { confirmDialog, showConfirm } = useConfirmDialog();
     const [admins, setAdmins] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -55,7 +60,15 @@ const AdminList = ({ onCreateClick }) => {
     };
 
     const handleSuspend = async (adminId) => {
-        if (!window.confirm('Are you sure you want to suspend this admin?')) return;
+        const confirmed = await showConfirm({
+            title: 'Suspend Admin',
+            message: 'Are you sure you want to suspend this admin?',
+            confirmText: 'Suspend',
+            cancelText: 'Cancel',
+            type: 'warning'
+        });
+        
+        if (!confirmed) return;
         
         try {
             const token = localStorage.getItem('token');
@@ -81,7 +94,15 @@ const AdminList = ({ onCreateClick }) => {
     };
 
     const handleDelete = async (adminId) => {
-        if (!window.confirm('Are you sure you want to delete this admin? This action cannot be undone.')) return;
+        const confirmed = await showConfirm({
+            title: 'Delete Admin',
+            message: 'Are you sure you want to delete this admin? This action cannot be undone.',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            type: 'danger'
+        });
+        
+        if (!confirmed) return;
         
         try {
             const token = localStorage.getItem('token');
@@ -104,11 +125,11 @@ const AdminList = ({ onCreateClick }) => {
             setShowResetModal(false);
             setSelectedAdmin(null);
             // Show success message
-            alert('Password reset successfully!');
+            showNotification('Password reset successfully!', 'success');
             fetchAdmins();
         } catch (error) {
             console.error('Failed to reset password:', error);
-            alert(error.response?.data?.message || 'Failed to reset password');
+            showNotification(error.response?.data?.message || 'Failed to reset password', 'error');
         }
     };
 
@@ -159,6 +180,21 @@ const AdminList = ({ onCreateClick }) => {
 
     return (
         <div>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
+            {/* Confirm Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog {...confirmDialog} />
+            )}
+            
             {/* Header Actions */}
             <div style={{ 
                 display: 'flex', 

@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { X, Save, Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
+import Notification from '../../../components/Notification';
+import { useNotification } from '../../../hooks/useNotification';
 
 const CreateAdmin = ({ onClose, onSuccess }) => {
+    const { notification, showNotification, hideNotification } = useNotification();
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -132,7 +135,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                 } catch (roleError) {
                     console.error('Role creation/fetch error:', roleError);
                     const errorMsg = roleError.response?.data?.message || 'Failed to create/find role';
-                    alert(`Error: ${errorMsg}`);
+                    showNotification(`Error: ${errorMsg}`, 'error');
                     setLoading(false);
                     return;
                 }
@@ -153,33 +156,44 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
-            alert('Admin created successfully!');
+            showNotification('Admin created successfully!', 'success');
             onSuccess();
         } catch (error) {
             console.error('Failed to create admin:', error);
             const errorMsg = error.response?.data?.message || 'Failed to create admin. Please try again.';
-            alert(`Error: ${errorMsg}`);
+            showNotification(`Error: ${errorMsg}`, 'error');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '1rem',
-            overflowY: 'auto'
-        }}>
+        <>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
             <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+                padding: '1rem',
+                overflowY: 'auto'
+            }}>
+                <div style={{
                 background: 'white',
                 borderRadius: '16px',
                 maxWidth: '900px',
@@ -462,6 +476,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                 </form>
             </div>
         </div>
+        </>
     );
 };
 

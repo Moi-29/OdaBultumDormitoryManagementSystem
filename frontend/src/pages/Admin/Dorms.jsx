@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Building, Plus, Edit2, Trash2, X, Save, Users, Bed, Home, Settings } from 'lucide-react';
 import axios from 'axios';
+import Notification from '../../components/Notification';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import { useNotification, useConfirmDialog } from '../../hooks/useNotification';
 
 const Dorms = () => {
     const [rooms, setRooms] = useState([]);
@@ -10,6 +13,8 @@ const Dorms = () => {
     const [blocks, setBlocks] = useState([]);
     const [genderFilter, setGenderFilter] = useState('M'); // New state for gender filter
     const [defaultCapacity, setDefaultCapacity] = useState(4); // System default capacity
+    const { notification, showNotification, hideNotification } = useNotification();
+    const { confirmDialog, showConfirm } = useConfirmDialog();
     
     // Modal States
     const [showBlockModal, setShowBlockModal] = useState(false);
@@ -129,7 +134,7 @@ const Dorms = () => {
 
     const handleSaveBlock = async () => {
         if (!blockForm.name.trim()) {
-            alert('Block name is required');
+            showNotification('Block name is required', 'error');
             return;
         }
 
@@ -149,9 +154,9 @@ const Dorms = () => {
                 fetchRooms();
                 setShowBlockModal(false);
                 setActiveTab(blockForm.name);
-                alert('Block updated successfully!');
+                showNotification('Block updated successfully!', 'success');
             } catch (error) {
-                alert('Failed to update block');
+                showNotification('Failed to update block', 'error');
             }
         } else {
             // Create a new block by creating a placeholder room
@@ -170,9 +175,9 @@ const Dorms = () => {
                 fetchRooms();
                 setShowBlockModal(false);
                 setActiveTab(blockForm.name);
-                alert(`Block "${blockForm.name}" created successfully! You can now add more rooms.`);
+                showNotification(`Block "${blockForm.name}" created successfully! You can now add more rooms.`, 'success');
             } catch (error) {
-                alert('Failed to create block: ' + (error.response?.data?.message || error.message));
+                showNotification('Failed to create block: ' + (error.response?.data?.message || error.message), 'error');
             }
         }
     };
@@ -180,15 +185,23 @@ const Dorms = () => {
     const handleDeleteBlock = async (blockName) => {
         const blockRooms = rooms.filter(r => r.building === blockName);
         if (blockRooms.length > 0) {
-            if (!window.confirm(`This block has ${blockRooms.length} rooms. Delete all rooms in this block?`)) {
-                return;
-            }
+            const confirmed = await showConfirm({
+                title: 'Delete Block',
+                message: `This block has ${blockRooms.length} rooms. Delete all rooms in this block?`,
+                confirmText: 'Delete All',
+                cancelText: 'Cancel',
+                type: 'danger'
+            });
+            
+            if (!confirmed) return;
+            
             try {
                 await Promise.all(blockRooms.map(room => axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${room._id}`)));
                 fetchRooms();
                 setActiveTab(blocks[0]?.name || '');
+                showNotification('Block and all rooms deleted successfully', 'success');
             } catch (error) {
-                alert('Failed to delete block');
+                showNotification('Failed to delete block', 'error');
             }
         }
     };
@@ -226,24 +239,35 @@ const Dorms = () => {
         try {
             if (editingRoom) {
                 await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${editingRoom._id}`, roomForm);
+                showNotification('Room updated successfully', 'success');
             } else {
                 await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', roomForm);
+                showNotification('Room created successfully', 'success');
             }
             fetchRooms();
             setShowRoomModal(false);
         } catch (error) {
-            alert(error.response?.data?.message || 'Operation failed');
+            showNotification(error.response?.data?.message || 'Operation failed', 'error');
         }
     };
 
     const handleDeleteRoom = async (roomId) => {
-        if (window.confirm('Are you sure you want to delete this room?')) {
-            try {
-                await axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${roomId}`);
-                fetchRooms();
-            } catch (error) {
-                alert('Failed to delete room');
-            }
+        const confirmed = await showConfirm({
+            title: 'Delete Room',
+            message: 'Are you sure you want to delete this room?',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            type: 'danger'
+        });
+        
+        if (!confirmed) return;
+        
+        try {
+            await axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${roomId}`);
+            fetchRooms();
+            showNotification('Room deleted successfully', 'success');
+        } catch (error) {
+            showNotification('Failed to delete room', 'error');
         }
     };
 
@@ -256,6 +280,21 @@ const Dorms = () => {
 
     return (
         <div>
+            {/* Notification */}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={hideNotification}
+                    duration={notification.duration}
+                />
+            )}
+            
+            {/* Confirm Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog {...confirmDialog} />
+            )}
+            
             {/* Header */}
             <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
