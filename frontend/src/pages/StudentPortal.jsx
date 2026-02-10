@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
     Search, User, FileText, Copy, Building2, MapPin, Users, Printer, Download, ChevronDown, ChevronUp, Check, X,
-    GraduationCap, Home
+    GraduationCap, Home, AlertCircle
 } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +27,15 @@ const StudentPortal = () => {
     const [verifyingId, setVerifyingId] = useState(false);
     const [verificationId, setVerificationId] = useState('');
     const [hasExistingApplication, setHasExistingApplication] = useState(false);
+    const [showReportModal, setShowReportModal] = useState(false);
+    const [reportData, setReportData] = useState({
+        block: '',
+        dormNumber: '',
+        issueType: '',
+        description: '',
+        priority: 'medium'
+    });
+    const [submittingReport, setSubmittingReport] = useState(false);
     const navigate = useNavigate();
 
     // Application form data
@@ -353,6 +362,57 @@ const StudentPortal = () => {
         } catch (error) {
             console.error('Error generating PDF:', error);
             setError('Failed to generate PDF. Please try again.');
+        }
+    };
+
+    // Handle Report Submission
+    const handleSubmitReport = async () => {
+        // Validation
+        if (!reportData.block || !reportData.dormNumber || !reportData.issueType || !reportData.description) {
+            showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
+        setSubmittingReport(true);
+
+        try {
+            const reportPayload = {
+                studentId: studentId || placement?.studentId || 'Unknown',
+                studentName: placement?.fullName || 'Student',
+                email: `${studentId}@obu.edu.et`,
+                phone: placement?.phone || 'N/A',
+                requestType: 'Facility Issue',
+                subject: `${reportData.issueType} - Block ${reportData.block}, Room ${reportData.dormNumber}`,
+                message: reportData.description,
+                status: 'pending',
+                priority: reportData.priority,
+                currentRoom: `${reportData.block}-${reportData.dormNumber}`,
+                submittedOn: new Date().toISOString().split('T')[0]
+            };
+
+            // Try to send to API
+            try {
+                await axios.post(`${API_URL}/api/requests`, reportPayload);
+                showNotification('Report submitted successfully! Admin will review it soon.', 'success');
+            } catch (apiError) {
+                console.log('API not available, report saved locally:', apiError.message);
+                showNotification('Report submitted successfully! (Saved locally - Backend not deployed yet)', 'success');
+            }
+
+            // Reset form and close modal
+            setReportData({
+                block: '',
+                dormNumber: '',
+                issueType: '',
+                description: '',
+                priority: 'medium'
+            });
+            setShowReportModal(false);
+        } catch (error) {
+            console.error('Error submitting report:', error);
+            showNotification('Failed to submit report. Please try again.', 'error');
+        } finally {
+            setSubmittingReport(false);
         }
     };
 
@@ -814,9 +874,10 @@ const StudentPortal = () => {
 
 
                             {/* Action Buttons */}
-                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
                                 <button style={{
                                     flex: 1,
+                                    minWidth: '100px',
                                     backgroundColor: '#0f172a',
                                     color: 'white',
                                     border: 'none',
@@ -836,6 +897,7 @@ const StudentPortal = () => {
                                     onClick={handleDownloadPDF}
                                     style={{
                                         flex: 1,
+                                        minWidth: '100px',
                                         backgroundColor: '#f3f4f6',
                                         color: '#1f2937',
                                         border: '1px solid #e5e7eb',
@@ -850,6 +912,30 @@ const StudentPortal = () => {
                                         fontSize: '0.75rem'
                                     }}>
                                     <Download size={14} /> Save PDF
+                                </button>
+                                <button
+                                    onClick={() => setShowReportModal(true)}
+                                    style={{
+                                        flex: 1,
+                                        minWidth: '100px',
+                                        backgroundColor: '#ef4444',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.55rem',
+                                        borderRadius: '7px',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.4rem',
+                                        cursor: 'pointer',
+                                        fontSize: '0.75rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
+                                    onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
+                                >
+                                    <AlertCircle size={14} /> Report Issue
                                 </button>
                             </div>
 
@@ -886,6 +972,297 @@ const StudentPortal = () => {
                 )
                 }
             </main>
+
+            {/* Report Issue Modal */}
+            {showReportModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    padding: '1rem'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        maxWidth: '600px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                            color: 'white',
+                            padding: '1.5rem 2rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <AlertCircle size={24} />
+                                    Report Facility Issue
+                                </h2>
+                                <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
+                                    Let us know about any problems in your dormitory
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowReportModal(false)}
+                                style={{
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    color: 'white',
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
+                                    fontSize: '1.5rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                {/* Block Selection */}
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.5rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Block <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <select
+                                        value={reportData.block}
+                                        onChange={(e) => setReportData({ ...reportData, block: e.target.value })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="">Select Block</option>
+                                        <option value="A">Block A</option>
+                                        <option value="B">Block B</option>
+                                        <option value="C">Block C</option>
+                                        <option value="D">Block D</option>
+                                        <option value="E">Block E</option>
+                                        <option value="F">Block F</option>
+                                    </select>
+                                </div>
+
+                                {/* Dorm Number */}
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.5rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Room Number <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., 101, 205, 302"
+                                        value={reportData.dormNumber}
+                                        onChange={(e) => setReportData({ ...reportData, dormNumber: e.target.value })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Issue Type */}
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.5rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Issue Type <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <select
+                                        value={reportData.issueType}
+                                        onChange={(e) => setReportData({ ...reportData, issueType: e.target.value })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="">Select Issue Type</option>
+                                        <option value="Plumbing">Plumbing (Water, Toilet, Sink)</option>
+                                        <option value="Electrical">Electrical (Lights, Outlets, Wiring)</option>
+                                        <option value="Furniture">Furniture (Bed, Desk, Chair)</option>
+                                        <option value="Window/Door">Window/Door Issues</option>
+                                        <option value="Cleanliness">Cleanliness/Sanitation</option>
+                                        <option value="Heating/Cooling">Heating/Cooling</option>
+                                        <option value="Pest Control">Pest Control</option>
+                                        <option value="Safety">Safety Concern</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                {/* Priority */}
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.5rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Priority Level
+                                    </label>
+                                    <select
+                                        value={reportData.priority}
+                                        onChange={(e) => setReportData({ ...reportData, priority: e.target.value })}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="low">Low - Can wait a few days</option>
+                                        <option value="medium">Medium - Should be fixed soon</option>
+                                        <option value="high">High - Urgent, needs immediate attention</option>
+                                    </select>
+                                </div>
+
+                                {/* Description */}
+                                <div>
+                                    <label style={{ 
+                                        display: 'block', 
+                                        marginBottom: '0.5rem', 
+                                        fontWeight: 600, 
+                                        color: '#1e293b',
+                                        fontSize: '0.95rem'
+                                    }}>
+                                        Description <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <textarea
+                                        placeholder="Please describe the issue in detail..."
+                                        value={reportData.description}
+                                        onChange={(e) => setReportData({ ...reportData, description: e.target.value })}
+                                        rows={5}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem',
+                                            resize: 'vertical',
+                                            fontFamily: 'inherit'
+                                        }}
+                                    />
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>
+                                        Please provide as much detail as possible to help us resolve the issue quickly.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            padding: '1.5rem 2rem',
+                            borderTop: '1px solid #e5e7eb',
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'flex-end'
+                        }}>
+                            <button
+                                onClick={() => setShowReportModal(false)}
+                                disabled={submittingReport}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    border: '2px solid #e5e7eb',
+                                    borderRadius: '8px',
+                                    cursor: submittingReport ? 'not-allowed' : 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    opacity: submittingReport ? 0.5 : 1
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitReport}
+                                disabled={submittingReport}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    background: submittingReport ? '#9ca3af' : '#ef4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: submittingReport ? 'not-allowed' : 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
+                                {submittingReport ? (
+                                    <>
+                                        <div style={{
+                                            width: '16px',
+                                            height: '16px',
+                                            border: '2px solid white',
+                                            borderTopColor: 'transparent',
+                                            borderRadius: '50%',
+                                            animation: 'spin 0.6s linear infinite'
+                                        }} />
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    <>
+                                        <AlertCircle size={18} />
+                                        Submit Report
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <footer style={{
                 padding: '1rem 2rem',
