@@ -513,39 +513,472 @@ const ApplicationFormWrapper = () => {
                         </div>
                     )}
 
-                    {/* Educational Tab - Simplified for brevity, add all fields similarly */}
+                    {/* Educational Tab */}
                     {activeTab === 'educational' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600 }}>
+                            <h3 style={{ marginBottom: '1.5rem', color: '#4F46E5', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
                                 Campus Related Information
                             </h3>
-                            <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
-                                Educational information fields will be displayed here (same structure as Personal tab)
-                            </p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Stream <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <select 
+                                        value={formData.educationalInfo.stream}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'stream', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    >
+                                        <option value="">Select stream</option>
+                                        <option value="Natural Science">Natural Science</option>
+                                        <option value="Social Science">Social Science</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Health Science">Health Science</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Sponsor Category <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <select 
+                                        value={formData.educationalInfo.sponsorCategory}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'sponsorCategory', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    >
+                                        <option value="">Select category</option>
+                                        <option value="Government">Government</option>
+                                        <option value="Private">Private</option>
+                                        <option value="Self-Sponsored">Self-Sponsored</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        National Exam Year (EC) <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., 2015"
+                                        value={formData.educationalInfo.nationalExamYear}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'nationalExamYear', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Entry Year <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., 2016"
+                                        value={formData.educationalInfo.entryYear}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'entryYear', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Sponsored By
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., Family"
+                                        value={formData.educationalInfo.sponsoredBy}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'sponsoredBy', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Examination ID
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., D1729733"
+                                        value={formData.educationalInfo.examinationId}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'examinationId', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Admission Date <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={formData.educationalInfo.admissionDate}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'admissionDate', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Checked-In Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={formData.educationalInfo.checkedInDate}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'checkedInDate', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        National Exam Result
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., 454"
+                                        value={formData.educationalInfo.nationalExamResult}
+                                        onChange={(e) => handleInputChange('educationalInfo', 'nationalExamResult', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
 
                     {/* School Tab */}
                     {activeTab === 'school' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600 }}>
-                                Primary School Information
+                            <h3 style={{ marginBottom: '1.5rem', color: '#4F46E5', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                Primary School
                             </h3>
-                            <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
-                                School information fields will be displayed here
-                            </p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        School Name <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., Abdi Gudina primary school"
+                                        value={formData.schoolInfo.schoolName}
+                                        onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Region
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter region"
+                                        value={formData.schoolInfo.region}
+                                        onChange={(e) => handleInputChange('schoolInfo', 'region', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        City
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter city"
+                                        value={formData.schoolInfo.city}
+                                        onChange={(e) => handleInputChange('schoolInfo', 'city', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Zone
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter zone"
+                                        value={formData.schoolInfo.zone}
+                                        onChange={(e) => handleInputChange('schoolInfo', 'zone', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        School Type <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <select 
+                                        value={formData.schoolInfo.schoolType}
+                                        onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    >
+                                        <option value="">Select type</option>
+                                        <option value="Public">Public</option>
+                                        <option value="Private">Private</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Woreda
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter woreda"
+                                        value={formData.schoolInfo.woreda}
+                                        onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Attended Year (From - To E.C)
+                                    </label>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="From (e.g., 2004)"
+                                            value={formData.schoolInfo.attendedYearFrom}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.95rem'
+                                            }}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="To (e.g., 2011)"
+                                            value={formData.schoolInfo.attendedYearTo}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.95rem'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
                     {/* Family Tab */}
                     {activeTab === 'family' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#0ea5e9', fontSize: '1.25rem', fontWeight: 600 }}>
-                                Family Information
+                            <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                                II. Please fill your Birth place and Your Family Information
                             </h3>
-                            <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
-                                Family information fields will be displayed here
-                            </p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Nationality <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., Ethiopia"
+                                        value={formData.familyInfo.nationality}
+                                        onChange={(e) => handleInputChange('familyInfo', 'nationality', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Region <span style={{ color: '#F43F5E' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your region"
+                                        value={formData.familyInfo.region}
+                                        onChange={(e) => handleInputChange('familyInfo', 'region', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Zone
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your zone"
+                                        value={formData.familyInfo.zone}
+                                        onChange={(e) => handleInputChange('familyInfo', 'zone', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Woreda (district)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your woreda"
+                                        value={formData.familyInfo.woreda}
+                                        onChange={(e) => handleInputChange('familyInfo', 'woreda', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Kebele
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your kebele"
+                                        value={formData.familyInfo.kebele}
+                                        onChange={(e) => handleInputChange('familyInfo', 'kebele', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Mother Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter mother's name"
+                                        value={formData.familyInfo.motherName}
+                                        onChange={(e) => handleInputChange('familyInfo', 'motherName', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                        Family Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        placeholder="+251911234567"
+                                        value={formData.familyInfo.familyPhone}
+                                        onChange={(e) => handleInputChange('familyInfo', 'familyPhone', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.75rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
