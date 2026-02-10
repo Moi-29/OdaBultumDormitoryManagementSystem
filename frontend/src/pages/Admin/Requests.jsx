@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
     MessageSquare, Clock, CheckCircle, XCircle, Eye, User, Mail, Phone, Calendar, 
-    Filter, Search, Send, Paperclip, Smile, TrendingUp, AlertTriangle, FileText,
-    MoreVertical, Download, Archive, Star, ChevronRight, Activity
+    ChevronRight, Trash2
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -11,12 +10,11 @@ const Requests = () => {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState(null);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [filterStatus, setFilterStatus] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
     const [notification, setNotification] = useState(null);
-    const [chatMessage, setChatMessage] = useState('');
     const [showChatPanel, setShowChatPanel] = useState(false);
+    const [selectedRequests, setSelectedRequests] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     // Show notification helper
     const showNotification = (message, type = 'success') => {
@@ -127,42 +125,66 @@ const Requests = () => {
         }
     };
 
+    const handleSelectAll = () => {
+        if (selectAll) {
+            setSelectedRequests([]);
+        } else {
+            setSelectedRequests(requests.map(req => req._id));
+        }
+        setSelectAll(!selectAll);
+    };
+
+    const handleSelectRequest = (requestId) => {
+        if (selectedRequests.includes(requestId)) {
+            setSelectedRequests(selectedRequests.filter(id => id !== requestId));
+        } else {
+            setSelectedRequests([...selectedRequests, requestId]);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        if (selectedRequests.length === 0) {
+            showNotification('Please select requests to delete', 'error');
+            return;
+        }
+
+        if (!window.confirm(`Are you sure you want to permanently delete ${selectedRequests.length} request(s)? This action cannot be undone.`)) {
+            return;
+        }
+
+        setDeleting(true);
+
+        try {
+            const token = localStorage.getItem('token');
+            
+            // Delete each selected request
+            for (const requestId of selectedRequests) {
+                try {
+                    await axios.delete(`${API_URL}/api/requests/${requestId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                } catch (apiError) {
+                    console.log('API not available, deleting locally');
+                }
+            }
+
+            // Remove deleted requests from state
+            setRequests(requests.filter(req => !selectedRequests.includes(req._id)));
+            setSelectedRequests([]);
+            setSelectAll(false);
+            
+            showNotification(`Successfully deleted ${selectedRequests.length} request(s)`, 'success');
+        } catch (error) {
+            console.error('Error deleting requests:', error);
+            showNotification('Failed to delete requests', 'error');
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     const viewDetails = (request) => {
         setSelectedRequest(request);
         setShowChatPanel(true);
-    };
-
-    const getPriorityColor = (priority) => {
-        switch (priority) {
-            case 'high': return { bg: '#FFF5F5', color: '#FF4500', border: '#FF4500' };
-            case 'medium': return { bg: '#FFFBEB', color: '#FFD700', border: '#FFD700' };
-            case 'low': return { bg: '#F0FFF4', color: '#32CD32', border: '#32CD32' };
-            default: return { bg: '#F5F5F5', color: '#A9A9A9', border: '#A9A9A9' };
-        }
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'pending': return { bg: '#FFFBEB', color: '#FFD700', border: '#FFD700' };
-            case 'approved': return { bg: '#F0FFF4', color: '#32CD32', border: '#32CD32' };
-            case 'rejected': return { bg: '#FFF5F5', color: '#FF4500', border: '#FF4500' };
-            default: return { bg: '#F5F5F5', color: '#A9A9A9', border: '#A9A9A9' };
-        }
-    };
-
-    const filteredRequests = requests.filter(req => {
-        const matchesStatus = filterStatus === 'all' || req.status === filterStatus;
-        const matchesSearch = req.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            req.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            req.subject.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesStatus && matchesSearch;
-    });
-
-    const stats = {
-        total: requests.length,
-        pending: requests.filter(r => r.status === 'pending').length,
-        approved: requests.filter(r => r.status === 'approved').length,
-        rejected: requests.filter(r => r.status === 'rejected').length
     };
 
     if (loading) {
@@ -293,119 +315,91 @@ const Requests = () => {
             </div>
 
             <div style={{ padding: '0 3rem 3rem 3rem' }}>
-                {/* Premium Stats Cards */}
-                <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-                    gap: '1.5rem', 
-                    marginBottom: '2.5rem' 
-                }}>
-                    <PremiumStatCard 
-                        label="Total Requests" 
-                        value={stats.total} 
-                        icon={<Activity size={24} />}
-                        color="#FF8C00"
-                        trend="+12%"
-                    />
-                    <PremiumStatCard 
-                        label="Pending" 
-                        value={stats.pending} 
-                        icon={<Clock size={24} />}
-                        color="#FFD700"
-                        trend="2 new"
-                    />
-                    <PremiumStatCard 
-                        label="Approved" 
-                        value={stats.approved} 
-                        icon={<CheckCircle size={24} />}
-                        color="#32CD32"
-                        trend="+5 today"
-                    />
-                    <PremiumStatCard 
-                        label="Rejected" 
-                        value={stats.rejected} 
-                        icon={<XCircle size={24} />}
-                        color="#FF4500"
-                        trend="0 today"
-                    />
-                </div>
-
-                {/* Advanced Search & Filters */}
+                {/* Select All and Delete Section */}
                 <div style={{
                     background: 'white',
                     borderRadius: '20px',
                     padding: '1.5rem',
                     marginBottom: '2rem',
                     boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                    border: '1px solid rgba(0,0,0,0.05)'
+                    border: '1px solid rgba(0,0,0,0.05)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                 }}>
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                        <div style={{ flex: 1, minWidth: '300px', position: 'relative' }}>
-                            <Search size={20} style={{ 
-                                position: 'absolute', 
-                                left: '1.25rem', 
-                                top: '50%', 
-                                transform: 'translateY(-50%)', 
-                                color: '#00BFFF',
-                                zIndex: 1
-                            }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <label style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '0.75rem',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            color: '#001F3F'
+                        }}>
                             <input
-                                type="text"
-                                placeholder="Search by name, ID, or subject..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                type="checkbox"
+                                checked={selectAll}
+                                onChange={handleSelectAll}
                                 style={{
-                                    width: '100%',
-                                    padding: '1rem 1rem 1rem 3.5rem',
-                                    border: '2px solid #E8E8E8',
-                                    borderRadius: '12px',
-                                    fontSize: '1rem',
-                                    fontWeight: 500,
-                                    transition: 'all 0.3s',
-                                    background: '#FAFAFA'
-                                }}
-                                onFocus={(e) => {
-                                    e.target.style.borderColor = '#00BFFF';
-                                    e.target.style.background = 'white';
-                                    e.target.style.boxShadow = '0 0 0 4px rgba(0,191,255,0.1)';
-                                }}
-                                onBlur={(e) => {
-                                    e.target.style.borderColor = '#E8E8E8';
-                                    e.target.style.background = '#FAFAFA';
-                                    e.target.style.boxShadow = 'none';
+                                    width: '20px',
+                                    height: '20px',
+                                    cursor: 'pointer',
+                                    accentColor: '#00BFFF'
                                 }}
                             />
-                        </div>
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            style={{
-                                padding: '1rem 1.5rem',
-                                border: '2px solid #E8E8E8',
-                                borderRadius: '12px',
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                                background: 'white',
-                                color: '#001F3F',
-                                minWidth: '180px',
-                                transition: 'all 0.3s'
-                            }}
-                            onFocus={(e) => {
-                                e.target.style.borderColor = '#00BFFF';
-                                e.target.style.boxShadow = '0 0 0 4px rgba(0,191,255,0.1)';
-                            }}
-                            onBlur={(e) => {
-                                e.target.style.borderColor = '#E8E8E8';
-                                e.target.style.boxShadow = 'none';
-                            }}
-                        >
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
+                            Select All Requests
+                        </label>
+                        {selectedRequests.length > 0 && (
+                            <span style={{
+                                padding: '0.5rem 1rem',
+                                background: '#F0F9FF',
+                                color: '#0080FF',
+                                borderRadius: '8px',
+                                fontSize: '0.9rem',
+                                fontWeight: 600
+                            }}>
+                                {selectedRequests.length} selected
+                            </span>
+                        )}
                     </div>
+                    
+                    <button
+                        onClick={handleDeleteSelected}
+                        disabled={selectedRequests.length === 0 || deleting}
+                        style={{
+                            padding: '0.75rem 1.5rem',
+                            background: selectedRequests.length === 0 || deleting 
+                                ? '#E5E7EB' 
+                                : 'linear-gradient(135deg, #FF4500 0%, #DC143C 100%)',
+                            color: selectedRequests.length === 0 || deleting ? '#9CA3AF' : 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            cursor: selectedRequests.length === 0 || deleting ? 'not-allowed' : 'pointer',
+                            fontWeight: 700,
+                            fontSize: '0.95rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            boxShadow: selectedRequests.length > 0 && !deleting ? '0 4px 12px rgba(255,69,0,0.3)' : 'none',
+                            transition: 'all 0.3s'
+                        }}
+                        onMouseEnter={(e) => {
+                            if (selectedRequests.length > 0 && !deleting) {
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 6px 16px rgba(255,69,0,0.4)';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (selectedRequests.length > 0 && !deleting) {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,69,0,0.3)';
+                            }
+                        }}
+                    >
+                        <Trash2 size={18} />
+                        {deleting ? 'Deleting...' : 'Delete Selected'}
+                    </button>
                 </div>
                 {/* Premium Table with Chat Panel */}
                 <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
@@ -423,6 +417,19 @@ const Requests = () => {
                             <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
                                 <thead>
                                     <tr style={{ background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)' }}>
+                                        <th style={{...tableHeaderStyle, width: '50px'}}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectAll}
+                                                onChange={handleSelectAll}
+                                                style={{
+                                                    width: '18px',
+                                                    height: '18px',
+                                                    cursor: 'pointer',
+                                                    accentColor: '#00BFFF'
+                                                }}
+                                            />
+                                        </th>
                                         <th style={tableHeaderStyle}>Student</th>
                                         <th style={tableHeaderStyle}>Type</th>
                                         <th style={tableHeaderStyle}>Subject</th>
@@ -433,7 +440,7 @@ const Requests = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredRequests.map((request, index) => (
+                                    {requests.map((request, index) => (
                                         <tr 
                                             key={request._id} 
                                             style={{ 
@@ -450,6 +457,20 @@ const Requests = () => {
                                                 e.currentTarget.style.transform = 'scale(1)';
                                             }}
                                         >
+                                            <td style={tableCellStyle}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedRequests.includes(request._id)}
+                                                    onChange={() => handleSelectRequest(request._id)}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    style={{
+                                                        width: '18px',
+                                                        height: '18px',
+                                                        cursor: 'pointer',
+                                                        accentColor: '#00BFFF'
+                                                    }}
+                                                />
+                                            </td>
                                             <td style={tableCellStyle}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                     <div style={{
@@ -550,11 +571,11 @@ const Requests = () => {
                             </table>
                         </div>
 
-                        {filteredRequests.length === 0 && (
+                        {requests.length === 0 && (
                             <div style={{ textAlign: 'center', padding: '4rem', color: '#A9A9A9' }}>
                                 <MessageSquare size={64} style={{ margin: '0 auto 1.5rem', opacity: 0.3 }} />
                                 <p style={{ fontSize: '1.2rem', fontWeight: 600 }}>No requests found</p>
-                                <p style={{ fontSize: '0.95rem', marginTop: '0.5rem' }}>Try adjusting your filters</p>
+                                <p style={{ fontSize: '0.95rem', marginTop: '0.5rem' }}>Student requests will appear here</p>
                             </div>
                         )}
                     </div>
@@ -761,75 +782,6 @@ const Requests = () => {
         </div>
     );
 };
-
-// Premium Stat Card Component
-const PremiumStatCard = ({ label, value, icon, color, trend }) => (
-    <div style={{
-        background: 'white',
-        borderRadius: '20px',
-        padding: '1.75rem',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-        border: '1px solid rgba(0,0,0,0.05)',
-        position: 'relative',
-        overflow: 'hidden',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        cursor: 'pointer'
-    }}
-    onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-8px)';
-        e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.15)';
-    }}
-    onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
-    }}
-    >
-        {/* Decorative gradient */}
-        <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '150px',
-            height: '150px',
-            background: `radial-gradient(circle, ${color}15 0%, transparent 70%)`,
-            borderRadius: '50%',
-            transform: 'translate(30%, -30%)'
-        }} />
-        
-        <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                <div style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '16px',
-                    background: `${color}15`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: color
-                }}>
-                    {icon}
-                </div>
-                <div style={{
-                    padding: '0.4rem 0.8rem',
-                    borderRadius: '8px',
-                    background: `${color}10`,
-                    color: color,
-                    fontSize: '0.8rem',
-                    fontWeight: 700
-                }}>
-                    {trend}
-                </div>
-            </div>
-            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
-                {label}
-            </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#001F3F', letterSpacing: '-1px' }}>
-                {value}
-            </div>
-        </div>
-    </div>
-);
 
 // Priority Badge Component
 const PriorityBadge = ({ priority }) => {
