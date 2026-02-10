@@ -573,38 +573,72 @@ const StudentPortal = () => {
                         </div>
                     </div>
 
-                    {/* Right side - Application Form Button */}
-                    <button
-                        onClick={() => setShowIdVerification(true)}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            padding: '0.6rem 1.5rem',
-                            background: 'rgba(255, 255, 255, 0.2)',
-                            border: '2px solid rgba(255, 255, 255, 0.3)',
-                            borderRadius: '8px',
-                            color: 'white',
-                            fontSize: '0.95rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s',
-                            backdropFilter: 'blur(10px)'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = 'none';
-                        }}
-                    >
-                        <FileText size={18} />
-                        Application Form
-                    </button>
+                    {/* Right side - Action Buttons */}
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        <button
+                            onClick={() => setShowIdVerification(true)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.6rem 1.5rem',
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                border: '2px solid rgba(255, 255, 255, 0.3)',
+                                borderRadius: '8px',
+                                color: 'white',
+                                fontSize: '0.95rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                backdropFilter: 'blur(10px)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = 'none';
+                            }}
+                        >
+                            <FileText size={18} />
+                            Application Form
+                        </button>
+                        
+                        <button
+                            onClick={() => setShowReportModal(true)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.6rem 1.5rem',
+                                background: 'rgba(239, 68, 68, 0.9)',
+                                border: '2px solid rgba(255, 255, 255, 0.3)',
+                                borderRadius: '8px',
+                                color: 'white',
+                                fontSize: '0.95rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                backdropFilter: 'blur(10px)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(220, 38, 38, 1)';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.9)';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = 'none';
+                            }}
+                        >
+                            <AlertCircle size={18} />
+                            Report Issue
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -912,30 +946,6 @@ const StudentPortal = () => {
                                         fontSize: '0.75rem'
                                     }}>
                                     <Download size={14} /> Save PDF
-                                </button>
-                                <button
-                                    onClick={() => setShowReportModal(true)}
-                                    style={{
-                                        flex: 1,
-                                        minWidth: '100px',
-                                        backgroundColor: '#ef4444',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.55rem',
-                                        borderRadius: '7px',
-                                        fontWeight: '600',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '0.4rem',
-                                        cursor: 'pointer',
-                                        fontSize: '0.75rem',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
-                                >
-                                    <AlertCircle size={14} /> Report Issue
                                 </button>
                             </div>
 

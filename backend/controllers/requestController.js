@@ -1,0 +1,108 @@
+const Request = require('../models/Request');
+
+// @desc    Get all requests
+// @route   GET /api/requests
+// @access  Private (Admin)
+const getRequests = async (req, res) => {
+    try {
+        const requests = await Request.find().sort({ createdAt: -1 });
+        res.json(requests);
+    } catch (error) {
+        console.error('Error fetching requests:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Create new request
+// @route   POST /api/requests
+// @access  Public
+const createRequest = async (req, res) => {
+    try {
+        const {
+            studentId,
+            studentName,
+            email,
+            phone,
+            requestType,
+            subject,
+            message,
+            status,
+            priority,
+            currentRoom,
+            submittedOn
+        } = req.body;
+
+        const request = await Request.create({
+            studentId,
+            studentName,
+            email,
+            phone,
+            requestType,
+            subject,
+            message,
+            status: status || 'pending',
+            priority: priority || 'medium',
+            currentRoom,
+            submittedOn: submittedOn || new Date().toISOString().split('T')[0]
+        });
+
+        res.status(201).json(request);
+    } catch (error) {
+        console.error('Error creating request:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Update request status
+// @route   PATCH /api/requests/:id/status
+// @access  Private (Admin)
+const updateRequestStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        
+        const request = await Request.findById(req.params.id);
+        
+        if (!request) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+
+        request.status = status;
+        if (status !== 'pending') {
+            request.resolvedOn = new Date().toISOString().split('T')[0];
+        } else {
+            request.resolvedOn = null;
+        }
+
+        await request.save();
+        res.json(request);
+    } catch (error) {
+        console.error('Error updating request status:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Delete request
+// @route   DELETE /api/requests/:id
+// @access  Private (Admin)
+const deleteRequest = async (req, res) => {
+    try {
+        const request = await Request.findById(req.params.id);
+        
+        if (!request) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+
+        await request.deleteOne();
+        res.json({ message: 'Request deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting request:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+module.exports = {
+    getRequests,
+    createRequest,
+    updateRequestStatus,
+    deleteRequest
+};
