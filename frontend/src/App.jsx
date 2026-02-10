@@ -7,6 +7,7 @@ import Students from './pages/Admin/Students';
 import Dorms from './pages/Admin/Dorms';
 import Reports from './pages/Admin/Reports';
 import Applications from './pages/Admin/Applications';
+import Requests from './pages/Admin/Requests';
 import Settings from './pages/Admin/Settings';
 import AdminManagement from './pages/Admin/AdminManagement';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -90,6 +91,11 @@ function App() {
             <Route path="applications" element={
               <ProtectedRoute requiredPermission="dashboard.view">
                 <Applications />
+              </ProtectedRoute>
+            } />
+            <Route path="requests" element={
+              <ProtectedRoute requiredPermission="dashboard.view">
+                <Requests />
               </ProtectedRoute>
             } />
             <Route path="settings" element={

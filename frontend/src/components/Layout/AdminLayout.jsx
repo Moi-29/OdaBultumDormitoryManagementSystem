@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Building, FileText, LogOut, Settings, Shield, AlertTriangle, Menu, X, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, Users, Building, FileText, LogOut, Settings, Shield, AlertTriangle, Menu, X, ClipboardList, MessageSquare } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -153,6 +153,9 @@ const AdminLayout = () => {
                         )}
                         {hasPermission('admins.view') && (
                             <NavItem to="/admin/admin-management" icon={<Shield size={20} />} label="Admin Management" active={isActive('admin-management')} onClick={() => setSidebarOpen(false)} />
+                        )}
+                        {hasPermission('dashboard.view') && (
+                            <NavItem to="/admin/requests" icon={<MessageSquare size={20} />} label="Requests" active={isActive('requests')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('dashboard.view') && (
                             <NavItem to="/admin/settings" icon={<Settings size={20} />} label="Settings" active={isActive('settings')} onClick={() => setSidebarOpen(false)} />
