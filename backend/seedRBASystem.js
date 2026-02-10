@@ -93,7 +93,7 @@ const seedProctors = async (blocks) => {
             });
         }
 
-        const createdProctors = await Proctor.insertMany(proctors);
+        const createdProctors = await Proctor.create(proctors);
         console.log(`✅ Created ${createdProctors.length} proctors`);
 
         return createdProctors;
@@ -158,7 +158,7 @@ const seedMaintainers = async () => {
             }
         ];
 
-        const createdMaintainers = await Maintainer.insertMany(maintainers);
+        const createdMaintainers = await Maintainer.create(maintainers);
         console.log(`✅ Created ${createdMaintainers.length} maintainers`);
 
         return createdMaintainers;
