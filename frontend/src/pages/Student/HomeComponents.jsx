@@ -1,41 +1,37 @@
 import { forwardRef, useState } from 'react';
-import { ChevronDown, Users, Building2, Award, TrendingUp, CheckCircle, Shield, AlertCircle, Heart, Droplet, Phone, MapPin, Mail, Clock, Bed, Home as HomeIcon } from 'lucide-react';
+import { ChevronDown, Users, Building2, Award, TrendingUp, CheckCircle, Shield, AlertCircle } from 'lucide-react';
 
-// Ultra Premium Hero Section - Minimal & Sophisticated
+// Luxury Hero Section - Exact from Image
 export const HeroSection = ({ scrollY }) => {
     const parallaxOffset = scrollY * 0.3;
     
     return (
         <div style={{
             position: 'relative',
-            height: '90vh',
-            minHeight: '600px',
+            height: '100vh',
+            minHeight: '700px',
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#ffffff'
+            background: 'linear-gradient(135deg, #0a1f1f 0%, #1a3535 50%, #2d4a4a 100%)'
         }}>
-            {/* Subtle gradient background */}
+            {/* Grid Pattern Background */}
             <div style={{
                 position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                inset: 0,
+                backgroundImage: 'linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px)',
+                backgroundSize: '64px 64px',
                 transform: `translateY(${parallaxOffset}px)`,
                 transition: 'transform 0.1s ease-out'
-            }}>
-                {/* Minimal grid pattern */}
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: 'linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px)',
-                    backgroundSize: '64px 64px',
-                    opacity: 0.3
-                }} />
-            </div>
+            }} />
+
+            {/* Gradient Overlay */}
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 70%)'
+            }} />
 
             {/* Content */}
             <div style={{
@@ -43,105 +39,191 @@ export const HeroSection = ({ scrollY }) => {
                 zIndex: 2,
                 textAlign: 'center',
                 padding: '2rem',
-                maxWidth: '900px',
-                animation: 'fadeInUp 1s ease-out'
+                maxWidth: '1000px',
+                animation: 'luxuryFadeIn 1s ease-out'
             }}>
+                {/* Badge */}
                 <div style={{
-                    display: 'inline-block',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                     padding: '0.5rem 1.25rem',
-                    background: '#10b981',
+                    background: 'rgba(212, 175, 55, 0.15)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
                     borderRadius: '50px',
-                    marginBottom: '2rem',
-                    animation: 'fadeIn 1.5s ease-out'
+                    marginBottom: '2.5rem',
+                    animation: 'luxuryFadeIn 1.2s ease-out'
                 }}>
-                    <span style={{ color: 'white', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.025em' }}>
-                        STUDENT PORTAL
+                    <span style={{ 
+                        fontSize: '0.75rem', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: '#d4af37'
+                    }}>
+                        ◆ ESTABLISHED EXCELLENCE • 2026
                     </span>
                 </div>
 
+                {/* Main Title */}
                 <h1 style={{
-                    fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                    fontSize: 'clamp(2.5rem, 6vw, 5rem)',
                     fontWeight: 800,
-                    color: '#0f172a',
-                    marginBottom: '1.5rem',
+                    color: 'white',
+                    marginBottom: '0.5rem',
                     lineHeight: 1.1,
                     letterSpacing: '-0.02em',
-                    animation: 'fadeInUp 1.2s ease-out'
+                    animation: 'luxuryFadeIn 1.4s ease-out',
+                    textTransform: 'uppercase'
                 }}>
-                    Oda Bultum University
+                    ELEVATE YOUR
                 </h1>
 
+                {/* Gold Italic Title */}
+                <h1 style={{
+                    fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+                    fontWeight: 800,
+                    background: 'linear-gradient(135deg, #d4af37 0%, #f0d068 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '2rem',
+                    lineHeight: 1.1,
+                    letterSpacing: '-0.02em',
+                    fontStyle: 'italic',
+                    animation: 'luxuryFadeIn 1.6s ease-out'
+                }}>
+                    POTENTIAL
+                </h1>
+
+                {/* Subtitle */}
                 <p style={{
-                    fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
-                    color: '#64748b',
+                    fontSize: '1.125rem',
+                    color: '#a0b0b0',
+                    marginBottom: '1rem',
+                    maxWidth: '700px',
+                    margin: '0 auto 1rem',
+                    lineHeight: 1.6,
+                    animation: 'luxuryFadeIn 1.8s ease-out'
+                }}>
+                    Welcome to the world's most sophisticated educational ecosystem.
+                </p>
+                <p style={{
+                    fontSize: '1.125rem',
+                    color: '#a0b0b0',
                     marginBottom: '3rem',
                     maxWidth: '700px',
                     margin: '0 auto 3rem',
                     lineHeight: 1.6,
-                    fontWeight: 400,
-                    animation: 'fadeInUp 1.4s ease-out'
+                    animation: 'luxuryFadeIn 2s ease-out'
                 }}>
-                    Your complete guide to campus life, services, and community
+                    A sanctuary for scholars where intelligence meets luxury.
                 </p>
 
+                {/* CTA Buttons */}
                 <div style={{
                     display: 'flex',
                     gap: '1rem',
                     justifyContent: 'center',
                     flexWrap: 'wrap',
-                    animation: 'fadeInUp 1.6s ease-out'
+                    animation: 'luxuryFadeIn 2.2s ease-out'
                 }}>
                     <button style={{
                         padding: '1rem 2rem',
-                        background: '#0f172a',
-                        color: 'white',
+                        background: 'linear-gradient(135deg, #d4af37 0%, #f0d068 100%)',
+                        color: '#0a1f1f',
                         border: 'none',
                         borderRadius: '12px',
-                        fontSize: '1rem',
-                        fontWeight: 600,
+                        fontSize: '0.9375rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.025em',
                         cursor: 'pointer',
-                        boxShadow: '0 4px 16px rgba(15, 23, 42, 0.2)',
+                        boxShadow: '0 4px 16px rgba(212, 175, 55, 0.3)',
                         transition: 'all 0.3s ease',
-                        letterSpacing: '0.01em'
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
                     }}
                     onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(15, 23, 42, 0.3)';
+                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(212, 175, 55, 0.5)';
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(15, 23, 42, 0.2)';
+                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(212, 175, 55, 0.3)';
                     }}>
-                        Explore Campus
+                        ENTER PORTAL →
+                    </button>
+
+                    <button style={{
+                        padding: '1rem 2rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '12px',
+                        fontSize: '0.9375rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    }}>
+                        ▶ VIRTUAL TOUR
                     </button>
                 </div>
             </div>
 
-            {/* Scroll Indicator */}
+            {/* Floating Icons at Bottom */}
             <div style={{
                 position: 'absolute',
-                bottom: '2rem',
+                bottom: '4rem',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                animation: 'bounce 2s infinite',
-                zIndex: 2,
-                opacity: 0.4
+                display: 'flex',
+                gap: '8rem',
+                zIndex: 2
             }}>
-                <ChevronDown size={28} color="#64748b" strokeWidth={2} />
+                {[
+                    { icon: '🎓', color: '#3b82f6' },
+                    { icon: '⚡', color: '#f59e0b' },
+                    { icon: '🔬', color: '#10b981' },
+                    { icon: '❤️', color: '#ef4444' }
+                ].map((item, i) => (
+                    <div key={i} style={{
+                        width: '64px',
+                        height: '64px',
+                        background: `${item.color}15`,
+                        borderRadius: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem',
+                        border: `1px solid ${item.color}30`,
+                        animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
+                        animationDelay: `${i * 0.2}s`
+                    }}>
+                        {item.icon}
+                    </div>
+                ))}
             </div>
 
             <style>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes fadeInUp {
+                @keyframes luxuryFadeIn {
                     from { opacity: 0; transform: translateY(30px); }
                     to { opacity: 1; transform: translateY(0); }
                 }
-                @keyframes bounce {
-                    0%, 100% { transform: translateX(-50%) translateY(0); }
-                    50% { transform: translateX(-50%) translateY(-10px); }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-15px); }
                 }
             `}</style>
         </div>
