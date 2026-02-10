@@ -1,26 +1,52 @@
 const mongoose = require('mongoose');
 
 const requestSchema = new mongoose.Schema({
-    studentId: {
+    // Sender information
+    fromUserId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        refPath: 'fromUserModel'
+    },
+    fromUserModel: {
+        type: String,
+        required: true,
+        enum: ['Student', 'Proctor', 'Maintainer', 'Admin']
+    },
+    fromUserName: {
         type: String,
         required: true
+    },
+    
+    // Recipient information (usually admin)
+    toUserId: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'toUserModel'
+    },
+    toUserModel: {
+        type: String,
+        enum: ['Admin', 'Proctor', 'Maintainer'],
+        default: 'Admin'
+    },
+    
+    // Legacy fields for student requests
+    studentId: {
+        type: String
     },
     studentName: {
-        type: String,
-        required: true
+        type: String
     },
     email: {
-        type: String,
-        required: true
+        type: String
     },
     phone: {
-        type: String,
-        required: true
+        type: String
     },
+    
+    // Request details
     requestType: {
         type: String,
         required: true,
-        enum: ['Room Change', 'Maintenance', 'Extension', 'Facility Issue', 'Other']
+        enum: ['Room Change', 'Maintenance', 'Extension', 'Facility Issue', 'Report', 'Message', 'Tool Request', 'Other']
     },
     subject: {
         type: String,
@@ -30,14 +56,20 @@ const requestSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    
+    // Block information (for proctor requests)
+    blockId: {
+        type: String
+    },
+    
     status: {
         type: String,
-        enum: ['pending', 'approved', 'rejected'],
+        enum: ['pending', 'in-progress', 'resolved', 'rejected'],
         default: 'pending'
     },
     priority: {
         type: String,
-        enum: ['low', 'medium', 'high'],
+        enum: ['low', 'medium', 'high', 'urgent'],
         default: 'medium'
     },
     currentRoom: {
@@ -49,9 +81,27 @@ const requestSchema = new mongoose.Schema({
     },
     resolvedOn: {
         type: String
-    }
+    },
+    resolvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin'
+    },
+    adminResponse: {
+        type: String
+    },
+    attachments: [{
+        filename: String,
+        url: String,
+        uploadedAt: Date
+    }]
 }, {
     timestamps: true
 });
+
+// Index for efficient queries
+requestSchema.index({ fromUserId: 1, status: 1 });
+requestSchema.index({ toUserId: 1, status: 1 });
+requestSchema.index({ blockId: 1, status: 1 });
+requestSchema.index({ requestType: 1, status: 1 });
 
 module.exports = mongoose.model('Request', requestSchema);

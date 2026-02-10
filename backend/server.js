@@ -199,6 +199,7 @@ app.get('/check-students', async (req, res) => {
 
 // Define Routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/multi-auth', require('./routes/multiAuthRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
 app.use('/api/dorms', require('./routes/dormRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
@@ -207,6 +208,9 @@ app.use('/api/cache', require('./routes/cacheRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
+app.use('/api/proctor', require('./routes/proctorRoutes'));
+app.use('/api/maintainer', require('./routes/maintainerRoutes'));
+app.use('/api/user-management', require('./routes/userManagementRoutes'));
 
 const PORT = process.env.PORT || 5000;
 

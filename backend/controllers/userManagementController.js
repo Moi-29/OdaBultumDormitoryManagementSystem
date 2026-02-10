@@ -1,0 +1,473 @@
+const Proctor = require('../models/Proctor');
+const Maintainer = require('../models/Maintainer');
+const Block = require('../models/Block');
+const Request = require('../models/Request');
+
+// ============= PROCTOR MANAGEMENT =============
+
+// @desc    Create new proctor
+// @route   POST /api/user-management/proctors
+// @access  Private (Admin)
+const createProctor = async (req, res) => {
+    try {
+        const { fullName, username, password, phone, email, blockId } = req.body;
+
+        // Validation
+        if (!fullName || !username || !password || !blockId) {
+            return res.status(400).json({ 
+                message: 'Full name, username, password, and block assignment are required' 
+            });
+        }
+
+        // Check if username already exists
+        const existingProctor = await Proctor.findOne({ username: username.toLowerCase() });
+        if (existingProctor) {
+            return res.status(400).json({ message: 'Username already exists' });
+        }
+
+        // Verify block exists
+        const block = await Block.findOne({ name: blockId });
+        if (!block) {
+            return res.status(400).json({ message: 'Invalid block ID' });
+        }
+
+        // Create proctor
+        const proctor = await Proctor.create({
+            fullName,
+            username: username.toLowerCase(),
+            password,
+            phone,
+            email,
+            blockId,
+            status: 'active',
+            createdBy: req.admin._id
+        });
+
+        // Update block with assigned proctor
+        block.assignedProctor = proctor._id;
+        await block.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Proctor created successfully',
+            proctor: {
+                id: proctor._id,
+                fullName: proctor.fullName,
+                username: proctor.username,
+                blockId: proctor.blockId,
+                status: proctor.status
+            }
+        });
+    } catch (error) {
+        console.error('Error creating proctor:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get all proctors
+// @route   GET /api/user-management/proctors
+// @access  Private (Admin)
+const getProctors = async (req, res) => {
+    try {
+        const { status, blockId } = req.query;
+
+        let query = {};
+        if (status) query.status = status;
+        if (blockId) query.blockId = blockId;
+
+        const proctors = await Proctor.find(query)
+            .select('-password')
+            .sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            count: proctors.length,
+            proctors
+        });
+    } catch (error) {
+        console.error('Error fetching proctors:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get single proctor
+// @route   GET /api/user-management/proctors/:id
+// @access  Private (Admin)
+const getProctor = async (req, res) => {
+    try {
+        const proctor = await Proctor.findById(req.params.id).select('-password');
+        
+        if (!proctor) {
+            return res.status(404).json({ message: 'Proctor not found' });
+        }
+
+        // Get proctor's statistics
+        const totalReports = await Request.countDocuments({
+            fromUserId: proctor._id,
+            fromUserModel: 'Proctor'
+        });
+
+        const pendingReports = await Request.countDocuments({
+            fromUserId: proctor._id,
+            fromUserModel: 'Proctor',
+            status: 'pending'
+        });
+
+        res.json({
+            success: true,
+            proctor,
+            stats: {
+                totalReports,
+                pendingReports
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching proctor:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Update proctor
+// @route   PUT /api/user-management/proctors/:id
+// @access  Private (Admin)
+const updateProctor = async (req, res) => {
+    try {
+        const { fullName, username, password, phone, email, blockId, status } = req.body;
+
+        const proctor = await Proctor.findById(req.params.id);
+        
+        if (!proctor) {
+            return res.status(404).json({ message: 'Proctor not found' });
+        }
+
+        // Update fields
+        if (fullName) proctor.fullName = fullName;
+        if (username) proctor.username = username.toLowerCase();
+        if (password) proctor.password = password; // Will be hashed by pre-save hook
+        if (phone) proctor.phone = phone;
+        if (email) proctor.email = email;
+        if (status) proctor.status = status;
+        
+        // Handle block reassignment
+        if (blockId && blockId !== proctor.blockId) {
+            // Verify new block exists
+            const newBlock = await Block.findOne({ name: blockId });
+            if (!newBlock) {
+                return res.status(400).json({ message: 'Invalid block ID' });
+            }
+
+            // Remove from old block
+            await Block.updateOne(
+                { name: proctor.blockId },
+                { $unset: { assignedProctor: 1 } }
+            );
+
+            // Assign to new block
+            newBlock.assignedProctor = proctor._id;
+            await newBlock.save();
+
+            proctor.blockId = blockId;
+        }
+
+        await proctor.save();
+
+        res.json({
+            success: true,
+            message: 'Proctor updated successfully',
+            proctor: {
+                id: proctor._id,
+                fullName: proctor.fullName,
+                username: proctor.username,
+                blockId: proctor.blockId,
+                status: proctor.status
+            }
+        });
+    } catch (error) {
+        console.error('Error updating proctor:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Delete/Dismiss proctor
+// @route   DELETE /api/user-management/proctors/:id
+// @access  Private (Admin)
+const deleteProctor = async (req, res) => {
+    try {
+        const proctor = await Proctor.findById(req.params.id);
+        
+        if (!proctor) {
+            return res.status(404).json({ message: 'Proctor not found' });
+        }
+
+        // Soft delete - set status to dismissed
+        proctor.status = 'dismissed';
+        await proctor.save();
+
+        // Remove from block assignment
+        await Block.updateOne(
+            { name: proctor.blockId },
+            { $unset: { assignedProctor: 1 } }
+        );
+
+        res.json({
+            success: true,
+            message: 'Proctor dismissed successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting proctor:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// ============= MAINTAINER MANAGEMENT =============
+
+// @desc    Create new maintainer
+// @route   POST /api/user-management/maintainers
+// @access  Private (Admin)
+const createMaintainer = async (req, res) => {
+    try {
+        const { fullName, username, password, phone, email, specialization } = req.body;
+
+        // Validation
+        if (!fullName || !username || !password) {
+            return res.status(400).json({ 
+                message: 'Full name, username, and password are required' 
+            });
+        }
+
+        // Check if username already exists
+        const existingMaintainer = await Maintainer.findOne({ username: username.toLowerCase() });
+        if (existingMaintainer) {
+            return res.status(400).json({ message: 'Username already exists' });
+        }
+
+        // Create maintainer
+        const maintainer = await Maintainer.create({
+            fullName,
+            username: username.toLowerCase(),
+            password,
+            phone,
+            email,
+            specialization: specialization || 'general',
+            status: 'active',
+            createdBy: req.admin._id
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Maintainer created successfully',
+            maintainer: {
+                id: maintainer._id,
+                fullName: maintainer.fullName,
+                username: maintainer.username,
+                specialization: maintainer.specialization,
+                status: maintainer.status
+            }
+        });
+    } catch (error) {
+        console.error('Error creating maintainer:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get all maintainers
+// @route   GET /api/user-management/maintainers
+// @access  Private (Admin)
+const getMaintainers = async (req, res) => {
+    try {
+        const { status, specialization } = req.query;
+
+        let query = {};
+        if (status) query.status = status;
+        if (specialization) query.specialization = specialization;
+
+        const maintainers = await Maintainer.find(query)
+            .select('-password')
+            .sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            count: maintainers.length,
+            maintainers
+        });
+    } catch (error) {
+        console.error('Error fetching maintainers:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get single maintainer
+// @route   GET /api/user-management/maintainers/:id
+// @access  Private (Admin)
+const getMaintainer = async (req, res) => {
+    try {
+        const maintainer = await Maintainer.findById(req.params.id).select('-password');
+        
+        if (!maintainer) {
+            return res.status(404).json({ message: 'Maintainer not found' });
+        }
+
+        // Get maintainer's statistics
+        const totalRequests = await Request.countDocuments({
+            fromUserId: maintainer._id,
+            fromUserModel: 'Maintainer'
+        });
+
+        const completedWorkOrders = await Request.countDocuments({
+            toUserId: maintainer._id,
+            toUserModel: 'Maintainer',
+            status: 'resolved'
+        });
+
+        res.json({
+            success: true,
+            maintainer,
+            stats: {
+                totalRequests,
+                completedWorkOrders
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching maintainer:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Update maintainer
+// @route   PUT /api/user-management/maintainers/:id
+// @access  Private (Admin)
+const updateMaintainer = async (req, res) => {
+    try {
+        const { fullName, username, password, phone, email, specialization, status } = req.body;
+
+        const maintainer = await Maintainer.findById(req.params.id);
+        
+        if (!maintainer) {
+            return res.status(404).json({ message: 'Maintainer not found' });
+        }
+
+        // Update fields
+        if (fullName) maintainer.fullName = fullName;
+        if (username) maintainer.username = username.toLowerCase();
+        if (password) maintainer.password = password; // Will be hashed by pre-save hook
+        if (phone) maintainer.phone = phone;
+        if (email) maintainer.email = email;
+        if (specialization) maintainer.specialization = specialization;
+        if (status) maintainer.status = status;
+
+        await maintainer.save();
+
+        res.json({
+            success: true,
+            message: 'Maintainer updated successfully',
+            maintainer: {
+                id: maintainer._id,
+                fullName: maintainer.fullName,
+                username: maintainer.username,
+                specialization: maintainer.specialization,
+                status: maintainer.status
+            }
+        });
+    } catch (error) {
+        console.error('Error updating maintainer:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Delete/Dismiss maintainer
+// @route   DELETE /api/user-management/maintainers/:id
+// @access  Private (Admin)
+const deleteMaintainer = async (req, res) => {
+    try {
+        const maintainer = await Maintainer.findById(req.params.id);
+        
+        if (!maintainer) {
+            return res.status(404).json({ message: 'Maintainer not found' });
+        }
+
+        // Soft delete - set status to dismissed
+        maintainer.status = 'dismissed';
+        await maintainer.save();
+
+        res.json({
+            success: true,
+            message: 'Maintainer dismissed successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting maintainer:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// ============= BLOCK MANAGEMENT =============
+
+// @desc    Get all blocks
+// @route   GET /api/user-management/blocks
+// @access  Private (Admin)
+const getBlocks = async (req, res) => {
+    try {
+        const blocks = await Block.find()
+            .populate('assignedProctor', 'fullName username')
+            .sort({ name: 1 });
+
+        res.json({
+            success: true,
+            count: blocks.length,
+            blocks
+        });
+    } catch (error) {
+        console.error('Error fetching blocks:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Create new block
+// @route   POST /api/user-management/blocks
+// @access  Private (Admin)
+const createBlock = async (req, res) => {
+    try {
+        const { name, description, gender, totalRooms, capacity } = req.body;
+
+        if (!name || !gender) {
+            return res.status(400).json({ message: 'Block name and gender are required' });
+        }
+
+        const block = await Block.create({
+            name,
+            description,
+            gender,
+            totalRooms: totalRooms || 0,
+            capacity: capacity || 0,
+            status: 'active'
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Block created successfully',
+            block
+        });
+    } catch (error) {
+        console.error('Error creating block:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+module.exports = {
+    // Proctor management
+    createProctor,
+    getProctors,
+    getProctor,
+    updateProctor,
+    deleteProctor,
+    
+    // Maintainer management
+    createMaintainer,
+    getMaintainers,
+    getMaintainer,
+    updateMaintainer,
+    deleteMaintainer,
+    
+    // Block management
+    getBlocks,
+    createBlock
+};
