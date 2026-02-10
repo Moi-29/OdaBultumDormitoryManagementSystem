@@ -1,6 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Auth/Login';
 import StudentPortal from './pages/StudentPortal';
+import StudentLayout from './components/Layout/StudentLayout';
+import DormitoryView from './pages/Student/DormitoryView';
+import ApplicationForm from './pages/Student/ApplicationForm';
+import ReportIssue from './pages/Student/ReportIssue';
 import AdminLayout from './components/Layout/AdminLayout';
 import Dashboard from './pages/Admin/Dashboard';
 import Students from './pages/Admin/Students';
@@ -65,8 +69,17 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Legacy Student Portal (keep for backward compatibility) */}
           <Route path="/" element={<StudentPortal />} />
           <Route path="/login" element={<Login />} />
+
+          {/* New Student Routes with Layout */}
+          <Route path="/student" element={<StudentLayout />}>
+            <Route index element={<Navigate to="/student/dormitory" replace />} />
+            <Route path="dormitory" element={<DormitoryView />} />
+            <Route path="application" element={<ApplicationForm />} />
+            <Route path="report" element={<ReportIssue />} />
+          </Route>
 
           {/* Proctor Routes */}
           <Route path="/proctor/dashboard" element={<ProctorDashboard />} />
