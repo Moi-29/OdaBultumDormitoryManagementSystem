@@ -156,7 +156,7 @@ const multiRoleLogin = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 phone: user.phone,
-                role: userRole,
+                role: userRole, // Keep as string for frontend routing
                 status: user.status
             }
         };
@@ -164,7 +164,7 @@ const multiRoleLogin = async (req, res) => {
         // Add role-specific data
         if (userRole === 'admin') {
             const populatedUser = await Admin.findById(user._id).populate('role');
-            responseData.user.role = populatedUser.role;
+            responseData.user.roleDetails = populatedUser.role; // Store populated role separately
             responseData.user.department = user.department;
             responseData.user.permissions = [
                 ...(populatedUser.role?.permissions || []),

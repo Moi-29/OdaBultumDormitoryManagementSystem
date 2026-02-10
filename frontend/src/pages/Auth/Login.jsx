@@ -21,8 +21,15 @@ const Login = () => {
         try {
             const result = await login(formData.username, formData.password, formData.role);
             if (result.success) {
+                // Get the role - handle both string and object cases
+                const userRole = typeof result.user.role === 'string' 
+                    ? result.user.role 
+                    : result.user.role?.name || formData.role;
+                
+                console.log('Login successful, redirecting based on role:', userRole);
+                
                 // Redirect based on role
-                switch (result.user.role) {
+                switch (userRole.toLowerCase()) {
                     case 'admin':
                         navigate('/admin/dashboard');
                         break;
@@ -33,11 +40,15 @@ const Login = () => {
                         navigate('/maintainer/dashboard');
                         break;
                     default:
+                        console.warn('Unknown role, redirecting to home:', userRole);
                         navigate('/');
                 }
             } else {
                 setError(result.message);
             }
+        } catch (error) {
+            console.error('Login error:', error);
+            setError('An unexpected error occurred. Please try again.');
         } finally {
             setIsLoading(false);
         }
