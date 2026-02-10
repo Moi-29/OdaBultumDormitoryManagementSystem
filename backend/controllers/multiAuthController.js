@@ -52,11 +52,14 @@ const multiRoleLogin = async (req, res) => {
         }).select('+password');
 
         if (!user) {
+            console.log(`Login attempt failed: User not found for ${userRole} with username: ${username}`);
             return res.status(401).json({ 
                 success: false,
                 message: 'Invalid credentials' 
             });
         }
+
+        console.log(`User found: ${user.username}, status: ${user.status}, role: ${userRole}`);
 
         // Check if account is locked
         if (user.isAccountLocked && user.isAccountLocked()) {
@@ -66,8 +69,8 @@ const multiRoleLogin = async (req, res) => {
             });
         }
 
-        // Check account status
-        if (user.status !== 'active' && user.status !== 'Active') {
+        // Check account status (case-insensitive)
+        if (user.status && user.status.toLowerCase() !== 'active') {
             return res.status(403).json({ 
                 success: false,
                 message: `Account is ${user.status}. Please contact administrator.` 

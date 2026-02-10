@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
 const Admin = require('./models/Admin');
 const Role = require('./models/Role');
 const SecuritySettings = require('./models/SecuritySettings');
 const { getAllPermissions } = require('./utils/permissions');
 
-dotenv.config();
+// Load environment variables from backend/.env
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const connectDB = async () => {
     try {
