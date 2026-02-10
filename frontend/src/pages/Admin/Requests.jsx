@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { MessageSquare, Clock, CheckCircle, XCircle, Eye, User, Mail, Phone, Calendar, Filter, Search } from 'lucide-react';
+import { 
+    MessageSquare, Clock, CheckCircle, XCircle, Eye, User, Mail, Phone, Calendar, 
+    Filter, Search, Send, Paperclip, Smile, TrendingUp, AlertTriangle, FileText,
+    MoreVertical, Download, Archive, Star, ChevronRight, Activity
+} from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 
@@ -8,9 +12,11 @@ const Requests = () => {
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [filterStatus, setFilterStatus] = useState('all'); // all, pending, approved, rejected
+    const [filterStatus, setFilterStatus] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [notification, setNotification] = useState(null);
+    const [chatMessage, setChatMessage] = useState('');
+    const [showChatPanel, setShowChatPanel] = useState(false);
 
     // Show notification helper
     const showNotification = (message, type = 'success') => {
@@ -26,12 +32,9 @@ const Requests = () => {
         try {
             const token = localStorage.getItem('token');
             
-            // Try to fetch from API
             try {
                 const response = await axios.get(`${API_URL}/api/requests`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 
                 if (response.data && response.data.length > 0) {
@@ -40,10 +43,10 @@ const Requests = () => {
                     return;
                 }
             } catch (apiError) {
-                console.log('API not available, using mock data:', apiError.message);
+                console.log('API not available, using mock data');
             }
             
-            // Fallback to mock data if API fails or returns empty
+            // Mock data
             const mockData = [
                 {
                     _id: '1',
@@ -67,7 +70,7 @@ const Requests = () => {
                     phone: '+251922345678',
                     requestType: 'Maintenance',
                     subject: 'Broken Window in Room A-101',
-                    message: 'The window in my room is broken and needs urgent repair. It is affecting the room temperature.',
+                    message: 'The window in my room is broken and needs urgent repair.',
                     status: 'approved',
                     priority: 'medium',
                     submittedOn: '2024-02-07',
@@ -82,7 +85,7 @@ const Requests = () => {
                     phone: '+251933456789',
                     requestType: 'Extension',
                     subject: 'Dormitory Stay Extension Request',
-                    message: 'I need to extend my dormitory stay for the summer semester due to research work.',
+                    message: 'I need to extend my dormitory stay for the summer semester.',
                     status: 'pending',
                     priority: 'low',
                     submittedOn: '2024-02-06',
@@ -101,22 +104,16 @@ const Requests = () => {
         try {
             const token = localStorage.getItem('token');
             
-            // Try API call first
             try {
                 await axios.patch(
                     `${API_URL}/api/requests/${requestId}/status`,
                     { status: newStatus },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                    { headers: { Authorization: `Bearer ${token}` } }
                 );
             } catch (apiError) {
-                console.log('API not available, updating locally:', apiError.message);
+                console.log('API not available, updating locally');
             }
             
-            // Update local state
             setRequests(requests.map(req => 
                 req._id === requestId 
                     ? { ...req, status: newStatus, resolvedOn: newStatus !== 'pending' ? new Date().toISOString().split('T')[0] : null }
@@ -124,7 +121,6 @@ const Requests = () => {
             ));
             
             showNotification(`Request ${newStatus} successfully`, 'success');
-            setShowDetailsModal(false);
         } catch (error) {
             console.error('Error updating request status:', error);
             showNotification('Failed to update request status', 'error');
@@ -133,24 +129,24 @@ const Requests = () => {
 
     const viewDetails = (request) => {
         setSelectedRequest(request);
-        setShowDetailsModal(true);
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'pending': return '#f59e0b';
-            case 'approved': return '#10b981';
-            case 'rejected': return '#ef4444';
-            default: return '#64748b';
-        }
+        setShowChatPanel(true);
     };
 
     const getPriorityColor = (priority) => {
         switch (priority) {
-            case 'high': return '#ef4444';
-            case 'medium': return '#f59e0b';
-            case 'low': return '#10b981';
-            default: return '#64748b';
+            case 'high': return { bg: '#FFF5F5', color: '#FF4500', border: '#FF4500' };
+            case 'medium': return { bg: '#FFFBEB', color: '#FFD700', border: '#FFD700' };
+            case 'low': return { bg: '#F0FFF4', color: '#32CD32', border: '#32CD32' };
+            default: return { bg: '#F5F5F5', color: '#A9A9A9', border: '#A9A9A9' };
+        }
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'pending': return { bg: '#FFFBEB', color: '#FFD700', border: '#FFD700' };
+            case 'approved': return { bg: '#F0FFF4', color: '#32CD32', border: '#32CD32' };
+            case 'rejected': return { bg: '#FFF5F5', color: '#FF4500', border: '#FF4500' };
+            default: return { bg: '#F5F5F5', color: '#A9A9A9', border: '#A9A9A9' };
         }
     };
 
@@ -170,385 +166,745 @@ const Requests = () => {
     };
 
     if (loading) {
-        return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading requests...</div>;
+        return (
+            <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '100vh',
+                background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)'
+            }}>
+                <div style={{ textAlign: 'center', color: 'white' }}>
+                    <div style={{
+                        width: '60px',
+                        height: '60px',
+                        border: '4px solid rgba(255,255,255,0.2)',
+                        borderTopColor: '#00BFFF',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        margin: '0 auto 1rem'
+                    }} />
+                    <div style={{ fontSize: '1.2rem', fontWeight: 600 }}>Loading requests...</div>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div style={{ position: 'relative' }}>
-            {/* Notification */}
+        <div style={{ 
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #F5F5F5 0%, #E8E8E8 100%)',
+            fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+            position: 'relative'
+        }}>
+            {/* Premium Notification */}
             {notification && (
                 <div style={{
                     position: 'fixed',
                     top: '2rem',
                     right: '2rem',
                     zIndex: 10001,
-                    minWidth: '320px',
-                    maxWidth: '500px',
+                    minWidth: '350px',
                     background: notification.type === 'success' 
-                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                        : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        ? 'linear-gradient(135deg, #32CD32 0%, #228B22 100%)'
+                        : 'linear-gradient(135deg, #FF4500 0%, #DC143C 100%)',
                     color: 'white',
-                    padding: '1.25rem 1.5rem',
+                    padding: '1.5rem 2rem',
                     borderRadius: '16px',
-                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-                    animation: 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)',
+                    animation: 'slideInRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                    backdropFilter: 'blur(10px)'
                 }}>
-                    {notification.message}
+                    <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                        {notification.type === 'success' ? '✓ Success' : '✗ Error'}
+                    </div>
+                    <div style={{ fontSize: '0.95rem', opacity: 0.95 }}>
+                        {notification.message}
+                    </div>
                 </div>
             )}
 
-            <div style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div>
-                        <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
-                            <MessageSquare size={32} /> Student Requests
-                        </h1>
-                        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                            Manage student requests and inquiries
-                        </p>
-                    </div>
-                </div>
+            {/* Hero Header */}
+            <div style={{
+                background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)',
+                padding: '3rem 3rem 2rem 3rem',
+                borderRadius: '0 0 32px 32px',
+                boxShadow: '0 10px 40px rgba(0,31,63,0.3)',
+                marginBottom: '2rem',
+                position: 'relative',
+                overflow: 'hidden'
+            }}>
+                {/* Decorative Elements */}
+                <div style={{
+                    position: 'absolute',
+                    top: '-50px',
+                    right: '-50px',
+                    width: '300px',
+                    height: '300px',
+                    background: 'radial-gradient(circle, rgba(0,191,255,0.15) 0%, transparent 70%)',
+                    borderRadius: '50%'
+                }} />
+                <div style={{
+                    position: 'absolute',
+                    bottom: '-100px',
+                    left: '-100px',
+                    width: '400px',
+                    height: '400px',
+                    background: 'radial-gradient(circle, rgba(0,191,255,0.1) 0%, transparent 70%)',
+                    borderRadius: '50%'
+                }} />
 
-                {/* Stats Cards */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                    <StatCard label="Total Requests" value={stats.total} color="#3b82f6" />
-                    <StatCard label="Pending" value={stats.pending} color="#f59e0b" />
-                    <StatCard label="Approved" value={stats.approved} color="#10b981" />
-                    <StatCard label="Rejected" value={stats.rejected} color="#ef4444" />
-                </div>
-
-                {/* Filters */}
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-                    <div style={{ flex: 1, minWidth: '250px', position: 'relative' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
-                        <input
-                            type="text"
-                            placeholder="Search by name, ID, or subject..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem 1rem 0.75rem 3rem',
-                                border: '2px solid #e5e7eb',
-                                borderRadius: '8px',
-                                fontSize: '0.95rem'
-                            }}
-                        />
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                        <div style={{
+                            width: '60px',
+                            height: '60px',
+                            background: 'linear-gradient(135deg, #00BFFF 0%, #0080FF 100%)',
+                            borderRadius: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 8px 24px rgba(0,191,255,0.4)'
+                        }}>
+                            <MessageSquare size={32} color="white" strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <h1 style={{ 
+                                margin: 0, 
+                                fontSize: '2.5rem', 
+                                fontWeight: 800,
+                                color: 'white',
+                                letterSpacing: '-1px',
+                                textShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                            }}>
+                                Student Requests
+                            </h1>
+                            <p style={{ 
+                                margin: '0.5rem 0 0 0', 
+                                fontSize: '1.1rem', 
+                                color: 'rgba(255,255,255,0.8)',
+                                fontWeight: 400
+                            }}>
+                                Manage student requests and inquiries seamlessly
+                            </p>
+                        </div>
                     </div>
-                    <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                        style={{
-                            padding: '0.75rem 1rem',
-                            border: '2px solid #e5e7eb',
-                            borderRadius: '8px',
-                            fontSize: '0.95rem',
-                            cursor: 'pointer',
-                            minWidth: '150px'
-                        }}
-                    >
-                        <option value="all">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
                 </div>
             </div>
 
-            {/* Requests Table */}
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
-                        <thead>
-                            <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Student</th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Request Type</th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Subject</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Priority</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Status</th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Date</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredRequests.map((request) => (
-                                <tr key={request._id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                                    <td style={{ padding: '1rem' }}>
-                                        <div style={{ fontWeight: 600 }}>{request.studentName}</div>
-                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{request.studentId}</div>
-                                    </td>
-                                    <td style={{ padding: '1rem' }}>{request.requestType}</td>
-                                    <td style={{ padding: '1rem', maxWidth: '250px' }}>
-                                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {request.subject}
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '999px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: 600,
-                                            background: `${getPriorityColor(request.priority)}20`,
-                                            color: getPriorityColor(request.priority)
-                                        }}>
-                                            {request.priority.toUpperCase()}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '999px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: 600,
-                                            background: `${getStatusColor(request.status)}20`,
-                                            color: getStatusColor(request.status)
-                                        }}>
-                                            {request.status.toUpperCase()}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '1rem', color: '#64748b' }}>{request.submittedOn}</td>
-                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <button
-                                            onClick={() => viewDetails(request)}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                background: '#3b82f6',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontWeight: 600,
-                                                fontSize: '0.85rem',
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem'
+            <div style={{ padding: '0 3rem 3rem 3rem' }}>
+                {/* Premium Stats Cards */}
+                <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+                    gap: '1.5rem', 
+                    marginBottom: '2.5rem' 
+                }}>
+                    <PremiumStatCard 
+                        label="Total Requests" 
+                        value={stats.total} 
+                        icon={<Activity size={24} />}
+                        color="#FF8C00"
+                        trend="+12%"
+                    />
+                    <PremiumStatCard 
+                        label="Pending" 
+                        value={stats.pending} 
+                        icon={<Clock size={24} />}
+                        color="#FFD700"
+                        trend="2 new"
+                    />
+                    <PremiumStatCard 
+                        label="Approved" 
+                        value={stats.approved} 
+                        icon={<CheckCircle size={24} />}
+                        color="#32CD32"
+                        trend="+5 today"
+                    />
+                    <PremiumStatCard 
+                        label="Rejected" 
+                        value={stats.rejected} 
+                        icon={<XCircle size={24} />}
+                        color="#FF4500"
+                        trend="0 today"
+                    />
+                </div>
+
+                {/* Advanced Search & Filters */}
+                <div style={{
+                    background: 'white',
+                    borderRadius: '20px',
+                    padding: '1.5rem',
+                    marginBottom: '2rem',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                    border: '1px solid rgba(0,0,0,0.05)'
+                }}>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <div style={{ flex: 1, minWidth: '300px', position: 'relative' }}>
+                            <Search size={20} style={{ 
+                                position: 'absolute', 
+                                left: '1.25rem', 
+                                top: '50%', 
+                                transform: 'translateY(-50%)', 
+                                color: '#00BFFF',
+                                zIndex: 1
+                            }} />
+                            <input
+                                type="text"
+                                placeholder="Search by name, ID, or subject..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '1rem 1rem 1rem 3.5rem',
+                                    border: '2px solid #E8E8E8',
+                                    borderRadius: '12px',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    transition: 'all 0.3s',
+                                    background: '#FAFAFA'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.style.borderColor = '#00BFFF';
+                                    e.target.style.background = 'white';
+                                    e.target.style.boxShadow = '0 0 0 4px rgba(0,191,255,0.1)';
+                                }}
+                                onBlur={(e) => {
+                                    e.target.style.borderColor = '#E8E8E8';
+                                    e.target.style.background = '#FAFAFA';
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            />
+                        </div>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            style={{
+                                padding: '1rem 1.5rem',
+                                border: '2px solid #E8E8E8',
+                                borderRadius: '12px',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                background: 'white',
+                                color: '#001F3F',
+                                minWidth: '180px',
+                                transition: 'all 0.3s'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.borderColor = '#00BFFF';
+                                e.target.style.boxShadow = '0 0 0 4px rgba(0,191,255,0.1)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#E8E8E8';
+                                e.target.style.boxShadow = 'none';
+                            }}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                {/* Premium Table with Chat Panel */}
+                <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+                    {/* Requests Table */}
+                    <div style={{ 
+                        flex: showChatPanel ? '0 0 60%' : '1',
+                        background: 'white',
+                        borderRadius: '20px',
+                        overflow: 'hidden',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.05)',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
+                                <thead>
+                                    <tr style={{ background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)' }}>
+                                        <th style={tableHeaderStyle}>Student</th>
+                                        <th style={tableHeaderStyle}>Type</th>
+                                        <th style={tableHeaderStyle}>Subject</th>
+                                        <th style={tableHeaderStyle}>Priority</th>
+                                        <th style={tableHeaderStyle}>Status</th>
+                                        <th style={tableHeaderStyle}>Date</th>
+                                        <th style={tableHeaderStyle}>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredRequests.map((request, index) => (
+                                        <tr 
+                                            key={request._id} 
+                                            style={{ 
+                                                background: index % 2 === 0 ? 'white' : '#FAFAFA',
+                                                transition: 'all 0.3s',
+                                                cursor: 'pointer'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.background = '#F0F9FF';
+                                                e.currentTarget.style.transform = 'scale(1.01)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.background = index % 2 === 0 ? 'white' : '#FAFAFA';
+                                                e.currentTarget.style.transform = 'scale(1)';
                                             }}
                                         >
-                                            <Eye size={16} />
-                                            View
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {filteredRequests.length === 0 && (
-                    <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
-                        <MessageSquare size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-                        <p>No requests found</p>
-                    </div>
-                )}
-            </div>
-
-            {/* Details Modal */}
-            {showDetailsModal && selectedRequest && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    backdropFilter: 'blur(4px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10000,
-                    padding: '1rem'
-                }}>
-                    <div style={{
-                        background: 'white',
-                        borderRadius: '16px',
-                        maxWidth: '600px',
-                        width: '100%',
-                        maxHeight: '90vh',
-                        overflow: 'hidden',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-                    }}>
-                        {/* Modal Header */}
-                        <div style={{
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            color: 'white',
-                            padding: '1.5rem 2rem',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}>
-                            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
-                                Request Details
-                            </h2>
-                            <button
-                                onClick={() => setShowDetailsModal(false)}
-                                style={{
-                                    background: 'rgba(255,255,255,0.2)',
-                                    border: 'none',
-                                    color: 'white',
-                                    width: '36px',
-                                    height: '36px',
-                                    borderRadius: '50%',
-                                    cursor: 'pointer',
-                                    fontSize: '1.5rem'
-                                }}
-                            >
-                                ×
-                            </button>
+                                            <td style={tableCellStyle}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                    <div style={{
+                                                        width: '40px',
+                                                        height: '40px',
+                                                        borderRadius: '50%',
+                                                        background: 'linear-gradient(135deg, #00BFFF 0%, #0080FF 100%)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        color: 'white',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.9rem',
+                                                        boxShadow: '0 4px 12px rgba(0,191,255,0.3)'
+                                                    }}>
+                                                        {request.studentName.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ fontWeight: 700, color: '#001F3F', fontSize: '0.95rem' }}>
+                                                            {request.studentName}
+                                                        </div>
+                                                        <div style={{ fontSize: '0.85rem', color: '#00BFFF', fontWeight: 600 }}>
+                                                            {request.studentId}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style={tableCellStyle}>
+                                                <span style={{
+                                                    padding: '0.4rem 0.8rem',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: 600,
+                                                    background: '#F0F9FF',
+                                                    color: '#0080FF',
+                                                    border: '1px solid #B3E0FF'
+                                                }}>
+                                                    {request.requestType}
+                                                </span>
+                                            </td>
+                                            <td style={{...tableCellStyle, maxWidth: '200px'}}>
+                                                <div style={{ 
+                                                    overflow: 'hidden', 
+                                                    textOverflow: 'ellipsis', 
+                                                    whiteSpace: 'nowrap',
+                                                    fontWeight: 500,
+                                                    color: '#333'
+                                                }}>
+                                                    {request.subject}
+                                                </div>
+                                            </td>
+                                            <td style={tableCellStyle}>
+                                                <PriorityBadge priority={request.priority} />
+                                            </td>
+                                            <td style={tableCellStyle}>
+                                                <StatusBadge status={request.status} />
+                                            </td>
+                                            <td style={tableCellStyle}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#666' }}>
+                                                    <Calendar size={14} />
+                                                    <span style={{ fontSize: '0.9rem' }}>{request.submittedOn}</span>
+                                                </div>
+                                            </td>
+                                            <td style={tableCellStyle}>
+                                                <button
+                                                    onClick={() => viewDetails(request)}
+                                                    style={{
+                                                        padding: '0.6rem 1.2rem',
+                                                        background: 'linear-gradient(135deg, #00BFFF 0%, #0080FF 100%)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '10px',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 600,
+                                                        fontSize: '0.85rem',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.5rem',
+                                                        boxShadow: '0 4px 12px rgba(0,191,255,0.3)',
+                                                        transition: 'all 0.3s'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,191,255,0.4)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,191,255,0.3)';
+                                                    }}
+                                                >
+                                                    <Eye size={16} />
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
 
-                        {/* Modal Content */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }}>
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                    <User size={18} color="#64748b" />
-                                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Student Information</span>
+                        {filteredRequests.length === 0 && (
+                            <div style={{ textAlign: 'center', padding: '4rem', color: '#A9A9A9' }}>
+                                <MessageSquare size={64} style={{ margin: '0 auto 1.5rem', opacity: 0.3 }} />
+                                <p style={{ fontSize: '1.2rem', fontWeight: 600 }}>No requests found</p>
+                                <p style={{ fontSize: '0.95rem', marginTop: '0.5rem' }}>Try adjusting your filters</p>
+                            </div>
+                        )}
+                    </div>
+                    {/* Premium Chat Panel */}
+                    {showChatPanel && selectedRequest && (
+                        <div style={{
+                            flex: '0 0 38%',
+                            background: 'white',
+                            borderRadius: '20px',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                            border: '1px solid rgba(0,0,0,0.05)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            maxHeight: '800px',
+                            animation: 'slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            position: 'sticky',
+                            top: '2rem'
+                        }}>
+                            {/* Chat Header */}
+                            <div style={{
+                                background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)',
+                                padding: '1.5rem',
+                                borderRadius: '20px 20px 0 0',
+                                color: 'white'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>
+                                            {selectedRequest.studentName}
+                                        </h3>
+                                        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
+                                            {selectedRequest.studentId} • {selectedRequest.currentRoom}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowChatPanel(false)}
+                                        style={{
+                                            background: 'rgba(255,255,255,0.2)',
+                                            border: 'none',
+                                            color: 'white',
+                                            width: '36px',
+                                            height: '36px',
+                                            borderRadius: '50%',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                                    >
+                                        <ChevronRight size={20} />
+                                    </button>
                                 </div>
-                                <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>{selectedRequest.studentName}</div>
-                                <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{selectedRequest.studentId}</div>
-                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
-                                        <Mail size={16} color="#64748b" />
+                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                                        <Mail size={14} />
                                         {selectedRequest.email}
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
-                                        <Phone size={16} color="#64748b" />
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                                        <Phone size={14} />
                                         {selectedRequest.phone}
                                     </div>
                                 </div>
                             </div>
 
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Request Type</div>
-                                <div style={{ fontWeight: 600 }}>{selectedRequest.requestType}</div>
-                            </div>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Subject</div>
-                                <div style={{ fontWeight: 600 }}>{selectedRequest.subject}</div>
-                            </div>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Message</div>
-                                <div style={{ 
-                                    padding: '1rem', 
-                                    background: '#f8fafc', 
-                                    borderRadius: '8px',
-                                    lineHeight: '1.6'
-                                }}>
-                                    {selectedRequest.message}
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
-                                <div>
-                                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Priority</div>
-                                    <span style={{
-                                        padding: '0.25rem 0.75rem',
-                                        borderRadius: '999px',
-                                        fontSize: '0.8rem',
-                                        fontWeight: 600,
-                                        background: `${getPriorityColor(selectedRequest.priority)}20`,
-                                        color: getPriorityColor(selectedRequest.priority)
-                                    }}>
-                                        {selectedRequest.priority.toUpperCase()}
-                                    </span>
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Status</div>
-                                    <span style={{
-                                        padding: '0.25rem 0.75rem',
-                                        borderRadius: '999px',
-                                        fontSize: '0.8rem',
-                                        fontWeight: 600,
-                                        background: `${getStatusColor(selectedRequest.status)}20`,
-                                        color: getStatusColor(selectedRequest.status)
-                                    }}>
-                                        {selectedRequest.status.toUpperCase()}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '1rem', fontSize: '0.9rem', color: '#64748b' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <Calendar size={16} />
-                                    Submitted: {selectedRequest.submittedOn}
-                                </div>
-                                {selectedRequest.resolvedOn && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <CheckCircle size={16} />
-                                        Resolved: {selectedRequest.resolvedOn}
+                            {/* Request Details */}
+                            <div style={{ padding: '1.5rem', borderBottom: '1px solid #E8E8E8' }}>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
+                                        Request Type
                                     </div>
-                                )}
+                                    <div style={{ fontWeight: 700, color: '#001F3F', fontSize: '1rem' }}>
+                                        {selectedRequest.requestType}
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
+                                        Subject
+                                    </div>
+                                    <div style={{ fontWeight: 600, color: '#333', fontSize: '0.95rem' }}>
+                                        {selectedRequest.subject}
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
+                                        Message
+                                    </div>
+                                    <div style={{ 
+                                        padding: '1rem', 
+                                        background: '#F8F9FA', 
+                                        borderRadius: '12px',
+                                        lineHeight: '1.6',
+                                        color: '#333',
+                                        fontSize: '0.95rem',
+                                        border: '1px solid #E8E8E8'
+                                    }}>
+                                        {selectedRequest.message}
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
+                                            Priority
+                                        </div>
+                                        <PriorityBadge priority={selectedRequest.priority} />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
+                                            Status
+                                        </div>
+                                        <StatusBadge status={selectedRequest.status} />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Modal Footer */}
-                        {selectedRequest.status === 'pending' && (
-                            <div style={{
-                                padding: '1.5rem 2rem',
-                                borderTop: '1px solid #e5e7eb',
-                                display: 'flex',
-                                gap: '1rem',
-                                justifyContent: 'flex-end'
-                            }}>
-                                <button
-                                    onClick={() => handleStatusChange(selectedRequest._id, 'rejected')}
-                                    style={{
-                                        padding: '0.75rem 1.5rem',
-                                        background: 'white',
-                                        color: '#ef4444',
-                                        border: '2px solid #ef4444',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: 600,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.5rem'
-                                    }}
-                                >
-                                    <XCircle size={18} />
-                                    Reject
-                                </button>
-                                <button
-                                    onClick={() => handleStatusChange(selectedRequest._id, 'approved')}
-                                    style={{
-                                        padding: '0.75rem 1.5rem',
-                                        background: '#10b981',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontWeight: 600,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.5rem'
-                                    }}
-                                >
-                                    <CheckCircle size={18} />
-                                    Approve
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                            {/* Action Buttons */}
+                            {selectedRequest.status === 'pending' && (
+                                <div style={{ padding: '1.5rem', display: 'flex', gap: '1rem' }}>
+                                    <button
+                                        onClick={() => handleStatusChange(selectedRequest._id, 'rejected')}
+                                        style={{
+                                            flex: 1,
+                                            padding: '1rem',
+                                            background: 'white',
+                                            color: '#FF4500',
+                                            border: '2px solid #FF4500',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                            fontSize: '0.95rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = '#FF4500';
+                                            e.currentTarget.style.color = 'white';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'white';
+                                            e.currentTarget.style.color = '#FF4500';
+                                        }}
+                                    >
+                                        <XCircle size={20} />
+                                        Reject
+                                    </button>
+                                    <button
+                                        onClick={() => handleStatusChange(selectedRequest._id, 'approved')}
+                                        style={{
+                                            flex: 1,
+                                            padding: '1rem',
+                                            background: 'linear-gradient(135deg, #32CD32 0%, #228B22 100%)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                            fontSize: '0.95rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            boxShadow: '0 4px 12px rgba(50,205,50,0.3)',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(50,205,50,0.4)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(50,205,50,0.3)';
+                                        }}
+                                    >
+                                        <CheckCircle size={20} />
+                                        Approve
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
+
+            <style>{`
+                @keyframes slideInRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     );
 };
 
-// Helper Components
-const StatCard = ({ label, value, color }) => (
-    <div className="card" style={{ borderLeft: `4px solid ${color}` }}>
-        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-            {label}
-        </div>
-        <div style={{ fontSize: '2rem', fontWeight: 700, color }}>
-            {value}
+// Premium Stat Card Component
+const PremiumStatCard = ({ label, value, icon, color, trend }) => (
+    <div style={{
+        background: 'white',
+        borderRadius: '20px',
+        padding: '1.75rem',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+        border: '1px solid rgba(0,0,0,0.05)',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        cursor: 'pointer'
+    }}
+    onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-8px)';
+        e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.15)';
+    }}
+    onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
+    }}
+    >
+        {/* Decorative gradient */}
+        <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '150px',
+            height: '150px',
+            background: `radial-gradient(circle, ${color}15 0%, transparent 70%)`,
+            borderRadius: '50%',
+            transform: 'translate(30%, -30%)'
+        }} />
+        
+        <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                <div style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: `${color}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: color
+                }}>
+                    {icon}
+                </div>
+                <div style={{
+                    padding: '0.4rem 0.8rem',
+                    borderRadius: '8px',
+                    background: `${color}10`,
+                    color: color,
+                    fontSize: '0.8rem',
+                    fontWeight: 700
+                }}>
+                    {trend}
+                </div>
+            </div>
+            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
+                {label}
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#001F3F', letterSpacing: '-1px' }}>
+                {value}
+            </div>
         </div>
     </div>
 );
+
+// Priority Badge Component
+const PriorityBadge = ({ priority }) => {
+    const colors = {
+        high: { bg: '#FFF5F5', color: '#FF4500', border: '#FF4500' },
+        medium: { bg: '#FFFBEB', color: '#FFD700', border: '#FFD700' },
+        low: { bg: '#F0FFF4', color: '#32CD32', border: '#32CD32' }
+    };
+    const style = colors[priority] || colors.low;
+    
+    return (
+        <span style={{
+            padding: '0.5rem 1rem',
+            borderRadius: '10px',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            background: style.bg,
+            color: style.color,
+            border: `2px solid ${style.border}`,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            display: 'inline-block'
+        }}>
+            {priority}
+        </span>
+    );
+};
+
+// Status Badge Component
+const StatusBadge = ({ status }) => {
+    const colors = {
+        pending: { bg: '#FFFBEB', color: '#FFD700', border: '#FFD700', icon: <Clock size={14} /> },
+        approved: { bg: '#F0FFF4', color: '#32CD32', border: '#32CD32', icon: <CheckCircle size={14} /> },
+        rejected: { bg: '#FFF5F5', color: '#FF4500', border: '#FF4500', icon: <XCircle size={14} /> }
+    };
+    const style = colors[status] || colors.pending;
+    
+    return (
+        <span style={{
+            padding: '0.5rem 1rem',
+            borderRadius: '10px',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            background: style.bg,
+            color: style.color,
+            border: `2px solid ${style.border}`,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem'
+        }}>
+            {style.icon}
+            {status}
+        </span>
+    );
+};
+
+// Table Styles
+const tableHeaderStyle = {
+    padding: '1.25rem 1.5rem',
+    textAlign: 'left',
+    fontWeight: 700,
+    color: 'white',
+    fontSize: '0.85rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    borderBottom: '2px solid rgba(255,255,255,0.1)'
+};
+
+const tableCellStyle = {
+    padding: '1.25rem 1.5rem',
+    fontSize: '0.95rem',
+    color: '#333',
+    borderBottom: '1px solid #F0F0F0'
+};
 
 export default Requests;
