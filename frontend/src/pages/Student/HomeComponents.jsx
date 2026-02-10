@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react';
-import { ChevronDown, Users, Utensils, Heart, Droplet, Building2, CreditCard, Shield, Globe, Clock, Phone, MapPin, Award, Star, TrendingUp, CheckCircle, AlertCircle, Coffee, Sunrise, Sunset, Moon } from 'lucide-react';
+import { ChevronDown, Users, Building2, Award, TrendingUp, CheckCircle, Shield, AlertCircle, Heart, Droplet, Phone, MapPin, Mail, Clock, Bed, Home as HomeIcon } from 'lucide-react';
 
-// Hero Section Component
+// Ultra Premium Hero Section - Minimal & Sophisticated
 export const HeroSection = ({ scrollY }) => {
     const parallaxOffset = scrollY * 0.3;
     
@@ -13,33 +13,27 @@ export const HeroSection = ({ scrollY }) => {
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            background: '#ffffff'
         }}>
-            {/* Background with Parallax */}
+            {/* Subtle gradient background */}
             <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(135deg, #e1e1e8ff 0%, #6e6e71ff 50%, #8B5CF6 100%)',
+                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
                 transform: `translateY(${parallaxOffset}px)`,
                 transition: 'transform 0.1s ease-out'
             }}>
-                {/* Overlay Pattern */}
+                {/* Minimal grid pattern */}
                 <div style={{
                     position: 'absolute',
                     inset: 0,
-                    backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
-                    backgroundSize: '40px 40px',
+                    backgroundImage: 'linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px)',
+                    backgroundSize: '64px 64px',
                     opacity: 0.3
-                }} />
-                
-                {/* Gradient Overlay */}
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%)'
                 }} />
             </div>
 
@@ -49,55 +43,45 @@ export const HeroSection = ({ scrollY }) => {
                 zIndex: 2,
                 textAlign: 'center',
                 padding: '2rem',
-                maxWidth: '1200px',
+                maxWidth: '900px',
                 animation: 'fadeInUp 1s ease-out'
             }}>
                 <div style={{
                     display: 'inline-block',
-                    padding: '0.5rem 1.5rem',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    backdropFilter: 'blur(10px)',
+                    padding: '0.5rem 1.25rem',
+                    background: '#10b981',
                     borderRadius: '50px',
                     marginBottom: '2rem',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
                     animation: 'fadeIn 1.5s ease-out'
                 }}>
-                    <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 600 }}>
-                        🎓 Welcome to Your Campus Home
+                    <span style={{ color: 'white', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.025em' }}>
+                        STUDENT PORTAL
                     </span>
                 </div>
 
                 <h1 style={{
-                    fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+                    fontSize: 'clamp(2.5rem, 5vw, 4rem)',
                     fontWeight: 800,
-                    color: 'white',
+                    color: '#0f172a',
                     marginBottom: '1.5rem',
                     lineHeight: 1.1,
-                    textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                    letterSpacing: '-0.02em',
                     animation: 'fadeInUp 1.2s ease-out'
                 }}>
                     Oda Bultum University
-                    <br />
-                    <span style={{
-                        background: 'linear-gradient(90deg, #F59E0B, #FBBF24)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
-                    }}>
-                        Student Portal
-                    </span>
                 </h1>
 
                 <p style={{
-                    fontSize: 'clamp(1.1rem, 2vw, 1.5rem)',
-                    color: 'rgba(255, 255, 255, 0.95)',
+                    fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
+                    color: '#64748b',
                     marginBottom: '3rem',
-                    maxWidth: '800px',
+                    maxWidth: '700px',
                     margin: '0 auto 3rem',
                     lineHeight: 1.6,
+                    fontWeight: 400,
                     animation: 'fadeInUp 1.4s ease-out'
                 }}>
-                    Your complete guide to dorm life, campus services, and community at Oda Bultum
+                    Your complete guide to campus life, services, and community
                 </p>
 
                 <div style={{
@@ -108,29 +92,26 @@ export const HeroSection = ({ scrollY }) => {
                     animation: 'fadeInUp 1.6s ease-out'
                 }}>
                     <button style={{
-                        padding: '1rem 2.5rem',
-                        background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
-                        color: '#1f2937',
+                        padding: '1rem 2rem',
+                        background: '#0f172a',
+                        color: 'white',
                         border: 'none',
                         borderRadius: '12px',
-                        fontSize: '1.1rem',
-                        fontWeight: 700,
+                        fontSize: '1rem',
+                        fontWeight: 600,
                         cursor: 'pointer',
-                        boxShadow: '0 10px 30px rgba(245, 158, 11, 0.4)',
-                        transition: 'all 0.3s',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
+                        boxShadow: '0 4px 16px rgba(15, 23, 42, 0.2)',
+                        transition: 'all 0.3s ease',
+                        letterSpacing: '0.01em'
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-3px)';
-                        e.currentTarget.style.boxShadow = '0 15px 40px rgba(245, 158, 11, 0.5)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(15, 23, 42, 0.3)';
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(245, 158, 11, 0.4)';
+                        e.currentTarget.style.boxShadow = '0 4px 16px rgba(15, 23, 42, 0.2)';
                     }}>
-                        <Building2 size={20} />
                         Explore Campus
                     </button>
                 </div>
@@ -143,9 +124,10 @@ export const HeroSection = ({ scrollY }) => {
                 left: '50%',
                 transform: 'translateX(-50%)',
                 animation: 'bounce 2s infinite',
-                zIndex: 2
+                zIndex: 2,
+                opacity: 0.4
             }}>
-                <ChevronDown size={32} color="white" strokeWidth={3} />
+                <ChevronDown size={28} color="#64748b" strokeWidth={2} />
             </div>
 
             <style>{`
@@ -167,7 +149,7 @@ export const HeroSection = ({ scrollY }) => {
 };
 
 
-// Welcome Stats Section
+// Welcome Stats Section - Clean & Minimal
 export const WelcomeStats = forwardRef(({ visible }, ref) => (
     <div 
         ref={ref}
@@ -187,54 +169,55 @@ export const WelcomeStats = forwardRef(({ visible }, ref) => (
                 gap: '2rem'
             }}>
                 {[
-                    { icon: Users, label: 'Active Students', value: '5,000+', color: '#4F46E5' },
-                    { icon: Building2, label: 'Dormitory Blocks', value: '12', color: '#8B5CF6' },
-                    { icon: Award, label: 'Campus Rating', value: '4.8/5', color: '#F59E0B' },
-                    { icon: TrendingUp, label: 'Satisfaction Rate', value: '96%', color: '#EC4899' }
+                    { icon: Users, label: 'Active Students', value: '5,000+', color: '#10b981' },
+                    { icon: Building2, label: 'Dormitory Blocks', value: '12', color: '#0f172a' },
+                    { icon: Award, label: 'Campus Rating', value: '4.8/5', color: '#10b981' },
+                    { icon: TrendingUp, label: 'Satisfaction Rate', value: '96%', color: '#0f172a' }
                 ].map((stat, i) => {
                     const Icon = stat.icon;
                     return (
                         <div key={i} style={{
-                            background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
+                            background: '#f8fafc',
                             padding: '2.5rem 2rem',
-                            borderRadius: '20px',
+                            borderRadius: '16px',
                             textAlign: 'center',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                            border: '1px solid #e5e7eb',
+                            border: '1px solid #e2e8f0',
                             transition: 'all 0.3s',
                             cursor: 'pointer'
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-8px)';
-                            e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.15)';
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+                            e.currentTarget.style.borderColor = stat.color;
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
+                            e.currentTarget.style.boxShadow = 'none';
+                            e.currentTarget.style.borderColor = '#e2e8f0';
                         }}>
                             <div style={{
-                                width: '80px',
-                                height: '80px',
-                                background: `${stat.color}15`,
+                                width: '64px',
+                                height: '64px',
+                                background: `${stat.color}10`,
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 margin: '0 auto 1.5rem'
                             }}>
-                                <Icon size={36} color={stat.color} strokeWidth={2.5} />
+                                <Icon size={28} color={stat.color} strokeWidth={2} />
                             </div>
                             <div style={{
                                 fontSize: '2.5rem',
                                 fontWeight: 800,
-                                color: '#1f2937',
+                                color: '#0f172a',
                                 marginBottom: '0.5rem'
                             }}>
                                 {stat.value}
                             </div>
                             <div style={{
                                 fontSize: '1rem',
-                                color: '#6b7280',
+                                color: '#64748b',
                                 fontWeight: 600
                             }}>
                                 {stat.label}
@@ -248,7 +231,7 @@ export const WelcomeStats = forwardRef(({ visible }, ref) => (
 ));
 
 
-// Discipline Section
+// Discipline Section - Refined Accordion
 export const DisciplineSection = forwardRef(({ visible }, ref) => {
     const [openIndex, setOpenIndex] = useState(null);
     
@@ -294,7 +277,7 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
             data-section="discipline"
             style={{
                 padding: '8rem 2rem',
-                background: 'linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%)',
+                background: '#f8fafc',
                 opacity: visible ? 1 : 0,
                 transform: visible ? 'translateY(0)' : 'translateY(50px)',
                 transition: 'all 0.8s ease-out 0.2s'
@@ -303,16 +286,17 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h2 style={{
-                        fontSize: 'clamp(2rem, 4vw, 3.5rem)',
+                        fontSize: 'clamp(2rem, 4vw, 3rem)',
                         fontWeight: 800,
-                        color: '#1f2937',
-                        marginBottom: '1rem'
+                        color: '#0f172a',
+                        marginBottom: '1rem',
+                        letterSpacing: '-0.01em'
                     }}>
                         Campus Guidelines
                     </h2>
                     <p style={{
-                        fontSize: '1.2rem',
-                        color: '#6b7280',
+                        fontSize: '1.125rem',
+                        color: '#64748b',
                         maxWidth: '600px',
                         margin: '0 auto'
                     }}>
@@ -320,7 +304,7 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                     </p>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {rules.map((rule, index) => {
                         const Icon = rule.icon;
                         const isOpen = openIndex === index;
@@ -329,18 +313,16 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                             <div key={index} style={{
                                 background: 'white',
                                 borderRadius: '16px',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                border: '1px solid #e2e8f0',
                                 overflow: 'hidden',
-                                border: '2px solid',
-                                borderColor: isOpen ? '#4F46E5' : '#e5e7eb',
                                 transition: 'all 0.3s'
                             }}>
                                 <button
                                     onClick={() => setOpenIndex(isOpen ? null : index)}
                                     style={{
                                         width: '100%',
-                                        padding: '2rem',
-                                        background: isOpen ? 'linear-gradient(135deg, #4F46E510 0%, #6366F110 100%)' : 'white',
+                                        padding: '1.5rem 2rem',
+                                        background: isOpen ? '#f8fafc' : 'white',
                                         border: 'none',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -350,30 +332,30 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                                     }}
                                 >
                                     <div style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        background: isOpen ? '#4F46E5' : '#f3f4f6',
+                                        width: '48px',
+                                        height: '48px',
+                                        background: isOpen ? '#10b981' : '#f8fafc',
                                         borderRadius: '12px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         transition: 'all 0.3s'
                                     }}>
-                                        <Icon size={28} color={isOpen ? 'white' : '#6b7280'} />
+                                        <Icon size={24} color={isOpen ? 'white' : '#64748b'} strokeWidth={2} />
                                     </div>
                                     <div style={{ flex: 1, textAlign: 'left' }}>
                                         <h3 style={{
-                                            fontSize: '1.5rem',
+                                            fontSize: '1.25rem',
                                             fontWeight: 700,
-                                            color: '#1f2937',
+                                            color: '#0f172a',
                                             margin: 0
                                         }}>
                                             {rule.title}
                                         </h3>
                                     </div>
                                     <ChevronDown 
-                                        size={24} 
-                                        color="#6b7280"
+                                        size={20} 
+                                        color="#64748b"
                                         style={{
                                             transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
                                             transition: 'transform 0.3s'
@@ -398,12 +380,12 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                                                     display: 'flex',
                                                     alignItems: 'flex-start',
                                                     gap: '1rem',
-                                                    borderBottom: i < rule.items.length - 1 ? '1px solid #f3f4f6' : 'none'
+                                                    borderBottom: i < rule.items.length - 1 ? '1px solid #f1f5f9' : 'none'
                                                 }}>
-                                                    <CheckCircle size={20} color="#4F46E5" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                                    <CheckCircle size={18} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} strokeWidth={2} />
                                                     <span style={{
-                                                        fontSize: '1.05rem',
-                                                        color: '#4b5563',
+                                                        fontSize: '0.9375rem',
+                                                        color: '#475569',
                                                         lineHeight: 1.6
                                                     }}>
                                                         {item}
