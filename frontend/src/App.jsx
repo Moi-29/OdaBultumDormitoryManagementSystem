@@ -3,8 +3,8 @@ import Login from './pages/Auth/Login';
 import StudentPortal from './pages/StudentPortal';
 import StudentLayout from './components/Layout/StudentLayout';
 import DormitoryView from './pages/Student/DormitoryView';
-import ApplicationForm from './pages/Student/ApplicationForm';
-import ReportIssue from './pages/Student/ReportIssue';
+import ApplicationFormWrapper from './pages/Student/ApplicationFormWrapper';
+import ReportIssueWrapper from './pages/Student/ReportIssueWrapper';
 import AdminLayout from './components/Layout/AdminLayout';
 import Dashboard from './pages/Admin/Dashboard';
 import Students from './pages/Admin/Students';
@@ -77,8 +77,8 @@ function App() {
           <Route path="/student" element={<StudentLayout />}>
             <Route index element={<Navigate to="/student/dormitory" replace />} />
             <Route path="dormitory" element={<DormitoryView />} />
-            <Route path="application" element={<ApplicationForm />} />
-            <Route path="report" element={<ReportIssue />} />
+            <Route path="application" element={<ApplicationFormWrapper />} />
+            <Route path="report" element={<ReportIssueWrapper />} />
           </Route>
 
           {/* Legacy Student Portal (keep for direct access) */}
