@@ -12,8 +12,8 @@ services:
       - key: PORT
         value: 5000
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://mbb75303_db_user:3N51QVF56yBBe0Bz@cluster0.7vzla2y.mongodb.net/obudms?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
-        sync: false
+        value: obudms_secret_key_12345
       - key: ALLOWED_ORIGIN
         value: https://obudms.vercel.app
