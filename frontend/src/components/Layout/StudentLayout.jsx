@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Home as HomeIcon, Building2, FileText, AlertCircle } from 'lucide-react';
+import '../styles/premiumAnimations.css';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,9 +20,9 @@ const StudentLayout = () => {
     }, []);
 
     const navItems = [
-        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2, color: '#4F46E5' },
-        { path: '/student/application', label: 'Application Form', icon: FileText, color: '#8B5CF6' },
-        { path: '/student/report', label: 'Report Issue', icon: AlertCircle, color: '#F43F5E' }
+        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2, color: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+        { path: '/student/application', label: 'Application Form', icon: FileText, color: '#d97706', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+        { path: '/student/report', label: 'Report Issue', icon: AlertCircle, color: '#4f46e5', gradient: 'linear-gradient(135deg, #4f46e5, #4338ca)' }
     ];
 
     const handleNavigation = (path) => {
@@ -36,108 +37,134 @@ const StudentLayout = () => {
             display: 'flex',
             flexDirection: 'column'
         }}>
-            {/* Top Navbar */}
+            {/* Glassmorphism Top Navbar */}
             <nav style={{
                 position: 'fixed',
                 top: 0,
                 left: isDesktop ? '280px' : 0,
                 right: 0,
-                height: '64px',
-                background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                height: '70px',
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderBottom: '1px solid rgba(16, 185, 129, 0.2)',
+                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '0 1.5rem',
-                gap: '1rem',
+                padding: '0 2rem',
+                gap: '1.5rem',
                 zIndex: 999,
-                transition: 'left 0.3s ease'
+                transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
                 {/* Hamburger Menu - Only visible on mobile */}
                 {!isDesktop && (
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         style={{
-                            background: 'rgba(255, 255, 255, 0.2)',
+                            background: 'linear-gradient(135deg, #10b981, #059669)',
                             border: 'none',
                             cursor: 'pointer',
-                            padding: '0.5rem',
+                            padding: '0.65rem',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            borderRadius: '8px',
-                            transition: 'all 0.2s',
-                            color: 'white'
+                            borderRadius: '12px',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            color: 'white',
+                            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                        className="hover-lift-sm"
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                        }}
                     >
                         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                 )}
 
-                {/* Home Link */}
+                {/* Home Link with Gold Gradient */}
                 <button
                     onClick={() => navigate('/student/home')}
                     style={{
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        border: 'none',
                         color: 'white',
-                        padding: '0.5rem 1.25rem',
-                        borderRadius: '8px',
-                        fontWeight: 600,
-                        fontSize: '0.95rem',
+                        padding: '0.65rem 1.5rem',
+                        borderRadius: '12px',
+                        fontWeight: 700,
+                        fontSize: '1rem',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        transition: 'all 0.2s',
-                        backdropFilter: 'blur(10px)'
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
+                        letterSpacing: '0.3px'
                     }}
+                    className="hover-lift-sm"
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(217, 119, 6, 0.4)';
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
                         e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 6, 0.3)';
                     }}
                 >
-                    <HomeIcon size={18} />
+                    <HomeIcon size={20} strokeWidth={2.5} />
                     Home
                 </button>
 
                 {/* Spacer */}
                 <div style={{ flex: 1 }} />
 
-                {/* University Logo */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                {/* University Logo with Ethiopian Colors */}
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '1rem',
+                    padding: '0.5rem 1.25rem',
+                    background: 'rgba(16, 185, 129, 0.08)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)'
+                }}>
                     <img 
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpWVhGUfDQPtwCOjcwTE3tQiAl0obKpwvN1A&s" 
                         alt="OBU Logo" 
                         style={{ 
-                            width: '40px', 
-                            height: '40px', 
+                            width: '45px', 
+                            height: '45px', 
                             objectFit: 'contain',
                             backgroundColor: 'white',
-                            borderRadius: '8px',
-                            padding: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.3)'
+                            borderRadius: '10px',
+                            padding: '5px',
+                            border: '2px solid rgba(16, 185, 129, 0.3)',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
                         }} 
                     />
                     {isDesktop && (
                         <div>
                             <div style={{ 
-                                fontSize: '0.9rem', 
-                                fontWeight: 700,
-                                color: 'white',
-                                lineHeight: 1.2
+                                fontSize: '1rem', 
+                                fontWeight: 800,
+                                background: 'linear-gradient(135deg, #10b981, #059669)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                lineHeight: 1.2,
+                                letterSpacing: '0.5px'
                             }}>
                                 OBU
                             </div>
                             <div style={{ 
-                                fontSize: '0.7rem',
-                                color: 'rgba(255, 255, 255, 0.9)'
+                                fontSize: '0.75rem',
+                                color: '#6b7280',
+                                fontWeight: 600
                             }}>
                                 Student Portal
                             </div>
@@ -164,7 +191,7 @@ const StudentLayout = () => {
                 />
             )}
 
-            {/* Sidebar Drawer */}
+            {/* Dark Emerald Sidebar Drawer */}
             <aside
                 style={{
                     position: 'fixed',
@@ -173,35 +200,50 @@ const StudentLayout = () => {
                     bottom: 0,
                     width: '280px',
                     maxWidth: isDesktop ? '280px' : '85vw',
-                    background: 'linear-gradient(180deg, #ffffff 0%, #f9fafb 100%)',
-                    boxShadow: isDesktop ? '2px 0 8px rgba(0, 0, 0, 0.05)' : '4px 0 24px rgba(0, 0, 0, 0.12)',
+                    background: 'linear-gradient(180deg, #064e3b 0%, #022c22 100%)',
+                    boxShadow: isDesktop ? '4px 0 24px rgba(0, 0, 0, 0.12)' : '4px 0 32px rgba(0, 0, 0, 0.2)',
                     transform: isDesktop ? 'translateX(0)' : (sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'),
-                    transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     zIndex: 1002,
                     display: 'flex',
                     flexDirection: 'column',
-                    overflowY: 'auto'
+                    overflowY: 'auto',
+                    borderRight: '1px solid rgba(16, 185, 129, 0.2)'
                 }}
             >
-                {/* Sidebar Header */}
+                {/* Sidebar Header with Emerald Gradient */}
                 <div style={{
-                    height: '64px',
+                    height: '70px',
                     padding: '0 1.5rem',
-                    borderBottom: '1px solid #e5e7eb',
-                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
+                    borderBottom: '1px solid rgba(16, 185, 129, 0.2)',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem',
-                    flexShrink: 0
+                    gap: '1rem',
+                    flexShrink: 0,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
                 }}>
-                    <Building2 size={24} color="white" />
+                    <div style={{
+                        width: '48px',
+                        height: '48px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid rgba(255, 255, 255, 0.3)'
+                    }}>
+                        <Building2 size={26} color="white" strokeWidth={2.5} />
+                    </div>
                     <div>
                         <h2 style={{
                             margin: 0,
-                            fontSize: '1.1rem',
-                            fontWeight: 700,
+                            fontSize: '1.15rem',
+                            fontWeight: 800,
                             color: 'white',
-                            lineHeight: 1.2
+                            lineHeight: 1.2,
+                            letterSpacing: '0.5px'
                         }}>
                             Student Portal
                         </h2>
@@ -209,20 +251,21 @@ const StudentLayout = () => {
                             margin: 0,
                             fontSize: '0.75rem',
                             color: 'rgba(255, 255, 255, 0.9)',
-                            lineHeight: 1.2
+                            lineHeight: 1.2,
+                            fontWeight: 600
                         }}>
                             Oda Bultum University
                         </p>
                     </div>
                 </div>
 
-                {/* Navigation Items */}
+                {/* Navigation Items with Color-Coded Accents */}
                 <nav style={{ 
                     flex: 1, 
-                    padding: '1.5rem 0',
+                    padding: '2rem 0',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.5rem'
+                    gap: '0.75rem'
                 }}>
                     {navItems.map((item) => {
                         const Icon = item.icon;
@@ -236,50 +279,74 @@ const StudentLayout = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '1rem',
-                                    padding: '1rem 1.5rem',
-                                    margin: '0 0.75rem',
-                                    background: isActive ? `${item.color}15` : 'transparent',
+                                    padding: '1.1rem 1.5rem',
+                                    margin: '0 1rem',
+                                    background: isActive ? `${item.color}20` : 'transparent',
                                     border: 'none',
                                     borderLeft: isActive ? `4px solid ${item.color}` : '4px solid transparent',
-                                    borderRadius: '8px',
+                                    borderRadius: '12px',
                                     cursor: 'pointer',
-                                    transition: 'all 0.2s',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     textAlign: 'left',
-                                    color: isActive ? item.color : '#4b5563',
-                                    fontWeight: isActive ? 600 : 500,
-                                    fontSize: '0.95rem',
-                                    width: 'calc(100% - 1.5rem)'
+                                    color: isActive ? item.color : 'rgba(255, 255, 255, 0.8)',
+                                    fontWeight: isActive ? 700 : 600,
+                                    fontSize: '1rem',
+                                    width: 'calc(100% - 2rem)',
+                                    position: 'relative',
+                                    overflow: 'hidden'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
-                                        e.currentTarget.style.background = '#f3f4f6';
-                                        e.currentTarget.style.transform = 'translateX(4px)';
+                                        e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)';
+                                        e.currentTarget.style.transform = 'translateX(6px)';
+                                        e.currentTarget.style.color = 'white';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
                                     if (!isActive) {
                                         e.currentTarget.style.background = 'transparent';
                                         e.currentTarget.style.transform = 'translateX(0)';
+                                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
                                     }
                                 }}
                             >
-                                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
-                                {item.label}
+                                {isActive && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        background: item.gradient,
+                                        opacity: 0.15,
+                                        borderRadius: '12px'
+                                    }} />
+                                )}
+                                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} style={{ position: 'relative', zIndex: 1 }} />
+                                <span style={{ position: 'relative', zIndex: 1 }}>{item.label}</span>
                             </button>
                         );
                     })}
                 </nav>
 
-                {/* Sidebar Footer */}
+                {/* Sidebar Footer with Ethiopian Flag Colors */}
                 <div style={{
                     padding: '1.5rem',
-                    borderTop: '1px solid #e5e7eb',
-                    background: '#f9fafb'
+                    borderTop: '1px solid rgba(16, 185, 129, 0.2)',
+                    background: 'rgba(0, 0, 0, 0.2)'
                 }}>
                     <div style={{
+                        display: 'flex',
+                        gap: '4px',
+                        marginBottom: '1rem',
+                        justifyContent: 'center'
+                    }}>
+                        <div style={{ width: '30px', height: '4px', background: '#10b981', borderRadius: '2px' }} />
+                        <div style={{ width: '30px', height: '4px', background: '#f59e0b', borderRadius: '2px' }} />
+                        <div style={{ width: '30px', height: '4px', background: '#ef4444', borderRadius: '2px' }} />
+                    </div>
+                    <div style={{
                         fontSize: '0.75rem',
-                        color: '#9ca3af',
-                        textAlign: 'center'
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        textAlign: 'center',
+                        fontWeight: 600
                     }}>
                         © 2026 Oda Bultum University
                     </div>
@@ -288,11 +355,12 @@ const StudentLayout = () => {
 
             {/* Main Content Area */}
             <main style={{
-                marginTop: '64px',
+                marginTop: '70px',
                 marginLeft: isDesktop ? '280px' : 0,
-                minHeight: 'calc(100vh - 64px)',
+                minHeight: 'calc(100vh - 70px)',
                 position: 'relative',
-                transition: 'margin-left 0.3s ease'
+                transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                background: '#f8f9fa'
             }}>
                 <Outlet />
             </main>

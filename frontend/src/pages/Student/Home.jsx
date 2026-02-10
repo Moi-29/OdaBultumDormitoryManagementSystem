@@ -4,6 +4,8 @@ import { StudentUnionSection, CafeteriaSchedule } from './HomeComponents2';
 import { ToleranceSection, CafeteriaQuality } from './HomeComponents3';
 import { HealthCenterSection, WaterSection } from './HomeComponents4';
 import { DormitoryAvailability, MealCardSection } from './HomeComponents5';
+import PremiumFooter from '../../components/Layout/PremiumFooter';
+import '../../styles/premiumAnimations.css';
 
 const Home = () => {
     const [scrollY, setScrollY] = useState(0);
@@ -54,6 +56,9 @@ const Home = () => {
                 <DormitoryAvailability ref={el => sectionsRef.current[8] = el} visible={visibleSections.has('dorm')} />
                 <MealCardSection ref={el => sectionsRef.current[9] = el} visible={visibleSections.has('meal')} />
             </div>
+
+            {/* Premium Footer */}
+            <PremiumFooter />
         </div>
     );
 };
