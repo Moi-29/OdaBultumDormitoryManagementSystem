@@ -7,18 +7,18 @@ const adminSchema = new mongoose.Schema({
         required: [true, 'Full name is required'],
         trim: true
     },
-    email: {
+    username: {
         type: String,
-        required: [true, 'Email/Username is required'],
+        required: [true, 'Username is required'],
         unique: true,
         lowercase: true,
         trim: true,
         validate: {
             validator: function(v) {
-                // Allow either email format or simple username (alphanumeric, underscore, hyphen)
-                return /^\S+@\S+\.\S+$/.test(v) || /^[a-zA-Z0-9_-]+$/.test(v);
+                // Allow alphanumeric, underscore, hyphen
+                return /^[a-zA-Z0-9_-]+$/.test(v);
             },
-            message: 'Please provide a valid email or username'
+            message: 'Username can only contain letters, numbers, underscores, and hyphens'
         }
     },
     password: {

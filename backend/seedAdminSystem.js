@@ -104,7 +104,7 @@ const seedAdminSystem = async () => {
         
         const superAdmin = await Admin.create({
             fullName: 'System Administrator',
-            email: 'admin',
+            username: 'admin',
             password: 'password123',
             phone: '+251-911-000-000',
             department: 'IT Department',
@@ -114,15 +114,14 @@ const seedAdminSystem = async () => {
         });
         console.log('✅ Super admin created');
         console.log('   Username: admin');
-        console.log('   Password: password123');
-        console.log('   Note: Login with username "admin" and password "password123"\n');
+        console.log('   Password: password123\n');
         
         // 4. Create sample admins
         console.log('👥 Creating sample admins...');
         
         await Admin.create({
             fullName: 'OBU Admin',
-            email: 'admin@obu.edu.et',
+            username: 'obuadmin',
             password: 'Admin@123',
             phone: '+251-911-111-111',
             department: 'Student Affairs',
@@ -130,11 +129,11 @@ const seedAdminSystem = async () => {
             status: 'Active',
             createdBy: superAdmin._id
         });
-        console.log('✅ Sample admin 1 created (admin@obu.edu.et) - Standard Admin role');
+        console.log('✅ Sample admin 1 created (username: obuadmin) - Standard Admin role');
         
         await Admin.create({
             fullName: 'John Doe',
-            email: 'john@obu.edu.et',
+            username: 'johndoe',
             password: 'Admin@123',
             phone: '+251-911-222-222',
             department: 'Dormitory Management',
@@ -142,11 +141,11 @@ const seedAdminSystem = async () => {
             status: 'Active',
             createdBy: superAdmin._id
         });
-        console.log('✅ Sample admin 2 created (john@obu.edu.et) - Standard Admin role');
+        console.log('✅ Sample admin 2 created (username: johndoe) - Standard Admin role');
         
         await Admin.create({
             fullName: 'Jane Smith',
-            email: 'jane@obu.edu.et',
+            username: 'janesmith',
             password: 'Admin@123',
             phone: '+251-911-333-333',
             department: 'IT Support',
@@ -154,7 +153,7 @@ const seedAdminSystem = async () => {
             status: 'Active',
             createdBy: superAdmin._id
         });
-        console.log('✅ Sample admin 3 created (jane@obu.edu.et) - Viewer role\n');
+        console.log('✅ Sample admin 3 created (username: janesmith) - Viewer role\n');
         
         console.log('🎉 Admin Management System seeded successfully!\n');
         console.log('📝 Summary:');
@@ -163,10 +162,9 @@ const seedAdminSystem = async () => {
         console.log('   - Security settings initialized');
         console.log('\n🔐 Login Credentials:');
         console.log('   Super Admin: admin / password123');
-        console.log('   Standard Admin: admin@obu.edu.et / Admin@123');
-        console.log('   Standard Admin: john@obu.edu.et / Admin@123');
-        console.log('   Viewer: jane@obu.edu.et / Admin@123\n');
-        console.log('⚠️  IMPORTANT: Use username "admin" (not email) for Super Admin login\n');
+        console.log('   Standard Admin: obuadmin / Admin@123');
+        console.log('   Standard Admin: johndoe / Admin@123');
+        console.log('   Viewer: janesmith / Admin@123\n');
         
         return true; // Success
     } catch (error) {

@@ -45,10 +45,7 @@ const multiRoleLogin = async (req, res) => {
 
         // Find user by username
         user = await Model.findOne({ 
-            $or: [
-                { username: username.toLowerCase() },
-                { email: username.toLowerCase() }
-            ]
+            username: username.toLowerCase()
         }).select('+password');
 
         if (!user) {
@@ -157,7 +154,6 @@ const multiRoleLogin = async (req, res) => {
                 id: user._id,
                 fullName: user.fullName,
                 username: user.username,
-                email: user.email,
                 phone: user.phone,
                 role: userRole, // Keep as string for frontend routing
                 status: user.status
@@ -234,7 +230,6 @@ const getMe = async (req, res) => {
                 id: user._id,
                 fullName: user.fullName,
                 username: user.username,
-                email: user.email,
                 phone: user.phone,
                 role: role,
                 status: user.status
