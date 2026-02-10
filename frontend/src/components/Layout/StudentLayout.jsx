@@ -43,13 +43,12 @@ const StudentLayout = () => {
                 left: isDesktop ? '280px' : 0,
                 right: 0,
                 height: '64px',
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '0 1rem',
+                padding: '0 1.5rem',
                 gap: '1rem',
                 zIndex: 999,
                 transition: 'left 0.3s ease'
@@ -59,7 +58,7 @@ const StudentLayout = () => {
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         style={{
-                            background: 'none',
+                            background: 'rgba(255, 255, 255, 0.2)',
                             border: 'none',
                             cursor: 'pointer',
                             padding: '0.5rem',
@@ -68,10 +67,10 @@ const StudentLayout = () => {
                             justifyContent: 'center',
                             borderRadius: '8px',
                             transition: 'all 0.2s',
-                            color: '#1f2937'
+                            color: 'white'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
                     >
                         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
@@ -80,8 +79,8 @@ const StudentLayout = () => {
                 {/* Home Link */}
                 <button
                     style={{
-                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                        border: 'none',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
                         color: 'white',
                         padding: '0.5rem 1.25rem',
                         borderRadius: '8px',
@@ -92,15 +91,15 @@ const StudentLayout = () => {
                         alignItems: 'center',
                         gap: '0.5rem',
                         transition: 'all 0.2s',
-                        boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)'
+                        backdropFilter: 'blur(10px)'
                     }}
                     onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
                         e.currentTarget.style.transform = 'translateY(-1px)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
                     }}
                     onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.2)';
                     }}
                 >
                     <HomeIcon size={18} />
@@ -122,25 +121,27 @@ const StudentLayout = () => {
                             backgroundColor: 'white',
                             borderRadius: '8px',
                             padding: '4px',
-                            border: '1px solid #e5e7eb'
+                            border: '1px solid rgba(255, 255, 255, 0.3)'
                         }} 
                     />
-                    <div style={{ display: 'none', '@media (min-width: 768px)': { display: 'block' } }}>
-                        <div style={{ 
-                            fontSize: '0.9rem', 
-                            fontWeight: 700,
-                            color: '#1f2937',
-                            lineHeight: 1.2
-                        }}>
-                            OBU
+                    {isDesktop && (
+                        <div>
+                            <div style={{ 
+                                fontSize: '0.9rem', 
+                                fontWeight: 700,
+                                color: 'white',
+                                lineHeight: 1.2
+                            }}>
+                                OBU
+                            </div>
+                            <div style={{ 
+                                fontSize: '0.7rem',
+                                color: 'rgba(255, 255, 255, 0.9)'
+                            }}>
+                                Student Portal
+                            </div>
                         </div>
-                        <div style={{ 
-                            fontSize: '0.7rem',
-                            color: '#6b7280'
-                        }}>
-                            Student Portal
-                        </div>
-                    </div>
+                    )}
                 </div>
             </nav>
 
@@ -183,29 +184,35 @@ const StudentLayout = () => {
             >
                 {/* Sidebar Header */}
                 <div style={{
-                    padding: '1.5rem',
+                    height: '64px',
+                    padding: '0 1.5rem',
                     borderBottom: '1px solid #e5e7eb',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    flexShrink: 0
                 }}>
-                    <h2 style={{
-                        margin: 0,
-                        fontSize: '1.25rem',
-                        fontWeight: 700,
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                    }}>
-                        <Building2 size={24} />
-                        Student Portal
-                    </h2>
-                    <p style={{
-                        margin: '0.25rem 0 0 0',
-                        fontSize: '0.85rem',
-                        color: 'rgba(255, 255, 255, 0.9)'
-                    }}>
-                        Oda Bultum University
-                    </p>
+                    <Building2 size={24} color="white" />
+                    <div>
+                        <h2 style={{
+                            margin: 0,
+                            fontSize: '1.1rem',
+                            fontWeight: 700,
+                            color: 'white',
+                            lineHeight: 1.2
+                        }}>
+                            Student Portal
+                        </h2>
+                        <p style={{
+                            margin: 0,
+                            fontSize: '0.75rem',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            lineHeight: 1.2
+                        }}>
+                            Oda Bultum University
+                        </p>
+                    </div>
                 </div>
 
                 {/* Navigation Items */}
@@ -294,12 +301,6 @@ const StudentLayout = () => {
                 @keyframes fadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
-                }
-
-                @media (min-width: 768px) {
-                    nav > div:nth-child(4) > div:nth-child(2) {
-                        display: block !important;
-                    }
                 }
             `}</style>
         </div>
