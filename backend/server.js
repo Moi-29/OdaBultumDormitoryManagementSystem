@@ -3,37 +3,74 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
+// Load environment variables
 dotenv.config();
+
+// Validate critical environment variables
+if (!process.env.MONGO_URI) {
+    console.error('❌ FATAL ERROR: MONGO_URI is not defined in environment variables');
+    process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+    console.error('❌ FATAL ERROR: JWT_SECRET is not defined in environment variables');
+    process.exit(1);
+}
+
+console.log('✅ Environment variables loaded successfully');
+console.log('📍 NODE_ENV:', process.env.NODE_ENV || 'development');
+console.log('📍 PORT:', process.env.PORT || 5000);
+console.log('📍 MONGO_URI:', process.env.MONGO_URI ? '✓ Set' : '✗ Missing');
+console.log('📍 JWT_SECRET:', process.env.JWT_SECRET ? '✓ Set' : '✗ Missing');
+console.log('📍 ALLOWED_ORIGIN:', process.env.ALLOWED_ORIGIN || 'Not set (will allow all in dev)');
 
 const app = express();
 
 // Middleware
 // CORS Configuration - supports both development and production
 const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? [process.env.ALLOWED_ORIGIN || 'https://your-frontend-url.onrender.com']
+    ? [
+        process.env.ALLOWED_ORIGIN || 'https://obudms.vercel.app',
+        'https://obudms.vercel.app',
+        'https://odabultumdormitorymanagementsystem.onrender.com'
+      ]
     : ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173'];
+
+console.log('🌐 CORS allowed origins:', allowedOrigins);
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+        // Allow requests with no origin (like mobile apps, Postman, or curl requests)
+        if (!origin) {
+            console.log('✓ Request with no origin allowed');
+            return callback(null, true);
+        }
+        
+        console.log('🔍 Checking origin:', origin);
         
         if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+            console.log('✓ Origin allowed:', origin);
             callback(null, true);
         } else {
+            console.log('✗ Origin blocked:', origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Database Connection and Auto-seed
 const initializeDatabase = async () => {
     try {
+        console.log('🔄 Initializing database connection...');
         await connectDB();
+        console.log('✅ Database connected successfully');
+        
         console.log('🔍 Checking if database needs seeding...');
         
         // Wait a bit for connection to stabilize
@@ -70,8 +107,17 @@ const initializeDatabase = async () => {
         } else {
             console.log('✅ Student/room data exists. Skipping data seed.');
         }
+        
+        console.log('🎉 Database initialization complete!');
     } catch (error) {
-        console.error('❌ Database initialization error:', error);
+        console.error('❌ Database initialization error:', error.message);
+        console.error('Stack trace:', error.stack);
+        
+        // In production, we want to exit if database connection fails
+        if (process.env.NODE_ENV === 'production') {
+            console.error('💥 Fatal error in production - exiting process');
+            process.exit(1);
+        }
     }
 };
 
@@ -164,6 +210,36 @@ app.use('/api/requests', require('./routes/requestRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const server = app.listen(PORT, () => {
+    console.log('🚀 ========================================');
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🚀 API URL: http://localhost:${PORT}`);
+    console.log('🚀 ========================================');
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+    console.error('💥 UNHANDLED REJECTION! Shutting down...');
+    console.error('Error:', err.message);
+    console.error('Stack:', err.stack);
+    server.close(() => {
+        process.exit(1);
+    });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.error('💥 UNCAUGHT EXCEPTION! Shutting down...');
+    console.error('Error:', err.message);
+    console.error('Stack:', err.stack);
+    process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('👋 SIGTERM received. Shutting down gracefully...');
+    server.close(() => {
+        console.log('✅ Process terminated');
+    });
 });
