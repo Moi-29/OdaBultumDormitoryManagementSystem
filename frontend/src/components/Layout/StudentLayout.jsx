@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Home as HomeIcon, Building2, FileText, AlertCircle } from 'lucide-react';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Handle window resize
+    useEffect(() => {
+        const handleResize = () => {
+            setIsDesktop(window.innerWidth >= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const navItems = [
         { path: '/student/dormitory', label: 'Dormitory View', icon: Building2, color: '#10b981' },
@@ -29,7 +40,7 @@ const StudentLayout = () => {
             <nav style={{
                 position: 'fixed',
                 top: 0,
-                left: 0,
+                left: isDesktop ? '280px' : 0,
                 right: 0,
                 height: '64px',
                 background: 'rgba(255, 255, 255, 0.95)',
@@ -40,28 +51,31 @@ const StudentLayout = () => {
                 alignItems: 'center',
                 padding: '0 1rem',
                 gap: '1rem',
-                zIndex: 1000
+                zIndex: 999,
+                transition: 'left 0.3s ease'
             }}>
-                {/* Hamburger Menu */}
-                <button
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '0.5rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: '8px',
-                        transition: 'all 0.2s',
-                        color: '#1f2937'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-                >
-                    {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                {/* Hamburger Menu - Only visible on mobile */}
+                {!isDesktop && (
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '8px',
+                            transition: 'all 0.2s',
+                            color: '#1f2937'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                    >
+                        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                )}
 
                 {/* Home Link */}
                 <button
@@ -130,8 +144,8 @@ const StudentLayout = () => {
                 </div>
             </nav>
 
-            {/* Sidebar Overlay */}
-            {sidebarOpen && (
+            {/* Sidebar Overlay - Only on mobile */}
+            {!isDesktop && sidebarOpen && (
                 <div
                     onClick={() => setSidebarOpen(false)}
                     style={{
@@ -156,10 +170,10 @@ const StudentLayout = () => {
                     left: 0,
                     bottom: 0,
                     width: '280px',
-                    maxWidth: '85vw',
+                    maxWidth: isDesktop ? '280px' : '85vw',
                     background: 'linear-gradient(180deg, #ffffff 0%, #f9fafb 100%)',
-                    boxShadow: '4px 0 24px rgba(0, 0, 0, 0.12)',
-                    transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+                    boxShadow: isDesktop ? '2px 0 8px rgba(0, 0, 0, 0.05)' : '4px 0 24px rgba(0, 0, 0, 0.12)',
+                    transform: isDesktop ? 'translateX(0)' : (sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'),
                     transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     zIndex: 1002,
                     display: 'flex',
@@ -225,7 +239,8 @@ const StudentLayout = () => {
                                     textAlign: 'left',
                                     color: isActive ? item.color : '#4b5563',
                                     fontWeight: isActive ? 600 : 500,
-                                    fontSize: '0.95rem'
+                                    fontSize: '0.95rem',
+                                    width: 'calc(100% - 1.5rem)'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
@@ -266,8 +281,10 @@ const StudentLayout = () => {
             {/* Main Content Area */}
             <main style={{
                 marginTop: '64px',
+                marginLeft: isDesktop ? '280px' : 0,
                 minHeight: 'calc(100vh - 64px)',
-                position: 'relative'
+                position: 'relative',
+                transition: 'margin-left 0.3s ease'
             }}>
                 <Outlet />
             </main>
