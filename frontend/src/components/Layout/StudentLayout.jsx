@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Home as HomeIcon, Building2, FileText, AlertCircle } from 'lucide-react';
-import '../styles/premiumAnimations.css';
+import '../../styles/premiumAnimations.css';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
