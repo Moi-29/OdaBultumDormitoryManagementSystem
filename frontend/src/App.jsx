@@ -69,8 +69,8 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Legacy Student Portal (keep for backward compatibility) */}
-          <Route path="/" element={<StudentPortal />} />
+          {/* Redirect root to new student layout */}
+          <Route path="/" element={<Navigate to="/student/dormitory" replace />} />
           <Route path="/login" element={<Login />} />
 
           {/* New Student Routes with Layout */}
@@ -80,6 +80,9 @@ function App() {
             <Route path="application" element={<ApplicationForm />} />
             <Route path="report" element={<ReportIssue />} />
           </Route>
+
+          {/* Legacy Student Portal (keep for direct access) */}
+          <Route path="/old-portal" element={<StudentPortal />} />
 
           {/* Proctor Routes */}
           <Route path="/proctor/dashboard" element={<ProctorDashboard />} />
