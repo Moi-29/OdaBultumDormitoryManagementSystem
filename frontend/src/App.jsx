@@ -10,6 +10,9 @@ import Applications from './pages/Admin/Applications';
 import Requests from './pages/Admin/Requests';
 import Settings from './pages/Admin/Settings';
 import AdminManagement from './pages/Admin/AdminManagement';
+import UserManagement from './pages/Admin/UserManagement';
+import ProctorDashboard from './pages/Proctor/ProctorDashboard';
+import MaintainerDashboard from './pages/Maintainer/MaintainerDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Protected Route Component
@@ -65,6 +68,12 @@ function App() {
           <Route path="/" element={<StudentPortal />} />
           <Route path="/login" element={<Login />} />
 
+          {/* Proctor Routes */}
+          <Route path="/proctor/dashboard" element={<ProctorDashboard />} />
+
+          {/* Maintainer Routes */}
+          <Route path="/maintainer/dashboard" element={<MaintainerDashboard />} />
+
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="redirect" element={<SmartRedirect />} />
@@ -106,6 +115,11 @@ function App() {
             <Route path="admin-management" element={
               <ProtectedRoute requiredPermission="admins.view">
                 <AdminManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="user-management" element={
+              <ProtectedRoute requiredPermission="admins.view">
+                <UserManagement />
               </ProtectedRoute>
             } />
             <Route index element={<SmartRedirect />} />

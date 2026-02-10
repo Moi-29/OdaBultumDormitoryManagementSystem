@@ -1,6 +1,6 @@
 const Proctor = require('../models/Proctor');
 const Request = require('../models/Request');
-const Block = require('../models/Block');
+const Room = require('../models/Room');
 
 // @desc    Get proctor profile
 // @route   GET /api/proctor/profile
@@ -13,13 +13,20 @@ const getProfile = async (req, res) => {
             return res.status(404).json({ message: 'Proctor not found' });
         }
 
-        // Get block information
-        const block = await Block.findOne({ name: proctor.blockId });
+        // Get block information from Room collection (real data)
+        const rooms = await Room.find({ building: proctor.blockId });
+        const blockInfo = rooms.length > 0 ? {
+            name: proctor.blockId,
+            gender: rooms[0].gender,
+            totalRooms: rooms.length,
+            totalCapacity: rooms.reduce((sum, r) => sum + r.capacity, 0),
+            occupied: rooms.reduce((sum, r) => sum + r.occupants.length, 0)
+        } : { name: proctor.blockId };
 
         res.json({
             success: true,
             proctor,
-            block
+            block: blockInfo
         });
     } catch (error) {
         console.error('Error fetching proctor profile:', error);
@@ -196,8 +203,15 @@ const getStats = async (req, res) => {
             return res.status(404).json({ message: 'Proctor not found' });
         }
 
-        // Get block info
-        const block = await Block.findOne({ name: proctor.blockId });
+        // Get block info from Room collection (real data)
+        const rooms = await Room.find({ building: proctor.blockId });
+        const blockInfo = rooms.length > 0 ? {
+            name: proctor.blockId,
+            gender: rooms[0].gender,
+            totalRooms: rooms.length,
+            totalCapacity: rooms.reduce((sum, r) => sum + r.capacity, 0),
+            occupied: rooms.reduce((sum, r) => sum + r.occupants.length, 0)
+        } : { name: proctor.blockId };
 
         // Get report statistics
         const totalReports = await Request.countDocuments({
@@ -230,7 +244,7 @@ const getStats = async (req, res) => {
         res.json({
             success: true,
             stats: {
-                block: block || { name: proctor.blockId },
+                block: blockInfo,
                 totalReports,
                 pendingReports,
                 resolvedReports,

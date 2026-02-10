@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Block = require('./models/Block');
+const path = require('path');
+const Room = require('./models/Room');
 const Proctor = require('./models/Proctor');
 const Maintainer = require('./models/Maintainer');
 
-dotenv.config();
+// Load environment variables from backend/.env
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const connectDB = async () => {
     try {
@@ -16,146 +18,83 @@ const connectDB = async () => {
     }
 };
 
-const seedBlocks = async () => {
+const getAvailableBlocks = async () => {
     try {
-        // Clear existing blocks
-        await Block.deleteMany({});
-        console.log('🗑️  Cleared existing blocks');
+        // Get unique buildings (blocks) from Room collection - REAL DATA
+        const rooms = await Room.find().select('building gender');
+        
+        if (rooms.length === 0) {
+            console.log('⚠️  No rooms found in database. Please add rooms in the Dormitories section first.');
+            return [];
+        }
 
-        // Create blocks
-        const blocks = [
-            {
-                name: 'Block A',
-                description: 'Male dormitory - Ground floor',
-                gender: 'male',
-                totalRooms: 50,
-                capacity: 200,
-                currentOccupancy: 180,
-                status: 'active'
-            },
-            {
-                name: 'Block B',
-                description: 'Male dormitory - First floor',
-                gender: 'male',
-                totalRooms: 50,
-                capacity: 200,
-                currentOccupancy: 195,
-                status: 'active'
-            },
-            {
-                name: 'Block C',
-                description: 'Female dormitory - Ground floor',
-                gender: 'female',
-                totalRooms: 45,
-                capacity: 180,
-                currentOccupancy: 165,
-                status: 'active'
-            },
-            {
-                name: 'Block D',
-                description: 'Female dormitory - First floor',
-                gender: 'female',
-                totalRooms: 45,
-                capacity: 180,
-                currentOccupancy: 170,
-                status: 'active'
-            },
-            {
-                name: 'Block E',
-                description: 'Mixed dormitory - Graduate students',
-                gender: 'mixed',
-                totalRooms: 30,
-                capacity: 120,
-                currentOccupancy: 100,
-                status: 'active'
-            },
-            {
-                name: 'Block F',
-                description: 'Male dormitory - Under maintenance',
-                gender: 'male',
-                totalRooms: 40,
-                capacity: 160,
-                currentOccupancy: 0,
-                status: 'maintenance'
+        // Group by building to get unique blocks
+        const blockMap = new Map();
+        rooms.forEach(room => {
+            if (!blockMap.has(room.building)) {
+                blockMap.set(room.building, {
+                    name: room.building,
+                    gender: room.gender
+                });
             }
-        ];
+        });
+        
+        const blocks = Array.from(blockMap.values()).sort((a, b) => 
+            a.name.localeCompare(b.name)
+        );
 
-        const createdBlocks = await Block.insertMany(blocks);
-        console.log(`✅ Created ${createdBlocks.length} blocks`);
-        return createdBlocks;
+        console.log(`✅ Found ${blocks.length} real blocks from Dormitories:`);
+        blocks.forEach(block => {
+            console.log(`   - ${block.name} (${block.gender === 'M' ? 'Male' : 'Female'})`);
+        });
+
+        return blocks;
     } catch (error) {
-        console.error('❌ Error seeding blocks:', error);
+        console.error('❌ Error fetching blocks:', error);
         throw error;
     }
 };
 
 const seedProctors = async (blocks) => {
     try {
+        if (blocks.length === 0) {
+            console.log('⚠️  No blocks available. Skipping proctor seeding.');
+            return [];
+        }
+
         // Clear existing proctors
         await Proctor.deleteMany({});
         console.log('🗑️  Cleared existing proctors');
 
-        // Create proctors
-        const proctors = [
-            {
-                fullName: 'John Doe',
-                username: 'proctor_blocka',
-                password: 'password123',
-                phone: '+251911111111',
-                email: 'proctor.blocka@obu.edu.et',
-                blockId: 'Block A',
-                status: 'active'
-            },
-            {
-                fullName: 'Jane Smith',
-                username: 'proctor_blockb',
-                password: 'password123',
-                phone: '+251922222222',
-                email: 'proctor.blockb@obu.edu.et',
-                blockId: 'Block B',
-                status: 'active'
-            },
-            {
-                fullName: 'Sarah Johnson',
-                username: 'proctor_blockc',
-                password: 'password123',
-                phone: '+251933333333',
-                email: 'proctor.blockc@obu.edu.et',
-                blockId: 'Block C',
-                status: 'active'
-            },
-            {
-                fullName: 'Emily Brown',
-                username: 'proctor_blockd',
-                password: 'password123',
-                phone: '+251944444444',
-                email: 'proctor.blockd@obu.edu.et',
-                blockId: 'Block D',
-                status: 'active'
-            },
-            {
-                fullName: 'Michael Wilson',
-                username: 'proctor_blocke',
-                password: 'password123',
-                phone: '+251955555555',
-                email: 'proctor.blocke@obu.edu.et',
-                blockId: 'Block E',
-                status: 'active'
-            }
+        // Create proctors for available blocks (up to 5)
+        const proctorData = [
+            { fullName: 'John Doe', username: 'proctor_', phone: '+251911111111', email: 'proctor1@obu.edu.et' },
+            { fullName: 'Jane Smith', username: 'proctor_', phone: '+251922222222', email: 'proctor2@obu.edu.et' },
+            { fullName: 'Sarah Johnson', username: 'proctor_', phone: '+251933333333', email: 'proctor3@obu.edu.et' },
+            { fullName: 'Emily Brown', username: 'proctor_', phone: '+251944444444', email: 'proctor4@obu.edu.et' },
+            { fullName: 'Michael Wilson', username: 'proctor_', phone: '+251955555555', email: 'proctor5@obu.edu.et' }
         ];
+
+        const proctors = [];
+        const maxProctors = Math.min(blocks.length, proctorData.length);
+
+        for (let i = 0; i < maxProctors; i++) {
+            const block = blocks[i];
+            const data = proctorData[i];
+            
+            proctors.push({
+                fullName: data.fullName,
+                username: `${data.username}${block.name.toLowerCase().replace(/\s+/g, '')}`,
+                password: 'password123',
+                phone: data.phone,
+                email: data.email,
+                blockId: block.name,
+                status: 'active'
+            });
+        }
 
         const createdProctors = await Proctor.insertMany(proctors);
         console.log(`✅ Created ${createdProctors.length} proctors`);
-
-        // Update blocks with assigned proctors
-        for (let i = 0; i < createdProctors.length; i++) {
-            const block = blocks.find(b => b.name === createdProctors[i].blockId);
-            if (block) {
-                block.assignedProctor = createdProctors[i]._id;
-                await block.save();
-            }
-        }
-        console.log('✅ Updated blocks with assigned proctors');
 
         return createdProctors;
     } catch (error) {
@@ -233,22 +172,40 @@ const seedAll = async () => {
     try {
         await connectDB();
 
-        console.log('\n🌱 Starting RBA System Seeding...\n');
+        console.log('\n🌱 Starting RBA System Seeding (Using Real Blocks from Dormitories)...\n');
 
-        const blocks = await seedBlocks();
+        const blocks = await getAvailableBlocks();
+        
+        if (blocks.length === 0) {
+            console.log('\n⚠️  WARNING: No blocks found!');
+            console.log('   Please add rooms in the Admin Dashboard > Dormitories section first.');
+            console.log('   Then run this seeder again to create proctors for those blocks.\n');
+            process.exit(1);
+        }
+
         const proctors = await seedProctors(blocks);
         const maintainers = await seedMaintainers();
 
         console.log('\n✅ RBA System Seeding Complete!\n');
         console.log('📋 Summary:');
-        console.log(`   - Blocks: ${blocks.length}`);
+        console.log(`   - Real Blocks (from Dormitories): ${blocks.length}`);
         console.log(`   - Proctors: ${proctors.length}`);
         console.log(`   - Maintainers: ${maintainers.length}`);
         console.log('\n🔐 Test Credentials:');
-        console.log('   Proctor (Block A): username: proctor_blocka, password: password123');
-        console.log('   Proctor (Block B): username: proctor_blockb, password: password123');
-        console.log('   Maintainer (Plumbing): username: maintainer_plumbing, password: password123');
-        console.log('   Maintainer (Electrical): username: maintainer_electrical, password: password123');
+        
+        if (proctors.length > 0) {
+            console.log('   Proctors:');
+            proctors.forEach(p => {
+                console.log(`     - ${p.blockId}: username: ${p.username}, password: password123`);
+            });
+        }
+        
+        console.log('   Maintainers:');
+        console.log('     - Plumbing: username: maintainer_plumbing, password: password123');
+        console.log('     - Electrical: username: maintainer_electrical, password: password123');
+        console.log('     - Carpentry: username: maintainer_carpentry, password: password123');
+        console.log('     - General: username: maintainer_general, password: password123');
+        console.log('     - HVAC: username: maintainer_hvac, password: password123');
         console.log('\n');
 
         process.exit(0);

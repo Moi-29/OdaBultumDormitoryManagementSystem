@@ -1,6 +1,5 @@
 const Proctor = require('../models/Proctor');
 const Maintainer = require('../models/Maintainer');
-const Block = require('../models/Block');
 const Request = require('../models/Request');
 
 // ============= PROCTOR MANAGEMENT =============
@@ -25,10 +24,13 @@ const createProctor = async (req, res) => {
             return res.status(400).json({ message: 'Username already exists' });
         }
 
-        // Verify block exists
-        const block = await Block.findOne({ name: blockId });
-        if (!block) {
-            return res.status(400).json({ message: 'Invalid block ID' });
+        // Verify block exists in Room collection (real data)
+        const Room = require('../models/Room');
+        const blockExists = await Room.findOne({ building: blockId });
+        if (!blockExists) {
+            return res.status(400).json({ 
+                message: 'Invalid block ID. Block must exist in Dormitories section first.' 
+            });
         }
 
         // Create proctor
@@ -42,10 +44,6 @@ const createProctor = async (req, res) => {
             status: 'active',
             createdBy: req.admin._id
         });
-
-        // Update block with assigned proctor
-        block.assignedProctor = proctor._id;
-        await block.save();
 
         res.status(201).json({
             success: true,
@@ -150,21 +148,14 @@ const updateProctor = async (req, res) => {
         
         // Handle block reassignment
         if (blockId && blockId !== proctor.blockId) {
-            // Verify new block exists
-            const newBlock = await Block.findOne({ name: blockId });
-            if (!newBlock) {
-                return res.status(400).json({ message: 'Invalid block ID' });
+            // Verify new block exists in Room collection (real data)
+            const Room = require('../models/Room');
+            const blockExists = await Room.findOne({ building: blockId });
+            if (!blockExists) {
+                return res.status(400).json({ 
+                    message: 'Invalid block ID. Block must exist in Dormitories section first.' 
+                });
             }
-
-            // Remove from old block
-            await Block.updateOne(
-                { name: proctor.blockId },
-                { $unset: { assignedProctor: 1 } }
-            );
-
-            // Assign to new block
-            newBlock.assignedProctor = proctor._id;
-            await newBlock.save();
 
             proctor.blockId = blockId;
         }
@@ -202,12 +193,6 @@ const deleteProctor = async (req, res) => {
         // Soft delete - set status to dismissed
         proctor.status = 'dismissed';
         await proctor.save();
-
-        // Remove from block assignment
-        await Block.updateOne(
-            { name: proctor.blockId },
-            { $unset: { assignedProctor: 1 } }
-        );
 
         res.json({
             success: true,
@@ -401,14 +386,32 @@ const deleteMaintainer = async (req, res) => {
 
 // ============= BLOCK MANAGEMENT =============
 
-// @desc    Get all blocks
+// @desc    Get all blocks (from Room collection - real data)
 // @route   GET /api/user-management/blocks
 // @access  Private (Admin)
 const getBlocks = async (req, res) => {
     try {
-        const blocks = await Block.find()
-            .populate('assignedProctor', 'fullName username')
-            .sort({ name: 1 });
+        const Room = require('../models/Room');
+        
+        // Get unique buildings (blocks) from Room collection
+        const rooms = await Room.find().select('building gender');
+        
+        // Group by building to get unique blocks with their gender
+        const blockMap = new Map();
+        rooms.forEach(room => {
+            if (!blockMap.has(room.building)) {
+                blockMap.set(room.building, {
+                    name: room.building,
+                    gender: room.gender,
+                    description: `${room.gender === 'M' ? 'Male' : 'Female'} Dormitory Block`
+                });
+            }
+        });
+        
+        // Convert to array and sort
+        const blocks = Array.from(blockMap.values()).sort((a, b) => 
+            a.name.localeCompare(b.name)
+        );
 
         res.json({
             success: true,
@@ -426,25 +429,11 @@ const getBlocks = async (req, res) => {
 // @access  Private (Admin)
 const createBlock = async (req, res) => {
     try {
-        const { name, description, gender, totalRooms, capacity } = req.body;
-
-        if (!name || !gender) {
-            return res.status(400).json({ message: 'Block name and gender are required' });
-        }
-
-        const block = await Block.create({
-            name,
-            description,
-            gender,
-            totalRooms: totalRooms || 0,
-            capacity: capacity || 0,
-            status: 'active'
-        });
-
-        res.status(201).json({
-            success: true,
-            message: 'Block created successfully',
-            block
+        // Blocks are automatically created when rooms are added in the Dormitories section
+        // This endpoint is kept for API compatibility but returns a message
+        res.status(400).json({ 
+            success: false,
+            message: 'Blocks are managed through the Dormitories section. Please add rooms there to create blocks.' 
         });
     } catch (error) {
         console.error('Error creating block:', error);
