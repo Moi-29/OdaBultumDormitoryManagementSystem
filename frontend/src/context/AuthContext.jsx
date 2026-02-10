@@ -9,99 +9,107 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check for regular user
-        const userInfo = localStorage.getItem('userInfo');
-        if (userInfo) {
-            try {
-                setUser(JSON.parse(userInfo));
-            } catch (error) {
-                console.error("Failed to parse user info:", error);
-                localStorage.removeItem('userInfo');
-            }
-        }
-        
-        // Check for admin user
+        // Check if user is logged in on mount
         const token = localStorage.getItem('token');
-        const adminInfo = localStorage.getItem('adminInfo');
-        if (token && adminInfo) {
+        const userData = localStorage.getItem('user');
+        
+        if (token && userData) {
             try {
-                setUser({ ...JSON.parse(adminInfo), isAdmin: true });
+                const parsedUser = JSON.parse(userData);
+                setUser(parsedUser);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             } catch (error) {
-                console.error("Failed to parse admin info:", error);
+                console.error('Error parsing user data:', error);
                 localStorage.removeItem('token');
-                localStorage.removeItem('adminInfo');
+                localStorage.removeItem('user');
             }
         }
-        
         setLoading(false);
     }, []);
 
-    const login = async (username, password) => {
+    // Multi-role login
+    const login = async (username, password, role = 'admin') => {
         try {
-            // Try admin login first (try with both email and username)
-            try {
-                const { data } = await axios.post(`${API_URL}/api/admin/auth/login`, { 
-                    email: username, 
-                    password 
-                });
-                
-                // Store admin token and info
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('adminInfo', JSON.stringify(data.admin));
-                setUser({ ...data.admin, isAdmin: true });
-                return { success: true, isAdmin: true };
-            } catch (adminError) {
-                console.log('Admin login failed, trying regular user login...');
-                // If admin login fails, try regular user login
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
-                const { data } = await axios.post(`${API_URL}/api/auth/login`, { username, password }, config);
+            const response = await axios.post(`${API_URL}/api/multi-auth/login`, {
+                username,
+                password,
+                role
+            });
 
-                localStorage.setItem('userInfo', JSON.stringify(data));
-                setUser(data);
-                return { success: true, isAdmin: false };
-            }
+            const { token, user: userData } = response.data;
+
+            // Store token and user data
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            // Set default authorization header
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            
+            setUser(userData);
+
+            return { success: true, user: userData };
         } catch (error) {
-            // Handle different error scenarios
-            let errorMessage = 'Invalid username or password';
-            
-            if (error.response) {
-                // Server responded with error
-                if (error.response.status === 401) {
-                    errorMessage = 'Invalid username or password';
-                } else if (error.response.data && error.response.data.message) {
-                    errorMessage = error.response.data.message;
-                }
-            } else if (error.request) {
-                // Request made but no response
-                errorMessage = 'Cannot connect to server. Please check your connection.';
-            } else {
-                // Something else happened
-                errorMessage = 'An error occurred. Please try again.';
-            }
-            
+            console.error('Login error:', error);
             return {
                 success: false,
-                message: errorMessage
+                message: error.response?.data?.message || 'Login failed. Please try again.'
             };
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('token');
-        localStorage.removeItem('adminInfo');
-        setUser(null);
+    // Legacy admin login (for backward compatibility)
+    const adminLogin = async (username, password) => {
+        return login(username, password, 'admin');
+    };
+
+    const logout = async () => {
+        try {
+            // Call logout endpoint
+            await axios.post(`${API_URL}/api/multi-auth/logout`);
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            // Clear local storage and state
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('userInfo'); // Legacy cleanup
+            localStorage.removeItem('adminInfo'); // Legacy cleanup
+            delete axios.defaults.headers.common['Authorization'];
+            setUser(null);
+        }
+    };
+
+    const updateUser = (userData) => {
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+    };
+
+    const value = {
+        user,
+        loading,
+        login,
+        adminLogin, // Keep for backward compatibility
+        logout,
+        updateUser,
+        isAuthenticated: !!user,
+        isAdmin: user?.role === 'admin',
+        isProctor: user?.role === 'proctor',
+        isMaintainer: user?.role === 'maintainer'
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={value}>
             {!loading && children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
+
+export default AuthContext;

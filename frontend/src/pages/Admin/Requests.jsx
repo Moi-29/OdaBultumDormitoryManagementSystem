@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
-    MessageSquare, Clock, CheckCircle, XCircle, Eye, User, Mail, Phone, Calendar, 
-    ChevronRight, Trash2
+    MessageSquare, Clock, CheckCircle, XCircle, Eye, Mail, Phone, Calendar, 
+    ChevronRight, Trash2, MapPin, User as UserIcon
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -11,7 +11,7 @@ const Requests = () => {
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [notification, setNotification] = useState(null);
-    const [showChatPanel, setShowChatPanel] = useState(false);
+    const [showDetailsPanel, setShowDetailsPanel] = useState(false);
     const [selectedRequests, setSelectedRequests] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -184,8 +184,16 @@ const Requests = () => {
 
     const viewDetails = (request) => {
         setSelectedRequest(request);
-        setShowChatPanel(true);
+        setShowDetailsPanel(true);
     };
+
+    useEffect(() => {
+        if (selectedRequests.length === requests.length && requests.length > 0) {
+            setSelectAll(true);
+        } else {
+            setSelectAll(false);
+        }
+    }, [selectedRequests, requests]);
 
     if (loading) {
         return (
