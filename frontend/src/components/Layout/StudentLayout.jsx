@@ -37,18 +37,16 @@ const StudentLayout = () => {
             display: 'flex',
             flexDirection: 'column'
         }}>
-            {/* Glassmorphism Top Navbar */}
+            {/* Green Gradient Top Navbar */}
             <nav style={{
                 position: 'fixed',
                 top: 0,
                 left: isDesktop ? '280px' : 0,
                 right: 0,
                 height: '70px',
-                background: 'rgba(255, 255, 255, 0.85)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderBottom: '1px solid rgba(16, 185, 129, 0.2)',
-                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 4px 24px rgba(16, 185, 129, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 padding: '0 2rem',
@@ -61,8 +59,8 @@ const StudentLayout = () => {
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         style={{
-                            background: 'linear-gradient(135deg, #10b981, #059669)',
-                            border: 'none',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
                             cursor: 'pointer',
                             padding: '0.65rem',
                             display: 'flex',
@@ -71,16 +69,16 @@ const StudentLayout = () => {
                             borderRadius: '12px',
                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             color: 'white',
-                            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                            backdropFilter: 'blur(10px)'
                         }}
                         className="hover-lift-sm"
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
                         }}
                     >
                         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -123,15 +121,16 @@ const StudentLayout = () => {
                 {/* Spacer */}
                 <div style={{ flex: 1 }} />
 
-                {/* University Logo with Ethiopian Colors */}
+                {/* University Logo */}
                 <div style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
                     gap: '1rem',
                     padding: '0.5rem 1.25rem',
-                    background: 'rgba(16, 185, 129, 0.08)',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    backdropFilter: 'blur(10px)',
                     borderRadius: '12px',
-                    border: '1px solid rgba(16, 185, 129, 0.2)'
+                    border: '1px solid rgba(255, 255, 255, 0.3)'
                 }}>
                     <img 
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpWVhGUfDQPtwCOjcwTE3tQiAl0obKpwvN1A&s" 
@@ -143,8 +142,8 @@ const StudentLayout = () => {
                             backgroundColor: 'white',
                             borderRadius: '10px',
                             padding: '5px',
-                            border: '2px solid rgba(16, 185, 129, 0.3)',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+                            border: '2px solid rgba(255, 255, 255, 0.5)',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                         }} 
                     />
                     {isDesktop && (
@@ -152,18 +151,16 @@ const StudentLayout = () => {
                             <div style={{ 
                                 fontSize: '1rem', 
                                 fontWeight: 800,
-                                background: 'linear-gradient(135deg, #10b981, #059669)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text',
+                                color: 'white',
                                 lineHeight: 1.2,
-                                letterSpacing: '0.5px'
+                                letterSpacing: '0.5px',
+                                textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                             }}>
                                 OBU
                             </div>
                             <div style={{ 
                                 fontSize: '0.75rem',
-                                color: '#6b7280',
+                                color: 'rgba(255, 255, 255, 0.95)',
                                 fontWeight: 600
                             }}>
                                 Student Portal

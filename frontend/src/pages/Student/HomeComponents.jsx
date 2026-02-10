@@ -22,7 +22,7 @@ export const HeroSection = ({ scrollY }) => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #8B5CF6 100%)',
+                background: 'linear-gradient(135deg, #e1e1e8ff 0%, #6e6e71ff 50%, #8B5CF6 100%)',
                 transform: `translateY(${parallaxOffset}px)`,
                 transition: 'transform 0.1s ease-out'
             }}>
