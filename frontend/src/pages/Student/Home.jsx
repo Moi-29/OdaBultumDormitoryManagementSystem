@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { HeroSection, WelcomeStats, DisciplineSection } from './HomeComponents';
-import { StudentUnionSection, CafeteriaSchedule, CafeteriaQuality } from './HomeComponents2';
-import { ToleranceSection } from './HomeComponents3';
+import { StudentUnionSection, CafeteriaSchedule } from './HomeComponents2';
+import { ToleranceSection, CafeteriaQuality } from './HomeComponents3';
 import { HealthCenterSection, WaterSection } from './HomeComponents4';
 import { DormitoryAvailability, MealCardSection } from './HomeComponents5';
 

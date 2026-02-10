@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { ChevronDown, Users, Utensils, Heart, Droplet, Building2, CreditCard, Shield, Globe, Clock, Phone, MapPin, Award, Star, TrendingUp, CheckCircle, AlertCircle, Coffee, Sunrise, Sunset, Moon } from 'lucide-react';
 
 // Hero Section Component
