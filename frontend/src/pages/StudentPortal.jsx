@@ -1051,7 +1051,7 @@ const StudentPortal = () => {
                         {/* Modal Content */}
                         <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                {/* Block Selection */}
+                                {/* Block Input */}
                                 <div>
                                     <label style={{ 
                                         display: 'block', 
@@ -1062,7 +1062,9 @@ const StudentPortal = () => {
                                     }}>
                                         Block <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
-                                    <select
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., A, B, C, Main Block, etc."
                                         value={reportData.block}
                                         onChange={(e) => setReportData({ ...reportData, block: e.target.value })}
                                         style={{
@@ -1070,18 +1072,9 @@ const StudentPortal = () => {
                                             padding: '0.75rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem',
-                                            cursor: 'pointer'
+                                            fontSize: '0.95rem'
                                         }}
-                                    >
-                                        <option value="">Select Block</option>
-                                        <option value="A">Block A</option>
-                                        <option value="B">Block B</option>
-                                        <option value="C">Block C</option>
-                                        <option value="D">Block D</option>
-                                        <option value="E">Block E</option>
-                                        <option value="F">Block F</option>
-                                    </select>
+                                    />
                                 </div>
 
                                 {/* Dorm Number */}
