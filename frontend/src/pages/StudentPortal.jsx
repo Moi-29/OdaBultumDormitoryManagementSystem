@@ -368,7 +368,7 @@ const StudentPortal = () => {
     // Handle Report Submission
     const handleSubmitReport = async () => {
         // Validation
-        if (!reportData.block || !reportData.dormNumber || !reportData.issueType || !reportData.description) {
+        if (!reportData.block || !reportData.dormNumber || !reportData.description) {
             showNotification('Please fill in all required fields', 'error');
             return;
         }
@@ -382,10 +382,10 @@ const StudentPortal = () => {
                 email: `${studentId}@obu.edu.et`,
                 phone: placement?.phone || 'N/A',
                 requestType: 'Facility Issue',
-                subject: `${reportData.issueType} - Block ${reportData.block}, Room ${reportData.dormNumber}`,
+                subject: `Facility Issue - Block ${reportData.block}, Room ${reportData.dormNumber}`,
                 message: reportData.description,
                 status: 'pending',
-                priority: reportData.priority,
+                priority: 'medium',
                 currentRoom: `${reportData.block}-${reportData.dormNumber}`,
                 submittedOn: new Date().toISOString().split('T')[0]
             };
@@ -1101,71 +1101,6 @@ const StudentPortal = () => {
                                             fontSize: '0.95rem'
                                         }}
                                     />
-                                </div>
-
-                                {/* Issue Type */}
-                                <div>
-                                    <label style={{ 
-                                        display: 'block', 
-                                        marginBottom: '0.5rem', 
-                                        fontWeight: 600, 
-                                        color: '#1e293b',
-                                        fontSize: '0.95rem'
-                                    }}>
-                                        Issue Type <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <select
-                                        value={reportData.issueType}
-                                        onChange={(e) => setReportData({ ...reportData, issueType: e.target.value })}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <option value="">Select Issue Type</option>
-                                        <option value="Plumbing">Plumbing (Water, Toilet, Sink)</option>
-                                        <option value="Electrical">Electrical (Lights, Outlets, Wiring)</option>
-                                        <option value="Furniture">Furniture (Bed, Desk, Chair)</option>
-                                        <option value="Window/Door">Window/Door Issues</option>
-                                        <option value="Cleanliness">Cleanliness/Sanitation</option>
-                                        <option value="Heating/Cooling">Heating/Cooling</option>
-                                        <option value="Pest Control">Pest Control</option>
-                                        <option value="Safety">Safety Concern</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-
-                                {/* Priority */}
-                                <div>
-                                    <label style={{ 
-                                        display: 'block', 
-                                        marginBottom: '0.5rem', 
-                                        fontWeight: 600, 
-                                        color: '#1e293b',
-                                        fontSize: '0.95rem'
-                                    }}>
-                                        Priority Level
-                                    </label>
-                                    <select
-                                        value={reportData.priority}
-                                        onChange={(e) => setReportData({ ...reportData, priority: e.target.value })}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <option value="low">Low - Can wait a few days</option>
-                                        <option value="medium">Medium - Should be fixed soon</option>
-                                        <option value="high">High - Urgent, needs immediate attention</option>
-                                    </select>
                                 </div>
 
                                 {/* Description */}
