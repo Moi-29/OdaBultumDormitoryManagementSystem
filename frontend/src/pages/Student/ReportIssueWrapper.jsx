@@ -87,8 +87,8 @@ const ReportIssueWrapper = () => {
                     minWidth: '320px',
                     maxWidth: '500px',
                     background: notification.type === 'success' 
-                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                        : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        ? 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)'
+                        : 'linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)',
                     color: 'white',
                     padding: '1.25rem 1.5rem',
                     borderRadius: '16px',
@@ -136,7 +136,7 @@ const ReportIssueWrapper = () => {
             }}>
                 {/* Header */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    background: 'linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)',
                     color: 'white',
                     padding: '1.5rem 2rem'
                 }}>
@@ -273,7 +273,7 @@ const ReportIssueWrapper = () => {
                         disabled={submittingReport}
                         style={{
                             padding: '0.75rem 1.5rem',
-                            background: submittingReport ? '#9ca3af' : '#ef4444',
+                            background: submittingReport ? '#9ca3af' : '#F43F5E',
                             color: 'white',
                             border: 'none',
                             borderRadius: '8px',

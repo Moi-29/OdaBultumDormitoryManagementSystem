@@ -19,9 +19,9 @@ const StudentLayout = () => {
     }, []);
 
     const navItems = [
-        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2, color: '#10b981' },
-        { path: '/student/application', label: 'Application Form', icon: FileText, color: '#3b82f6' },
-        { path: '/student/report', label: 'Report Issue', icon: AlertCircle, color: '#ef4444' }
+        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2, color: '#4F46E5' },
+        { path: '/student/application', label: 'Application Form', icon: FileText, color: '#8B5CF6' },
+        { path: '/student/report', label: 'Report Issue', icon: AlertCircle, color: '#F43F5E' }
     ];
 
     const handleNavigation = (path) => {
@@ -43,7 +43,7 @@ const StudentLayout = () => {
                 left: isDesktop ? '280px' : 0,
                 right: 0,
                 height: '64px',
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
@@ -188,7 +188,7 @@ const StudentLayout = () => {
                     height: '64px',
                     padding: '0 1.5rem',
                     borderBottom: '1px solid #e5e7eb',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.75rem',

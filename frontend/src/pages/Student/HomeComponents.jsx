@@ -22,7 +22,7 @@ export const HeroSection = ({ scrollY }) => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
+                background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #8B5CF6 100%)',
                 transform: `translateY(${parallaxOffset}px)`,
                 transition: 'transform 0.1s ease-out'
             }}>
@@ -79,7 +79,7 @@ export const HeroSection = ({ scrollY }) => {
                     Oda Bultum University
                     <br />
                     <span style={{
-                        background: 'linear-gradient(90deg, #fbbf24, #f59e0b)',
+                        background: 'linear-gradient(90deg, #F59E0B, #FBBF24)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                         backgroundClip: 'text'
@@ -109,14 +109,14 @@ export const HeroSection = ({ scrollY }) => {
                 }}>
                     <button style={{
                         padding: '1rem 2.5rem',
-                        background: 'white',
-                        color: '#059669',
+                        background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+                        color: '#1f2937',
                         border: 'none',
                         borderRadius: '12px',
                         fontSize: '1.1rem',
                         fontWeight: 700,
                         cursor: 'pointer',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        boxShadow: '0 10px 30px rgba(245, 158, 11, 0.4)',
                         transition: 'all 0.3s',
                         display: 'flex',
                         alignItems: 'center',
@@ -124,11 +124,11 @@ export const HeroSection = ({ scrollY }) => {
                     }}
                     onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-3px)';
-                        e.currentTarget.style.boxShadow = '0 15px 40px rgba(0,0,0,0.4)';
+                        e.currentTarget.style.boxShadow = '0 15px 40px rgba(245, 158, 11, 0.5)';
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(245, 158, 11, 0.4)';
                     }}>
                         <Building2 size={20} />
                         Explore Campus
@@ -187,10 +187,10 @@ export const WelcomeStats = forwardRef(({ visible }, ref) => (
                 gap: '2rem'
             }}>
                 {[
-                    { icon: Users, label: 'Active Students', value: '5,000+', color: '#10b981' },
-                    { icon: Building2, label: 'Dormitory Blocks', value: '12', color: '#3b82f6' },
-                    { icon: Award, label: 'Campus Rating', value: '4.8/5', color: '#f59e0b' },
-                    { icon: TrendingUp, label: 'Satisfaction Rate', value: '96%', color: '#8b5cf6' }
+                    { icon: Users, label: 'Active Students', value: '5,000+', color: '#4F46E5' },
+                    { icon: Building2, label: 'Dormitory Blocks', value: '12', color: '#8B5CF6' },
+                    { icon: Award, label: 'Campus Rating', value: '4.8/5', color: '#F59E0B' },
+                    { icon: TrendingUp, label: 'Satisfaction Rate', value: '96%', color: '#EC4899' }
                 ].map((stat, i) => {
                     const Icon = stat.icon;
                     return (
@@ -332,7 +332,7 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                                 boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                                 overflow: 'hidden',
                                 border: '2px solid',
-                                borderColor: isOpen ? '#10b981' : '#e5e7eb',
+                                borderColor: isOpen ? '#4F46E5' : '#e5e7eb',
                                 transition: 'all 0.3s'
                             }}>
                                 <button
@@ -340,7 +340,7 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                                     style={{
                                         width: '100%',
                                         padding: '2rem',
-                                        background: isOpen ? 'linear-gradient(135deg, #10b98110 0%, #05966910 100%)' : 'white',
+                                        background: isOpen ? 'linear-gradient(135deg, #4F46E510 0%, #6366F110 100%)' : 'white',
                                         border: 'none',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -352,7 +352,7 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                                     <div style={{
                                         width: '60px',
                                         height: '60px',
-                                        background: isOpen ? '#10b981' : '#f3f4f6',
+                                        background: isOpen ? '#4F46E5' : '#f3f4f6',
                                         borderRadius: '12px',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -400,7 +400,7 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
                                                     gap: '1rem',
                                                     borderBottom: i < rule.items.length - 1 ? '1px solid #f3f4f6' : 'none'
                                                 }}>
-                                                    <CheckCircle size={20} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                                    <CheckCircle size={20} color="#4F46E5" style={{ flexShrink: 0, marginTop: '2px' }} />
                                                     <span style={{
                                                         fontSize: '1.05rem',
                                                         color: '#4b5563',

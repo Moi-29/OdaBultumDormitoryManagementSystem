@@ -195,8 +195,8 @@ const ApplicationFormWrapper = () => {
                     minWidth: '320px',
                     maxWidth: '500px',
                     background: notification.type === 'success' 
-                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                        : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        ? 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)'
+                        : 'linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)',
                     color: 'white',
                     padding: '1.25rem 1.5rem',
                     borderRadius: '16px',
@@ -244,7 +244,7 @@ const ApplicationFormWrapper = () => {
             }}>
                 {/* Header */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
                     color: 'white',
                     padding: '1.5rem 2rem'
                 }}>
@@ -280,7 +280,7 @@ const ApplicationFormWrapper = () => {
                                 gap: '0.5rem',
                                 padding: '0.75rem 1.25rem',
                                 border: 'none',
-                                background: activeTab === tab.id ? '#10b981' : 'transparent',
+                                background: activeTab === tab.id ? '#4F46E5' : 'transparent',
                                 color: activeTab === tab.id ? 'white' : '#64748b',
                                 borderRadius: '8px 8px 0 0',
                                 cursor: 'pointer',
@@ -605,7 +605,7 @@ const ApplicationFormWrapper = () => {
                             width: '64px',
                             height: '64px',
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -641,7 +641,7 @@ const ApplicationFormWrapper = () => {
                                 style={{
                                     flex: 1,
                                     padding: '0.75rem',
-                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '8px',

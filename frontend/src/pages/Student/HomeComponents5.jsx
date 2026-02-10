@@ -20,13 +20,13 @@ export const DormitoryAvailability = forwardRef(({ visible }, ref) => (
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    background: '#10b98115',
+                    background: '#4F46E515',
                     padding: '0.75rem 1.5rem',
                     borderRadius: '50px',
                     marginBottom: '1.5rem'
                 }}>
                     <Building2 size={20} color="#10b981" />
-                    <span style={{ color: '#10b981', fontWeight: 700 }}>Housing Information</span>
+                    <span style={{ color: '#4F46E5', fontWeight: 700 }}>Housing Information</span>
                 </div>
                 <h2 style={{
                     fontSize: 'clamp(2rem, 4vw, 3.5rem)',
@@ -53,9 +53,9 @@ export const DormitoryAvailability = forwardRef(({ visible }, ref) => (
                 marginBottom: '3rem'
             }}>
                 {[
-                    { label: 'Total Capacity', value: '6,000', icon: Building2, color: '#10b981' },
-                    { label: 'Current Occupancy', value: '5,100', icon: Users, color: '#3b82f6' },
-                    { label: 'Occupancy Rate', value: '85%', icon: TrendingUp, color: '#f59e0b' }
+                    { label: 'Total Capacity', value: '6,000', icon: Building2, color: '#4F46E5' },
+                    { label: 'Current Occupancy', value: '5,100', icon: Users, color: '#8B5CF6' },
+                    { label: 'Occupancy Rate', value: '85%', icon: TrendingUp, color: '#F59E0B' }
                 ].map((stat, i) => {
                     const Icon = stat.icon;
                     return (
@@ -123,7 +123,7 @@ export const DormitoryAvailability = forwardRef(({ visible }, ref) => (
                     alignItems: 'center',
                     gap: '0.75rem'
                 }}>
-                    <Home size={28} color="#10b981" />
+                    <Home size={28} color="#4F46E5" />
                     Available Dormitory Blocks
                 </h3>
                 <div style={{
@@ -149,7 +149,7 @@ export const DormitoryAvailability = forwardRef(({ visible }, ref) => (
                             transition: 'all 0.3s'
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = '#10b981';
+                            e.currentTarget.style.borderColor = '#4F46E5';
                             e.currentTarget.style.transform = 'translateY(-3px)';
                         }}
                         onMouseLeave={(e) => {
@@ -175,10 +175,10 @@ export const DormitoryAvailability = forwardRef(({ visible }, ref) => (
                                     borderRadius: '50px',
                                     fontSize: '0.75rem',
                                     fontWeight: 700,
-                                    background: block.status === 'Available' ? '#10b98115' : 
-                                               block.status === 'Limited' ? '#f59e0b15' : '#ef444415',
-                                    color: block.status === 'Available' ? '#10b981' : 
-                                           block.status === 'Limited' ? '#f59e0b' : '#ef4444'
+                                    background: block.status === 'Available' ? '#4F46E515' : 
+                                               block.status === 'Limited' ? '#F59E0B15' : '#F43F5E15',
+                                    color: block.status === 'Available' ? '#4F46E5' : 
+                                           block.status === 'Limited' ? '#F59E0B' : '#F43F5E'
                                 }}>
                                     {block.status}
                                 </span>
@@ -232,13 +232,13 @@ export const MealCardSection = forwardRef(({ visible }, ref) => (
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    background: '#3b82f615',
+                    background: '#8B5CF615',
                     padding: '0.75rem 1.5rem',
                     borderRadius: '50px',
                     marginBottom: '1.5rem'
                 }}>
                     <CreditCard size={20} color="#3b82f6" />
-                    <span style={{ color: '#3b82f6', fontWeight: 700 }}>Meal Services</span>
+                    <span style={{ color: '#8B5CF6', fontWeight: 700 }}>Meal Services</span>
                 </div>
                 <h2 style={{
                     fontSize: 'clamp(2rem, 4vw, 3.5rem)',
@@ -283,7 +283,7 @@ export const MealCardSection = forwardRef(({ visible }, ref) => (
                     <div style={{
                         width: '70px',
                         height: '70px',
-                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        background: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)',
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
@@ -324,7 +324,7 @@ export const MealCardSection = forwardRef(({ visible }, ref) => (
                                 <div style={{
                                     width: '28px',
                                     height: '28px',
-                                    background: '#3b82f6',
+                                    background: '#8B5CF6',
                                     borderRadius: '50%',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -350,7 +350,7 @@ export const MealCardSection = forwardRef(({ visible }, ref) => (
 
                 {/* Meal Card Benefits */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
                     borderRadius: '24px',
                     padding: '3rem',
                     color: 'white',
