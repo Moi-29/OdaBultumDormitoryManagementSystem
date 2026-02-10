@@ -33,7 +33,7 @@ const PremiumFooter = () => {
 
     return (
         <footer style={{
-            background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)',
+            background: 'linear-gradient(180deg, #0d2d2d 0%, #0a1f1f 100%)',
             color: 'white',
             position: 'relative',
             overflow: 'hidden'
@@ -41,7 +41,7 @@ const PremiumFooter = () => {
             {/* Golden Divider */}
             <div style={{
                 height: '4px',
-                background: 'linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #4f46e5 100%)',
+                background: 'linear-gradient(90deg, #d4af37 0%, #f0d068 50%, #d4af37 100%)',
                 backgroundSize: '200% 100%',
                 animation: 'gradientShift 8s ease infinite'
             }} />

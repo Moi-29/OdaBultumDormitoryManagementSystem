@@ -485,3 +485,162 @@ export const DisciplineSection = forwardRef(({ visible }, ref) => {
         </div>
     );
 });
+
+
+// Stats Section - Luxury Dark Theme
+export const WelcomeStats = forwardRef(({ visible }, ref) => (
+    <div ref={ref} data-section="stats" style={{
+        padding: '6rem 2rem',
+        background: '#0a1f1f',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(50px)',
+        transition: 'all 0.8s ease-out'
+    }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '2rem'
+            }}>
+                {[
+                    { label: 'LIVE IMPACT', value: '08', sublabel: 'VERIFIED', color: '#d4af37' },
+                    { label: 'LIVE IMPACT', value: '3.92', sublabel: 'VERIFIED', color: '#d4af37' },
+                    { label: 'LIVE IMPACT', value: '98%', sublabel: 'VERIFIED', color: '#d4af37' },
+                    { label: 'LIVE IMPACT', value: '1,420', sublabel: 'VERIFIED', color: '#d4af37' }
+                ].map((stat, i) => (
+                    <div key={i} style={{
+                        background: 'linear-gradient(135deg, #0d2d2d 0%, #1a4040 100%)',
+                        padding: '2rem',
+                        borderRadius: '16px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(212, 175, 55, 0.2)',
+                        transition: 'all 0.3s'
+                    }}>
+                        <div style={{ fontSize: '0.75rem', color: '#708090', marginBottom: '1rem', letterSpacing: '0.1em' }}>
+                            {stat.label}
+                        </div>
+                        <div style={{ fontSize: '3rem', fontWeight: 800, color: 'white', marginBottom: '0.5rem' }}>
+                            {stat.value}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                            <span>●</span> {stat.sublabel}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+));
+
+// Code of Excellence Section
+export const DisciplineSection = forwardRef(({ visible }, ref) => {
+    const [openIndex, setOpenIndex] = useState(null);
+    
+    return (
+        <div ref={ref} data-section="discipline" style={{
+            padding: '8rem 2rem',
+            background: '#0a1f1f',
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(50px)',
+            transition: 'all 0.8s ease-out 0.2s'
+        }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '3rem', marginBottom: '3rem' }}>
+                    <div style={{
+                        width: '64px',
+                        height: '64px',
+                        background: 'rgba(59, 130, 246, 0.15)',
+                        borderRadius: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid rgba(59, 130, 246, 0.3)'
+                    }}>
+                        <Shield size={32} color="#3b82f6" strokeWidth={2} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <h2 style={{
+                            fontSize: '2.5rem',
+                            fontWeight: 800,
+                            color: 'white',
+                            marginBottom: '1rem'
+                        }}>
+                            Code of Excellence
+                        </h2>
+                        <p style={{ fontSize: '1.125rem', color: '#a0b0b0', lineHeight: 1.6 }}>
+                            The principles that define the elite scholarly community of Oda Bultum University.
+                        </p>
+                    </div>
+                </div>
+
+                <div style={{
+                    background: 'linear-gradient(135deg, #0d2d2d 0%, #1a4040 100%)',
+                    borderRadius: '24px',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    overflow: 'hidden'
+                }}>
+                    <button onClick={() => setOpenIndex(openIndex === 0 ? null : 0)} style={{
+                        width: '100%',
+                        padding: '2rem',
+                        background: 'transparent',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1.5rem',
+                        cursor: 'pointer',
+                        color: 'white'
+                    }}>
+                        <div style={{
+                            width: '48px',
+                            height: '48px',
+                            background: 'rgba(212, 175, 55, 0.15)',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <Award size={24} color="#d4af37" />
+                        </div>
+                        <div style={{ flex: 1, textAlign: 'left' }}>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>
+                                Academic Excellence Protocol
+                            </h3>
+                        </div>
+                        <ChevronDown size={20} style={{
+                            transform: openIndex === 0 ? 'rotate(180deg)' : 'rotate(0)',
+                            transition: 'transform 0.3s'
+                        }} />
+                    </button>
+                    <div style={{
+                        maxHeight: openIndex === 0 ? '500px' : '0',
+                        overflow: 'hidden',
+                        transition: 'max-height 0.4s ease-out'
+                    }}>
+                        <div style={{ padding: '0 2rem 2rem' }}>
+                            {[
+                                'Respect quiet hours: 10 PM - 6 AM on weekdays',
+                                'No smoking or alcohol in dormitory premises',
+                                'Visitors must register at reception and leave by 8 PM',
+                                'Keep common areas clean and organized',
+                                'Report maintenance issues promptly to your proctor'
+                            ].map((item, i) => (
+                                <div key={i} style={{
+                                    padding: '1rem',
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '1rem',
+                                    borderBottom: i < 4 ? '1px solid rgba(255,255,255,0.1)' : 'none'
+                                }}>
+                                    <CheckCircle size={18} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                    <span style={{ fontSize: '0.9375rem', color: '#a0b0b0', lineHeight: 1.6 }}>
+                                        {item}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+});

@@ -5,7 +5,7 @@ import { ToleranceSection, CafeteriaQuality } from './HomeComponents3';
 import { HealthCenterSection, WaterSection } from './HomeComponents4';
 import { DormitoryAvailability, MealCardSection } from './HomeComponents5';
 import PremiumFooter from '../../components/Layout/PremiumFooter';
-import '../../styles/premiumAnimations.css';
+import '../../styles/luxury.css';
 
 const Home = () => {
     const [scrollY, setScrollY] = useState(0);
@@ -35,10 +35,10 @@ const Home = () => {
     }, []);
 
     return (
-        <div style={{ 
+        <div className="luxury-theme" style={{ 
             width: '100%',
             overflowX: 'hidden',
-            backgroundColor: '#f8f9fa'
+            backgroundColor: '#0a1f1f'
         }}>
             {/* Hero Section */}
             <HeroSection scrollY={scrollY} />

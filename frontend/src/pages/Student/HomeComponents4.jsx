@@ -1,196 +1,98 @@
 import { forwardRef } from 'react';
-import { Heart, Droplet, Building2, CreditCard, Phone, MapPin, CheckCircle, Clock, AlertCircle, TrendingUp } from 'lucide-react';
+import { Heart, Droplet, Phone, Activity } from 'lucide-react';
 
-// Health Center Section
+// Wellness Sanctuary Section
 export const HealthCenterSection = forwardRef(({ visible }, ref) => (
-    <div 
-        ref={ref}
-        data-section="health"
-        style={{
-            padding: '8rem 2rem',
-            background: 'white',
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(50px)',
-            transition: 'all 0.8s ease-out 0.7s'
-        }}
-    >
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+    <div ref={ref} data-section="health" style={{
+        padding: '8rem 2rem',
+        background: '#0a1f1f',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(50px)',
+        transition: 'all 0.8s ease-out 0.7s'
+    }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '3rem' }}>
+            <div style={{
+                background: 'linear-gradient(135deg, #0d2d2d, #1a4040)',
+                borderRadius: '24px',
+                padding: '3rem',
+                border: '1px solid rgba(239, 68, 68, 0.2)'
+            }}>
+                <div style={{
+                    width: '64px',
+                    height: '64px',
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '2rem'
+                }}>
+                    <Heart size={32} color="#ef4444" />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <Heart size={24} color="#ef4444" />
+                    <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'white', margin: 0 }}>
+                        Wellness Sanctuary
+                    </h2>
+                </div>
+                <p style={{ fontSize: '1rem', color: '#a0b0b0', marginBottom: '2rem' }}>
+                    Your physical and mental health, prioritized.
+                </p>
+
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'white', marginBottom: '1.5rem' }}>
+                    Scholarly Vitality Services
+                </h3>
+                <p style={{ fontSize: '0.9375rem', color: '#a0b0b0', lineHeight: 1.6, marginBottom: '2rem' }}>
+                    Our premier medical facility provides 24/7 elite care, ensuring that every scholar maintains peak physical and psychological health for their academic journey.
+                </p>
+
                 <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    background: '#ef444415',
-                    padding: '0.75rem 1.5rem',
+                    padding: '0.5rem 1rem',
+                    background: 'rgba(16, 185, 129, 0.15)',
                     borderRadius: '50px',
-                    marginBottom: '1.5rem'
+                    marginBottom: '1.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: '#10b981'
                 }}>
-                    <Heart size={20} color="#ef4444" />
-                    <span style={{ color: '#ef4444', fontWeight: 700 }}>Healthcare Services</span>
-                </div>
-                <h2 style={{
-                    fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-                    fontWeight: 800,
-                    color: '#1f2937',
-                    marginBottom: '1rem'
-                }}>
-                    Campus Health Center
-                </h2>
-                <p style={{
-                    fontSize: '1.2rem',
-                    color: '#6b7280',
-                    maxWidth: '600px',
-                    margin: '0 auto'
-                }}>
-                    Professional medical care when you need it most
-                </p>
-            </div>
-
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                gap: '2rem'
-            }}>
-                <div style={{
-                    background: 'linear-gradient(135deg, #ef444410 0%, #dc262610 100%)',
-                    borderRadius: '24px',
-                    padding: '3rem',
-                    border: '2px solid #ef444420'
-                }}>
-                    <Heart size={48} color="#ef4444" strokeWidth={2} style={{ marginBottom: '1.5rem' }} />
-                    <h3 style={{
-                        fontSize: '1.8rem',
-                        fontWeight: 700,
-                        color: '#1f2937',
-                        marginBottom: '1.5rem'
-                    }}>
-                        Medical Services
-                    </h3>
-                    <ul style={{
-                        listStyle: 'none',
-                        padding: 0,
-                        margin: 0,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1rem'
-                    }}>
-                        {[
-                            'General consultation',
-                            'Emergency first aid',
-                            'Prescription services',
-                            'Health counseling',
-                            'Vaccination programs',
-                            'Mental health support'
-                        ].map((service, i) => (
-                            <li key={i} style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.75rem'
-                            }}>
-                                <CheckCircle size={20} color="#10b981" />
-                                <span style={{
-                                    fontSize: '1.05rem',
-                                    color: '#4b5563'
-                                }}>
-                                    {service}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
+                    <Activity size={14} />
+                    DOCTORS ONLINE
                 </div>
 
-                <div style={{
-                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    borderRadius: '24px',
-                    padding: '3rem',
-                    color: 'white',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
-                }}>
-                    <div>
-                        <h3 style={{
-                            fontSize: '1.8rem',
-                            fontWeight: 700,
-                            marginBottom: '2rem'
-                        }}>
-                            Operating Hours
-                        </h3>
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '1.5rem'
-                        }}>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.15)',
-                                backdropFilter: 'blur(10px)',
-                                borderRadius: '12px',
-                                padding: '1.5rem',
-                                border: '1px solid rgba(255,255,255,0.2)'
-                            }}>
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem',
-                                    marginBottom: '0.5rem'
-                                }}>
-                                    <Clock size={20} />
-                                    <span style={{ fontWeight: 600 }}>Regular Hours</span>
-                                </div>
-                                <div style={{ fontSize: '1.1rem', opacity: 0.9 }}>
-                                    Monday - Friday: 8:00 AM - 6:00 PM
-                                </div>
-                            </div>
-
-                            <div style={{
-                                background: 'rgba(255,255,255,0.15)',
-                                backdropFilter: 'blur(10px)',
-                                borderRadius: '12px',
-                                padding: '1.5rem',
-                                border: '1px solid rgba(255,255,255,0.2)'
-                            }}>
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem',
-                                    marginBottom: '0.5rem'
-                                }}>
-                                    <AlertCircle size={20} />
-                                    <span style={{ fontWeight: 600 }}>Emergency</span>
-                                </div>
-                                <div style={{ fontSize: '1.1rem', opacity: 0.9 }}>
-                                    24/7 On-Call Service
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <div style={{ display: 'flex', gap: '1rem' }}>
                     <button style={{
-                        marginTop: '2rem',
-                        padding: '1.25rem',
-                        background: 'white',
+                        flex: 1,
+                        padding: '1rem',
+                        background: 'rgba(239, 68, 68, 0.2)',
                         color: '#ef4444',
-                        border: 'none',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
                         borderRadius: '12px',
-                        fontSize: '1.1rem',
-                        fontWeight: 700,
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                    }}>
+                        BOOK CONSULT
+                    </button>
+                    <button style={{
+                        flex: 1,
+                        padding: '1rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '0.75rem',
-                        transition: 'all 0.3s'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.05)';
-                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                        e.currentTarget.style.boxShadow = 'none';
+                        gap: '0.5rem'
                     }}>
-                        <Phone size={20} />
-                        Emergency: +251-911-000-000
+                        <Phone size={16} />
+                        EMERGENCY
                     </button>
                 </div>
             </div>
@@ -198,101 +100,88 @@ export const HealthCenterSection = forwardRef(({ visible }, ref) => (
     </div>
 ));
 
-// Water Section
+// Pure Hydration Section
 export const WaterSection = forwardRef(({ visible }, ref) => (
-    <div 
-        ref={ref}
-        data-section="water"
-        style={{
-            padding: '8rem 2rem',
-            background: 'linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%)',
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(50px)',
-            transition: 'all 0.8s ease-out 0.8s'
-        }}
-    >
+    <div ref={ref} data-section="water" style={{
+        padding: '8rem 2rem',
+        background: '#0a1f1f',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(50px)',
+        transition: 'all 0.8s ease-out 0.8s'
+    }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
             <div style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                background: 'linear-gradient(135deg, #1a4040, #2d5555)',
                 borderRadius: '32px',
-                padding: '4rem 3rem',
-                color: 'white',
+                padding: '3rem',
+                border: '1px solid rgba(6, 182, 212, 0.3)',
                 position: 'relative',
-                overflow: 'hidden',
-                textAlign: 'center'
+                overflow: 'hidden'
             }}>
-                {/* Background Decoration */}
-                <div style={{
-                    position: 'absolute',
-                    top: '-100px',
-                    right: '-100px',
-                    width: '300px',
-                    height: '300px',
-                    background: 'rgba(255,255,255,0.1)',
-                    borderRadius: '50%'
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    bottom: '-80px',
-                    left: '-80px',
-                    width: '250px',
-                    height: '250px',
-                    background: 'rgba(255,255,255,0.1)',
-                    borderRadius: '50%'
-                }} />
-
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                    <Droplet size={64} color="white" strokeWidth={2} style={{ marginBottom: '2rem' }} />
-                    
-                    <h2 style={{
-                        fontSize: 'clamp(2rem, 4vw, 3rem)',
-                        fontWeight: 800,
-                        marginBottom: '1.5rem'
-                    }}>
-                        Clean Water Available 24/7
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+                    <Droplet size={32} color="#06b6d4" />
+                    <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'white' }}>
+                        Pure Hydration
                     </h2>
+                </div>
+                <p style={{ fontSize: '1rem', color: '#a0b0b0', marginBottom: '2rem' }}>
+                    Monitoring campus sustainability and water purity.
+                </p>
 
-                    <p style={{
-                        fontSize: '1.2rem',
-                        opacity: 0.95,
-                        marginBottom: '3rem',
-                        lineHeight: 1.6,
-                        maxWidth: '700px',
-                        margin: '0 auto 3rem'
-                    }}>
-                        Access to safe, filtered drinking water throughout all dormitory buildings. Our water undergoes regular quality testing to ensure your health and safety.
-                    </p>
+                <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    background: 'rgba(6, 182, 212, 0.15)',
+                    borderRadius: '50px',
+                    marginBottom: '1.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.1em',
+                    color: '#06b6d4'
+                }}>
+                    INTELLIGENCE STATUS
+                </div>
 
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                        gap: '2rem'
-                    }}>
-                        {[
-                            { label: 'Filtered', icon: CheckCircle },
-                            { label: 'Tested Daily', icon: CheckCircle },
-                            { label: '24/7 Access', icon: CheckCircle }
-                        ].map((feature, i) => {
-                            const Icon = feature.icon;
-                            return (
-                                <div key={i} style={{
-                                    background: 'rgba(255,255,255,0.2)',
-                                    backdropFilter: 'blur(10px)',
-                                    borderRadius: '16px',
-                                    padding: '2rem 1.5rem',
-                                    border: '1px solid rgba(255,255,255,0.3)'
-                                }}>
-                                    <Icon size={32} color="white" strokeWidth={2.5} style={{ marginBottom: '1rem' }} />
-                                    <div style={{
-                                        fontSize: '1.2rem',
-                                        fontWeight: 700
-                                    }}>
-                                        {feature.label}
-                                    </div>
-                                </div>
-                            );
-                        })}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <span style={{ fontSize: '4rem', fontWeight: 800, color: 'white' }}>99.8</span>
+                    <span style={{ fontSize: '1.5rem', color: '#a0b0b0' }}>%</span>
+                </div>
+
+                <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.875rem', color: '#a0b0b0' }}>💧 PURITY LEVEL</span>
                     </div>
+                    <div style={{
+                        width: '100%',
+                        height: '12px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '50px',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{
+                            width: '99.8%',
+                            height: '100%',
+                            background: 'linear-gradient(90deg, #06b6d4, #22d3ee)',
+                            borderRadius: '50px'
+                        }} />
+                    </div>
+                </div>
+
+                <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    borderRadius: '50px',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: '#10b981'
+                }}>
+                    💧 SMART FILTRATION ACTIVE
+                    <span style={{ marginLeft: '1rem', color: '#708090' }}>EST. FLOW: 1,240 L/H</span>
                 </div>
             </div>
         </div>
