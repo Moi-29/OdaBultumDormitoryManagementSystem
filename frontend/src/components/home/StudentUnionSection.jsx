@@ -4,23 +4,27 @@ import { Users, Calendar, Star, Lightbulb, Heart, Award, Rocket } from "lucide-r
 import AnimatedCounter from "../AnimatedCounter";
 import SectionWrapper from "../SectionWrapper";
 import { useTheme } from "../../context/ThemeContext";
-
-const stats = [
-  { icon: Users, value: 500, suffix: "+", label: "Active Members" },
-  { icon: Calendar, value: 20, suffix: "+", label: "Annual Events" },
-  { icon: Star, value: 4.9, suffix: "/5", label: "Impact Score", decimals: 1 },
-];
-
-const values = [
-  { icon: Heart, title: "Unity", desc: "Building bridges across communities" },
-  { icon: Award, title: "Excellence", desc: "Promoting growth and high standards" },
-  { icon: Users, title: "Service", desc: "Serving with integrity and purpose" },
-  { icon: Rocket, title: "Innovation", desc: "Creating opportunities for all" },
-];
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 
 const StudentUnionSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const { isDarkMode } = useTheme();
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+
+  const stats = [
+    { icon: Users, value: 500, suffix: "+", label: t('activeMembers') },
+    { icon: Calendar, value: 20, suffix: "+", label: t('annualEvents') },
+    { icon: Star, value: 4.9, suffix: "/5", label: t('impactScore'), decimals: 1 },
+  ];
+
+  const values = [
+    { icon: Heart, title: t('unity'), desc: t('unityDesc') },
+    { icon: Award, title: t('excellence'), desc: t('excellenceDesc') },
+    { icon: Users, title: t('service'), desc: t('serviceDesc') },
+    { icon: Rocket, title: t('innovation'), desc: t('innovationDesc') },
+  ];
 
   return (
     <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
@@ -30,10 +34,10 @@ const StudentUnionSection = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Community</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Student Union</h2>
+          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">{t('studentUnionSubtitle')}</p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{t('studentUnionTitle')}</h2>
           <p className="mt-3 max-w-2xl mx-auto font-body" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
-            Empowering students through leadership, unity, and shared purpose.
+            {t('studentUnionDesc')}
           </p>
         </motion.div>
 

@@ -3,43 +3,44 @@ import { useInView } from "react-intersection-observer";
 import { Clock, Coffee, Utensils, Moon } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
 import { useTheme } from "../../context/ThemeContext";
-
-const meals = [
-  {
-    title: "Breakfast",
-    time: "12:30 – 1:00 AM LT",
-    icon: Coffee,
-    color: "from-gold to-gold-light",
-    bgClass: "bg-gold/10",
-    borderClass: "border-gold/20",
-    desc: "Morning Essentials & Light Meals",
-    samples: ["Tea & Coffee", "Bread & Butter", "Eggs", "Porridge", "Fresh Fruits"],
-  },
-  {
-    title: "Lunch",
-    time: "5:00 AM – 7:00 PM LT",
-    icon: Utensils,
-    color: "from-emerald to-emerald-light",
-    bgClass: "bg-emerald/10",
-    borderClass: "border-emerald/20",
-    desc: "Traditional Ethiopian & Continental",
-    samples: ["Injera with Wot", "Rice & Stew", "Pasta", "Fresh Salad", "Seasonal Fruits"],
-  },
-  {
-    title: "Dinner",
-    time: "11:00 – 1:00 PM LT",
-    icon: Moon,
-    color: "from-primary to-indigo-light",
-    bgClass: "bg-primary/10",
-    borderClass: "border-primary/20",
-    desc: "Hot Meals & Vegetarian Options",
-    samples: ["Firfir", "Vegetable Stew", "Grilled Meat", "Soup", "Bread & Butter"],
-  },
-];
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 
 const CafeteriaSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const { isDarkMode } = useTheme();
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+
+  const meals = [
+    {
+      title: t('breakfast'),
+      time: t('breakfastTime'),
+      icon: Coffee,
+      color: "from-gold to-gold-light",
+      bgClass: "bg-gold/10",
+      borderClass: "border-gold/20",
+      desc: t('breakfastDesc'),
+    },
+    {
+      title: t('lunch'),
+      time: t('lunchTime'),
+      icon: Utensils,
+      color: "from-emerald to-emerald-light",
+      bgClass: "bg-emerald/10",
+      borderClass: "border-emerald/20",
+      desc: t('lunchDesc'),
+    },
+    {
+      title: t('dinner'),
+      time: t('dinnerTime'),
+      icon: Moon,
+      color: "from-primary to-indigo-light",
+      bgClass: "bg-primary/10",
+      borderClass: "border-primary/20",
+      desc: t('dinnerDesc'),
+    },
+  ];
 
   return (
     <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
@@ -49,10 +50,10 @@ const CafeteriaSection = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-14"
         >
-          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Dining</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Cafeteria Schedule</h2>
+          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">{t('cafeteriaSubtitle')}</p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{t('cafeteriaTitle')}</h2>
           <p className="mt-3 font-body max-w-xl mx-auto" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
-            Nutritious meals served daily to keep you energized and focused.
+            {t('cafeteriaDesc')}
           </p>
         </motion.div>
 

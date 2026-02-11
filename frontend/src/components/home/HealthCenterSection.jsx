@@ -3,17 +3,21 @@ import { useInView } from "react-intersection-observer";
 import { Stethoscope, Phone, Clock, Heart, Pill, Brain, CheckCircle } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
 import { useTheme } from "../../context/ThemeContext";
-
-const services = [
-  { icon: Stethoscope, label: "General Check-ups" },
-  { icon: Brain, label: "Mental Health Support" },
-  { icon: Pill, label: "Pharmacy Services" },
-  { icon: Heart, label: "Emergency Care" },
-];
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 
 const HealthCenterSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const { isDarkMode } = useTheme();
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+
+  const services = [
+    { icon: Stethoscope, label: t('generalCheckups') },
+    { icon: Brain, label: t('mentalHealthSupport') },
+    { icon: Pill, label: t('pharmacyServices') },
+    { icon: Heart, label: t('emergencyCare') },
+  ];
 
   return (
     <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
@@ -23,8 +27,8 @@ const HealthCenterSection = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-14"
         >
-          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Wellness</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Health Center</h2>
+          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">{t('healthCenterSubtitle')}</p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{t('healthCenterTitle')}</h2>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -39,26 +43,25 @@ const HealthCenterSection = () => {
               <div className="w-12 h-12 rounded-xl indigo-gradient flex items-center justify-center">
                 <Stethoscope className="w-6 h-6 text-gold-light" />
               </div>
-              <h3 className="font-display text-xl text-foreground">Campus Clinic</h3>
+              <h3 className="font-display text-xl text-foreground">{t('campusClinic')}</h3>
             </div>
             <p className="text-muted-foreground font-body mb-6">
-              Free basic medical services including consultations, vaccinations, and emergency care.
-              Our qualified staff is available 24/7 for urgent health needs.
+              {t('healthCenterDesc')}
             </p>
 
             <div className="flex flex-wrap gap-3 mb-6">
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/20 text-sm font-body text-foreground pulse-gold">
                 <Phone className="w-4 h-4 text-destructive" />
-                Emergency: 24/7
+                {t('emergency247')}
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald/10 border border-emerald/20 text-sm font-body text-foreground">
                 <Clock className="w-4 h-4 text-emerald" />
-                Regular: 8AM – 6PM
+                {t('regularHours')}
               </div>
             </div>
 
             <div className="space-y-2">
-              {["Free consultations for all students", "Qualified medical professionals", "Referral to hospitals when needed"].map((item, i) => (
+              {[t('freeConsultations'), t('qualifiedProfessionals'), t('hospitalReferral')].map((item, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm font-body text-muted-foreground">
                   <CheckCircle className="w-4 h-4 text-emerald shrink-0" />
                   {item}

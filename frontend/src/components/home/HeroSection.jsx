@@ -1,8 +1,13 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import heroImg from "../../assets/Hero-Section.jpg";
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 
 const HeroSection = () => {
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+  
   return (
     <section className="relative w-full h-[calc(100vh-81px)] overflow-hidden">
       {/* Parallax background */}
@@ -33,7 +38,7 @@ const HeroSection = () => {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="text-gold-light font-body text-sm md:text-base tracking-[0.3em] uppercase mb-4"
         >
-          Oda Bultum University — Student Services
+          {t('heroSubtitle')}
         </motion.p>
 
         <motion.h1
@@ -42,7 +47,7 @@ const HeroSection = () => {
           transition={{ delay: 0.5, duration: 0.8 }}
           className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-5xl leading-tight"
         >
-          <span className="gold-text">Welcome to OBU Student Services</span>
+          <span className="gold-text">{t('heroTitle')}</span>
         </motion.h1>
 
         <motion.button
@@ -54,7 +59,7 @@ const HeroSection = () => {
             pulse-gold hover:scale-105 transition-transform duration-300 shadow-lg"
           onClick={() => document.getElementById("guidelines")?.scrollIntoView({ behavior: "smooth" })}
         >
-          Explore Campus
+          {t('exploreCampus')}
         </motion.button>
 
         {/* Scroll indicator */}

@@ -6,9 +6,14 @@ import { AlertCircle, X } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '@/config/api';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslation } from '../../translations/translations';
 
 const ReportIssueWrapper = () => {
     const { isDarkMode } = useTheme();
+    const { language } = useLanguage();
+    const t = (key) => getTranslation(language, key);
+    
     const [reportData, setReportData] = useState({
         block: '',
         dormNumber: '',
@@ -153,10 +158,10 @@ const ReportIssueWrapper = () => {
                 }}>
                     <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <AlertCircle size={20} />
-                        Report Facility Issue
+                        {t('reportFacilityIssue')}
                     </h2>
                     <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', opacity: 0.9 }}>
-                        Let us know about any problems in your dormitory
+                        {t('letUsKnowProblems')}
                     </p>
                 </div>
 
@@ -173,7 +178,7 @@ const ReportIssueWrapper = () => {
                                 fontSize: '0.875rem',
                                 transition: 'color 0.3s ease'
                             }}>
-                                Block <span style={{ color: '#ef4444' }}>*</span>
+                                {t('block')} <span style={{ color: '#ef4444' }}>*</span>
                             </label>
                             <input
                                 type="text"
@@ -203,7 +208,7 @@ const ReportIssueWrapper = () => {
                                 fontSize: '0.875rem',
                                 transition: 'color 0.3s ease'
                             }}>
-                                Room Number <span style={{ color: '#ef4444' }}>*</span>
+                                {t('roomNumber')} <span style={{ color: '#ef4444' }}>*</span>
                             </label>
                             <input
                                 type="text"
@@ -233,10 +238,10 @@ const ReportIssueWrapper = () => {
                                 fontSize: '0.875rem',
                                 transition: 'color 0.3s ease'
                             }}>
-                                Description <span style={{ color: '#ef4444' }}>*</span>
+                                {t('description')} <span style={{ color: '#ef4444' }}>*</span>
                             </label>
                             <textarea
-                                placeholder="Describe the issue..."
+                                placeholder={t('describeIssue')}
                                 value={reportData.description}
                                 onChange={(e) => setReportData({ ...reportData, description: e.target.value })}
                                 rows={3}
@@ -288,7 +293,7 @@ const ReportIssueWrapper = () => {
                             transition: 'all 0.3s ease'
                         }}
                     >
-                        Clear
+                        {t('clear')}
                     </button>
                     <button
                         onClick={handleSubmitReport}
@@ -317,12 +322,12 @@ const ReportIssueWrapper = () => {
                                     borderRadius: '50%',
                                     animation: 'spin 0.6s linear infinite'
                                 }} />
-                                Submitting...
+                                {t('submitting')}
                             </>
                         ) : (
                             <>
                                 <AlertCircle size={16} />
-                                Submit Report
+                                {t('submitReport')}
                             </>
                         )}
                     </button>
@@ -347,7 +352,7 @@ const ReportIssueWrapper = () => {
                 flexShrink: 0,
                 transition: 'all 0.3s ease'
             }}>
-                Copyright © 2026 Oda Bultum University. All rights reserved.
+                Copyright {t('copyright')}
             </footer>
         </div>
     );

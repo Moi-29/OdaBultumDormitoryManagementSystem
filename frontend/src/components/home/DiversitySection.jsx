@@ -1,75 +1,81 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Globe, Heart, Languages, Users, Handshake, Shield, Star, Award, BookOpen, Smile, Target, Zap } from "lucide-react";
+import { useState } from "react";
 import SectionWrapper from "../SectionWrapper";
 import { useTheme } from "../../context/ThemeContext";
-
-const diversityCards = [
-  {
-    icon: Globe,
-    title: "Cultural Exchange",
-    description: "Experience rich cultural diversity through student-led events, traditional celebrations, and international food festivals that bring our global community together."
-  },
-  {
-    icon: Handshake,
-    title: "Inclusive Community",
-    description: "We celebrate differences and create a welcoming environment where every student feels valued, respected, and empowered to be their authentic self."
-  },
-  {
-    icon: Shield,
-    title: "Zero Tolerance Policy",
-    description: "Strict enforcement against discrimination, harassment, or prejudice based on ethnicity, religion, gender, ability, or any other characteristic."
-  },
-  {
-    icon: Star,
-    title: "Equal Opportunities",
-    description: "All students have equal access to academic resources, extracurricular activities, leadership positions, and support services regardless of background."
-  },
-  {
-    icon: Award,
-    title: "Diversity Recognition",
-    description: "Annual awards and recognition programs celebrate students who promote inclusivity, bridge cultural gaps, and champion diversity initiatives."
-  },
-  {
-    icon: BookOpen,
-    title: "Cultural Education",
-    description: "Workshops, seminars, and training sessions help students understand different cultures, traditions, and perspectives to build mutual respect."
-  },
-  {
-    icon: Smile,
-    title: "Support Networks",
-    description: "Dedicated support groups and mentorship programs connect students from similar backgrounds while encouraging cross-cultural friendships."
-  },
-  {
-    icon: Target,
-    title: "Inclusion Goals",
-    description: "Continuous improvement of diversity metrics, representation in leadership, and accessibility features to ensure no one is left behind."
-  },
-  {
-    icon: Zap,
-    title: "Active Engagement",
-    description: "Student-led diversity committees, cultural clubs, and advocacy groups actively work to promote understanding and celebrate our multicultural campus."
-  },
-  {
-    icon: Heart,
-    title: "Respect & Dignity",
-    description: "Every interaction is guided by principles of mutual respect, human dignity, and the understanding that diversity makes us stronger together."
-  },
-  {
-    icon: Users,
-    title: "Unity in Action",
-    description: "Collaborative projects and team activities intentionally mix students from different backgrounds to build lasting friendships and understanding."
-  },
-  {
-    icon: Languages,
-    title: "Language Support",
-    description: "Multilingual resources, translation services, and language exchange programs ensure effective communication across all linguistic backgrounds."
-  },
-];
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 
 const DiversitySection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const { isDarkMode } = useTheme();
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+  const [showAll, setShowAll] = useState(false);
+
+  const diversityCards = [
+    {
+      icon: Globe,
+      title: t('culturalExchange'),
+      description: t('culturalExchangeDesc')
+    },
+    {
+      icon: Handshake,
+      title: t('inclusiveCommunity'),
+      description: t('inclusiveCommunityDesc')
+    },
+    {
+      icon: Shield,
+      title: t('zeroTolerance'),
+      description: t('zeroToleranceDesc')
+    },
+    {
+      icon: Languages,
+      title: t('languageSupport'),
+      description: t('languageSupportDesc')
+    },
+    {
+      icon: Heart,
+      title: t('religiousFreedom'),
+      description: t('religiousFreedomDesc')
+    },
+    {
+      icon: Star,
+      title: t('equalOpportunity'),
+      description: t('equalOpportunityDesc')
+    },
+    {
+      icon: Users,
+      title: t('disabilitySupport'),
+      description: t('disabilitySupportDesc')
+    },
+    {
+      icon: Handshake,
+      title: t('conflictMediation'),
+      description: t('conflictMediationDesc')
+    },
+    {
+      icon: Award,
+      title: t('culturalEvents'),
+      description: t('culturalEventsDesc')
+    },
+    {
+      icon: Smile,
+      title: t('peerSupport'),
+      description: t('peerSupportDesc')
+    },
+    {
+      icon: Target,
+      title: t('safeSpaces'),
+      description: t('safeSpacesDesc')
+    },
+    {
+      icon: Zap,
+      title: t('diversityTraining'),
+      description: t('diversityTrainingDesc')
+    },
+  ];
 
   return (
     <SectionWrapper className="relative py-20 md:py-28 overflow-hidden">
@@ -99,18 +105,18 @@ const DiversitySection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
         >
-          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Our Strength</p>
+          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">{t('diversitySubtitle')}</p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-4" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>
-            Unity in Diversity
+            {t('diversityTitle')}
           </h2>
           <p className="font-body max-w-2xl mx-auto mb-12" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
-            We foster inclusivity and maintain zero tolerance for discrimination. Every student belongs here.
+            {t('diversityDesc')}
           </p>
         </motion.div>
 
         {/* Diversity Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {diversityCards.map((card, i) => {
+          {diversityCards.slice(0, showAll ? diversityCards.length : 6).map((card, i) => {
             const Icon = card.icon;
             return (
               <motion.div
@@ -142,6 +148,26 @@ const DiversitySection = () => {
             );
           })}
         </div>
+
+        {/* Show More/Less Button */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="text-center mt-12"
+        >
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+            style={{
+              backgroundColor: isDarkMode ? '#4F46E5' : '#4F46E5',
+              color: 'white',
+              border: 'none'
+            }}
+          >
+            {showAll ? t('showLess') : t('showMore')}
+          </button>
+        </motion.div>
 
       </div>
     </SectionWrapper>

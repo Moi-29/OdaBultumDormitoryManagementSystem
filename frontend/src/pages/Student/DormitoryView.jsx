@@ -7,9 +7,14 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslation } from '../../translations/translations';
 
 const DormitoryView = () => {
     const { isDarkMode } = useTheme();
+    const { language } = useLanguage();
+    const t = (key) => getTranslation(language, key);
+    
     const [studentId, setStudentId] = useState('');
     const [placement, setPlacement] = useState(null);
     const [error, setError] = useState('');
@@ -111,7 +116,7 @@ const DormitoryView = () => {
                         marginBottom: '1rem',
                         marginTop: '0.5rem',
                         transition: 'color 0.3s ease'
-                    }}>Find Your Dorm Placement</h2>
+                    }}>{t('findDormPlacement')}</h2>
 
                     <p style={{
                         color: isDarkMode ? '#d1d5db' : '#6b7280',
@@ -119,7 +124,7 @@ const DormitoryView = () => {
                         fontSize: '0.95rem',
                         transition: 'color 0.3s ease'
                     }}>
-                        Enter your university ID to view your assigned accommodation
+                        {t('enterUniversityId')}
                     </p>
 
                     <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -133,7 +138,7 @@ const DormitoryView = () => {
                                 alignItems: 'center',
                                 gap: '0.5rem'
                             }}>
-                                <User size={16} /> University ID
+                                <User size={16} /> {t('universityId')}
                             </label>
                             <input
                                 type="text"
@@ -176,9 +181,9 @@ const DormitoryView = () => {
                                 letterSpacing: '0.05em'
                             }}
                         >
-                            {loading ? 'SEARCHING...' : (
+                            {loading ? t('searching') : (
                                 <>
-                                    <Search size={18} /> VIEW PLACEMENT
+                                    <Search size={18} /> {t('viewPlacement')}
                                 </>
                             )}
                         </button>
@@ -222,7 +227,7 @@ const DormitoryView = () => {
                             fontWeight: '600',
                             letterSpacing: '0.025em',
                             color: 'white'
-                        }}>Dormitory Placement Details</h2>
+                        }}>{t('dormitoryPlacementDetails')}</h2>
                     </div>
 
                     <div style={{ padding: '1rem', flex: 1, overflow: 'visible' }}>
@@ -234,7 +239,7 @@ const DormitoryView = () => {
                             border: '1px solid #e5e7eb',
                             marginBottom: '0.75rem'
                         }}>
-                            <p style={{ color: '#6b7280', fontSize: '0.7rem', marginBottom: '0.15rem', margin: 0 }}>Your Room</p>
+                            <p style={{ color: '#6b7280', fontSize: '0.7rem', marginBottom: '0.15rem', margin: 0 }}>{t('yourRoom')}</p>
                             <h1 style={{
                                 fontFamily: '"Playfair Display", serif',
                                 fontSize: '1.75rem',
@@ -253,7 +258,7 @@ const DormitoryView = () => {
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>University ID</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('universityId')}</span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                     <span style={{ fontWeight: '700', color: '#111827', fontSize: '0.8rem' }}>{placement.studentId}</span>
                                     <button
@@ -266,12 +271,12 @@ const DormitoryView = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Full Name</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('fullName')}</span>
                                 <span style={{ fontWeight: '700', color: '#111827', fontSize: '0.8rem' }}>{placement.fullName}</span>
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Sex</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('sex')}</span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                     <span style={{ fontWeight: '700', color: '#111827', fontSize: '0.8rem' }}>{placement.gender === 'M' ? 'M' : 'F'}</span>
                                     <div style={{
@@ -284,7 +289,7 @@ const DormitoryView = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Department</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('department')}</span>
                                 <span style={{
                                     backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.15rem 0.45rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: '600'
                                 }}>
@@ -293,28 +298,28 @@ const DormitoryView = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Building</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('building')}</span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#111827', fontWeight: '700', fontSize: '0.8rem' }}>
                                     <Building2 size={13} color="#d97706" /> {placement.room?.building}
                                 </div>
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Room Number</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('roomNumber')}</span>
                                 <span style={{ color: '#d97706', fontWeight: '700', fontSize: '0.95rem' }}>{placement.room?.roomNumber}</span>
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.35rem' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Campus</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('campus')}</span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#111827', fontWeight: '700', fontSize: '0.8rem' }}>
-                                    <MapPin size={13} color="#d97706" /> Main Campus
+                                    <MapPin size={13} color="#d97706" /> {t('mainCampus')}
                                 </div>
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>Capacity</span>
+                                <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{t('capacity')}</span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#111827', fontWeight: '700', fontSize: '0.8rem' }}>
-                                    <Users size={13} color="#d97706" /> {placement.room?.capacity} Students
+                                    <Users size={13} color="#d97706" /> {placement.room?.capacity} {t('students')}
                                 </div>
                             </div>
                         </div>
@@ -336,7 +341,7 @@ const DormitoryView = () => {
                                 cursor: 'pointer',
                                 fontSize: '0.75rem'
                             }} onClick={() => window.print()}>
-                                <Printer size={14} /> Print
+                                <Printer size={14} /> {t('print')}
                             </button>
                             <button
                                 onClick={handleDownloadPDF}
@@ -356,7 +361,7 @@ const DormitoryView = () => {
                                     cursor: 'pointer',
                                     fontSize: '0.75rem'
                                 }}>
-                                <Download size={14} /> Save PDF
+                                <Download size={14} /> {t('savePdf')}
                             </button>
                         </div>
 
@@ -383,7 +388,7 @@ const DormitoryView = () => {
                             onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
                             onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
                         >
-                            <Search size={15} /> New Search
+                            <Search size={15} /> {t('newSearch')}
                         </button>
                     </div>
                 </div>
@@ -401,7 +406,7 @@ const DormitoryView = () => {
                 flexShrink: 0,
                 transition: 'all 0.3s ease'
             }}>
-                Copyright © 2026 Oda Bultum University. All rights reserved.
+                {t('copyright')}
             </footer>
         </div>
     );

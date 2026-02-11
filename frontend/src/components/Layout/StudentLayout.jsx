@@ -1,14 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Building2, FileText, AlertCircle, Sun, Moon } from 'lucide-react';
+import { X, Home, Building2, FileText, AlertCircle, Sun, Moon, Languages } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslation } from '../../translations/translations';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+    const [showLanguageMenu, setShowLanguageMenu] = useState(false);
     const { isDarkMode, toggleTheme } = useTheme();
+    const { language, changeLanguage } = useLanguage();
     const navigate = useNavigate();
     const location = useLocation();
+
+    const t = (key) => getTranslation(language, key);
+
+    const languages = [
+        { code: 'en', name: 'English', flag: '🇬🇧' },
+        { code: 'am', name: 'አማርኛ', flag: '🇪🇹' },
+        { code: 'om', name: 'Afaan Oromo', flag: '🇪🇹' }
+    ];
 
     // Handle window resize
     useEffect(() => {
@@ -21,10 +33,10 @@ const StudentLayout = () => {
     }, []);
 
     const navItems = [
-        { path: '/student/home', label: 'Home', icon: Home },
-        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2 },
-        { path: '/student/application', label: 'Application Form', icon: FileText },
-        { path: '/student/report', label: 'Report Issue', icon: AlertCircle }
+        { path: '/student/home', label: t('home'), icon: Home },
+        { path: '/student/dormitory', label: t('dormitoryView'), icon: Building2 },
+        { path: '/student/application', label: t('applicationForm'), icon: FileText },
+        { path: '/student/report', label: t('reportIssue'), icon: AlertCircle }
     ];
 
     const handleNavigation = (path) => {
@@ -58,11 +70,11 @@ const StudentLayout = () => {
                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.25), 0 20px 60px rgba(0, 0, 0, 0.2)',
                 transition: 'left 0.3s ease, background 0.3s ease'
             }}>
-                {/* Left side - Theme Toggle */}
+                {/* Left side - Theme Toggle & Language Selector */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '1rem'
+                    gap: '0.5rem'
                 }}>
                     <button
                         onClick={toggleTheme}
@@ -82,6 +94,104 @@ const StudentLayout = () => {
                     >
                         {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
+
+                    {/* Language Selector */}
+                    <div style={{ position: 'relative' }}>
+                        <button
+                            onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                            style={{
+                                background: isDarkMode ? '#374151' : '#f3f4f6',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '0.5rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.25rem',
+                                transition: 'all 0.3s ease',
+                                color: isDarkMode ? '#60a5fa' : '#3b82f6'
+                            }}
+                            title="Change Language"
+                        >
+                            <Languages size={20} />
+                            <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                                {languages.find(l => l.code === language)?.flag}
+                            </span>
+                        </button>
+
+                        {/* Language Dropdown */}
+                        {showLanguageMenu && (
+                            <>
+                                <div
+                                    onClick={() => setShowLanguageMenu(false)}
+                                    style={{
+                                        position: 'fixed',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        zIndex: 999
+                                    }}
+                                />
+                                <div style={{
+                                    position: 'absolute',
+                                    top: 'calc(100% + 0.5rem)',
+                                    left: 0,
+                                    backgroundColor: isDarkMode ? '#1f2937' : 'white',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+                                    border: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+                                    overflow: 'hidden',
+                                    zIndex: 1000,
+                                    minWidth: '180px'
+                                }}>
+                                    {languages.map((lang) => (
+                                        <button
+                                            key={lang.code}
+                                            onClick={() => {
+                                                changeLanguage(lang.code);
+                                                setShowLanguageMenu(false);
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem 1rem',
+                                                border: 'none',
+                                                background: language === lang.code 
+                                                    ? (isDarkMode ? '#374151' : '#f3f4f6')
+                                                    : 'transparent',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.75rem',
+                                                fontSize: '0.875rem',
+                                                fontWeight: language === lang.code ? 600 : 400,
+                                                transition: 'all 0.2s ease',
+                                                textAlign: 'left'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (language !== lang.code) {
+                                                    e.currentTarget.style.background = isDarkMode ? '#374151' : '#f9fafb';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (language !== lang.code) {
+                                                    e.currentTarget.style.background = 'transparent';
+                                                }
+                                            }}
+                                        >
+                                            <span style={{ fontSize: '1.25rem' }}>{lang.flag}</span>
+                                            <span>{lang.name}</span>
+                                            {language === lang.code && (
+                                                <span style={{ marginLeft: 'auto', color: '#10b981' }}>✓</span>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 {/* Center - University Name */}
@@ -100,7 +210,7 @@ const StudentLayout = () => {
                     maxWidth: isDesktop ? 'none' : '50%',
                     transition: 'color 0.3s ease'
                 }}>
-                    ODA BULTUM UNIVERSITY
+                    {t('universityName')}
                 </div>
 
                 {/* Right side - Logo and User Info */}

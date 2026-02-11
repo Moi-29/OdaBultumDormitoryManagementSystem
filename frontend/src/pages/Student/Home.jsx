@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import HeroSection from "../../components/home/HeroSection";
+import WelcomeSection from "../../components/home/WelcomeSection";
 import { useTheme } from "../../context/ThemeContext";
 
 const GuidelinesSection = lazy(() => import("../../components/home/GuidelinesSection"));
@@ -24,6 +25,7 @@ const Home = () => {
     <div className="min-h-screen" style={{ marginLeft: 0, backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <main>
         <HeroSection />
+        <WelcomeSection />
         <Suspense fallback={<SectionLoader />}>
           <GuidelinesSection />
           <StudentUnionSection />

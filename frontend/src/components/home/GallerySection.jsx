@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 
 // Import all gallery images
 import im from "../../assets/im.jpg";
@@ -54,6 +56,34 @@ const galleryImages = [
 
 const GallerySection = () => {
   const { isDarkMode } = useTheme();
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+  
+  const galleryImages = [
+    { src: im, title: t('gallery1Title'), description: t('gallery1Desc') },
+    { src: im1, title: t('gallery2Title'), description: t('gallery2Desc') },
+    { src: im2, title: t('gallery3Title'), description: t('gallery3Desc') },
+    { src: im3, title: t('gallery4Title'), description: t('gallery4Desc') },
+    { src: im4, title: t('gallery5Title'), description: t('gallery5Desc') },
+    { src: im5, title: t('gallery6Title'), description: t('gallery6Desc') },
+    { src: im6, title: t('gallery7Title'), description: t('gallery7Desc') },
+    { src: im7, title: t('gallery8Title'), description: t('gallery8Desc') },
+    { src: im8, title: t('gallery9Title'), description: t('gallery9Desc') },
+    { src: im9, title: t('gallery10Title'), description: t('gallery10Desc') },
+    { src: im10, title: t('gallery11Title'), description: t('gallery11Desc') },
+    { src: im11, title: t('gallery12Title'), description: t('gallery12Desc') },
+    { src: im12, title: t('gallery13Title'), description: t('gallery13Desc') },
+    { src: im13, title: t('gallery14Title'), description: t('gallery14Desc') },
+    { src: im15, title: t('gallery15Title'), description: t('gallery15Desc') },
+    { src: im16, title: t('gallery16Title'), description: t('gallery16Desc') },
+    { src: im17, title: t('gallery17Title'), description: t('gallery17Desc') },
+    { src: im18, title: t('gallery18Title'), description: t('gallery18Desc') },
+    { src: im19, title: t('gallery19Title'), description: t('gallery19Desc') },
+    { src: im20, title: t('gallery20Title'), description: t('gallery20Desc') },
+    { src: im21, title: t('gallery21Title'), description: t('gallery21Desc') },
+    { src: im22, title: t('gallery22Title'), description: t('gallery22Desc') }
+  ];
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -121,10 +151,10 @@ const GallerySection = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
-            <span className="gold-text">Campus Gallery</span>
+            <span className="gold-text">{t('galleryTitle')}</span>
           </h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
-            Explore the beauty and vibrancy of life at Oda Bultum University
+            {t('galleryDesc')}
           </p>
         </motion.div>
 
