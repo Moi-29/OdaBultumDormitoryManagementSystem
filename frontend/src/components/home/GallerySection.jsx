@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Play, Pause } from "lucide-react";
 
 // Import all gallery images
 import im from "../../assets/im.jpg";
@@ -52,24 +53,63 @@ const galleryImages = [
 
 const GallerySection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const intervalRef = useRef(null);
+  const progressIntervalRef = useRef(null);
+
+  const startSlideshow = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+    
+    setProgress(0);
+    
+    // Progress bar animation
+    progressIntervalRef.current = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) return 0;
+        return prev + (100 / 50); // 50 steps for smooth animation (5000ms / 100ms)
+      });
+    }, 100);
+    
+    // Slide change
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % galleryImages.length);
+      setProgress(0);
+    }, 5000);
+  };
+
+  const stopSlideshow = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % galleryImages.length);
-    }, 3000); // Change image every 3 seconds
+    if (isPlaying) {
+      startSlideshow();
+    } else {
+      stopSlideshow();
+    }
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      stopSlideshow();
+    };
+  }, [isPlaying, currentIndex]);
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+    setProgress(0);
+  };
 
   const currentImage = galleryImages[currentIndex];
+  const nextImage = galleryImages[(currentIndex + 1) % galleryImages.length];
 
   return (
-    <section 
-      className="relative w-full py-20 overflow-hidden bg-gradient-to-b from-background to-background-dark"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <section className="relative w-full py-20 overflow-hidden bg-gradient-to-b from-background to-background-dark">
       <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -91,67 +131,48 @@ const GallerySection = () => {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative w-full h-[500px] md:h-[600px] rounded-3xl overflow-hidden shadow-2xl"
-          style={{
-            background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)"
-          }}
+          className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-3xl overflow-hidden shadow-2xl bg-gray-900"
         >
-          {/* Curved Wave Mask Effect */}
-          <div className="absolute inset-0 z-10 pointer-events-none">
-            <svg
-              className="absolute inset-0 w-full h-full"
-              viewBox="0 0 1000 600"
-              preserveAspectRatio="none"
+          {/* Background Image (Current) */}
+          <div className="absolute inset-0">
+            <img
+              src={currentImage.src}
+              alt={currentImage.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Circular Morph Transition Overlay */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              className="absolute inset-0"
+              initial={{ clipPath: "circle(0% at 50% 50%)" }}
+              animate={{ clipPath: "circle(150% at 50% 50%)" }}
+              exit={{ clipPath: "circle(150% at 50% 50%)" }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
             >
-              <defs>
-                <clipPath id="waveClip">
-                  <motion.path
-                    d="M0,0 L1000,0 L1000,600 Q750,550 500,600 T0,600 Z"
-                    animate={isHovered ? {
-                      d: [
-                        "M0,0 L1000,0 L1000,600 Q750,550 500,600 T0,600 Z",
-                        "M0,0 L1000,0 L1000,600 Q750,650 500,600 T0,600 Z",
-                        "M0,0 L1000,0 L1000,600 Q750,550 500,600 T0,600 Z"
-                      ]
-                    } : {}}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                </clipPath>
-              </defs>
-            </svg>
-          </div>
+              <img
+                src={nextImage.src}
+                alt={nextImage.title}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </AnimatePresence>
 
-          {/* Image Container with Clip Path */}
-          <div className="absolute inset-0" style={{ clipPath: "url(#waveClip)" }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
-                className="absolute inset-0"
-              >
-                <img
-                  src={currentImage.src}
-                  alt={currentImage.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          {/* Dark Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent pointer-events-none" />
 
-          {/* Text Content Overlay */}
-          <div className="absolute inset-0 z-20 flex flex-col justify-center px-8 md:px-16 lg:px-24">
+          {/* Content Overlay - Left Side */}
+          <div className="absolute inset-0 flex items-center px-8 md:px-16 lg:px-20">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.5 }}
-                className="max-w-xl"
+                transition={{ duration: 0.6 }}
+                className="max-w-xl z-10"
               >
                 <motion.h3
                   className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4"
@@ -163,14 +184,14 @@ const GallerySection = () => {
                 </motion.h3>
                 
                 <motion.div
-                  className="w-24 h-1 bg-gold mb-6"
+                  className="w-32 h-1 bg-gold mb-6"
                   initial={{ width: 0 }}
-                  animate={{ width: 96 }}
+                  animate={{ width: 128 }}
                   transition={{ delay: 0.4, duration: 0.6 }}
                 />
                 
                 <motion.p
-                  className="text-lg md:text-xl text-gray-200 leading-relaxed"
+                  className="text-base md:text-lg lg:text-xl text-gray-200 leading-relaxed mb-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
@@ -181,27 +202,52 @@ const GallerySection = () => {
             </AnimatePresence>
           </div>
 
-          {/* Progress Indicators */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
-            {galleryImages.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? "w-8 bg-gold"
-                    : "w-2 bg-white/50 hover:bg-white/80"
-                }`}
-                aria-label={`Go to image ${index + 1}`}
-              />
-            ))}
-          </div>
+          {/* Play/Pause Button - Top Left */}
+          <button
+            onClick={togglePlayPause}
+            className="absolute top-6 left-6 z-30 bg-black/50 hover:bg-black/70 backdrop-blur-sm p-3 rounded-full transition-all duration-300 group"
+            aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+          >
+            {isPlaying ? (
+              <Pause className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+            ) : (
+              <Play className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+            )}
+          </button>
 
-          {/* Image Counter */}
-          <div className="absolute top-8 right-8 z-30 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
-            <span className="text-white font-semibold">
+          {/* Image Counter - Top Right */}
+          <div className="absolute top-6 right-6 z-30 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
+            <span className="text-white font-semibold text-sm">
               {currentIndex + 1} / {galleryImages.length}
             </span>
+          </div>
+
+          {/* Bottom Controls */}
+          <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black/80 to-transparent pt-12 pb-6 px-6">
+            {/* Progress Bar */}
+            <div className="w-full bg-white/20 h-1 rounded-full mb-4 overflow-hidden">
+              <motion.div
+                className="h-full bg-gold"
+                style={{ width: `${progress}%` }}
+                transition={{ duration: 0.1 }}
+              />
+            </div>
+
+            {/* Navigation Dots */}
+            <div className="flex justify-center gap-2 flex-wrap">
+              {galleryImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? "w-8 bg-gold"
+                      : "w-2 bg-white/40 hover:bg-white/70"
+                  }`}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
