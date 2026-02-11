@@ -305,19 +305,19 @@ const ApplicationFormWrapper = () => {
 
                 {/* Tab Content */}
                 <div style={{
-                    padding: '2rem',
-                    maxHeight: 'calc(100vh - 300px)',
+                    padding: '1.5rem',
+                    maxHeight: 'calc(100vh - 320px)',
                     overflowY: 'auto'
                 }}>
                     {/* Personal Tab */}
                     {activeTab === 'personal' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                            <h3 style={{ marginBottom: '1rem', color: '#1e293b', fontSize: '1.1rem', fontWeight: 600 }}>
                                 I. Please fill your Full Information
                             </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Full Name <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -327,15 +327,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         ID No. <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -345,15 +345,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'idNo', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Sex <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <select 
@@ -361,10 +361,10 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'sex', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     >
                                         <option value="">Select</option>
@@ -373,7 +373,7 @@ const ApplicationFormWrapper = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Meal card No.
                                     </label>
                                     <input
@@ -383,15 +383,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'mealCardNo', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         College <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -401,15 +401,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'college', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Department <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -419,15 +419,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'department', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Academic Year <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -437,15 +437,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'academicYear', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Dorm No.
                                     </label>
                                     <input
@@ -455,15 +455,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'dormNo', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Your Phone Number <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -473,15 +473,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Religious
                                     </label>
                                     <input
@@ -491,15 +491,15 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'religious', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
                                         Your Nation
                                     </label>
                                     <input
@@ -509,10 +509,10 @@ const ApplicationFormWrapper = () => {
                                         onChange={(e) => handleInputChange('personalInfo', 'nation', e.target.value)}
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem',
+                                            padding: '0.6rem',
                                             border: '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.95rem'
+                                            fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>

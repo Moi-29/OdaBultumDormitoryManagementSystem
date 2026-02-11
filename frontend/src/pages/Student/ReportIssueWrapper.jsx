@@ -136,51 +136,51 @@ const ReportIssueWrapper = () => {
             <div style={{
                 background: 'white',
                 borderRadius: '16px',
-                maxWidth: '600px',
+                maxWidth: '500px',
                 width: '100%',
                 overflow: 'hidden',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
             }}>
                 {/* Header */}
                 <div style={{
                     background: 'linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)',
                     color: 'white',
-                    padding: '1.5rem 2rem'
+                    padding: '1rem 1.5rem'
                 }}>
-                    <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <AlertCircle size={24} />
+                    <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <AlertCircle size={20} />
                         Report Facility Issue
                     </h2>
-                    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', opacity: 0.9 }}>
                         Let us know about any problems in your dormitory
                     </p>
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '2rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ padding: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {/* Block Input */}
                         <div>
                             <label style={{ 
                                 display: 'block', 
-                                marginBottom: '0.5rem', 
+                                marginBottom: '0.4rem', 
                                 fontWeight: 600, 
                                 color: '#1e293b',
-                                fontSize: '0.95rem'
+                                fontSize: '0.875rem'
                             }}>
                                 Block <span style={{ color: '#ef4444' }}>*</span>
                             </label>
                             <input
                                 type="text"
-                                placeholder="e.g., A, B, C, Main Block, etc."
+                                placeholder="e.g., A, B, C"
                                 value={reportData.block}
                                 onChange={(e) => setReportData({ ...reportData, block: e.target.value })}
                                 style={{
                                     width: '100%',
-                                    padding: '0.75rem',
+                                    padding: '0.6rem',
                                     border: '2px solid #e5e7eb',
                                     borderRadius: '8px',
-                                    fontSize: '0.95rem'
+                                    fontSize: '0.875rem'
                                 }}
                             />
                         </div>
@@ -189,24 +189,24 @@ const ReportIssueWrapper = () => {
                         <div>
                             <label style={{ 
                                 display: 'block', 
-                                marginBottom: '0.5rem', 
+                                marginBottom: '0.4rem', 
                                 fontWeight: 600, 
                                 color: '#1e293b',
-                                fontSize: '0.95rem'
+                                fontSize: '0.875rem'
                             }}>
                                 Room Number <span style={{ color: '#ef4444' }}>*</span>
                             </label>
                             <input
                                 type="text"
-                                placeholder="e.g., 101, 205, 302"
+                                placeholder="e.g., 101, 205"
                                 value={reportData.dormNumber}
                                 onChange={(e) => setReportData({ ...reportData, dormNumber: e.target.value })}
                                 style={{
                                     width: '100%',
-                                    padding: '0.75rem',
+                                    padding: '0.6rem',
                                     border: '2px solid #e5e7eb',
                                     borderRadius: '8px',
-                                    fontSize: '0.95rem'
+                                    fontSize: '0.875rem'
                                 }}
                             />
                         </div>
@@ -215,41 +215,38 @@ const ReportIssueWrapper = () => {
                         <div>
                             <label style={{ 
                                 display: 'block', 
-                                marginBottom: '0.5rem', 
+                                marginBottom: '0.4rem', 
                                 fontWeight: 600, 
                                 color: '#1e293b',
-                                fontSize: '0.95rem'
+                                fontSize: '0.875rem'
                             }}>
                                 Description <span style={{ color: '#ef4444' }}>*</span>
                             </label>
                             <textarea
-                                placeholder="Please describe the issue in detail..."
+                                placeholder="Describe the issue..."
                                 value={reportData.description}
                                 onChange={(e) => setReportData({ ...reportData, description: e.target.value })}
-                                rows={5}
+                                rows={3}
                                 style={{
                                     width: '100%',
-                                    padding: '0.75rem',
+                                    padding: '0.6rem',
                                     border: '2px solid #e5e7eb',
                                     borderRadius: '8px',
-                                    fontSize: '0.95rem',
-                                    resize: 'vertical',
+                                    fontSize: '0.875rem',
+                                    resize: 'none',
                                     fontFamily: 'inherit'
                                 }}
                             />
-                            <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>
-                                Please provide as much detail as possible to help us resolve the issue quickly.
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer */}
                 <div style={{
-                    padding: '1.5rem 2rem',
+                    padding: '1rem 1.5rem',
                     borderTop: '1px solid #e5e7eb',
                     display: 'flex',
-                    gap: '1rem',
+                    gap: '0.75rem',
                     justifyContent: 'flex-end'
                 }}>
                     <button
@@ -262,14 +259,14 @@ const ReportIssueWrapper = () => {
                         })}
                         disabled={submittingReport}
                         style={{
-                            padding: '0.75rem 1.5rem',
+                            padding: '0.6rem 1.25rem',
                             background: 'white',
                             color: '#64748b',
                             border: '2px solid #e5e7eb',
                             borderRadius: '8px',
                             cursor: submittingReport ? 'not-allowed' : 'pointer',
                             fontWeight: 600,
-                            fontSize: '0.95rem',
+                            fontSize: '0.875rem',
                             opacity: submittingReport ? 0.5 : 1
                         }}
                     >
@@ -279,14 +276,14 @@ const ReportIssueWrapper = () => {
                         onClick={handleSubmitReport}
                         disabled={submittingReport}
                         style={{
-                            padding: '0.75rem 1.5rem',
+                            padding: '0.6rem 1.25rem',
                             background: submittingReport ? '#9ca3af' : '#F43F5E',
                             color: 'white',
                             border: 'none',
                             borderRadius: '8px',
                             cursor: submittingReport ? 'not-allowed' : 'pointer',
                             fontWeight: 600,
-                            fontSize: '0.95rem',
+                            fontSize: '0.875rem',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.5rem'
@@ -295,8 +292,8 @@ const ReportIssueWrapper = () => {
                         {submittingReport ? (
                             <>
                                 <div style={{
-                                    width: '16px',
-                                    height: '16px',
+                                    width: '14px',
+                                    height: '14px',
                                     border: '2px solid white',
                                     borderTopColor: 'transparent',
                                     borderRadius: '50%',
@@ -306,7 +303,7 @@ const ReportIssueWrapper = () => {
                             </>
                         ) : (
                             <>
-                                <AlertCircle size={18} />
+                                <AlertCircle size={16} />
                                 Submit Report
                             </>
                         )}
