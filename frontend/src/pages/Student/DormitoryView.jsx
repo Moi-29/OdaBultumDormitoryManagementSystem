@@ -6,8 +6,10 @@ import { Search, User, Copy, Building2, MapPin, Users, Printer, Download } from 
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useTheme } from '../../context/ThemeContext';
 
 const DormitoryView = () => {
+    const { isDarkMode } = useTheme();
     const [studentId, setStudentId] = useState('');
     const [placement, setPlacement] = useState(null);
     const [error, setError] = useState('');
@@ -66,8 +68,9 @@ const DormitoryView = () => {
             height: 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#f8f9fa',
-            overflow: 'hidden'
+            backgroundColor: isDarkMode ? '#111827' : '#f8f9fa',
+            overflow: 'hidden',
+            transition: 'background-color 0.3s ease'
         }}>
             <div style={{
                 flex: 1,
@@ -79,14 +82,15 @@ const DormitoryView = () => {
             }}>
             {!placement ? (
                 <div style={{
-                    backgroundColor: 'white',
+                    backgroundColor: isDarkMode ? '#1f2937' : 'white',
                     borderRadius: '16px',
-                    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
+                    boxShadow: isDarkMode ? '0 4px 24px rgba(0, 0, 0, 0.5)' : '0 4px 24px rgba(0, 0, 0, 0.04)',
                     padding: '3rem 2.5rem',
                     width: '100%',
                     maxWidth: '550px',
                     textAlign: 'center',
-                    position: 'relative'
+                    position: 'relative',
+                    transition: 'all 0.3s ease'
                 }}>
                     <div style={{
                         position: 'absolute',
@@ -101,17 +105,19 @@ const DormitoryView = () => {
 
                     <h2 style={{
                         fontFamily: '"Playfair Display", serif',
-                        color: '#111827',
+                        color: isDarkMode ? '#f3f4f6' : '#111827',
                         fontSize: '2rem',
                         fontWeight: '700',
                         marginBottom: '1rem',
-                        marginTop: '0.5rem'
+                        marginTop: '0.5rem',
+                        transition: 'color 0.3s ease'
                     }}>Find Your Dorm Placement</h2>
 
                     <p style={{
-                        color: '#6b7280',
+                        color: isDarkMode ? '#9ca3af' : '#6b7280',
                         marginBottom: '2.5rem',
-                        fontSize: '0.95rem'
+                        fontSize: '0.95rem',
+                        transition: 'color 0.3s ease'
                     }}>
                         Enter your university ID to view your assigned accommodation
                     </p>
@@ -137,12 +143,13 @@ const DormitoryView = () => {
                                 style={{
                                     width: '100%',
                                     padding: '1rem',
-                                    backgroundColor: '#f3f4f6',
-                                    border: '1px solid #e5e7eb',
+                                    backgroundColor: isDarkMode ? '#111827' : '#f3f4f6',
+                                    border: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontSize: '1rem',
-                                    color: '#1f2937',
-                                    outline: 'none'
+                                    color: isDarkMode ? '#f3f4f6' : '#1f2937',
+                                    outline: 'none',
+                                    transition: 'all 0.3s ease'
                                 }}
                             />
                         </div>
@@ -385,13 +392,14 @@ const DormitoryView = () => {
             
             {/* Footer */}
             <footer style={{
-                backgroundColor: '#1e3a5f',
+                backgroundColor: isDarkMode ? '#0f172a' : '#1e3a5f',
                 color: '#ffffff',
                 textAlign: 'center',
                 padding: '1rem',
                 fontSize: '0.875rem',
-                borderTop: '1px solid #2d4a6f',
-                flexShrink: 0
+                borderTop: isDarkMode ? '1px solid #1e293b' : '1px solid #2d4a6f',
+                flexShrink: 0,
+                transition: 'all 0.3s ease'
             }}>
                 Copyright © 2026 Oda Bultum University. All rights reserved.
             </footer>

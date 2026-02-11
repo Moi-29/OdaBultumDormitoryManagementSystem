@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { BookOpen, Shield, Home, GraduationCap, Scale, AlertTriangle, UserX, Users, Ban, FileX } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
+import { useTheme } from "../../context/ThemeContext";
 
 const guidelines = [
   {
@@ -74,9 +75,10 @@ const guidelines = [
 
 const GuidelinesSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const { isDarkMode } = useTheme();
 
   return (
-    <SectionWrapper id="guidelines" className="py-20 md:py-28 relative overflow-hidden bg-white">
+    <SectionWrapper id="guidelines" className="py-20 md:py-28 relative overflow-hidden" style={{ backgroundColor: isDarkMode ? '#111827' : 'white', transition: 'background-color 0.3s ease' }}>
       {/* Subtle Grid Pattern */}
       <div className="absolute inset-0 opacity-5" style={{
         backgroundImage: 'linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px)',
@@ -97,11 +99,11 @@ const GuidelinesSection = () => {
             </span>
           </div>
           
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ color: isDarkMode ? '#f3f4f6' : '#111827', transition: 'color 0.3s ease' }}>
             Discipline & Campus Guidelines
           </h2>
           
-          <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: isDarkMode ? '#9ca3af' : '#4b5563', transition: 'color 0.3s ease' }}>
             A respectful community starts with shared values. Review our comprehensive guidelines to ensure a safe, enriching, and harmonious campus experience for everyone.
           </p>
 
@@ -128,7 +130,11 @@ const GuidelinesSection = () => {
                 <div className={`absolute -inset-0.5 bg-gradient-to-r ${item.color} rounded-3xl blur opacity-0 group-hover:opacity-30 transition duration-300`}></div>
                 
                 {/* Card Content */}
-                <div className="relative bg-white rounded-3xl p-8 h-full border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden hover:-translate-y-2">
+                <div className="relative rounded-3xl p-8 h-full border-2 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden hover:-translate-y-2" style={{ 
+                  backgroundColor: isDarkMode ? '#1f2937' : 'white',
+                  borderColor: isDarkMode ? '#374151' : '#e5e7eb',
+                  transition: 'all 0.3s ease'
+                }}>
                   {/* Subtle Background Pattern */}
                   <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
                     <div className={`w-full h-full bg-gradient-to-br ${item.color} rounded-full blur-2xl`}></div>
@@ -142,12 +148,12 @@ const GuidelinesSection = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className="relative z-10 font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold transition-colors duration-300">
+                  <h3 className="relative z-10 font-display text-2xl font-bold mb-4 group-hover:text-gold transition-colors duration-300" style={{ color: isDarkMode ? '#f3f4f6' : '#111827', transition: 'color 0.3s ease' }}>
                     {item.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="relative z-10 text-gray-600 font-body text-sm leading-relaxed">
+                  <p className="relative z-10 font-body text-sm leading-relaxed" style={{ color: isDarkMode ? '#9ca3af' : '#4b5563', transition: 'color 0.3s ease' }}>
                     {item.description}
                   </p>
 
@@ -166,9 +172,13 @@ const GuidelinesSection = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="text-center mt-16"
         >
-          <div className="inline-flex items-center gap-3 px-8 py-4 bg-gray-100 rounded-full border-2 border-gray-200 shadow-lg">
+          <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 shadow-lg" style={{
+            backgroundColor: isDarkMode ? '#1f2937' : '#f3f4f6',
+            borderColor: isDarkMode ? '#374151' : '#e5e7eb',
+            transition: 'all 0.3s ease'
+          }}>
             <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-gray-700 font-semibold">All guidelines are actively enforced</span>
+            <span className="font-semibold" style={{ color: isDarkMode ? '#d1d5db' : '#374151', transition: 'color 0.3s ease' }}>All guidelines are actively enforced</span>
           </div>
         </motion.div>
       </div>

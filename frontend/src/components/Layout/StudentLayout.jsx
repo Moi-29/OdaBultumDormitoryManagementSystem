@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Building2, FileText, AlertCircle } from 'lucide-react';
+import { Menu, X, Home, Building2, FileText, AlertCircle, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+    const { isDarkMode, toggleTheme } = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -45,23 +47,40 @@ const StudentLayout = () => {
                 left: isDesktop ? '260px' : 0,
                 right: 0,
                 height: '81px',
-                background: 'white',
-                borderBottom: '1px solid #e5e7eb',
+                background: isDarkMode ? '#1f2937' : 'white',
+                borderBottom: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0 2rem',
                 zIndex: 1000,
                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.25), 0 20px 60px rgba(0, 0, 0, 0.2)',
-                transition: 'left 0.3s ease'
+                transition: 'left 0.3s ease, background 0.3s ease'
             }}>
-                {/* Left side - Empty or additional items */}
+                {/* Left side - Theme Toggle */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem'
                 }}>
-                    {/* Add any left side items here */}
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            background: isDarkMode ? '#374151' : '#f3f4f6',
+                            border: 'none',
+                            borderRadius: '8px',
+                            padding: '0.5rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.3s ease',
+                            color: isDarkMode ? '#fbbf24' : '#f59e0b'
+                        }}
+                        title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                    >
+                        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                    </button>
                 </div>
 
                 {/* Center - University Name */}
@@ -71,13 +90,14 @@ const StudentLayout = () => {
                     transform: isDesktop ? 'translateX(-50%)' : 'none',
                     fontSize: isDesktop ? '1.25rem' : '0.875rem',
                     fontWeight: 700,
-                    color: '#111',
+                    color: isDarkMode ? '#f3f4f6' : '#111',
                     letterSpacing: '0.05em',
                     textTransform: 'uppercase',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    maxWidth: isDesktop ? 'none' : '50%'
+                    maxWidth: isDesktop ? 'none' : '50%',
+                    transition: 'color 0.3s ease'
                 }}>
                     ODA BULTUM UNIVERSITY
                 </div>

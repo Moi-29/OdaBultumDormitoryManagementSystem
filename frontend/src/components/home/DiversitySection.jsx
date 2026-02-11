@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Globe, Heart, Languages, Users, Handshake, Shield, Star, Award, BookOpen, Smile, Target, Zap } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
+import { useTheme } from "../../context/ThemeContext";
 
 const diversityCards = [
   {
@@ -68,6 +69,7 @@ const diversityCards = [
 
 const DiversitySection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const { isDarkMode } = useTheme();
 
   return (
     <SectionWrapper className="relative py-20 md:py-28 overflow-hidden">
@@ -98,10 +100,10 @@ const DiversitySection = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
         >
           <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Our Strength</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-foreground mb-4">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-4" style={{ color: isDarkMode ? '#f3f4f6' : '#111827', transition: 'color 0.3s ease' }}>
             Unity in Diversity
           </h2>
-          <p className="text-muted-foreground font-body max-w-2xl mx-auto mb-12">
+          <p className="font-body max-w-2xl mx-auto mb-12" style={{ color: isDarkMode ? '#9ca3af' : '#6b7280', transition: 'color 0.3s ease' }}>
             We foster inclusivity and maintain zero tolerance for discrimination. Every student belongs here.
           </p>
         </motion.div>
@@ -116,7 +118,13 @@ const DiversitySection = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2 + i * 0.08, duration: 0.5 }}
-                className="glass-card p-6 hover:scale-[1.03] transition-all duration-300 text-left"
+                className="p-6 hover:scale-[1.03] transition-all duration-300 text-left rounded-2xl"
+                style={{
+                  backgroundColor: isDarkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  border: isDarkMode ? '1px solid #374151' : '1px solid rgba(255, 255, 255, 0.2)',
+                  transition: 'all 0.3s ease'
+                }}
               >
                 <motion.div
                   className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
@@ -124,10 +132,10 @@ const DiversitySection = () => {
                 >
                   <Icon className="w-6 h-6 text-white" />
                 </motion.div>
-                <h3 className="font-display text-xl font-bold text-foreground mb-3">
+                <h3 className="font-display text-xl font-bold mb-3" style={{ color: isDarkMode ? '#f3f4f6' : '#111827', transition: 'color 0.3s ease' }}>
                   {card.title}
                 </h3>
-                <p className="text-muted-foreground font-body text-sm leading-relaxed">
+                <p className="font-body text-sm leading-relaxed" style={{ color: isDarkMode ? '#9ca3af' : '#6b7280', transition: 'color 0.3s ease' }}>
                   {card.description}
                 </p>
               </motion.div>

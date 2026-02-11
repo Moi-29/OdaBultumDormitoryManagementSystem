@@ -5,8 +5,10 @@ import { useState } from 'react';
 import { AlertCircle, X } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '@/config/api';
+import { useTheme } from '../../context/ThemeContext';
 
 const ReportIssueWrapper = () => {
+    const { isDarkMode } = useTheme();
     const [reportData, setReportData] = useState({
         block: '',
         dormNumber: '',
@@ -73,8 +75,9 @@ const ReportIssueWrapper = () => {
             height: 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#f8f9fa',
-            overflow: 'hidden'
+            backgroundColor: isDarkMode ? '#111827' : '#f8f9fa',
+            overflow: 'hidden',
+            transition: 'background-color 0.3s ease'
         }}>
             <div style={{
                 flex: 1,
@@ -134,12 +137,13 @@ const ReportIssueWrapper = () => {
 
             {/* Report Form */}
             <div style={{
-                background: 'white',
+                background: isDarkMode ? '#1f2937' : 'white',
                 borderRadius: '16px',
                 maxWidth: '500px',
                 width: '100%',
                 overflow: 'hidden',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                boxShadow: isDarkMode ? '0 10px 25px rgba(0, 0, 0, 0.5)' : '0 10px 25px rgba(0, 0, 0, 0.15)',
+                transition: 'all 0.3s ease'
             }}>
                 {/* Header */}
                 <div style={{
@@ -165,8 +169,9 @@ const ReportIssueWrapper = () => {
                                 display: 'block', 
                                 marginBottom: '0.4rem', 
                                 fontWeight: 600, 
-                                color: '#1e293b',
-                                fontSize: '0.875rem'
+                                color: isDarkMode ? '#d1d5db' : '#1e293b',
+                                fontSize: '0.875rem',
+                                transition: 'color 0.3s ease'
                             }}>
                                 Block <span style={{ color: '#ef4444' }}>*</span>
                             </label>
@@ -178,21 +183,25 @@ const ReportIssueWrapper = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem',
-                                    border: '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
-                                    fontSize: '0.875rem'
+                                    fontSize: '0.875rem',
+                                    backgroundColor: isDarkMode ? '#111827' : 'white',
+                                    color: isDarkMode ? '#f3f4f6' : '#111827',
+                                    transition: 'all 0.3s ease'
                                 }}
                             />
                         </div>
 
-                        {/* Dorm Number */}
+                        {/* Room Number */}
                         <div>
                             <label style={{ 
                                 display: 'block', 
                                 marginBottom: '0.4rem', 
                                 fontWeight: 600, 
-                                color: '#1e293b',
-                                fontSize: '0.875rem'
+                                color: isDarkMode ? '#d1d5db' : '#1e293b',
+                                fontSize: '0.875rem',
+                                transition: 'color 0.3s ease'
                             }}>
                                 Room Number <span style={{ color: '#ef4444' }}>*</span>
                             </label>
@@ -204,9 +213,12 @@ const ReportIssueWrapper = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem',
-                                    border: '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
-                                    fontSize: '0.875rem'
+                                    fontSize: '0.875rem',
+                                    backgroundColor: isDarkMode ? '#111827' : 'white',
+                                    color: isDarkMode ? '#f3f4f6' : '#111827',
+                                    transition: 'all 0.3s ease'
                                 }}
                             />
                         </div>
@@ -217,8 +229,9 @@ const ReportIssueWrapper = () => {
                                 display: 'block', 
                                 marginBottom: '0.4rem', 
                                 fontWeight: 600, 
-                                color: '#1e293b',
-                                fontSize: '0.875rem'
+                                color: isDarkMode ? '#d1d5db' : '#1e293b',
+                                fontSize: '0.875rem',
+                                transition: 'color 0.3s ease'
                             }}>
                                 Description <span style={{ color: '#ef4444' }}>*</span>
                             </label>
@@ -230,11 +243,14 @@ const ReportIssueWrapper = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem',
-                                    border: '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontSize: '0.875rem',
                                     resize: 'none',
-                                    fontFamily: 'inherit'
+                                    fontFamily: 'inherit',
+                                    backgroundColor: isDarkMode ? '#111827' : 'white',
+                                    color: isDarkMode ? '#f3f4f6' : '#111827',
+                                    transition: 'all 0.3s ease'
                                 }}
                             />
                         </div>
@@ -244,10 +260,11 @@ const ReportIssueWrapper = () => {
                 {/* Footer */}
                 <div style={{
                     padding: '1rem 1.5rem',
-                    borderTop: '1px solid #e5e7eb',
+                    borderTop: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
                     display: 'flex',
                     gap: '0.75rem',
-                    justifyContent: 'flex-end'
+                    justifyContent: 'flex-end',
+                    transition: 'border-color 0.3s ease'
                 }}>
                     <button
                         onClick={() => setReportData({
@@ -260,14 +277,15 @@ const ReportIssueWrapper = () => {
                         disabled={submittingReport}
                         style={{
                             padding: '0.6rem 1.25rem',
-                            background: 'white',
-                            color: '#64748b',
-                            border: '2px solid #e5e7eb',
+                            background: isDarkMode ? '#374151' : 'white',
+                            color: isDarkMode ? '#d1d5db' : '#64748b',
+                            border: isDarkMode ? '2px solid #4b5563' : '2px solid #e5e7eb',
                             borderRadius: '8px',
                             cursor: submittingReport ? 'not-allowed' : 'pointer',
                             fontWeight: 600,
                             fontSize: '0.875rem',
-                            opacity: submittingReport ? 0.5 : 1
+                            opacity: submittingReport ? 0.5 : 1,
+                            transition: 'all 0.3s ease'
                         }}
                     >
                         Clear
@@ -320,13 +338,14 @@ const ReportIssueWrapper = () => {
             
             {/* Footer */}
             <footer style={{
-                backgroundColor: '#1e3a5f',
+                backgroundColor: isDarkMode ? '#0f172a' : '#1e3a5f',
                 color: '#ffffff',
                 textAlign: 'center',
                 padding: '1rem',
                 fontSize: '0.875rem',
-                borderTop: '1px solid #2d4a6f',
-                flexShrink: 0
+                borderTop: isDarkMode ? '1px solid #1e293b' : '1px solid #2d4a6f',
+                flexShrink: 0,
+                transition: 'all 0.3s ease'
             }}>
                 Copyright © 2026 Oda Bultum University. All rights reserved.
             </footer>

@@ -5,8 +5,10 @@ import { useState } from 'react';
 import { X, User, GraduationCap, Home, Users, Check } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '@/config/api';
+import { useTheme } from '../../context/ThemeContext';
 
 const ApplicationFormWrapper = () => {
+    const { isDarkMode } = useTheme();
     const [activeTab, setActiveTab] = useState('personal');
     const [submitting, setSubmitting] = useState(false);
     const [notification, setNotification] = useState(null);
@@ -184,8 +186,9 @@ const ApplicationFormWrapper = () => {
             height: 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#f8f9fa',
-            overflow: 'hidden'
+            backgroundColor: isDarkMode ? '#111827' : '#f8f9fa',
+            overflow: 'hidden',
+            transition: 'background-color 0.3s ease'
         }}>
             <div style={{
                 flex: 1,
@@ -244,10 +247,11 @@ const ApplicationFormWrapper = () => {
             <div style={{
                 maxWidth: '1200px',
                 margin: '0 auto',
-                backgroundColor: 'white',
+                backgroundColor: isDarkMode ? '#1f2937' : 'white',
                 borderRadius: '16px',
-                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-                overflow: 'hidden'
+                boxShadow: isDarkMode ? '0 4px 24px rgba(0, 0, 0, 0.5)' : '0 4px 24px rgba(0, 0, 0, 0.08)',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease'
             }}>
                 {/* Header */}
                 <div style={{
@@ -268,9 +272,10 @@ const ApplicationFormWrapper = () => {
                     display: 'flex',
                     gap: '0.5rem',
                     padding: '1rem 2rem 0',
-                    borderBottom: '2px solid #e5e7eb',
+                    borderBottom: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
                     overflowX: 'auto',
-                    backgroundColor: '#f9fafb'
+                    backgroundColor: isDarkMode ? '#111827' : '#f9fafb',
+                    transition: 'all 0.3s ease'
                 }}>
                     {[
                         { id: 'personal', label: 'Personal', icon: <User size={18} /> },
@@ -288,7 +293,7 @@ const ApplicationFormWrapper = () => {
                                 padding: '0.75rem 1.25rem',
                                 border: 'none',
                                 background: activeTab === tab.id ? '#4F46E5' : 'transparent',
-                                color: activeTab === tab.id ? 'white' : '#64748b',
+                                color: activeTab === tab.id ? 'white' : (isDarkMode ? '#9ca3af' : '#64748b'),
                                 borderRadius: '8px 8px 0 0',
                                 cursor: 'pointer',
                                 fontWeight: activeTab === tab.id ? 600 : 500,
@@ -312,12 +317,12 @@ const ApplicationFormWrapper = () => {
                     {/* Personal Tab */}
                     {activeTab === 'personal' && (
                         <div>
-                            <h3 style={{ marginBottom: '1rem', color: '#1e293b', fontSize: '1.1rem', fontWeight: 600 }}>
+                            <h3 style={{ marginBottom: '1rem', color: isDarkMode ? '#f3f4f6' : '#1e293b', fontSize: '1.1rem', fontWeight: 600, transition: 'color 0.3s ease' }}>
                                 I. Please fill your Full Information
                             </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#d1d5db' : '#374151', fontSize: '0.875rem', transition: 'color 0.3s ease' }}>
                                         Full Name <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -328,9 +333,12 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
-                                            fontSize: '0.875rem'
+                                            fontSize: '0.875rem',
+                                            backgroundColor: isDarkMode ? '#111827' : 'white',
+                                            color: isDarkMode ? '#f3f4f6' : '#111827',
+                                            transition: 'all 0.3s ease'
                                         }}
                                     />
                                 </div>
