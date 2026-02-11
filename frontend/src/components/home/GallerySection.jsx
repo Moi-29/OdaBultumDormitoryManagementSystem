@@ -27,13 +27,13 @@ import im21 from "../../assets/im21.jpg";
 import im22 from "../../assets/im22.jpg";
 
 const galleryImages = [
-  { src: im, title: "Campus Life", description: "Experience the vibrant student community at Oda Bultum University" },
+  { src: im, title: "Official Administrative Mandate for Oda Bultum University", description: "A formal communication from the Ministry of Science and Higher Education directing the university to adopt standardized governance and student conduct frameworks." },
   { src: im1, title: "Modern Facilities", description: "State-of-the-art infrastructure designed for excellence in education" },
-  { src: im2, title: "Academic Excellence", description: "Dedicated spaces for learning, research, and innovation" },
+  { src: im2, title: "Legal Protections and Academic Freedoms", description: "A comprehensive list of the fundamental rights granted to students, ensuring access to quality education, university services, and fair administrative processes." },
   { src: im3, title: "Student Activities", description: "Engaging programs that foster personal and professional growth" },
   { src: im4, title: "Campus Grounds", description: "Beautiful green spaces perfect for study and relaxation" },
   { src: im5, title: "Learning Spaces", description: "Collaborative environments that inspire creativity and knowledge" },
-  { src: im6, title: "University Events", description: "Celebrating achievements and building lasting memories together" },
+  { src: im6, title: "Asset Protection", description: "A formal declaration regarding the responsibility of the campus community to protect and maintain the physical assets and resources of Oda Bultum University." },
   { src: im7, title: "Student Services", description: "Comprehensive support systems for your academic journey" },
   { src: im8, title: "Campus Architecture", description: "Modern design meets functional excellence in every building" },
   { src: im9, title: "Community Spirit", description: "A diverse and inclusive environment where everyone belongs" },

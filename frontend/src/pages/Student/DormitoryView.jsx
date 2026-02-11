@@ -63,13 +63,20 @@ const DormitoryView = () => {
 
     return (
         <div style={{
-            minHeight: 'calc(100vh - 64px)',
+            height: 'calc(100vh - 81px)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem 1rem',
-            backgroundColor: '#f8f9fa'
+            flexDirection: 'column',
+            backgroundColor: '#f8f9fa',
+            overflow: 'hidden'
         }}>
+            <div style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2rem 1rem',
+                overflow: 'auto'
+            }}>
             {!placement ? (
                 <div style={{
                     backgroundColor: 'white',
@@ -374,6 +381,20 @@ const DormitoryView = () => {
                     </div>
                 </div>
             )}
+            </div>
+            
+            {/* Footer */}
+            <footer style={{
+                backgroundColor: '#1e3a5f',
+                color: '#ffffff',
+                textAlign: 'center',
+                padding: '1rem',
+                fontSize: '0.875rem',
+                borderTop: '1px solid #2d4a6f',
+                flexShrink: 0
+            }}>
+                Copyright © 2026 Oda Bultum University. All rights reserved.
+            </footer>
         </div>
     );
 };

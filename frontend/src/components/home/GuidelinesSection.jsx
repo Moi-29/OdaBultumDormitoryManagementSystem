@@ -1,192 +1,176 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { ChevronDown, CheckCircle, BookOpen, Shield, Home, GraduationCap, Scale, AlertTriangle } from "lucide-react";
+import { BookOpen, Shield, Home, GraduationCap, Scale, AlertTriangle, UserX, Users, Ban, FileX } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
 
 const guidelines = [
   {
     title: "Dormitory Rules & Regulations",
     icon: Home,
-    items: [
-      "Students assigned to dormitories must properly use and care for the dormitory rooms and facilities given to them.",
-      "Students are responsible for maintaining cleanliness inside their rooms and in shared areas.",
-      "Damaging dormitory property intentionally or through negligence is strictly prohibited.",
-      "Any student who damages property will be required to pay for the damage and may face disciplinary measures.",
-      "Transferring from one dormitory room to another without official permission is not allowed.",
-      "Bringing unauthorized individuals into dormitory rooms is prohibited.",
-      "Activities that disturb the peace and comfort of other residents are forbidden.",
-      "Keeping materials or substances that are illegal or dangerous inside dormitories is strictly prohibited.",
-      "Students must follow dormitory curfew and entry/exit regulations set by the institution.",
-      "Use of alcohol, drugs, or other prohibited substances inside the dormitory is forbidden.",
-      "Theft or attempting to steal within the dormitory will result in strict disciplinary action.",
-      "Physical fighting, harassment, or threatening behavior toward other residents is prohibited.",
-      "Students must cooperate with dormitory proctors and administrators.",
-      "Regular inspections of rooms may be conducted in accordance with dormitory regulations.",
-      "Students must properly use water, electricity, and other shared resources responsibly.",
-      "Cooking inside rooms, unless in designated areas, is not allowed.",
-      "Posting unauthorized notices or materials on dormitory walls is prohibited.",
-      "Students must report maintenance issues or damages to the appropriate dormitory authority.",
-      "Violating dormitory regulations may lead to warnings, suspension from the dormitory, or other disciplinary measures.",
-      "Serious violations may result in removal from the dormitory and further institutional action.",
-      "All dormitory residents are required to respect institutional policies and community living standards.",
-      "These dormitory rules shall be implemented and enforced by the institution.",
-    ],
+    description: "Students must properly use and care for dormitory facilities. Maintain cleanliness, respect curfew regulations, and report maintenance issues promptly. Prohibited: unauthorized transfers, bringing unauthorized individuals, disturbing others, keeping illegal substances, alcohol, drugs, theft, fighting, and harassment.",
+    color: "from-blue-500 to-blue-600"
   },
   {
-    title: "Academic Conduct",
-    icon: BookOpen,
-    items: [
-      "Maintain academic integrity — no plagiarism or cheating",
-      "Attend all classes and submit assignments on time",
-      "Respect instructors and fellow students",
-      "Use library resources responsibly",
-      "Follow exam hall regulations strictly",
-    ],
+    title: "Personal Conduct & Dignity",
+    icon: UserX,
+    description: "Prohibited on campus: possession or use of alcohol, drugs, khat, or entering premises intoxicated. Maintain appropriate dress code and hygiene. Prohibited: inappropriate sexual conduct, begging, sexual misconduct with staff, public displays of affection, same-sex activities, and suicide attempts.",
+    color: "from-purple-500 to-purple-600"
   },
   {
-    title: "Safety & Security",
+    title: "Respect for Others",
+    icon: Users,
+    description: "Honor your roommate's space, belongings, and personal time. Cultural differences are celebrated. No verbal abuse, slander, threats, or harassment based on ethnicity, gender, religion, political belief, ability, race, or age. Respect all religions, languages, and cultures.",
+    color: "from-pink-500 to-pink-600"
+  },
+  {
+    title: "Communication & Conflict Resolution",
     icon: Shield,
-    items: [
-      "Familiarize yourself with emergency exits and protocols",
-      "Report suspicious activities immediately",
-      "Carry your student ID at all times",
-      "Follow fire safety and evacuation procedures",
-      "Cooperate with security personnel during inspections",
-    ],
+    description: "Address concerns directly and kindly. Use conflict resolution services when needed. No anonymous harassment, defamatory literature, insults, name-calling, teasing, or character assassination. Respect disabled students and employees.",
+    color: "from-cyan-500 to-cyan-600"
   },
   {
-    title: "Students Right",
+    title: "Violence & Criminal Acts",
+    icon: Ban,
+    description: "Strictly prohibited: threatening or attacking employees, bullying, physical injury, maiming, attempted murder, abduction, false imprisonment, blackmail, extortion, unauthorized entry into residences, mutual combat, mobbing staff, and staging hunger strikes.",
+    color: "from-red-500 to-red-600"
+  },
+  {
+    title: "Academic Integrity & Honesty",
+    icon: FileX,
+    description: "Maintain academic integrity - no plagiarism, cheating, forgery, or fraud. Attend classes regularly, submit assignments on time, respect instructors. No disobeying invigilators, propagating exam theft rumors, or obtaining materials fraudulently.",
+    color: "from-orange-500 to-orange-600"
+  },
+  {
+    title: "Facility & Property Rules",
+    icon: BookOpen,
+    description: "Maintain shared spaces. Follow cleaning schedules. Report maintenance issues promptly. Respect library, classroom, and laboratory staff. No abusive language, coercing students, disobeying staff instructions, fighting, or damaging property.",
+    color: "from-green-500 to-green-600"
+  },
+  {
+    title: "Cooperation & Community",
     icon: Scale,
-    items: [
-      "Freedom to learn, inquire, and develop skills according to the university calendar.",
-      "Access to a safe environment where constitutional and human rights are protected.",
-      "Legal protection against any form of discrimination or harassment.",
-      "Participation in student unions and university leadership meetings through representatives.",
-      "Access to food, dormitory, medical, and recreational services for regular students who have signed cost-sharing agreements.",
-      "The right to present evidence and defense when accused of an offense.",
-    ],
+    description: "Share responsibilities fairly. Support your roommate during difficult times. Cooperate with dormitory proctors, security personnel, and all university staff. Participate in community activities and respect institutional policies.",
+    color: "from-amber-500 to-amber-600"
+  },
+  {
+    title: "Students Rights",
+    icon: GraduationCap,
+    description: "Freedom to learn, inquire, and develop skills. Access to safe environment with protected constitutional and human rights. Legal protection against discrimination. Participation in student unions. Access to food, dormitory, medical, and recreational services. Right to present evidence and defense.",
+    color: "from-indigo-500 to-indigo-600"
   },
   {
     title: "Academic Rules & Regulations",
-    icon: GraduationCap,
-    items: [
-      "Any student who registers properly and begins classes shall follow the academic rules and regulations of the institution. Students are required to respect institutional policies and fulfill academic responsibilities.",
-      "A student who fails to register within the specified registration period will not be allowed to attend classes unless special permission is granted.",
-      "A student who withdraws from courses without following official procedures will not receive academic credit for those courses.",
-      "Students must attend classes regularly. Absence beyond the permitted limit may result in academic penalties.",
-      "Continuous assessment results, assignments, and examinations shall be evaluated according to the institution's grading policy.",
-      "A student who fails examinations due to acceptable and documented reasons may be allowed to sit for a makeup examination.",
-      "Academic dishonesty, including cheating or plagiarism, will result in disciplinary action according to institutional rules.",
-      "Students must maintain the minimum required academic performance to remain in good standing.",
-      "A student whose academic performance falls below the required standard may be placed on academic warning or probation.",
-      "A student who remains on academic probation for consecutive semesters without improvement may be dismissed from the institution.",
-      "A student has the right to formally appeal academic decisions following established procedures.",
-      "Students are required to comply with academic legislation and institutional directives at all times.",
-      "Academic records must be properly maintained according to institutional policy.",
-      "A Grade Report shall be officially issued to students at the end of each semester.",
-      "The Grade Report will include course grades, semester performance, and cumulative academic status.",
-      "Students who wish to obtain official documents must follow proper request procedures and fulfill necessary requirements.",
-    ],
+    icon: BookOpen,
+    description: "Follow academic rules and institutional policies. Register within specified periods. Attend classes regularly. Maintain minimum academic performance. Academic dishonesty results in disciplinary action. Grade reports issued each semester. Right to appeal academic decisions.",
+    color: "from-teal-500 to-teal-600"
   },
   {
     title: "Penalties and Appeals",
     icon: AlertTriangle,
-    items: [
-      "Oral Warnings: For first-time minor disturbances.",
-      "Written Warnings: Kept in the student's permanent file.",
-      "Suspension: The student must leave the campus immediately and surrender their ID card.",
-      "Expulsion: The student is barred from re-enrolling in that specific institution or, in severe cases, any public university for a specified duration.",
-      "A student dissatisfied with a disciplinary decision has the right to appeal to the University President or the designated Appeals Committee.",
-      "Appeals must be submitted within 5 (five) working days of the decision.",
-      "The decision of the President on the appeal shall be final.",
-    ],
+    description: "Violations result in: Oral warnings (first-time minor), Written warnings (permanent file), Suspension (immediate campus departure), or Expulsion (barred from re-enrollment). Appeals to University President within 5 working days. President's decision is final.",
+    color: "from-yellow-500 to-yellow-600"
   },
 ];
 
 const GuidelinesSection = () => {
-  const [openIndex, setOpenIndex] = useState(null);
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <SectionWrapper id="guidelines" className="py-20 md:py-28 section-gradient">
-      <div ref={ref} className="max-w-5xl mx-auto px-4 sm:px-6">
+    <SectionWrapper id="guidelines" className="py-20 md:py-28 relative overflow-hidden bg-white">
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 opacity-5" style={{
+        backgroundImage: 'linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px)',
+        backgroundSize: '50px 50px'
+      }}></div>
+
+      <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Campus Life</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-foreground">
+          <div className="inline-block mb-4">
+            <span className="px-6 py-2 bg-gradient-to-r from-gold to-yellow-500 text-white font-bold text-sm tracking-[0.2em] uppercase rounded-full shadow-lg">
+              Campus Life
+            </span>
+          </div>
+          
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900">
             Discipline & Campus Guidelines
           </h2>
-          <p className="text-muted-foreground mt-3 max-w-2xl mx-auto font-body">
-            A respectful community starts with shared values. Review our guidelines to ensure a safe and enriching experience.
+          
+          <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            A respectful community starts with shared values. Review our comprehensive guidelines to ensure a safe, enriching, and harmonious campus experience for everyone.
           </p>
+
+          {/* Decorative Line */}
+          <div className="h-1 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-8 max-w-md"></div>
         </motion.div>
 
-        <div className="space-y-4">
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {guidelines.map((item, i) => {
             const Icon = item.icon;
-            const isOpen = openIndex === i;
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: i * 0.15, duration: 0.5 }}
-                className="glass-card overflow-hidden"
+                transition={{ 
+                  delay: i * 0.08, 
+                  duration: 0.5
+                }}
+                className="group relative"
               >
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between p-5 md:p-6 text-left"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl indigo-gradient flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-gold-light" />
-                    </div>
-                    <h3 className="font-display text-lg md:text-xl text-foreground">{item.title}</h3>
+                {/* Card Glow Effect on Hover */}
+                <div className={`absolute -inset-0.5 bg-gradient-to-r ${item.color} rounded-3xl blur opacity-0 group-hover:opacity-30 transition duration-300`}></div>
+                
+                {/* Card Content */}
+                <div className="relative bg-white rounded-3xl p-8 h-full border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden hover:-translate-y-2">
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+                    <div className={`w-full h-full bg-gradient-to-br ${item.color} rounded-full blur-2xl`}></div>
                   </div>
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  </motion.div>
-                </button>
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 md:px-6 pb-5 md:pb-6 pt-0">
-                        <ul className="space-y-3">
-                          {item.items.map((rule, j) => (
-                            <motion.li
-                              key={j}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: j * 0.08 }}
-                              className="flex items-start gap-3 text-muted-foreground font-body text-sm md:text-base"
-                            >
-                              <CheckCircle className="w-4 h-4 text-emerald mt-0.5 shrink-0" />
-                              {rule}
-                            </motion.li>
-                          ))}
-                        </ul>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+
+                  {/* Icon Container - No Animation */}
+                  <div className="relative z-10">
+                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-6 shadow-lg`}>
+                      <Icon className="w-10 h-10 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="relative z-10 font-display text-2xl font-bold text-gray-900 mb-4 group-hover:text-gold transition-colors duration-300">
+                    {item.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="relative z-10 text-gray-600 font-body text-sm leading-relaxed">
+                    {item.description}
+                  </p>
+
+                  {/* Bottom Accent Line */}
+                  <div className={`absolute bottom-0 left-0 w-0 group-hover:w-full h-1 bg-gradient-to-r ${item.color} transition-all duration-300`}></div>
+                </div>
               </motion.div>
             );
           })}
         </div>
+
+        {/* Bottom Status */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="text-center mt-16"
+        >
+          <div className="inline-flex items-center gap-3 px-8 py-4 bg-gray-100 rounded-full border-2 border-gray-200 shadow-lg">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-gray-700 font-semibold">All guidelines are actively enforced</span>
+          </div>
+        </motion.div>
       </div>
     </SectionWrapper>
   );
