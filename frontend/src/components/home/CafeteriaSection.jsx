@@ -12,6 +12,7 @@ const meals = [
     bgClass: "bg-gold/10",
     borderClass: "border-gold/20",
     desc: "Morning Essentials & Light Meals",
+    samples: ["Tea & Coffee", "Bread & Butter", "Eggs", "Porridge", "Fresh Fruits"],
   },
   {
     title: "Lunch",
@@ -21,6 +22,7 @@ const meals = [
     bgClass: "bg-emerald/10",
     borderClass: "border-emerald/20",
     desc: "Traditional Ethiopian & Continental",
+    samples: ["Injera with Wot", "Rice & Stew", "Pasta", "Fresh Salad", "Seasonal Fruits"],
   },
   {
     title: "Dinner",
@@ -30,6 +32,7 @@ const meals = [
     bgClass: "bg-primary/10",
     borderClass: "border-primary/20",
     desc: "Hot Meals & Vegetarian Options",
+    samples: ["Firfir", "Vegetable Stew", "Grilled Meat", "Soup", "Bread & Butter"],
   },
 ];
 
