@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
 // Import all gallery images
 import im from "../../assets/im.jpg";
@@ -52,6 +53,7 @@ const galleryImages = [
 ];
 
 const GallerySection = () => {
+  const { isDarkMode } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -109,7 +111,7 @@ const GallerySection = () => {
   const nextImage = galleryImages[(currentIndex + 1) % galleryImages.length];
 
   return (
-    <section className="relative w-full py-20 overflow-hidden bg-gradient-to-b from-background to-background-dark">
+    <section className="relative w-full py-20 overflow-hidden" style={{ background: isDarkMode ? 'linear-gradient(to bottom, #0f172a, #1e293b)' : 'linear-gradient(to bottom, #ffffff, #f9fafb)', transition: 'background 0.3s ease' }}>
       <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -121,7 +123,7 @@ const GallerySection = () => {
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
             <span className="gold-text">Campus Gallery</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
             Explore the beauty and vibrancy of life at Oda Bultum University
           </p>
         </motion.div>

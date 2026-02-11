@@ -68,7 +68,7 @@ const DormitoryView = () => {
             height: 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: isDarkMode ? '#111827' : '#f8f9fa',
+            backgroundColor: isDarkMode ? '#0f172a' : '#f8f9fa',
             overflow: 'hidden',
             transition: 'background-color 0.3s ease'
         }}>
@@ -82,7 +82,7 @@ const DormitoryView = () => {
             }}>
             {!placement ? (
                 <div style={{
-                    backgroundColor: isDarkMode ? '#1f2937' : 'white',
+                    backgroundColor: isDarkMode ? '#1e293b' : 'white',
                     borderRadius: '16px',
                     boxShadow: isDarkMode ? '0 4px 24px rgba(0, 0, 0, 0.5)' : '0 4px 24px rgba(0, 0, 0, 0.04)',
                     padding: '3rem 2.5rem',
@@ -105,7 +105,7 @@ const DormitoryView = () => {
 
                     <h2 style={{
                         fontFamily: '"Playfair Display", serif',
-                        color: isDarkMode ? '#f3f4f6' : '#111827',
+                        color: isDarkMode ? '#ffffff' : '#111827',
                         fontSize: '2rem',
                         fontWeight: '700',
                         marginBottom: '1rem',
@@ -114,7 +114,7 @@ const DormitoryView = () => {
                     }}>Find Your Dorm Placement</h2>
 
                     <p style={{
-                        color: isDarkMode ? '#9ca3af' : '#6b7280',
+                        color: isDarkMode ? '#d1d5db' : '#6b7280',
                         marginBottom: '2.5rem',
                         fontSize: '0.95rem',
                         transition: 'color 0.3s ease'
@@ -143,11 +143,11 @@ const DormitoryView = () => {
                                 style={{
                                     width: '100%',
                                     padding: '1rem',
-                                    backgroundColor: isDarkMode ? '#111827' : '#f3f4f6',
-                                    border: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+                                    backgroundColor: isDarkMode ? '#0f172a' : '#f3f4f6',
+                                    border: isDarkMode ? '1px solid #475569' : '1px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontSize: '1rem',
-                                    color: isDarkMode ? '#f3f4f6' : '#1f2937',
+                                    color: isDarkMode ? '#ffffff' : '#1f2937',
                                     outline: 'none',
                                     transition: 'all 0.3s ease'
                                 }}

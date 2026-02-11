@@ -2,14 +2,16 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Droplets, CheckCircle } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
+import { useTheme } from "../../context/ThemeContext";
 
 const features = ["Filtered", "Tested Daily", "24/7 Access"];
 
 const CleanWaterSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+  const { isDarkMode } = useTheme();
 
   return (
-    <SectionWrapper className="py-20 md:py-28 section-gradient">
+    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-4xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -32,8 +34,8 @@ const CleanWaterSection = () => {
             <Droplets className="w-10 h-10 text-white" />
           </motion.div>
 
-          <h2 className="font-display text-3xl md:text-4xl text-foreground mb-3">Clean Water 24/7</h2>
-          <p className="text-muted-foreground font-body max-w-lg mx-auto mb-8">
+          <h2 className="font-display text-3xl md:text-4xl mb-3" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Clean Water 24/7</h2>
+          <p className="font-body max-w-lg mx-auto mb-8" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
             Safe, filtered drinking water available throughout all dormitories, regularly tested for your health and safety.
           </p>
 

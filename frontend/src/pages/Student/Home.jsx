@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import HeroSection from "../../components/home/HeroSection";
+import { useTheme } from "../../context/ThemeContext";
 
 const GuidelinesSection = lazy(() => import("../../components/home/GuidelinesSection"));
 const StudentUnionSection = lazy(() => import("../../components/home/StudentUnionSection"));
@@ -17,8 +18,10 @@ const SectionLoader = () => (
 );
 
 const Home = () => {
+  const { isDarkMode } = useTheme();
+  
   return (
-    <div className="min-h-screen bg-background" style={{ marginLeft: 0 }}>
+    <div className="min-h-screen" style={{ marginLeft: 0, backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <main>
         <HeroSection />
         <Suspense fallback={<SectionLoader />}>

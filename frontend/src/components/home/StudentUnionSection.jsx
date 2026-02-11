@@ -3,6 +3,7 @@ import { useInView } from "react-intersection-observer";
 import { Users, Calendar, Star, Lightbulb, Heart, Award, Rocket } from "lucide-react";
 import AnimatedCounter from "../AnimatedCounter";
 import SectionWrapper from "../SectionWrapper";
+import { useTheme } from "../../context/ThemeContext";
 
 const stats = [
   { icon: Users, value: 500, suffix: "+", label: "Active Members" },
@@ -19,9 +20,10 @@ const values = [
 
 const StudentUnionSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const { isDarkMode } = useTheme();
 
   return (
-    <SectionWrapper className="py-20 md:py-28 bg-background">
+    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -29,8 +31,8 @@ const StudentUnionSection = () => {
           className="text-center mb-16"
         >
           <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Community</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-foreground">Student Union</h2>
-          <p className="text-muted-foreground mt-3 max-w-2xl mx-auto font-body">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Student Union</h2>
+          <p className="mt-3 max-w-2xl mx-auto font-body" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
             Empowering students through leadership, unity, and shared purpose.
           </p>
         </motion.div>

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Stethoscope, Phone, Clock, Heart, Pill, Brain, CheckCircle } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
+import { useTheme } from "../../context/ThemeContext";
 
 const services = [
   { icon: Stethoscope, label: "General Check-ups" },
@@ -12,9 +13,10 @@ const services = [
 
 const HealthCenterSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const { isDarkMode } = useTheme();
 
   return (
-    <SectionWrapper className="py-20 md:py-28 bg-background">
+    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -22,7 +24,7 @@ const HealthCenterSection = () => {
           className="text-center mb-14"
         >
           <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Wellness</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-foreground">Health Center</h2>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Health Center</h2>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

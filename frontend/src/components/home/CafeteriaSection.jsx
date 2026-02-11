@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Clock, Coffee, Utensils, Moon } from "lucide-react";
 import SectionWrapper from "../SectionWrapper";
+import { useTheme } from "../../context/ThemeContext";
 
 const meals = [
   {
@@ -38,9 +39,10 @@ const meals = [
 
 const CafeteriaSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const { isDarkMode } = useTheme();
 
   return (
-    <SectionWrapper className="py-20 md:py-28 section-gradient">
+    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -48,8 +50,8 @@ const CafeteriaSection = () => {
           className="text-center mb-14"
         >
           <p className="text-gold font-body text-sm tracking-[0.2em] uppercase mb-2">Dining</p>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-foreground">Cafeteria Schedule</h2>
-          <p className="text-muted-foreground mt-3 font-body max-w-xl mx-auto">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>Cafeteria Schedule</h2>
+          <p className="mt-3 font-body max-w-xl mx-auto" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
             Nutritious meals served daily to keep you energized and focused.
           </p>
         </motion.div>

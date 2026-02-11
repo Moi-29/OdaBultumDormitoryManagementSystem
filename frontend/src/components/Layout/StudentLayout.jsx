@@ -37,8 +37,9 @@ const StudentLayout = () => {
     return (
         <div style={{ 
             minHeight: '100vh', 
-            backgroundColor: '#f5f5f5',
-            display: 'flex'
+            backgroundColor: isDarkMode ? '#0f172a' : '#f5f5f5',
+            display: 'flex',
+            transition: 'background-color 0.3s ease'
         }}>
             {/* White Top Navbar */}
             <nav style={{
@@ -128,15 +129,17 @@ const StudentLayout = () => {
                             <div style={{
                                 fontSize: '0.875rem',
                                 fontWeight: 600,
-                                color: '#111',
-                                lineHeight: 1.3
+                                color: isDarkMode ? '#ffffff' : '#111',
+                                lineHeight: 1.3,
+                                transition: 'color 0.3s ease'
                             }}>
                                 Student Service
                             </div>
                             <div style={{
                                 fontSize: '0.75rem',
-                                color: '#6b7280',
-                                lineHeight: 1.3
+                                color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                lineHeight: 1.3,
+                                transition: 'color 0.3s ease'
                             }}>
                                 student@example.com
                             </div>
@@ -355,8 +358,8 @@ const StudentLayout = () => {
                 minHeight: 'calc(100vh - 81px)',
                 width: isDesktop ? 'calc(100% - 260px)' : '100%',
                 position: 'relative',
-                transition: 'margin-left 0.3s ease',
-                background: '#f5f5f5'
+                transition: 'margin-left 0.3s ease, background-color 0.3s ease',
+                background: isDarkMode ? '#0f172a' : '#f5f5f5'
             }}>
                 <Outlet />
             </main>

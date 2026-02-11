@@ -186,7 +186,7 @@ const ApplicationFormWrapper = () => {
             height: 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: isDarkMode ? '#111827' : '#f8f9fa',
+            backgroundColor: isDarkMode ? '#0f172a' : '#f8f9fa',
             overflow: 'hidden',
             transition: 'background-color 0.3s ease'
         }}>
@@ -247,7 +247,7 @@ const ApplicationFormWrapper = () => {
             <div style={{
                 maxWidth: '1200px',
                 margin: '0 auto',
-                backgroundColor: isDarkMode ? '#1f2937' : 'white',
+                backgroundColor: isDarkMode ? '#1e293b' : 'white',
                 borderRadius: '16px',
                 boxShadow: isDarkMode ? '0 4px 24px rgba(0, 0, 0, 0.5)' : '0 4px 24px rgba(0, 0, 0, 0.08)',
                 overflow: 'hidden',
@@ -272,9 +272,9 @@ const ApplicationFormWrapper = () => {
                     display: 'flex',
                     gap: '0.5rem',
                     padding: '1rem 2rem 0',
-                    borderBottom: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
+                    borderBottom: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                     overflowX: 'auto',
-                    backgroundColor: isDarkMode ? '#111827' : '#f9fafb',
+                    backgroundColor: isDarkMode ? '#0f172a' : '#f9fafb',
                     transition: 'all 0.3s ease'
                 }}>
                     {[
@@ -293,7 +293,7 @@ const ApplicationFormWrapper = () => {
                                 padding: '0.75rem 1.25rem',
                                 border: 'none',
                                 background: activeTab === tab.id ? '#4F46E5' : 'transparent',
-                                color: activeTab === tab.id ? 'white' : (isDarkMode ? '#9ca3af' : '#64748b'),
+                                color: activeTab === tab.id ? 'white' : (isDarkMode ? '#ffffff' : '#64748b'),
                                 borderRadius: '8px 8px 0 0',
                                 cursor: 'pointer',
                                 fontWeight: activeTab === tab.id ? 600 : 500,
@@ -317,12 +317,12 @@ const ApplicationFormWrapper = () => {
                     {/* Personal Tab */}
                     {activeTab === 'personal' && (
                         <div>
-                            <h3 style={{ marginBottom: '1rem', color: isDarkMode ? '#f3f4f6' : '#1e293b', fontSize: '1.1rem', fontWeight: 600, transition: 'color 0.3s ease' }}>
+                            <h3 style={{ marginBottom: '1rem', color: isDarkMode ? '#ffffff' : '#1e293b', fontSize: '1.1rem', fontWeight: 600, transition: 'color 0.3s ease' }}>
                                 I. Please fill your Full Information
                             </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#d1d5db' : '#374151', fontSize: '0.875rem', transition: 'color 0.3s ease' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem', transition: 'color 0.3s ease' }}>
                                         Full Name <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -333,17 +333,19 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem',
-                                            backgroundColor: isDarkMode ? '#111827' : 'white',
-                                            color: isDarkMode ? '#f3f4f6' : '#111827',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
                                             transition: 'all 0.3s ease'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         ID No. <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -354,14 +356,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Sex <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <select 
@@ -370,7 +374,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
@@ -381,7 +387,7 @@ const ApplicationFormWrapper = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Meal card No.
                                     </label>
                                     <input
@@ -392,14 +398,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         College <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -410,14 +418,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Department <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -428,14 +438,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Academic Year <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -446,14 +458,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Dorm No.
                                     </label>
                                     <input
@@ -464,14 +478,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Your Phone Number <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
                                     <input
@@ -482,14 +498,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Religious
                                     </label>
                                     <input
@@ -500,14 +518,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
                                         Your Nation
                                     </label>
                                     <input
@@ -518,7 +538,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.875rem'
                                         }}
@@ -536,7 +558,7 @@ const ApplicationFormWrapper = () => {
                             </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Stream <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <select 
@@ -545,7 +567,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
@@ -558,7 +582,7 @@ const ApplicationFormWrapper = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Sponsor Category <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <select 
@@ -567,7 +591,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
@@ -579,7 +605,7 @@ const ApplicationFormWrapper = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         National Exam Year (EC) <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
@@ -590,14 +616,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Entry Year <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
@@ -608,14 +636,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Sponsored By
                                     </label>
                                     <input
@@ -626,14 +656,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Examination ID
                                     </label>
                                     <input
@@ -644,14 +676,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Admission Date <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
@@ -661,14 +695,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Checked-In Date
                                     </label>
                                     <input
@@ -678,14 +714,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         National Exam Result
                                     </label>
                                     <input
@@ -696,7 +734,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
@@ -714,7 +754,7 @@ const ApplicationFormWrapper = () => {
                             </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         School Name <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
@@ -725,14 +765,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Region
                                     </label>
                                     <input
@@ -743,14 +785,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         City
                                     </label>
                                     <input
@@ -761,14 +805,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Zone
                                     </label>
                                     <input
@@ -779,14 +825,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         School Type <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <select 
@@ -795,7 +843,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
@@ -806,7 +856,7 @@ const ApplicationFormWrapper = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Woreda
                                     </label>
                                     <input
@@ -817,14 +867,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div style={{ gridColumn: 'span 2' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Attended Year (From - To E.C)
                                     </label>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -836,7 +888,9 @@ const ApplicationFormWrapper = () => {
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
-                                                border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                                 borderRadius: '8px',
                                                 fontSize: '0.95rem'
                                             }}
@@ -849,7 +903,9 @@ const ApplicationFormWrapper = () => {
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
-                                                border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                                 borderRadius: '8px',
                                                 fontSize: '0.95rem'
                                             }}
@@ -868,7 +924,7 @@ const ApplicationFormWrapper = () => {
                             </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Nationality <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
@@ -879,14 +935,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Region <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
@@ -897,14 +955,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Zone
                                     </label>
                                     <input
@@ -915,14 +975,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Woreda (district)
                                     </label>
                                     <input
@@ -933,14 +995,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Kebele
                                     </label>
                                     <input
@@ -951,14 +1015,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Mother Name
                                     </label>
                                     <input
@@ -969,14 +1035,16 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
                                         Family Phone Number
                                     </label>
                                     <input
@@ -987,7 +1055,9 @@ const ApplicationFormWrapper = () => {
                                         style={{
                                             width: '100%',
                                             padding: '0.75rem',
-                                            border: '2px solid #e5e7eb',
+                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                            color: isDarkMode ? '#ffffff' : '#111827',
+                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                             borderRadius: '8px',
                                             fontSize: '0.95rem'
                                         }}
@@ -1075,7 +1145,7 @@ const ApplicationFormWrapper = () => {
                                     padding: '0.75rem',
                                     background: 'white',
                                     color: '#64748b',
-                                    border: '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontWeight: 600,
                                     cursor: 'pointer'
@@ -1123,3 +1193,4 @@ const ApplicationFormWrapper = () => {
 };
 
 export default ApplicationFormWrapper;
+

@@ -75,7 +75,7 @@ const ReportIssueWrapper = () => {
             height: 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: isDarkMode ? '#111827' : '#f8f9fa',
+            backgroundColor: isDarkMode ? '#0f172a' : '#f8f9fa',
             overflow: 'hidden',
             transition: 'background-color 0.3s ease'
         }}>
@@ -137,7 +137,7 @@ const ReportIssueWrapper = () => {
 
             {/* Report Form */}
             <div style={{
-                background: isDarkMode ? '#1f2937' : 'white',
+                background: isDarkMode ? '#1e293b' : 'white',
                 borderRadius: '16px',
                 maxWidth: '500px',
                 width: '100%',
@@ -169,7 +169,7 @@ const ReportIssueWrapper = () => {
                                 display: 'block', 
                                 marginBottom: '0.4rem', 
                                 fontWeight: 600, 
-                                color: isDarkMode ? '#d1d5db' : '#1e293b',
+                                color: isDarkMode ? '#ffffff' : '#1e293b',
                                 fontSize: '0.875rem',
                                 transition: 'color 0.3s ease'
                             }}>
@@ -183,11 +183,11 @@ const ReportIssueWrapper = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem',
-                                    border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontSize: '0.875rem',
-                                    backgroundColor: isDarkMode ? '#111827' : 'white',
-                                    color: isDarkMode ? '#f3f4f6' : '#111827',
+                                    backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                    color: isDarkMode ? '#ffffff' : '#111827',
                                     transition: 'all 0.3s ease'
                                 }}
                             />
@@ -199,7 +199,7 @@ const ReportIssueWrapper = () => {
                                 display: 'block', 
                                 marginBottom: '0.4rem', 
                                 fontWeight: 600, 
-                                color: isDarkMode ? '#d1d5db' : '#1e293b',
+                                color: isDarkMode ? '#ffffff' : '#1e293b',
                                 fontSize: '0.875rem',
                                 transition: 'color 0.3s ease'
                             }}>
@@ -213,11 +213,11 @@ const ReportIssueWrapper = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem',
-                                    border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontSize: '0.875rem',
-                                    backgroundColor: isDarkMode ? '#111827' : 'white',
-                                    color: isDarkMode ? '#f3f4f6' : '#111827',
+                                    backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                    color: isDarkMode ? '#ffffff' : '#111827',
                                     transition: 'all 0.3s ease'
                                 }}
                             />
@@ -229,7 +229,7 @@ const ReportIssueWrapper = () => {
                                 display: 'block', 
                                 marginBottom: '0.4rem', 
                                 fontWeight: 600, 
-                                color: isDarkMode ? '#d1d5db' : '#1e293b',
+                                color: isDarkMode ? '#ffffff' : '#1e293b',
                                 fontSize: '0.875rem',
                                 transition: 'color 0.3s ease'
                             }}>
@@ -243,13 +243,13 @@ const ReportIssueWrapper = () => {
                                 style={{
                                     width: '100%',
                                     padding: '0.6rem',
-                                    border: isDarkMode ? '2px solid #374151' : '2px solid #e5e7eb',
+                                    border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                     borderRadius: '8px',
                                     fontSize: '0.875rem',
                                     resize: 'none',
                                     fontFamily: 'inherit',
-                                    backgroundColor: isDarkMode ? '#111827' : 'white',
-                                    color: isDarkMode ? '#f3f4f6' : '#111827',
+                                    backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                    color: isDarkMode ? '#ffffff' : '#111827',
                                     transition: 'all 0.3s ease'
                                 }}
                             />
@@ -260,7 +260,7 @@ const ReportIssueWrapper = () => {
                 {/* Footer */}
                 <div style={{
                     padding: '1rem 1.5rem',
-                    borderTop: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+                    borderTop: isDarkMode ? '1px solid #475569' : '1px solid #e5e7eb',
                     display: 'flex',
                     gap: '0.75rem',
                     justifyContent: 'flex-end',
@@ -277,9 +277,9 @@ const ReportIssueWrapper = () => {
                         disabled={submittingReport}
                         style={{
                             padding: '0.6rem 1.25rem',
-                            background: isDarkMode ? '#374151' : 'white',
-                            color: isDarkMode ? '#d1d5db' : '#64748b',
-                            border: isDarkMode ? '2px solid #4b5563' : '2px solid #e5e7eb',
+                            background: isDarkMode ? '#475569' : 'white',
+                            color: isDarkMode ? '#ffffff' : '#64748b',
+                            border: isDarkMode ? '2px solid #64748b' : '2px solid #e5e7eb',
                             borderRadius: '8px',
                             cursor: submittingReport ? 'not-allowed' : 'pointer',
                             fontWeight: 600,
