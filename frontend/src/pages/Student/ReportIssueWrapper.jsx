@@ -70,13 +70,20 @@ const ReportIssueWrapper = () => {
 
     return (
         <div style={{
-            minHeight: 'calc(100vh - 64px)',
-            backgroundColor: '#f8f9fa',
-            padding: '2rem 1rem',
+            height: 'calc(100vh - 81px)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            flexDirection: 'column',
+            backgroundColor: '#f8f9fa',
+            overflow: 'hidden'
         }}>
+            <div style={{
+                flex: 1,
+                padding: '2rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'auto'
+            }}>
             {/* Notification */}
             {notification && (
                 <div style={{
@@ -312,6 +319,20 @@ const ReportIssueWrapper = () => {
                     to { transform: rotate(360deg); }
                 }
             `}</style>
+            </div>
+            
+            {/* Footer */}
+            <footer style={{
+                backgroundColor: '#1e3a5f',
+                color: '#ffffff',
+                textAlign: 'center',
+                padding: '1rem',
+                fontSize: '0.875rem',
+                borderTop: '1px solid #2d4a6f',
+                flexShrink: 0
+            }}>
+                Copyright © 2026 Oda Bultum University. All rights reserved.
+            </footer>
         </div>
     );
 };
