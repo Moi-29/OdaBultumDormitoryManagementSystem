@@ -5,11 +5,8 @@ const GuidelinesSection = lazy(() => import("../../components/home/GuidelinesSec
 const StudentUnionSection = lazy(() => import("../../components/home/StudentUnionSection"));
 const DiversitySection = lazy(() => import("../../components/home/DiversitySection"));
 const CafeteriaSection = lazy(() => import("../../components/home/CafeteriaSection"));
-const DiningSection = lazy(() => import("../../components/home/DiningSection"));
 const CleanWaterSection = lazy(() => import("../../components/home/CleanWaterSection"));
 const HealthCenterSection = lazy(() => import("../../components/home/HealthCenterSection"));
-const DormitorySection = lazy(() => import("../../components/home/DormitorySection"));
-const MealCardSection = lazy(() => import("../../components/home/MealCardSection"));
 const Footer = lazy(() => import("../../components/home/Footer"));
 
 const SectionLoader = () => (
@@ -28,11 +25,8 @@ const Home = () => {
           <StudentUnionSection />
           <DiversitySection />
           <CafeteriaSection />
-          <DiningSection />
           <CleanWaterSection />
           <HealthCenterSection />
-          <DormitorySection />
-          <MealCardSection />
           <Footer />
         </Suspense>
       </main>

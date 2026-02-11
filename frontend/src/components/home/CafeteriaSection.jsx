@@ -74,16 +74,7 @@ const CafeteriaSection = () => {
                   {meal.time}
                 </div>
                 <p className="text-muted-foreground font-body text-sm mb-4">{meal.desc}</p>
-                <div className="border-t border-border pt-4">
-                  <p className="text-xs font-body text-muted-foreground mb-2 uppercase tracking-wider">Sample Menu</p>
-                  <div className="flex flex-wrap gap-2">
-                    {meal.samples.map((s, j) => (
-                      <span key={j} className={`px-3 py-1 rounded-full text-xs font-body ${meal.bgClass} ${meal.borderClass} border text-foreground/80`}>
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+
               </motion.div>
             );
           })}

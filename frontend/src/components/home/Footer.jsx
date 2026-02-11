@@ -1,37 +1,11 @@
 import { motion } from "framer-motion";
-import { ArrowUp, Building2, FileText, AlertCircle, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowUp, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <footer className="relative overflow-hidden">
-      {/* Quick actions */}
-      <div className="indigo-gradient py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-wrap justify-center gap-4">
-            {[
-              { icon: Building2, label: "View Dormitory" },
-              { icon: FileText, label: "Apply Now" },
-              { icon: AlertCircle, label: "Report Issue" },
-            ].map((action, i) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={i}
-                  className="flex items-center gap-2 px-6 py-3 rounded-full
-                    bg-white/10 border border-white/20 text-gold-light font-body text-sm
-                    hover:bg-white/20 transition-all duration-300 hover:scale-105"
-                >
-                  <Icon className="w-4 h-4" />
-                  {action.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Main footer */}
       <div className="bg-foreground/95 text-white/70 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">

@@ -43,20 +43,7 @@ const HeroSection = () => {
           className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-5xl leading-tight"
         >
           <span className="gold-text">Welcome to OBU Student Services</span>
-          <br />
-          <span className="text-white/90 text-xl sm:text-2xl md:text-3xl font-body font-light mt-2 block">
-            Your Home Away From Home
-          </span>
         </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="text-white/80 font-body text-lg md:text-xl mt-6"
-        >
-          Hi, <span className="text-gold font-semibold">Student</span> 👋
-        </motion.p>
 
         <motion.button
           initial={{ opacity: 0, y: 20 }}

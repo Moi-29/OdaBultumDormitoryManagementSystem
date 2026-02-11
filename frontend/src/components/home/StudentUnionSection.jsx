@@ -82,17 +82,7 @@ const StudentUnionSection = () => {
           })}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 1 }}
-          className="text-center mt-10"
-        >
-          <button className="px-8 py-3 rounded-full font-body font-semibold text-sm
-            indigo-gradient text-gold-light hover:scale-105 transition-transform duration-300 shadow-lg">
-            Join the Union
-          </button>
-        </motion.div>
+
       </div>
     </SectionWrapper>
   );

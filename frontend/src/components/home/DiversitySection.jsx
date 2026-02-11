@@ -78,16 +78,7 @@ const DiversitySection = () => {
           })}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full glass-card text-muted-foreground font-body text-sm"
-        >
-          <Globe className="w-4 h-4 text-emerald" />
-          Building a campus where every culture is celebrated
-          <Heart className="w-4 h-4 text-destructive" />
-        </motion.div>
+
       </div>
     </SectionWrapper>
   );
