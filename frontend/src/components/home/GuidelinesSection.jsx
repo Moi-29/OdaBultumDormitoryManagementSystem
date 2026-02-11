@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { BookOpen, Shield, Home, GraduationCap, Scale, AlertTriangle, UserX, Users, Ban, FileX } from "lucide-react";
@@ -80,6 +81,7 @@ const GuidelinesSection = () => {
   const { isDarkMode } = useTheme();
   const { language } = useLanguage();
   const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+  const [showAll, setShowAll] = useState(false);
 
   const guidelines = [
     {
@@ -256,23 +258,6 @@ const GuidelinesSection = () => {
           >
             {showAll ? t('showLess') : t('showMore')}
           </button>
-        </motion.div>
-
-        {/* Bottom Status */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center mt-16"
-        >
-          <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 shadow-lg" style={{
-            backgroundColor: isDarkMode ? '#1e293b' : '#f3f4f6',
-            borderColor: isDarkMode ? '#475569' : '#e5e7eb',
-            transition: 'all 0.3s ease'
-          }}>
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="font-semibold" style={{ color: isDarkMode ? '#ffffff' : '#374151', transition: 'color 0.3s ease' }}>{t('allGuidelinesEnforced')}</span>
-          </div>
         </motion.div>
       </div>
     </SectionWrapper>

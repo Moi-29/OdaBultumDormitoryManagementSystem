@@ -43,7 +43,7 @@ const CafeteriaSection = () => {
   ];
 
   return (
-    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
+    <SectionWrapper className={`py-20 md:py-28 ${isDarkMode ? 'dark' : ''}`} style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -71,12 +71,12 @@ const CafeteriaSection = () => {
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${meal.color} flex items-center justify-center mb-4`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="font-display text-2xl text-foreground mb-1">{meal.title}</h3>
-                <div className="flex items-center gap-2 text-muted-foreground font-body text-sm mb-3">
+                <h3 className="font-display text-2xl mb-1" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{meal.title}</h3>
+                <div className="flex items-center gap-2 font-body text-sm mb-3" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
                   <Clock className="w-4 h-4" />
                   {meal.time}
                 </div>
-                <p className="text-muted-foreground font-body text-sm mb-4">{meal.desc}</p>
+                <p className="font-body text-sm mb-4" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>{meal.desc}</p>
 
               </motion.div>
             );

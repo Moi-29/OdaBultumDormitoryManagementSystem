@@ -15,7 +15,7 @@ const CleanWaterSection = () => {
   const features = [t('filtered'), t('testedDaily'), t('access247')];
 
   return (
-    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
+    <SectionWrapper className={`py-20 md:py-28 ${isDarkMode ? 'dark' : ''}`} style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f9fafb', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-4xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -51,7 +51,8 @@ const CleanWaterSection = () => {
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.6 + i * 0.15 }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full font-body text-sm
-                  bg-emerald/10 border border-emerald/20 text-foreground"
+                  bg-emerald/10 border border-emerald/20"
+                style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}
               >
                 <CheckCircle className="w-4 h-4 text-emerald" />
                 {f}

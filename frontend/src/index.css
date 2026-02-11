@@ -82,6 +82,9 @@
     @apply bg-white/80 backdrop-blur-lg border border-white/40 shadow-lg shadow-black/5;
     border-radius: 1.5rem;
   }
+  .dark .glass-card {
+    @apply bg-slate-800/90 backdrop-blur-lg border border-slate-700/50 shadow-lg shadow-black/20;
+  }
   .gold-text {
     background: linear-gradient(135deg, hsl(43, 72%, 52%), hsl(43, 90%, 70%), hsl(43, 72%, 52%));
     -webkit-background-clip: text;

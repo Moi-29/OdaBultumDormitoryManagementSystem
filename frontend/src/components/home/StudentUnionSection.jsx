@@ -27,7 +27,7 @@ const StudentUnionSection = () => {
   ];
 
   return (
-    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
+    <SectionWrapper className={`py-20 md:py-28 ${isDarkMode ? 'dark' : ''}`} style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -56,10 +56,10 @@ const StudentUnionSection = () => {
                 <div className="w-14 h-14 rounded-2xl indigo-gradient flex items-center justify-center mx-auto mb-4">
                   <Icon className="w-7 h-7 text-gold-light" />
                 </div>
-                <div className="font-display text-4xl md:text-5xl text-primary mb-1">
+                <div className="font-display text-4xl md:text-5xl mb-1" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>
                   <AnimatedCounter end={stat.value} suffix={stat.suffix} decimals={stat.decimals || 0} />
                 </div>
-                <p className="text-muted-foreground font-body text-sm">{stat.label}</p>
+                <p className="font-body text-sm" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>{stat.label}</p>
               </motion.div>
             );
           })}
@@ -81,8 +81,8 @@ const StudentUnionSection = () => {
                   group-hover:scale-110 transition-transform duration-300">
                   <Icon className="w-6 h-6 text-gold-light" />
                 </div>
-                <h4 className="font-display text-lg text-foreground mb-1">{v.title}</h4>
-                <p className="text-muted-foreground font-body text-sm">{v.desc}</p>
+                <h4 className="font-display text-lg mb-1" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{v.title}</h4>
+                <p className="font-body text-sm" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>{v.desc}</p>
               </motion.div>
             );
           })}

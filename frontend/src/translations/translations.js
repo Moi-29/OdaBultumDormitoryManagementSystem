@@ -683,6 +683,14 @@ export const homeTranslations = {
     heroSubtitle: "ኦዳ ቡልቱም ዩኒቨርሲቲ — የተማሪ አገልግሎቶች",
     heroTitle: "ወደ ኦዳ ቡልቱም ዩኒቨርሲቲ የተማሪ አገልግሎቶች እንኳን በደህና መጡ",
     
+    // Welcome Section (Amharic)
+    welcomeSectionTitlePart1: "አቶ ለሊሳ",
+    welcomeSectionTitlePart2: "ሻምሴዲን",
+    welcomeSectionDescription: "ራሱን የሰጠ የአስተዳደር መሪ፣ አቶ ለሊሳ ሻምሴዲን በተማሪዎች ላይ ያተኮሩ ስራዎችን አጠቃላይ አስተዳደር ኃላፊነት አለባቸው። የእሱ ሚና የተማሪዎችን ልምድ ለማሻሻል የተነደፉ አስፈላጊ አገልግሎቶችን ከፍተኛ ደረጃ ማስተባበርን ያካትታል። በእሱ አመራር ስር ዳይሬክቶሬቱ በስራ ቅልጥፍና፣ በተማሪዎች ድጋፍ እና ደማቅ እና አካታች የዩኒቨርሲቲ ባህልን በማዳበር ላይ ያተኩራል።",
+    learnMore: "ተጨማሪ ይወቁ",
+    showMore: "ተጨማሪ አሳይ",
+    showLess: "ያነሰ አሳይ",
+    
     // Guidelines Section
     guidelinesTitle: "የዲሲፕሊን እና የካምፓስ መመሪያዎች",
     guidelinesSubtitle: "የካምፓስ ህይወት",

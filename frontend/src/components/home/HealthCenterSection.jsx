@@ -20,7 +20,7 @@ const HealthCenterSection = () => {
   ];
 
   return (
-    <SectionWrapper className="py-20 md:py-28" style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
+    <SectionWrapper className={`py-20 md:py-28 ${isDarkMode ? 'dark' : ''}`} style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -43,18 +43,18 @@ const HealthCenterSection = () => {
               <div className="w-12 h-12 rounded-xl indigo-gradient flex items-center justify-center">
                 <Stethoscope className="w-6 h-6 text-gold-light" />
               </div>
-              <h3 className="font-display text-xl text-foreground">{t('campusClinic')}</h3>
+              <h3 className="font-display text-xl" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{t('campusClinic')}</h3>
             </div>
-            <p className="text-muted-foreground font-body mb-6">
+            <p className="font-body mb-6" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
               {t('healthCenterDesc')}
             </p>
 
             <div className="flex flex-wrap gap-3 mb-6">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/20 text-sm font-body text-foreground pulse-gold">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/20 text-sm font-body pulse-gold" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>
                 <Phone className="w-4 h-4 text-destructive" />
                 {t('emergency247')}
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald/10 border border-emerald/20 text-sm font-body text-foreground">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald/10 border border-emerald/20 text-sm font-body" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>
                 <Clock className="w-4 h-4 text-emerald" />
                 {t('regularHours')}
               </div>
@@ -62,7 +62,7 @@ const HealthCenterSection = () => {
 
             <div className="space-y-2">
               {[t('freeConsultations'), t('qualifiedProfessionals'), t('hospitalReferral')].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm font-body text-muted-foreground">
+                <div key={i} className="flex items-center gap-2 text-sm font-body" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
                   <CheckCircle className="w-4 h-4 text-emerald shrink-0" />
                   {item}
                 </div>
@@ -85,7 +85,7 @@ const HealthCenterSection = () => {
                   <div className="w-12 h-12 rounded-xl emerald-gradient flex items-center justify-center mx-auto mb-3">
                     <Icon className="w-6 h-6 text-white" />
                   </div>
-                  <p className="font-body text-sm text-foreground font-medium">{s.label}</p>
+                  <p className="font-body text-sm font-medium" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>{s.label}</p>
                 </motion.div>
               );
             })}
