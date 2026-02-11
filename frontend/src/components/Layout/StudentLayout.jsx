@@ -151,24 +151,35 @@ const StudentLayout = () => {
                         position: 'fixed',
                         top: '1rem',
                         left: '1rem',
-                        background: 'white',
+                        background: '#1e3a5f',
                         border: 'none',
                         cursor: 'pointer',
-                        padding: '0.5rem',
+                        padding: '0.75rem',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        gap: '0.35rem',
                         borderRadius: '8px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                         zIndex: 1003,
-                        color: '#333'
+                        width: '48px',
+                        height: '48px'
                     }}
                 >
-                    {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                    {sidebarOpen ? (
+                        <X size={24} color="white" />
+                    ) : (
+                        <>
+                            <div style={{ width: '28px', height: '4px', backgroundColor: '#4ade80', borderRadius: '2px' }}></div>
+                            <div style={{ width: '28px', height: '4px', backgroundColor: '#4ade80', borderRadius: '2px' }}></div>
+                            <div style={{ width: '28px', height: '4px', backgroundColor: '#4ade80', borderRadius: '2px' }}></div>
+                        </>
+                    )}
                 </button>
             )}
 
-            {/* Clean White Sidebar */}
+            {/* Dark Blue Sidebar */}
             <aside
                 style={{
                     position: 'fixed',
@@ -177,7 +188,7 @@ const StudentLayout = () => {
                     bottom: 0,
                     width: '260px',
                     maxWidth: isDesktop ? '260px' : '85vw',
-                    background: 'white',
+                    background: '#1e3a5f',
                     boxShadow: '10px 0 40px rgba(0, 0, 0, 0.25), 20px 0 80px rgba(0, 0, 0, 0.2)',
                     transform: isDesktop ? 'translateX(0)' : (sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'),
                     transition: 'transform 0.3s ease',
@@ -193,7 +204,7 @@ const StudentLayout = () => {
                 {/* Sidebar Header */}
                 <div style={{
                     padding: '1.75rem 1.25rem',
-                    borderBottom: '1px solid #e5e7eb',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.875rem',
@@ -209,7 +220,7 @@ const StudentLayout = () => {
                         flexShrink: 0,
                         overflow: 'hidden',
                         background: 'white',
-                        border: '1px solid #e5e7eb'
+                        border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}>
                         <img 
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-dYS7xdf-tgxWKo0y5i_CyKO0g_tyreDHqg&s"
@@ -226,7 +237,7 @@ const StudentLayout = () => {
                             margin: 0,
                             fontSize: '1rem',
                             fontWeight: 600,
-                            color: '#111',
+                            color: 'white',
                             lineHeight: 1.3,
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
@@ -237,7 +248,7 @@ const StudentLayout = () => {
                         <p style={{
                             margin: 0,
                             fontSize: '0.75rem',
-                            color: '#6b7280',
+                            color: 'rgba(255, 255, 255, 0.7)',
                             lineHeight: 1.3,
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
@@ -269,13 +280,13 @@ const StudentLayout = () => {
                                     alignItems: 'center',
                                     gap: '1rem',
                                     padding: '0.875rem 1.25rem',
-                                    background: isActive ? '#3b82f6' : 'transparent',
+                                    background: isActive ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
                                     border: 'none',
                                     borderRadius: '10px',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease',
                                     textAlign: 'left',
-                                    color: isActive ? 'white' : '#374151',
+                                    color: isActive ? '#60a5fa' : 'rgba(255, 255, 255, 0.8)',
                                     fontWeight: isActive ? 600 : 500,
                                     fontSize: '1rem',
                                     width: '100%',
@@ -283,14 +294,14 @@ const StudentLayout = () => {
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
-                                        e.currentTarget.style.background = '#e5e7eb';
-                                        e.currentTarget.style.color = '#111827';
+                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                                        e.currentTarget.style.color = 'white';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
                                     if (!isActive) {
                                         e.currentTarget.style.background = 'transparent';
-                                        e.currentTarget.style.color = '#374151';
+                                        e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
                                     }
                                 }}
                             >
@@ -304,11 +315,11 @@ const StudentLayout = () => {
                 {/* Sidebar Footer */}
                 <div style={{
                     padding: '0.875rem',
-                    borderTop: '1px solid #e5e7eb'
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
                     <div style={{
                         fontSize: '0.65rem',
-                        color: '#9ca3af',
+                        color: 'rgba(255, 255, 255, 0.5)',
                         textAlign: 'center',
                         lineHeight: 1.4
                     }}>
