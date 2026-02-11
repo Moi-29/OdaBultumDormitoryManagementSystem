@@ -85,9 +85,9 @@ const StudentLayout = () => {
                     </button>
                 )}
 
-                {/* Home Link with Gold Gradient */}
+                {/* Dashboard Link with Gold Gradient */}
                 <button
-                    onClick={() => navigate('/student/home')}
+                    onClick={() => navigate('/student/dormitory')}
                     style={{
                         background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                         border: 'none',
@@ -115,7 +115,7 @@ const StudentLayout = () => {
                     }}
                 >
                     <HomeIcon size={20} strokeWidth={2.5} />
-                    Home
+                    Dashboard
                 </button>
 
                 {/* Spacer */}
