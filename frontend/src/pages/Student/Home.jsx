@@ -7,6 +7,7 @@ const DiversitySection = lazy(() => import("../../components/home/DiversitySecti
 const CafeteriaSection = lazy(() => import("../../components/home/CafeteriaSection"));
 const CleanWaterSection = lazy(() => import("../../components/home/CleanWaterSection"));
 const HealthCenterSection = lazy(() => import("../../components/home/HealthCenterSection"));
+const GallerySection = lazy(() => import("../../components/home/GallerySection"));
 const Footer = lazy(() => import("../../components/home/Footer"));
 
 const SectionLoader = () => (
@@ -17,7 +18,7 @@ const SectionLoader = () => (
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" style={{ marginLeft: 0 }}>
       <main>
         <HeroSection />
         <Suspense fallback={<SectionLoader />}>
@@ -27,6 +28,7 @@ const Home = () => {
           <CafeteriaSection />
           <CleanWaterSection />
           <HealthCenterSection />
+          <GallerySection />
           <Footer />
         </Suspense>
       </main>

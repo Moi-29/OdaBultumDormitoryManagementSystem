@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import API_URL from '../config/api';
+import { getErrorMessage, logError } from '../utils/errorHandler';
 
 const AuthContext = createContext(null);
 
@@ -49,10 +50,11 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true, user: userData };
         } catch (error) {
-            console.error('Login error:', error);
+            logError('AuthContext.login', error);
+            const { message } = getErrorMessage(error);
             return {
                 success: false,
-                message: error.response?.data?.message || 'Login failed. Please try again.'
+                message: message
             };
         }
     };

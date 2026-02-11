@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Home as HomeIcon, Building2, FileText, AlertCircle } from 'lucide-react';
-import '../../styles/premiumAnimations.css';
+import { Menu, X, Home, Building2, FileText, AlertCircle } from 'lucide-react';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,70 +19,110 @@ const StudentLayout = () => {
     }, []);
 
     const navItems = [
-        { path: '/student/home', label: 'Home', icon: HomeIcon, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
-        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
-        { path: '/student/application', label: 'Application Form', icon: FileText, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
-        { path: '/student/report', label: 'Report Issue', icon: AlertCircle, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' }
+        { path: '/student/home', label: 'Home', icon: Home },
+        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2 },
+        { path: '/student/application', label: 'Application Form', icon: FileText },
+        { path: '/student/report', label: 'Report Issue', icon: AlertCircle }
     ];
 
     const handleNavigation = (path) => {
         navigate(path);
-        setSidebarOpen(false);
+        if (!isDesktop) {
+            setSidebarOpen(false);
+        }
     };
 
     return (
         <div style={{ 
             minHeight: '100vh', 
-            backgroundColor: '#f3f4f6',
-            display: 'flex',
-            flexDirection: 'column'
+            backgroundColor: '#f5f5f5',
+            display: 'flex'
         }}>
             {/* White Top Navbar */}
             <nav style={{
                 position: 'fixed',
                 top: 0,
-                left: isDesktop ? '280px' : 0,
+                left: isDesktop ? '260px' : 0,
                 right: 0,
-                height: '70px',
+                height: '81px',
                 background: 'white',
                 borderBottom: '1px solid #e5e7eb',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'space-between',
                 padding: '0 2rem',
-                gap: '1.5rem',
-                zIndex: 999,
-                transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                zIndex: 1000,
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.25), 0 20px 60px rgba(0, 0, 0, 0.2)',
+                transition: 'left 0.3s ease'
             }}>
-                {/* Hamburger Menu - Only visible on mobile */}
-                {!isDesktop && (
-                    <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        style={{
-                            background: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            padding: '0.65rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '10px',
-                            transition: 'all 0.3s ease',
-                            color: '#374151'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#f3f4f6';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                        }}
-                    >
-                        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                )}
+                {/* Left side - Empty or additional items */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem'
+                }}>
+                    {/* Add any left side items here */}
+                </div>
 
-                {/* Spacer */}
-                <div style={{ flex: 1 }} />
+                {/* Center - University Name */}
+                <div style={{
+                    position: isDesktop ? 'absolute' : 'relative',
+                    left: isDesktop ? '50%' : 'auto',
+                    transform: isDesktop ? 'translateX(-50%)' : 'none',
+                    fontSize: isDesktop ? '1.25rem' : '0.875rem',
+                    fontWeight: 700,
+                    color: '#111',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: isDesktop ? 'none' : '50%'
+                }}>
+                    ODA BULTUM UNIVERSITY
+                </div>
+
+                {/* Right side - Logo and User Info */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem'
+                }}>
+                    <img 
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-dYS7xdf-tgxWKo0y5i_CyKO0g_tyreDHqg&s"
+                        alt="OBU Logo"
+                        style={{
+                            width: '50px',
+                            height: '50px',
+                            borderRadius: '8px',
+                            objectFit: 'cover',
+                            border: '1px solid #e5e7eb'
+                        }}
+                    />
+                    {isDesktop && (
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start'
+                        }}>
+                            <div style={{
+                                fontSize: '0.875rem',
+                                fontWeight: 600,
+                                color: '#111',
+                                lineHeight: 1.3
+                            }}>
+                                Student Service
+                            </div>
+                            <div style={{
+                                fontSize: '0.75rem',
+                                color: '#6b7280',
+                                lineHeight: 1.3
+                            }}>
+                                student@example.com
+                            </div>
+                        </div>
+                    )}
+                </div>
             </nav>
 
             {/* Sidebar Overlay - Only on mobile */}
@@ -104,63 +143,105 @@ const StudentLayout = () => {
                 />
             )}
 
-            {/* White Sidebar */}
+            {/* Hamburger Menu Button - Mobile Only */}
+            {!isDesktop && (
+                <button
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    style={{
+                        position: 'fixed',
+                        top: '1rem',
+                        left: '1rem',
+                        background: 'white',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '0.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        zIndex: 1003,
+                        color: '#333'
+                    }}
+                >
+                    {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            )}
+
+            {/* Clean White Sidebar */}
             <aside
                 style={{
                     position: 'fixed',
                     top: 0,
                     left: 0,
                     bottom: 0,
-                    width: '280px',
-                    maxWidth: isDesktop ? '280px' : '85vw',
+                    width: '260px',
+                    maxWidth: isDesktop ? '260px' : '85vw',
                     background: 'white',
-                    boxShadow: isDesktop ? '1px 0 3px rgba(0, 0, 0, 0.1)' : '4px 0 32px rgba(0, 0, 0, 0.2)',
+                    boxShadow: '10px 0 40px rgba(0, 0, 0, 0.25), 20px 0 80px rgba(0, 0, 0, 0.2)',
                     transform: isDesktop ? 'translateX(0)' : (sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'),
-                    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'transform 0.3s ease',
                     zIndex: 1002,
                     display: 'flex',
                     flexDirection: 'column',
                     overflowY: 'auto',
-                    borderRight: '1px solid #e5e7eb'
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none'
                 }}
+                className="hide-scrollbar"
             >
                 {/* Sidebar Header */}
                 <div style={{
-                    height: '70px',
-                    padding: '0 1.5rem',
+                    padding: '1.75rem 1.25rem',
                     borderBottom: '1px solid #e5e7eb',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '1rem',
+                    gap: '0.875rem',
                     flexShrink: 0
                 }}>
                     <div style={{
-                        width: '48px',
-                        height: '48px',
-                        background: '#f3f4f6',
-                        borderRadius: '12px',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '6px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        overflow: 'hidden',
+                        background: 'white',
+                        border: '1px solid #e5e7eb'
                     }}>
-                        <Building2 size={26} color="#374151" strokeWidth={2.5} />
+                        <img 
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-dYS7xdf-tgxWKo0y5i_CyKO0g_tyreDHqg&s"
+                            alt="OBU Logo"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                            }}
+                        />
                     </div>
-                    <div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                         <h2 style={{
                             margin: 0,
-                            fontSize: '1.15rem',
-                            fontWeight: 700,
-                            color: '#111827',
-                            lineHeight: 1.2
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            color: '#111',
+                            lineHeight: 1.3,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
                         }}>
-                            Student Portal
+                            Student Service
                         </h2>
                         <p style={{
                             margin: 0,
                             fontSize: '0.75rem',
                             color: '#6b7280',
-                            lineHeight: 1.2,
-                            fontWeight: 500
+                            lineHeight: 1.3,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
                         }}>
                             Oda Bultum University
                         </p>
@@ -170,10 +251,10 @@ const StudentLayout = () => {
                 {/* Navigation Items */}
                 <nav style={{ 
                     flex: 1, 
-                    padding: '1.5rem 0',
+                    padding: '1rem 0.75rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.25rem'
+                    gap: '0.375rem'
                 }}>
                     {navItems.map((item) => {
                         const Icon = item.icon;
@@ -186,32 +267,34 @@ const StudentLayout = () => {
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '0.75rem',
-                                    padding: '0.75rem 1.5rem',
-                                    margin: '0 0.75rem',
+                                    gap: '1rem',
+                                    padding: '0.875rem 1.25rem',
                                     background: isActive ? '#3b82f6' : 'transparent',
                                     border: 'none',
-                                    borderRadius: '8px',
+                                    borderRadius: '10px',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease',
                                     textAlign: 'left',
                                     color: isActive ? 'white' : '#374151',
-                                    fontWeight: isActive ? 500 : 400,
-                                    fontSize: '0.875rem',
-                                    width: 'calc(100% - 1.5rem)'
+                                    fontWeight: isActive ? 600 : 500,
+                                    fontSize: '1rem',
+                                    width: '100%',
+                                    letterSpacing: '0.01em'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
-                                        e.currentTarget.style.background = '#f9fafb';
+                                        e.currentTarget.style.background = '#e5e7eb';
+                                        e.currentTarget.style.color = '#111827';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
                                     if (!isActive) {
                                         e.currentTarget.style.background = 'transparent';
+                                        e.currentTarget.style.color = '#374151';
                                     }
                                 }}
                             >
-                                <Icon size={20} strokeWidth={2} />
+                                <Icon size={20} strokeWidth={2.5} />
                                 <span>{item.label}</span>
                             </button>
                         );
@@ -220,14 +303,14 @@ const StudentLayout = () => {
 
                 {/* Sidebar Footer */}
                 <div style={{
-                    padding: '1.5rem',
+                    padding: '0.875rem',
                     borderTop: '1px solid #e5e7eb'
                 }}>
                     <div style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.65rem',
                         color: '#9ca3af',
                         textAlign: 'center',
-                        fontWeight: 500
+                        lineHeight: 1.4
                     }}>
                         © 2026 Oda Bultum University
                     </div>
@@ -236,12 +319,13 @@ const StudentLayout = () => {
 
             {/* Main Content Area */}
             <main style={{
-                marginTop: '70px',
-                marginLeft: isDesktop ? '280px' : 0,
-                minHeight: 'calc(100vh - 70px)',
+                marginLeft: isDesktop ? '260px' : 0,
+                marginTop: '81px',
+                minHeight: 'calc(100vh - 81px)',
+                width: isDesktop ? 'calc(100% - 260px)' : '100%',
                 position: 'relative',
-                transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                background: '#f3f4f6'
+                transition: 'margin-left 0.3s ease',
+                background: '#f5f5f5'
             }}>
                 <Outlet />
             </main>
@@ -251,6 +335,36 @@ const StudentLayout = () => {
                 @keyframes fadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
+                }
+                
+                /* Hide scrollbar for Chrome, Safari and Opera */
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                
+                /* Hide scrollbar for IE, Edge and Firefox */
+                .hide-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                
+                /* Hide scrollbar globally */
+                body::-webkit-scrollbar {
+                    display: none;
+                }
+                
+                body {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                
+                * {
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                }
+                
+                *::-webkit-scrollbar {
+                    display: none;
                 }
             `}</style>
         </div>

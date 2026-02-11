@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import heroImg from "../../assets/hero-campus.jpg";
+import heroImg from "../../assets/Hero-Section.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full h-[90vh] min-h-[600px] overflow-hidden">
+    <section className="relative w-full h-[calc(100vh-81px)] overflow-hidden">
       {/* Parallax background */}
       <motion.div
         className="absolute inset-0"

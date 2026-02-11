@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, User, LogIn, Shield, Wrench, UserCheck } from 'lucide-react';
+import { getErrorMessage, logError } from '../../utils/errorHandler';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '', role: 'admin' });
@@ -47,8 +48,9 @@ const Login = () => {
                 setError(result.message);
             }
         } catch (error) {
-            console.error('Login error:', error);
-            setError('An unexpected error occurred. Please try again.');
+            logError('Login', error);
+            const { message } = getErrorMessage(error);
+            setError(message);
         } finally {
             setIsLoading(false);
         }
