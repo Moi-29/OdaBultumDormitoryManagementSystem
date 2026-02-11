@@ -454,3 +454,225 @@ html {
     transform: translateX(0);
   }
 }
+
+/* ========================================
+   LUXURY HOME PAGE THEME STYLES
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --background: 0 0% 98%;
+  --foreground: 0 0% 10%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+
+  --primary: 262 85% 34%;
+  --primary-foreground: 45 54% 80%;
+
+  --secondary: 190 72% 21%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 8% 46%;
+
+  --accent: 43 72% 52%;
+  --accent-foreground: 0 0% 10%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 262 85% 34%;
+
+  --radius: 0.75rem;
+
+  /* Custom tokens */
+  --gold: 43 72% 52%;
+  --gold-light: 43 80% 70%;
+  --gold-shimmer: 43 90% 85%;
+  --indigo: 262 85% 34%;
+  --indigo-light: 262 60% 55%;
+  --emerald: 190 72% 21%;
+  --emerald-light: 170 50% 40%;
+  --warm-bg: 40 33% 97%;
+  --cream: 39 50% 96%;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: 1.5rem;
+}
+
+.gold-text {
+  background: linear-gradient(135deg, hsl(43, 72%, 52%), hsl(43, 90%, 70%), hsl(43, 72%, 52%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-glow {
+  box-shadow: 0 0 30px hsl(43 72% 52% / 0.3), 0 0 60px hsl(43 72% 52% / 0.1);
+}
+
+.section-gradient {
+  background: linear-gradient(180deg, hsl(40, 33%, 97%) 0%, hsl(39, 50%, 96%) 100%);
+}
+
+.indigo-gradient {
+  background: linear-gradient(135deg, hsl(262, 85%, 34%), hsl(190, 72%, 21%));
+}
+
+.emerald-gradient {
+  background: linear-gradient(135deg, hsl(190, 72%, 21%), hsl(170, 50%, 40%));
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, hsl(43 90% 85% / 0.4), transparent);
+  animation: shimmer 3s infinite;
+}
+
+.water-wave {
+  animation: wave 3s ease-in-out infinite;
+}
+
+.pulse-gold {
+  animation: pulseGold 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  50% { transform: translateY(-5px) scaleX(1.02); }
+}
+
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(43 72% 52% / 0.4); }
+  50% { box-shadow: 0 0 0 12px hsl(43 72% 52% / 0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tailwind-like utility classes for Home page */
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.text-gold {
+  color: hsl(var(--gold));
+}
+
+.text-gold-light {
+  color: hsl(var(--gold-light));
+}
+
+.text-foreground {
+  color: hsl(var(--foreground));
+}
+
+.text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.text-primary {
+  color: hsl(var(--primary));
+}
+
+.text-emerald {
+  color: hsl(var(--emerald));
+}
+
+.text-destructive {
+  color: hsl(var(--destructive));
+}
+
+.bg-background {
+  background-color: hsl(var(--background));
+}
+
+.bg-gold\/10 {
+  background-color: hsl(var(--gold) / 0.1);
+}
+
+.bg-emerald\/10 {
+  background-color: hsl(var(--emerald) / 0.1);
+}
+
+.bg-primary\/10 {
+  background-color: hsl(var(--primary) / 0.1);
+}
+
+.bg-destructive\/10 {
+  background-color: hsl(var(--destructive) / 0.1);
+}
+
+.border-gold\/20 {
+  border-color: hsl(var(--gold) / 0.2);
+}
+
+.border-gold\/30 {
+  border-color: hsl(var(--gold) / 0.3);
+}
+
+.border-emerald\/20 {
+  border-color: hsl(var(--emerald) / 0.2);
+}
+
+.border-primary\/20 {
+  border-color: hsl(var(--primary) / 0.2);
+}
+
+.border-destructive\/20 {
+  border-color: hsl(var(--destructive) / 0.2);
+}
+
+.border-border {
+  border-color: hsl(var(--border));
+}
+
+.fill-gold {
+  fill: hsl(var(--gold));
+}

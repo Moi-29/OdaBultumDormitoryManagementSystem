@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Auth/Login';
 import StudentPortal from './pages/StudentPortal';
 import StudentLayout from './components/Layout/StudentLayout';
+import Home from './pages/Student/Home';
 import DormitoryView from './pages/Student/DormitoryView';
 import ApplicationFormWrapper from './pages/Student/ApplicationFormWrapper';
 import ReportIssueWrapper from './pages/Student/ReportIssueWrapper';
@@ -69,13 +70,14 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Redirect root to student dormitory view */}
-          <Route path="/" element={<Navigate to="/student/dormitory" replace />} />
+          {/* Redirect root to student home */}
+          <Route path="/" element={<Navigate to="/student/home" replace />} />
           <Route path="/login" element={<Login />} />
 
           {/* Student Routes with Layout */}
           <Route path="/student" element={<StudentLayout />}>
-            <Route index element={<Navigate to="/student/dormitory" replace />} />
+            <Route index element={<Navigate to="/student/home" replace />} />
+            <Route path="home" element={<Home />} />
             <Route path="dormitory" element={<DormitoryView />} />
             <Route path="application" element={<ApplicationFormWrapper />} />
             <Route path="report" element={<ReportIssueWrapper />} />
