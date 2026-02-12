@@ -64,7 +64,7 @@ const requestSchema = new mongoose.Schema({
     
     status: {
         type: String,
-        enum: ['pending', 'in-progress', 'resolved', 'rejected'],
+        enum: ['pending', 'in-progress', 'resolved', 'rejected', 'approved'],
         default: 'pending'
     },
     priority: {
