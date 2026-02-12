@@ -122,9 +122,9 @@ const GallerySection = () => {
         background: isDarkMode 
           ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%)'
           : 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)',
-        paddingTop: isMobile ? '3rem' : '5rem',
-        paddingBottom: isMobile ? '5rem' : '5rem',
-        minHeight: isMobile ? '600px' : '700px'
+        paddingTop: '3rem',
+        paddingBottom: '5rem',
+        minHeight: '600px'
       }}
     >
       {/* Premium Background Pattern */}
@@ -144,7 +144,7 @@ const GallerySection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8 md:mb-16 px-4"
+          className="text-center mb-12 px-4"
         >
           <h2 style={{
             fontSize: isMobile ? '2rem' : '3rem',
@@ -156,7 +156,7 @@ const GallerySection = () => {
             fontFamily: 'Montserrat, sans-serif',
             textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
           }}>
-            OBU Gallery
+            OBU GALLERY
           </h2>
           <div style={{
             width: isMobile ? '80px' : '100px',
@@ -165,8 +165,8 @@ const GallerySection = () => {
             margin: '0 auto 1.5rem'
           }} />
           <p style={{
-            fontSize: isMobile ? '0.95rem' : '1.1rem',
-            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: isMobile ? '1rem' : '1.1rem',
+            color: 'rgba(255, 255, 255, 0.9)',
             maxWidth: '600px',
             margin: '0 auto',
             fontFamily: 'Montserrat, sans-serif',

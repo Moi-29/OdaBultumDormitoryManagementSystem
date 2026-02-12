@@ -27,7 +27,7 @@ const WelcomeSection = () => {
 
   return (
     <SectionWrapper 
-      className="relative py-20 md:py-28 overflow-hidden" 
+      className="relative py-12 md:py-28 overflow-hidden" 
       style={{ 
         backgroundColor: isDarkMode ? '#0f172a' : '#f5f5f0',
         transition: 'background-color 0.3s ease',
@@ -111,13 +111,13 @@ const WelcomeSection = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={inView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="relative z-20 rounded-full overflow-hidden"
+                className="relative z-20 rounded-full overflow-hidden mx-auto"
                 style={{
-                  width: isMobile ? '280px' : '380px',
-                  height: isMobile ? '280px' : '380px',
+                  width: isMobile ? '300px' : '380px',
+                  height: isMobile ? '300px' : '380px',
                   boxShadow: isDarkMode 
-                    ? '0 25px 70px rgba(0, 0, 0, 0.6), 0 15px 40px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4)'
-                    : '0 25px 70px rgba(0, 0, 0, 0.4), 0 15px 40px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.25)'
+                    ? '0 25px 70px rgba(0, 0, 0, 0.6), 0 15px 40px rgba(0, 0, 0, 0.5)'
+                    : '0 25px 70px rgba(0, 0, 0, 0.4), 0 15px 40px rgba(0, 0, 0, 0.3)'
                 }}
               >
                 <img
@@ -141,10 +141,10 @@ const WelcomeSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-center lg:text-left"
+              className="text-center lg:text-left px-4"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: isMobile ? '2rem' : '3.5rem',
+                fontSize: isMobile ? '2.25rem' : '3.5rem',
                 fontWeight: 600,
                 lineHeight: 1.3,
                 letterSpacing: '0.02em'
@@ -153,7 +153,7 @@ const WelcomeSection = () => {
               <span style={{ 
                 color: isDarkMode ? '#d4af37' : '#8B7355',
                 display: 'block',
-                marginBottom: '0.25rem'
+                marginBottom: '0.5rem'
               }}>
                 {t('welcomeSectionTitlePart1')}
               </span>
@@ -169,10 +169,10 @@ const WelcomeSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-center lg:text-justify"
+              className="text-center lg:text-justify px-4"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: isMobile ? '1rem' : '1.125rem',
+                fontSize: isMobile ? '1.125rem' : '1.125rem',
                 lineHeight: 1.8,
                 color: isDarkMode ? '#d1d5db' : '#4a4a4a',
                 transition: 'color 0.3s ease'
@@ -193,18 +193,18 @@ const WelcomeSection = () => {
           <h3 
             style={{
               fontFamily: "'Cinzel', serif",
-              fontSize: isMobile ? '0.95rem' : '2rem',
+              fontSize: isMobile ? '1.125rem' : '2rem',
               fontWeight: 400,
               color: isDarkMode ? '#d4af37' : '#8B7355',
-              letterSpacing: isMobile ? '0.15em' : '0.25em',
+              letterSpacing: isMobile ? '0.2em' : '0.25em',
               textTransform: 'uppercase',
               transition: 'all 0.3s ease',
               position: 'relative',
               display: 'inline-block',
-              padding: isMobile ? '0 1.5rem' : '0 3rem',
-              wordBreak: 'break-word',
+              padding: isMobile ? '0 2rem' : '0 3rem',
+              wordBreak: 'normal',
               maxWidth: '100%',
-              lineHeight: 1.5
+              lineHeight: 1.6
             }}
           >
             <span style={{

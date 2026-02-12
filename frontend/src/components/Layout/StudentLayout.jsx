@@ -123,17 +123,16 @@ const StudentLayout = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: isDesktop ? '0 2rem' : '0 1rem',
+                padding: isDesktop ? '0 2rem' : '0 1rem 0 5rem',
                 zIndex: 1000,
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s ease'
             }}>
-                {/* Left side - Hamburger, Theme Toggle & Language Selector */}
+                {/* Left side - Theme Toggle & Language Selector (Desktop also has Hamburger) */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: isDesktop ? '0.5rem' : '0.5rem',
-                    flex: isDesktop ? 'initial' : 1
+                    gap: '0.5rem'
                 }}>
                     {/* Desktop Hamburger Menu */}
                     {isDesktop && (
@@ -149,7 +148,9 @@ const StudentLayout = () => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 transition: 'all 0.3s ease',
-                                color: isDarkMode ? '#60a5fa' : '#3b82f6'
+                                color: isDarkMode ? '#60a5fa' : '#3b82f6',
+                                minWidth: '44px',
+                                minHeight: '44px'
                             }}
                             title={sidebarVisible ? 'Hide Sidebar' : 'Show Sidebar'}
                         >
@@ -157,7 +158,7 @@ const StudentLayout = () => {
                         </button>
                     )}
                     
-                    {/* Theme Toggle - Always visible */}
+                    {/* Theme Toggle - Always visible on both mobile and desktop */}
                     <button
                         onClick={toggleTheme}
                         style={{
@@ -172,15 +173,16 @@ const StudentLayout = () => {
                             transition: 'all 0.3s ease',
                             color: isDarkMode ? '#fbbf24' : '#f59e0b',
                             minWidth: '44px',
-                            minHeight: '44px'
+                            minHeight: '44px',
+                            flexShrink: 0
                         }}
                         title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                     >
                         {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
 
-                    {/* Language Selector - Always visible */}
-                    <div style={{ position: 'relative' }}>
+                    {/* Language Selector - Always visible on both mobile and desktop */}
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
                         <button
                             onClick={() => setShowLanguageMenu(!showLanguageMenu)}
                             style={{
