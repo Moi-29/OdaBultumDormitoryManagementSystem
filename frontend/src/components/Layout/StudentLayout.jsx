@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { X, Home, Building2, FileText, AlertCircle, Sun, Moon, Languages, Menu } from 'lucide-react';
+import { Home, Building2, FileText, AlertCircle, Sun, Moon, Menu } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { getTranslation } from '../../translations/translations';
@@ -370,7 +370,7 @@ const StudentLayout = () => {
                         position: 'fixed',
                         top: '0.75rem',
                         left: '0.75rem',
-                        background: sidebarOpen ? '#ef4444' : '#2d9f6e',
+                        background: '#2d9f6e',
                         border: 'none',
                         cursor: 'pointer',
                         padding: '0.625rem',
@@ -384,37 +384,30 @@ const StudentLayout = () => {
                         zIndex: 1003,
                         width: '48px',
                         height: '48px',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transform: sidebarOpen ? 'rotate(90deg)' : 'rotate(0deg)'
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                 >
-                    {sidebarOpen ? (
-                        <X size={24} color="white" strokeWidth={2.5} />
-                    ) : (
-                        <>
-                            <div style={{ 
-                                width: '24px', 
-                                height: '3px', 
-                                backgroundColor: 'white', 
-                                borderRadius: '2px',
-                                transition: 'all 0.3s ease'
-                            }}></div>
-                            <div style={{ 
-                                width: '24px', 
-                                height: '3px', 
-                                backgroundColor: 'white', 
-                                borderRadius: '2px',
-                                transition: 'all 0.3s ease'
-                            }}></div>
-                            <div style={{ 
-                                width: '24px', 
-                                height: '3px', 
-                                backgroundColor: 'white', 
-                                borderRadius: '2px',
-                                transition: 'all 0.3s ease'
-                            }}></div>
-                        </>
-                    )}
+                    <div style={{ 
+                        width: '24px', 
+                        height: '3px', 
+                        backgroundColor: 'white', 
+                        borderRadius: '2px',
+                        transition: 'all 0.3s ease'
+                    }}></div>
+                    <div style={{ 
+                        width: '24px', 
+                        height: '3px', 
+                        backgroundColor: 'white', 
+                        borderRadius: '2px',
+                        transition: 'all 0.3s ease'
+                    }}></div>
+                    <div style={{ 
+                        width: '24px', 
+                        height: '3px', 
+                        backgroundColor: 'white', 
+                        borderRadius: '2px',
+                        transition: 'all 0.3s ease'
+                    }}></div>
                 </button>
             )}
 
@@ -425,7 +418,7 @@ const StudentLayout = () => {
                     top: 0,
                     left: 0,
                     bottom: 0,
-                    width: isDesktop ? '260px' : 'min(85vw, 320px)',
+                    width: isDesktop ? '260px' : 'min(70vw, 280px)',
                     background: isDarkMode 
                         ? 'linear-gradient(180deg, #2d9f6e 0%, #27916a 50%, #238360 100%)'
                         : 'linear-gradient(180deg, #2d9f6e 0%, #27916a 50%, #238360 100%)',
