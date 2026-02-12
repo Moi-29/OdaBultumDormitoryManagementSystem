@@ -124,7 +124,10 @@ const GallerySection = () => {
           : 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)',
         paddingTop: '3rem',
         paddingBottom: '5rem',
-        minHeight: '600px'
+        minHeight: '600px',
+        WebkitOverflowScrolling: 'touch',
+        transform: 'translateZ(0)',
+        willChange: 'transform'
       }}
     >
       {/* Premium Background Pattern */}

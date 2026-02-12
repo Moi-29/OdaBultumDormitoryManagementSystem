@@ -31,7 +31,10 @@ const WelcomeSection = () => {
       style={{ 
         backgroundColor: isDarkMode ? '#0f172a' : '#f5f5f0',
         transition: 'background-color 0.3s ease',
-        position: 'relative'
+        position: 'relative',
+        WebkitOverflowScrolling: 'touch',
+        transform: 'translateZ(0)',
+        willChange: 'transform'
       }}
     >
       {/* Decorative Corner Lines - Hidden on mobile */}

@@ -611,7 +611,12 @@ const StudentLayout = () => {
                 width: isDesktop ? (sidebarVisible ? 'calc(100% - 260px)' : '100%') : '100%',
                 position: 'relative',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                background: isDarkMode ? '#0f172a' : '#f5f5f5'
+                background: isDarkMode ? '#0f172a' : '#f5f5f5',
+                WebkitOverflowScrolling: 'touch',
+                overflowY: 'auto',
+                overscrollBehavior: 'contain',
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden'
             }}>
                 <Outlet />
             </main>
@@ -621,6 +626,12 @@ const StudentLayout = () => {
                 @keyframes fadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
+                }
+                
+                /* Smooth scrolling for all browsers */
+                html {
+                    scroll-behavior: smooth;
+                    -webkit-overflow-scrolling: touch;
                 }
                 
                 /* Custom Scrollbar for Sidebar */
@@ -641,11 +652,6 @@ const StudentLayout = () => {
                     background: rgba(255, 255, 255, 0.3);
                 }
                 
-                /* Smooth scrolling */
-                html {
-                    scroll-behavior: smooth;
-                }
-                
                 /* Prevent text selection on buttons */
                 button {
                     -webkit-user-select: none;
@@ -664,9 +670,32 @@ const StudentLayout = () => {
                     box-sizing: border-box;
                 }
                 
-                /* Mobile viewport fix */
+                /* Mobile viewport optimizations */
                 @media (max-width: 767px) {
                     body {
+                        overflow-x: hidden;
+                        -webkit-overflow-scrolling: touch;
+                        overscroll-behavior-y: contain;
+                    }
+                    
+                    /* Smooth momentum scrolling */
+                    main {
+                        -webkit-overflow-scrolling: touch;
+                        overflow-y: auto;
+                        overscroll-behavior: contain;
+                    }
+                    
+                    /* Optimize animations for mobile */
+                    * {
+                        -webkit-backface-visibility: hidden;
+                        backface-visibility: hidden;
+                        -webkit-perspective: 1000;
+                        perspective: 1000;
+                    }
+                    
+                    /* Prevent horizontal scroll */
+                    html, body {
+                        max-width: 100vw;
                         overflow-x: hidden;
                     }
                 }
