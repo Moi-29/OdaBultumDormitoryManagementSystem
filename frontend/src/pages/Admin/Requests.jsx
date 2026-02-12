@@ -587,182 +587,334 @@ const Requests = () => {
                             </div>
                         )}
                     </div>
-                    {/* Premium Details Panel */}
+                    {/* Premium Chat-Style Panel */}
                     {showDetailsPanel && selectedRequest && (
                         <div style={{
                             flex: '0 0 38%',
-                            background: 'white',
-                            borderRadius: '20px',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                            border: '1px solid rgba(0,0,0,0.05)',
+                            background: 'linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%)',
+                            borderRadius: '24px',
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
                             display: 'flex',
                             flexDirection: 'column',
                             maxHeight: '800px',
                             animation: 'slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                             position: 'sticky',
-                            top: '2rem'
+                            top: '2rem',
+                            overflow: 'hidden'
                         }}>
-                            {/* Details Header */}
+                            {/* Chat Header */}
                             <div style={{
-                                background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)',
-                                padding: '1.5rem',
-                                borderRadius: '20px 20px 0 0',
-                                color: 'white'
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                padding: '1.25rem 1.5rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
                             }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>
-                                            {selectedRequest.studentName || 'Unknown Student'}
-                                        </h3>
-                                        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
-                                            {selectedRequest.studentId || 'N/A'} • {selectedRequest.currentRoom || 'N/A'}
-                                        </p>
+                                <div style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '50%',
+                                    background: 'linear-gradient(135deg, #00BFFF 0%, #0080FF 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontWeight: 700,
+                                    fontSize: '1.2rem',
+                                    boxShadow: '0 4px 12px rgba(0,191,255,0.4)',
+                                    border: '3px solid white'
+                                }}>
+                                    {selectedRequest.studentName ? selectedRequest.studentName.charAt(0).toUpperCase() : '?'}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'white' }}>
+                                        {selectedRequest.studentName || 'Unknown Student'}
+                                    </h3>
+                                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.9)' }}>
+                                        {selectedRequest.studentId || 'N/A'} • Room {selectedRequest.currentRoom || 'N/A'}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setShowDetailsPanel(false)}
+                                    style={{
+                                        background: 'rgba(255,255,255,0.2)',
+                                        border: 'none',
+                                        color: 'white',
+                                        width: '36px',
+                                        height: '36px',
+                                        borderRadius: '50%',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.3s',
+                                        backdropFilter: 'blur(10px)'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+
+                            {/* Chat Messages Area */}
+                            <div style={{ 
+                                flex: 1, 
+                                padding: '1.5rem',
+                                overflowY: 'auto',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '1rem',
+                                background: '#f8f9fa'
+                            }}>
+                                {/* Request Info Badge */}
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    marginBottom: '0.5rem'
+                                }}>
+                                    <div style={{
+                                        background: 'rgba(102, 126, 234, 0.1)',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '20px',
+                                        fontSize: '0.75rem',
+                                        color: '#667eea',
+                                        fontWeight: 600
+                                    }}>
+                                        Request submitted on {selectedRequest.submittedOn}
                                     </div>
-                                    <button
-                                        onClick={() => setShowDetailsPanel(false)}
-                                        style={{
-                                            background: 'rgba(255,255,255,0.2)',
-                                            border: 'none',
-                                            color: 'white',
+                                </div>
+
+                                {/* Student Message Bubble */}
+                                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                                    <div style={{
+                                        width: '36px',
+                                        height: '36px',
+                                        borderRadius: '50%',
+                                        background: 'linear-gradient(135deg, #00BFFF 0%, #0080FF 100%)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: 'white',
+                                        fontWeight: 700,
+                                        fontSize: '0.9rem',
+                                        flexShrink: 0,
+                                        boxShadow: '0 2px 8px rgba(0,191,255,0.3)'
+                                    }}>
+                                        {selectedRequest.studentName ? selectedRequest.studentName.charAt(0).toUpperCase() : '?'}
+                                    </div>
+                                    <div style={{ flex: 1, maxWidth: '85%' }}>
+                                        <div style={{
+                                            background: 'white',
+                                            padding: '1rem 1.25rem',
+                                            borderRadius: '18px 18px 18px 4px',
+                                            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                                            border: '1px solid rgba(0,0,0,0.05)',
+                                            animation: 'messageSlideIn 0.3s ease-out'
+                                        }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                marginBottom: '0.5rem'
+                                            }}>
+                                                <span style={{
+                                                    padding: '0.25rem 0.75rem',
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    color: 'white',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: 700,
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.5px'
+                                                }}>
+                                                    {selectedRequest.requestType || 'Request'}
+                                                </span>
+                                                <PriorityBadge priority={selectedRequest.priority || 'low'} />
+                                            </div>
+                                            <div style={{
+                                                fontWeight: 700,
+                                                color: '#1e293b',
+                                                fontSize: '1rem',
+                                                marginBottom: '0.75rem'
+                                            }}>
+                                                {selectedRequest.subject || 'No Subject'}
+                                            </div>
+                                            <div style={{
+                                                color: '#475569',
+                                                fontSize: '0.9rem',
+                                                lineHeight: '1.6',
+                                                whiteSpace: 'pre-wrap'
+                                            }}>
+                                                {selectedRequest.message || 'No message provided'}
+                                            </div>
+                                            <div style={{
+                                                marginTop: '0.75rem',
+                                                paddingTop: '0.75rem',
+                                                borderTop: '1px solid #e2e8f0',
+                                                display: 'flex',
+                                                gap: '1rem',
+                                                fontSize: '0.75rem',
+                                                color: '#94a3b8'
+                                            }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                                    <Mail size={12} />
+                                                    {selectedRequest.email || 'N/A'}
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                                    <Phone size={12} />
+                                                    {selectedRequest.phone || 'N/A'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            fontSize: '0.7rem',
+                                            color: '#94a3b8',
+                                            marginTop: '0.5rem',
+                                            marginLeft: '0.5rem'
+                                        }}>
+                                            {selectedRequest.submittedOn}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Status Update (if not pending) */}
+                                {selectedRequest.status !== 'pending' && (
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                                        <div style={{ maxWidth: '85%' }}>
+                                            <div style={{
+                                                background: selectedRequest.status === 'approved' 
+                                                    ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                                                    : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                                padding: '1rem 1.25rem',
+                                                borderRadius: '18px 18px 4px 18px',
+                                                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                                                color: 'white',
+                                                animation: 'messageSlideIn 0.3s ease-out 0.2s both'
+                                            }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem',
+                                                    marginBottom: '0.5rem'
+                                                }}>
+                                                    {selectedRequest.status === 'approved' ? (
+                                                        <CheckCircle size={18} />
+                                                    ) : (
+                                                        <XCircle size={18} />
+                                                    )}
+                                                    <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                                                        Request {selectedRequest.status === 'approved' ? 'Approved' : 'Rejected'}
+                                                    </span>
+                                                </div>
+                                                <div style={{ fontSize: '0.85rem', opacity: 0.95 }}>
+                                                    Your request has been {selectedRequest.status} by the admin team.
+                                                </div>
+                                            </div>
+                                            <div style={{
+                                                fontSize: '0.7rem',
+                                                color: '#94a3b8',
+                                                marginTop: '0.5rem',
+                                                marginRight: '0.5rem',
+                                                textAlign: 'right'
+                                            }}>
+                                                {selectedRequest.resolvedOn || 'Just now'}
+                                            </div>
+                                        </div>
+                                        <div style={{
                                             width: '36px',
                                             height: '36px',
                                             borderRadius: '50%',
-                                            cursor: 'pointer',
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            transition: 'all 0.3s'
-                                        }}
-                                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
-                                        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-                                    >
-                                        <ChevronRight size={20} />
-                                    </button>
-                                </div>
-                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                                        <Mail size={14} />
-                                        {selectedRequest.email || 'N/A'}
+                                            color: 'white',
+                                            fontWeight: 700,
+                                            fontSize: '0.9rem',
+                                            flexShrink: 0,
+                                            boxShadow: '0 2px 8px rgba(102, 126, 234, 0.4)'
+                                        }}>
+                                            A
+                                        </div>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                                        <Phone size={14} />
-                                        {selectedRequest.phone || 'N/A'}
-                                    </div>
-                                </div>
+                                )}
                             </div>
 
-                            {/* Request Details */}
-                            <div style={{ padding: '1.5rem', borderBottom: '1px solid #E8E8E8' }}>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                        Request Type
-                                    </div>
-                                    <div style={{ fontWeight: 700, color: '#001F3F', fontSize: '1rem' }}>
-                                        {selectedRequest.requestType || 'N/A'}
-                                    </div>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                        Subject
-                                    </div>
-                                    <div style={{ fontWeight: 600, color: '#333', fontSize: '0.95rem' }}>
-                                        {selectedRequest.subject || 'N/A'}
-                                    </div>
-                                </div>
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                        Message
-                                    </div>
-                                    <div style={{ 
-                                        padding: '1rem', 
-                                        background: '#F8F9FA', 
-                                        borderRadius: '12px',
-                                        lineHeight: '1.6',
-                                        color: '#333',
-                                        fontSize: '0.95rem',
-                                        border: '1px solid #E8E8E8'
-                                    }}>
-                                        {selectedRequest.message || 'No message provided'}
-                                    </div>
-                                </div>
-                                <div style={{ display: 'flex', gap: '1rem' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                            Priority
-                                        </div>
-                                        <PriorityBadge priority={selectedRequest.priority || 'low'} />
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                            Status
-                                        </div>
-                                        <StatusBadge status={selectedRequest.status || 'pending'} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Action Buttons */}
+                            {/* Action Buttons Footer */}
                             {selectedRequest.status === 'pending' && (
-                                <div style={{ padding: '1.5rem', display: 'flex', gap: '1rem' }}>
+                                <div style={{
+                                    padding: '1.25rem 1.5rem',
+                                    background: 'white',
+                                    borderTop: '1px solid #e2e8f0',
+                                    display: 'flex',
+                                    gap: '0.75rem'
+                                }}>
                                     <button
                                         onClick={() => handleStatusChange(selectedRequest._id, 'rejected')}
                                         style={{
                                             flex: 1,
-                                            padding: '1rem',
+                                            padding: '0.875rem 1.25rem',
                                             background: 'white',
-                                            color: '#FF4500',
-                                            border: '2px solid #FF4500',
-                                            borderRadius: '12px',
+                                            color: '#ef4444',
+                                            border: '2px solid #ef4444',
+                                            borderRadius: '14px',
                                             cursor: 'pointer',
                                             fontWeight: 700,
-                                            fontSize: '0.95rem',
+                                            fontSize: '0.9rem',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             gap: '0.5rem',
-                                            transition: 'all 0.3s'
+                                            transition: 'all 0.3s',
+                                            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.15)'
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.background = '#FF4500';
+                                            e.currentTarget.style.background = '#ef4444';
                                             e.currentTarget.style.color = 'white';
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.background = 'white';
-                                            e.currentTarget.style.color = '#FF4500';
+                                            e.currentTarget.style.color = '#ef4444';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(239, 68, 68, 0.15)';
                                         }}
                                     >
-                                        <XCircle size={20} />
+                                        <XCircle size={18} />
                                         Reject
                                     </button>
                                     <button
                                         onClick={() => handleStatusChange(selectedRequest._id, 'approved')}
                                         style={{
                                             flex: 1,
-                                            padding: '1rem',
-                                            background: 'linear-gradient(135deg, #32CD32 0%, #228B22 100%)',
+                                            padding: '0.875rem 1.25rem',
+                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                             color: 'white',
                                             border: 'none',
-                                            borderRadius: '12px',
+                                            borderRadius: '14px',
                                             cursor: 'pointer',
                                             fontWeight: 700,
-                                            fontSize: '0.95rem',
+                                            fontSize: '0.9rem',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             gap: '0.5rem',
-                                            boxShadow: '0 4px 12px rgba(50,205,50,0.3)',
+                                            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
                                             transition: 'all 0.3s'
                                         }}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.transform = 'translateY(-2px)';
-                                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(50,205,50,0.4)';
+                                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.transform = 'translateY(0)';
-                                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(50,205,50,0.3)';
+                                            e.currentTarget.style.boxShadow = '0 4px 16px rgba(16, 185, 129, 0.3)';
                                         }}
                                     >
-                                        <CheckCircle size={20} />
+                                        <CheckCircle size={18} />
                                         Approve
                                     </button>
                                 </div>
@@ -781,6 +933,16 @@ const Requests = () => {
                     to {
                         opacity: 1;
                         transform: translateX(0);
+                    }
+                }
+                @keyframes messageSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
                     }
                 }
                 @keyframes spin {
