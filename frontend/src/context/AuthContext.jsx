@@ -3,6 +3,7 @@ import axios from 'axios';
 import API_URL from '../config/api';
 import { getErrorMessage, logError } from '../utils/errorHandler';
 
+// Authentication Context for managing user state and authentication
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
