@@ -69,7 +69,7 @@ const ReportIssue = () => {
                 borderTop: '1px solid #2d4a6f',
                 flexShrink: 0
             }}>
-                Copyright © 2026 Oda Bultum University. All rights reserved.
+                Copyright @ 2026 Oda Bultum University. All rights reserved.
             </footer>
         </div>
     );

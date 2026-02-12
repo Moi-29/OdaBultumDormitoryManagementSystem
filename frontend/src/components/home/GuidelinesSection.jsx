@@ -201,39 +201,70 @@ const GuidelinesSection = () => {
                 }}
                 className="group relative"
               >
-                {/* Card Glow Effect on Hover */}
+                {/* Colored Glow Effect on Hover */}
                 <div className={`absolute -inset-0.5 bg-gradient-to-r ${item.color} rounded-3xl blur opacity-0 group-hover:opacity-30 transition duration-300`}></div>
                 
-                {/* Card Content */}
-                <div className="relative rounded-3xl p-8 h-full border-2 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden hover:-translate-y-2" style={{ 
-                  backgroundColor: isDarkMode ? '#1e293b' : 'white',
-                  borderColor: isDarkMode ? '#475569' : '#e5e7eb',
-                  transition: 'all 0.3s ease'
-                }}>
-                  {/* Subtle Background Pattern */}
-                  <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
-                    <div className={`w-full h-full bg-gradient-to-br ${item.color} rounded-full blur-2xl`}></div>
-                  </div>
+                {/* Modern Card with Soft Shadow */}
+                <div 
+                  className="relative rounded-3xl p-8 h-full transition-all duration-300 hover:-translate-y-2" 
+                  style={{ 
+                    backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
+                    boxShadow: isDarkMode 
+                      ? '0 10px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
+                      : '0 10px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05)',
+                    border: 'none',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = isDarkMode
+                      ? '0 20px 60px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4)'
+                      : '0 20px 60px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(0, 0, 0, 0.08)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = isDarkMode
+                      ? '0 10px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
+                      : '0 10px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05)';
+                  }}
+                >
+                  {/* Subtle Top Gradient Accent */}
+                  <div 
+                    className={`absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-gradient-to-r ${item.color}`}
+                    style={{ opacity: 0.8 }}
+                  ></div>
 
-                  {/* Icon Container - No Animation */}
-                  <div className="relative z-10">
-                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-6 shadow-lg`}>
-                      <Icon className="w-10 h-10 text-white" />
+                  {/* Icon Container */}
+                  <div className="relative z-10 mb-6">
+                    <div 
+                      className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center`}
+                      style={{
+                        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)'
+                      }}
+                    >
+                      <Icon className="w-8 h-8 text-white" />
                     </div>
                   </div>
 
                   {/* Title */}
-                  <h3 className="relative z-10 font-display text-2xl font-bold mb-4 group-hover:text-gold transition-colors duration-300" style={{ color: isDarkMode ? '#ffffff' : '#111827', transition: 'color 0.3s ease' }}>
+                  <h3 
+                    className="relative z-10 font-display text-xl font-bold mb-4 transition-colors duration-300" 
+                    style={{ 
+                      color: isDarkMode ? '#ffffff' : '#1f2937',
+                      transition: 'color 0.3s ease'
+                    }}
+                  >
                     {item.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="relative z-10 font-body text-sm leading-relaxed" style={{ color: isDarkMode ? '#d1d5db' : '#4b5563', transition: 'color 0.3s ease' }}>
+                  <p 
+                    className="relative z-10 font-body text-sm leading-relaxed" 
+                    style={{ 
+                      color: isDarkMode ? '#cbd5e1' : '#6b7280',
+                      transition: 'color 0.3s ease'
+                    }}
+                  >
                     {item.description}
                   </p>
-
-                  {/* Bottom Accent Line */}
-                  <div className={`absolute bottom-0 left-0 w-0 group-hover:w-full h-1 bg-gradient-to-r ${item.color} transition-all duration-300`}></div>
                 </div>
               </motion.div>
             );

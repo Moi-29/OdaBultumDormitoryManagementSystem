@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
-import { homeTranslations } from "../../translations/translations";
+import { getTranslation } from "../../translations/translations";
 
 // Import all gallery images
 import im from "../../assets/im.jpg";
@@ -29,259 +29,406 @@ import im20 from "../../assets/im20.jpg";
 import im21 from "../../assets/im21.jpg";
 import im22 from "../../assets/im22.jpg";
 
-const galleryImages = [
-  { src: im, title: "Official Administrative Mandate for Oda Bultum University", description: "A formal communication from the Ministry of Science and Higher Education directing the university to adopt standardized governance and student conduct frameworks." },
-  { src: im1, title: "Modern Facilities", description: "State-of-the-art infrastructure designed for excellence in education" },
-  { src: im2, title: "Legal Protections and Academic Freedoms", description: "A comprehensive list of the fundamental rights granted to students, ensuring access to quality education, university services, and fair administrative processes." },
-  { src: im3, title: "Student Activities", description: "Engaging programs that foster personal and professional growth" },
-  { src: im4, title: "Campus Grounds", description: "Beautiful green spaces perfect for study and relaxation" },
-  { src: im5, title: "Learning Spaces", description: "Collaborative environments that inspire creativity and knowledge" },
-  { src: im6, title: "Asset Protection", description: "A formal declaration regarding the responsibility of the campus community to protect and maintain the physical assets and resources of Oda Bultum University." },
-  { src: im7, title: "Student Services", description: "Comprehensive support systems for your academic journey" },
-  { src: im8, title: "Campus Architecture", description: "Modern design meets functional excellence in every building" },
-  { src: im9, title: "Community Spirit", description: "A diverse and inclusive environment where everyone belongs" },
-  { src: im10, title: "Research Facilities", description: "Advanced laboratories and equipment for groundbreaking discoveries" },
-  { src: im11, title: "Sports & Recreation", description: "Promoting health, wellness, and team spirit through athletics" },
-  { src: im12, title: "Library Resources", description: "Extensive collections and quiet study areas for academic success" },
-  { src: im13, title: "Cultural Events", description: "Celebrating diversity through art, music, and cultural programs" },
-  { src: im15, title: "Innovation Hub", description: "Where ideas transform into reality through collaboration" },
-  { src: im16, title: "Student Housing", description: "Comfortable and secure dormitories that feel like home" },
-  { src: im17, title: "Dining Services", description: "Nutritious meals and diverse cuisine options for every taste" },
-  { src: im18, title: "Technology Center", description: "Cutting-edge computing resources for the digital age" },
-  { src: im19, title: "Outdoor Spaces", description: "Scenic pathways and gathering areas across campus" },
-  { src: im20, title: "Academic Support", description: "Tutoring and mentorship programs for student success" },
-  { src: im21, title: "Campus Security", description: "24/7 safety measures ensuring a secure learning environment" },
-  { src: im22, title: "Future Ready", description: "Preparing tomorrow's leaders through quality education today" }
-];
-
 const GallerySection = () => {
   const { isDarkMode } = useTheme();
   const { language } = useLanguage();
-  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
-  
-  const galleryImages = [
-    { src: im, title: t('gallery1Title'), description: t('gallery1Desc') },
-    { src: im1, title: t('gallery2Title'), description: t('gallery2Desc') },
-    { src: im2, title: t('gallery3Title'), description: t('gallery3Desc') },
-    { src: im3, title: t('gallery4Title'), description: t('gallery4Desc') },
-    { src: im4, title: t('gallery5Title'), description: t('gallery5Desc') },
-    { src: im5, title: t('gallery6Title'), description: t('gallery6Desc') },
-    { src: im6, title: t('gallery7Title'), description: t('gallery7Desc') },
-    { src: im7, title: t('gallery8Title'), description: t('gallery8Desc') },
-    { src: im8, title: t('gallery9Title'), description: t('gallery9Desc') },
-    { src: im9, title: t('gallery10Title'), description: t('gallery10Desc') },
-    { src: im10, title: t('gallery11Title'), description: t('gallery11Desc') },
-    { src: im11, title: t('gallery12Title'), description: t('gallery12Desc') },
-    { src: im12, title: t('gallery13Title'), description: t('gallery13Desc') },
-    { src: im13, title: t('gallery14Title'), description: t('gallery14Desc') },
-    { src: im15, title: t('gallery15Title'), description: t('gallery15Desc') },
-    { src: im16, title: t('gallery16Title'), description: t('gallery16Desc') },
-    { src: im17, title: t('gallery17Title'), description: t('gallery17Desc') },
-    { src: im18, title: t('gallery18Title'), description: t('gallery18Desc') },
-    { src: im19, title: t('gallery19Title'), description: t('gallery19Desc') },
-    { src: im20, title: t('gallery20Title'), description: t('gallery20Desc') },
-    { src: im21, title: t('gallery21Title'), description: t('gallery21Desc') },
-    { src: im22, title: t('gallery22Title'), description: t('gallery22Desc') }
-  ];
   
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const intervalRef = useRef(null);
-  const progressIntervalRef = useRef(null);
+  
+  // All 22 gallery items
+  const galleryItems = [
+    { src: im },
+    { src: im1 },
+    { src: im2 },
+    { src: im3 },
+    { src: im4 },
+    { src: im5 },
+    { src: im6 },
+    { src: im7 },
+    { src: im8 },
+    { src: im9 },
+    { src: im10 },
+    { src: im11 },
+    { src: im12 },
+    { src: im13 },
+    { src: im15 },
+    { src: im16 },
+    { src: im17 },
+    { src: im18 },
+    { src: im19 },
+    { src: im20 },
+    { src: im21 },
+    { src: im22 }
+  ];
 
-  const startSlideshow = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-    
-    setProgress(0);
-    
-    // Progress bar animation
-    progressIntervalRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) return 0;
-        return prev + (100 / 50); // 50 steps for smooth animation (5000ms / 100ms)
-      });
-    }, 100);
-    
-    // Slide change
-    intervalRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % galleryImages.length);
-      setProgress(0);
-    }, 5000);
-  };
-
-  const stopSlideshow = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-  };
-
+  // Auto-advance carousel
   useEffect(() => {
-    if (isPlaying) {
-      startSlideshow();
-    } else {
-      stopSlideshow();
+    if (isAutoPlaying) {
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % galleryItems.length);
+      }, 4000);
     }
 
     return () => {
-      stopSlideshow();
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPlaying, currentIndex]);
+  }, [isAutoPlaying, galleryItems.length]);
 
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % galleryItems.length);
+    setIsAutoPlaying(false);
+  };
+
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
+    setIsAutoPlaying(false);
   };
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
-    setProgress(0);
+    setIsAutoPlaying(false);
   };
 
-  const currentImage = galleryImages[currentIndex];
-  const nextImage = galleryImages[(currentIndex + 1) % galleryImages.length];
+  // Get visible cards for 3D carousel effect
+  const getVisibleCards = () => {
+    const cards = [];
+    for (let i = -2; i <= 2; i++) {
+      const index = (currentIndex + i + galleryItems.length) % galleryItems.length;
+      cards.push({ ...galleryItems[index], position: i, index });
+    }
+    return cards;
+  };
+
+  const visibleCards = getVisibleCards();
 
   return (
-    <section className="relative w-full py-20 overflow-hidden" style={{ background: isDarkMode ? 'linear-gradient(to bottom, #0f172a, #1e293b)' : 'linear-gradient(to bottom, #ffffff, #f9fafb)', transition: 'background 0.3s ease' }}>
-      <div className="max-w-7xl mx-auto px-4">
+    <section 
+      className="relative w-full py-12 md:py-20 overflow-hidden"
+      style={{
+        background: isDarkMode 
+          ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%)'
+          : 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)',
+        minHeight: 'clamp(500px, 80vh, 700px)'
+      }}
+    >
+      {/* Premium Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div style={{
+          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                           radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.2) 0%, transparent 50%)`,
+          width: '100%',
+          height: '100%'
+        }} />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
-            <span className="gold-text">{t('galleryTitle')}</span>
+          <h2 style={{
+            fontSize: 'clamp(1.75rem, 6vw, 3rem)',
+            fontWeight: 800,
+            color: 'white',
+            marginBottom: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: 'clamp(0.05em, 1.5vw, 0.1em)',
+            fontFamily: 'Montserrat, sans-serif',
+            textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
+          }}>
+            {getTranslation(language, 'galleryTitle')}
           </h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: isDarkMode ? '#d1d5db' : '#6b7280', transition: 'color 0.3s ease' }}>
-            {t('galleryDesc')}
+          <div style={{
+            width: 'clamp(60px, 15vw, 100px)',
+            height: '4px',
+            background: 'linear-gradient(90deg, transparent, #ffd700, transparent)',
+            margin: '0 auto 1.5rem'
+          }} />
+          <p style={{
+            fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
+            color: 'rgba(255, 255, 255, 0.85)',
+            maxWidth: '600px',
+            margin: '0 auto',
+            fontFamily: 'Montserrat, sans-serif',
+            lineHeight: 1.6,
+            padding: '0 1rem'
+          }}>
+            {getTranslation(language, 'galleryDesc')}
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-3xl overflow-hidden shadow-2xl bg-gray-900"
-        >
-          {/* Background Image (Current) */}
-          <div className="absolute inset-0">
-            <img
-              src={currentImage.src}
-              alt={currentImage.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          {/* Circular Morph Transition Overlay */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              className="absolute inset-0"
-              initial={{ clipPath: "circle(0% at 50% 50%)" }}
-              animate={{ clipPath: "circle(150% at 50% 50%)" }}
-              exit={{ clipPath: "circle(150% at 50% 50%)" }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-            >
-              <img
-                src={nextImage.src}
-                alt={nextImage.title}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Dark Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent pointer-events-none" />
-
-          {/* Content Overlay - Left Side */}
-          <div className="absolute inset-0 flex items-center px-8 md:px-16 lg:px-20">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.6 }}
-                className="max-w-xl z-10"
-              >
-                <motion.h3
-                  className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  {currentImage.title}
-                </motion.h3>
+        {/* 3D Carousel Container */}
+        <div className="relative" style={{ 
+          height: 'clamp(350px, 60vh, 500px)', 
+          perspective: window.innerWidth < 768 ? '1000px' : '2000px' 
+        }}>
+          
+          {/* 3D Card Stack */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <AnimatePresence mode="sync">
+              {visibleCards.map((card) => {
+                const position = card.position;
+                const isCenter = position === 0;
+                const isMobile = window.innerWidth < 768;
                 
-                <motion.div
-                  className="w-32 h-1 bg-gold mb-6"
-                  initial={{ width: 0 }}
-                  animate={{ width: 128 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                />
+                // Mobile-optimized values
+                const scale = isMobile 
+                  ? (isCenter ? 1 : 0.6 - Math.abs(position) * 0.15)
+                  : (isCenter ? 1 : 0.75 - Math.abs(position) * 0.1);
+                const zIndex = 50 - Math.abs(position) * 10;
+                const opacity = isCenter ? 1 : (isMobile ? 0.3 : 0.4 - Math.abs(position) * 0.1);
+                const rotateY = isMobile ? position * 15 : position * 25;
+                const translateX = isMobile ? position * 120 : position * 280;
+                const translateZ = isCenter ? 0 : -Math.abs(position) * (isMobile ? 80 : 150);
                 
-                <motion.p
-                  className="text-base md:text-lg lg:text-xl text-gray-200 leading-relaxed mb-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  {currentImage.description}
-                </motion.p>
-              </motion.div>
+                // Responsive card dimensions
+                const cardWidth = isMobile ? 'min(280px, 85vw)' : '400px';
+                const cardHeight = isMobile ? 'min(350px, 70vh)' : '450px';
+
+                return (
+                  <motion.div
+                    key={card.index}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{
+                      opacity,
+                      scale,
+                      rotateY,
+                      x: translateX,
+                      z: translateZ,
+                      zIndex
+                    }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.32, 0.72, 0, 1]
+                    }}
+                    className="absolute"
+                    style={{
+                      width: cardWidth,
+                      height: cardHeight,
+                      transformStyle: 'preserve-3d',
+                      cursor: isCenter ? 'default' : 'pointer'
+                    }}
+                    onClick={() => !isCenter && goToSlide(card.index)}
+                  >
+                    {/* Card Container */}
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: isMobile ? '16px' : '20px',
+                      overflow: 'hidden',
+                      boxShadow: isCenter 
+                        ? '0 30px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.3)'
+                        : '0 20px 50px rgba(0, 0, 0, 0.4)',
+                      transition: 'box-shadow 0.3s ease',
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
+                      backdropFilter: 'blur(10px)',
+                      border: isCenter ? '2px solid rgba(255, 215, 0, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
+                      {/* Image */}
+                      <div style={{
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden',
+                        position: 'relative'
+                      }}>
+                        <img
+                          src={card.src}
+                          alt="OBU Campus"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transition: 'transform 0.3s ease'
+                          }}
+                        />
+                      </div>
+
+                      {/* Card Number Badge */}
+                      {isCenter && (
+                        <div style={{
+                          position: 'absolute',
+                          top: isMobile ? '12px' : '20px',
+                          right: isMobile ? '12px' : '20px',
+                          width: isMobile ? '40px' : '50px',
+                          height: isMobile ? '40px' : '50px',
+                          borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #ffd700, #ffed4e)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 15px rgba(255, 215, 0, 0.5)',
+                          border: isMobile ? '2px solid white' : '3px solid white'
+                        }}>
+                          <span style={{
+                            fontSize: isMobile ? '1rem' : '1.2rem',
+                            fontWeight: 800,
+                            color: '#1a1a2e',
+                            fontFamily: 'Montserrat, sans-serif'
+                          }}>
+                            {String(currentIndex + 1).padStart(2, '0')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
 
-          {/* Play/Pause Button - Top Left */}
+          {/* Navigation Buttons */}
           <button
-            onClick={togglePlayPause}
-            className="absolute top-6 left-6 z-30 bg-black/50 hover:bg-black/70 backdrop-blur-sm p-3 rounded-full transition-all duration-300 group"
-            aria-label={isPlaying ? "Pause slideshow" : "Play slideshow"}
+            onClick={goToPrev}
+            className="hidden sm:flex"
+            style={{
+              position: 'absolute',
+              left: 'clamp(10px, 2vw, 20px)',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: 'clamp(50px, 8vw, 60px)',
+              height: 'clamp(50px, 8vw, 60px)',
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              zIndex: 100
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 215, 0, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.8)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+            }}
           >
-            {isPlaying ? (
-              <Pause className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
-            ) : (
-              <Play className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
-            )}
+            <ChevronLeft size={window.innerWidth < 768 ? 24 : 32} color="white" strokeWidth={3} />
           </button>
 
-          {/* Image Counter - Top Right */}
-          <div className="absolute top-6 right-6 z-30 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
-            <span className="text-white font-semibold text-sm">
-              {currentIndex + 1} / {galleryImages.length}
-            </span>
+          <button
+            onClick={goToNext}
+            className="hidden sm:flex"
+            style={{
+              position: 'absolute',
+              right: 'clamp(10px, 2vw, 20px)',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: 'clamp(50px, 8vw, 60px)',
+              height: 'clamp(50px, 8vw, 60px)',
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(255, 255, 255, 0.3)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              zIndex: 100
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 215, 0, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.8)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            <ChevronRight size={window.innerWidth < 768 ? 24 : 32} color="white" strokeWidth={3} />
+          </button>
+          
+          {/* Mobile Navigation Buttons - Bottom positioned */}
+          <div className="sm:hidden absolute bottom-4 left-0 right-0 flex justify-center gap-4 z-100">
+            <button
+              onClick={goToPrev}
+              style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                border: '2px solid rgba(255, 255, 255, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              <ChevronLeft size={28} color="white" strokeWidth={3} />
+            </button>
+            <button
+              onClick={goToNext}
+              style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                border: '2px solid rgba(255, 255, 255, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              <ChevronRight size={28} color="white" strokeWidth={3} />
+            </button>
           </div>
+        </div>
 
-          {/* Bottom Controls */}
-          <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black/80 to-transparent pt-12 pb-6 px-6">
-            {/* Progress Bar */}
-            <div className="w-full bg-white/20 h-1 rounded-full mb-4 overflow-hidden">
-              <motion.div
-                className="h-full bg-gold"
-                style={{ width: `${progress}%` }}
-                transition={{ duration: 0.1 }}
-              />
-            </div>
+        {/* Progress Indicators */}
+        <div className="flex justify-center items-center gap-2 mt-8 md:mt-12 flex-wrap px-4">
+          {galleryItems.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              style={{
+                width: index === currentIndex ? 'clamp(30px, 6vw, 40px)' : 'clamp(8px, 1.5vw, 10px)',
+                height: 'clamp(8px, 1.5vw, 10px)',
+                borderRadius: '5px',
+                background: index === currentIndex 
+                  ? 'linear-gradient(90deg, #ffd700, #ffed4e)'
+                  : 'rgba(255, 255, 255, 0.3)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: index === currentIndex ? '0 2px 10px rgba(255, 215, 0, 0.5)' : 'none'
+              }}
+            />
+          ))}
+        </div>
 
-            {/* Navigation Dots */}
-            <div className="flex justify-center gap-2 flex-wrap">
-              {galleryImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? "w-8 bg-gold"
-                      : "w-2 bg-white/40 hover:bg-white/70"
-                  }`}
-                  aria-label={`Go to image ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.div>
+        {/* Counter Display */}
+        <div style={{
+          textAlign: 'center',
+          marginTop: 'clamp(1rem, 3vw, 2rem)',
+          fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+          fontWeight: 600,
+          color: 'white',
+          fontFamily: 'Montserrat, sans-serif',
+          letterSpacing: '0.1em'
+        }}>
+          {String(currentIndex + 1).padStart(2, '0')} / {String(galleryItems.length).padStart(2, '0')}
+        </div>
       </div>
     </section>
   );

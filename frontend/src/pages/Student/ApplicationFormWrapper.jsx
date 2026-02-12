@@ -1,13 +1,11 @@
-// This component extracts ONLY the Application Form functionality from StudentPortal
-// NO modifications - just isolated display
-
+// Comprehensive Application Form with all sections matching the design
 import { useState } from 'react';
-import { X, User, GraduationCap, Home, Users, Check } from 'lucide-react';
+import { X, User, GraduationCap, Home, Users, AlertCircle, HelpCircle, CheckSquare } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '@/config/api';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { translations, getTranslation } from '../../translations/translations';
+import { getTranslation } from '../../translations/translations';
 
 const ApplicationFormWrapper = () => {
     const { isDarkMode } = useTheme();
@@ -17,25 +15,43 @@ const ApplicationFormWrapper = () => {
     const [activeTab, setActiveTab] = useState('personal');
     const [submitting, setSubmitting] = useState(false);
     const [notification, setNotification] = useState(null);
-    const [showAgreementModal, setShowAgreementModal] = useState(false);
-    const [verificationId, setVerificationId] = useState('');
-    const [hasExistingApplication, setHasExistingApplication] = useState(false);
 
-    // Application form data
+    // Comprehensive form data structure
     const [formData, setFormData] = useState({
+        // Personal Tab - Basic Information
         personalInfo: {
-            fullName: '',
-            idNo: '',
-            sex: '',
-            mealCardNo: '',
-            college: '',
-            department: '',
-            academicYear: '',
-            dormNo: '',
+            name: '',
+            fatherName: '',
+            gFatherName: '',
+            nameAm: '',
+            fatherNameAm: '',
+            gFatherNameAm: '',
+            gender: '',
+            dob: '',
+            placeOfBirth: '',
+            placeOfBirthAm: '',
+            motherTongue: '',
+            nationalId: '',
+            healthStatus: '',
+            maritalStatus: '',
+            // Location & Address
+            citizenship: '',
+            country: '',
+            woreda: '',
+            cityEn: '',
+            cityAm: '',
+            kebeleEn: '',
+            kebeleAm: '',
             phone: '',
-            religious: '',
-            nation: ''
+            email: '',
+            poBox: '',
+            // Others
+            economicalStatus: '',
+            areaType: '',
+            tinNumber: '',
+            accountNumber: ''
         },
+        // Educational Tab
         educationalInfo: {
             stream: '',
             sponsorCategory: '',
@@ -47,16 +63,37 @@ const ApplicationFormWrapper = () => {
             checkedInDate: '',
             nationalExamResult: ''
         },
+        // School Tab - Three sections
         schoolInfo: {
-            schoolName: '',
-            region: '',
-            city: '',
-            zone: '',
-            schoolType: '',
-            woreda: '',
-            attendedYearFrom: '',
-            attendedYearTo: ''
+            // Primary School
+            primary: {
+                schoolName: '',
+                schoolNameAm: '',
+                woreda: '',
+                attendedYearFrom: '',
+                attendedYearTo: '',
+                schoolType: ''
+            },
+            // Secondary School
+            secondary: {
+                schoolName: '',
+                schoolNameAm: '',
+                woreda: '',
+                attendedYearFrom: '',
+                attendedYearTo: '',
+                schoolType: ''
+            },
+            // Preparatory School
+            preparatory: {
+                schoolName: '',
+                schoolNameAm: '',
+                woreda: '',
+                attendedYearFrom: '',
+                attendedYearTo: '',
+                schoolType: ''
+            }
         },
+        // Family Tab
         familyInfo: {
             nationality: '',
             region: '',
@@ -65,125 +102,160 @@ const ApplicationFormWrapper = () => {
             kebele: '',
             motherName: '',
             familyPhone: ''
+        },
+        // Emergency Tab
+        emergencyInfo: {
+            fullName: '',
+            relationship: '',
+            phone: '',
+            email: '',
+            job: '',
+            woreda: '',
+            homeTown: '',
+            kebele: ''
+        },
+        // Agreement
+        agreement: {
+            accepted: false
         }
     });
 
-    // Show notification helper
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
         setTimeout(() => setNotification(null), 4000);
     };
 
-    // Handle Save & Continue - Navigate to next tab
+    const handleInputChange = (section, field, value, subsection = null) => {
+        if (subsection) {
+            setFormData(prev => ({
+                ...prev,
+                [section]: {
+                    ...prev[section],
+                    [subsection]: {
+                        ...prev[section][subsection],
+                        [field]: value
+                    }
+                }
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [section]: {
+                    ...prev[section],
+                    [field]: value
+                }
+            }));
+        }
+    };
+
     const handleSaveAndContinue = () => {
-        const tabs = ['personal', 'educational', 'school', 'family'];
+        const tabs = ['personal', 'educational', 'school', 'family', 'emergency', 'agreement', 'help'];
         const currentIndex = tabs.indexOf(activeTab);
         
-        // Validate current tab's required fields
-        if (activeTab === 'personal') {
-            const requiredFields = [
-                { field: 'fullName', label: 'Full Name' },
-                { field: 'idNo', label: 'ID No.' },
-                { field: 'sex', label: 'Sex' },
-                { field: 'college', label: 'College' },
-                { field: 'department', label: 'Department' },
-                { field: 'academicYear', label: 'Academic Year' },
-                { field: 'phone', label: 'Phone Number' }
-            ];
+        if (activeTab === 'agreement') {
+            // Don't auto-navigate from agreement tab
+            return;
+        }
 
-            for (const { field, label } of requiredFields) {
+        // Validate current tab before proceeding
+        if (activeTab === 'personal') {
+            const required = ['name', 'fatherName', 'gFatherName', 'gender', 'dob', 'placeOfBirth', 
+                            'motherTongue', 'nationalId', 'healthStatus', 'maritalStatus',
+                            'citizenship', 'country', 'woreda', 'cityEn', 'kebeleEn', 
+                            'phone', 'email', 'economicalStatus', 'areaType'];
+            for (const field of required) {
                 if (!formData.personalInfo[field]) {
-                    showNotification(`Please fill in ${label}`, 'error');
+                    showNotification(`Please fill in all required fields in Personal tab`, 'error');
                     return;
                 }
             }
         }
 
-        // If on last tab, show agreement modal
-        if (currentIndex === tabs.length - 1) {
-            setShowAgreementModal(true);
-        } else {
-            // Move to next tab
+        if (activeTab === 'educational') {
+            const required = ['stream', 'sponsorCategory', 'nationalExamYear', 'entryYear', 
+                            'examinationId', 'admissionDate', 'nationalExamResult'];
+            for (const field of required) {
+                if (!formData.educationalInfo[field]) {
+                    showNotification(`Please fill in all required fields in Educational tab`, 'error');
+                    return;
+                }
+            }
+        }
+
+        if (activeTab === 'school') {
+            // Validate Primary School
+            const primaryRequired = ['schoolName', 'woreda', 'schoolType', 'attendedYearFrom', 'attendedYearTo'];
+            for (const field of primaryRequired) {
+                if (!formData.schoolInfo.primary[field]) {
+                    showNotification(`Please fill in all required fields in Primary School section`, 'error');
+                    return;
+                }
+            }
+            // Validate Secondary School
+            const secondaryRequired = ['schoolName', 'woreda', 'schoolType', 'attendedYearFrom', 'attendedYearTo'];
+            for (const field of secondaryRequired) {
+                if (!formData.schoolInfo.secondary[field]) {
+                    showNotification(`Please fill in all required fields in Secondary School section`, 'error');
+                    return;
+                }
+            }
+        }
+
+        if (activeTab === 'family') {
+            const required = ['nationality', 'region', 'zone', 'woreda', 'kebele', 'motherName', 'familyPhone'];
+            for (const field of required) {
+                if (!formData.familyInfo[field]) {
+                    showNotification(`Please fill in all required fields in Family tab`, 'error');
+                    return;
+                }
+            }
+        }
+
+        if (activeTab === 'emergency') {
+            const required = ['fullName', 'relationship', 'phone', 'job', 'woreda', 'homeTown', 'kebele'];
+            for (const field of required) {
+                if (!formData.emergencyInfo[field]) {
+                    showNotification(`Please fill in all required fields in Emergency tab`, 'error');
+                    return;
+                }
+            }
+        }
+        
+        if (currentIndex < tabs.length - 1) {
             setActiveTab(tabs[currentIndex + 1]);
         }
     };
 
-    // Handle final form submission after agreement
     const handleFinalSubmit = async () => {
-        setShowAgreementModal(false);
+        if (!formData.agreement.accepted) {
+            showNotification('Please accept the agreement to submit your application', 'error');
+            return;
+        }
+
         setSubmitting(true);
 
         try {
             const applicationData = {
-                studentId: formData.personalInfo.idNo.toUpperCase(),
-                studentName: formData.personalInfo.fullName,
+                studentId: formData.personalInfo.nationalId,
+                studentName: formData.personalInfo.name,
                 submittedOn: new Date().toISOString().split('T')[0],
-                canEdit: false,
-                personalInfo: formData.personalInfo,
-                educationalInfo: formData.educationalInfo,
-                schoolInfo: formData.schoolInfo,
-                familyInfo: formData.familyInfo
+                canEdit: false, // Lock editing after submission
+                ...formData
             };
 
-            let response;
-            
-            if (hasExistingApplication && formData._id) {
-                response = await axios.put(`${API_URL}/api/applications/${formData._id}`, applicationData);
-                showNotification('Application updated successfully!', 'success');
-            } else {
-                response = await axios.post(`${API_URL}/api/applications`, applicationData);
-                showNotification('Application submitted successfully!', 'success');
-            }
-            
-            setVerificationId('');
-            setHasExistingApplication(false);
+            await axios.post(`${API_URL}/api/applications`, applicationData);
+            showNotification('Application submitted successfully! Your application is now under review.', 'success');
             
             setTimeout(() => {
-                setFormData({
-                    personalInfo: {
-                        fullName: '', idNo: '', sex: '', mealCardNo: '', college: '',
-                        department: '', academicYear: '', dormNo: '', phone: '', religious: '', nation: ''
-                    },
-                    educationalInfo: {
-                        stream: '', sponsorCategory: '', nationalExamYear: '', entryYear: '',
-                        sponsoredBy: '', examinationId: '', admissionDate: '', checkedInDate: '', nationalExamResult: ''
-                    },
-                    schoolInfo: {
-                        schoolName: '', region: '', city: '', zone: '', schoolType: '',
-                        woreda: '', attendedYearFrom: '', attendedYearTo: ''
-                    },
-                    familyInfo: {
-                        nationality: '', region: '', zone: '', woreda: '', kebele: '',
-                        motherName: '', familyPhone: ''
-                    }
-                });
                 setActiveTab('personal');
+                // Optionally redirect or disable form
             }, 3000);
         } catch (error) {
             console.error('Error submitting application:', error);
-            let errorMessage = 'Failed to submit application. Please try again.';
-            
-            if (error.response?.status === 409 || error.response?.data?.message?.includes('duplicate')) {
-                errorMessage = 'You have already submitted an application with this Student ID.';
-            } else if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            }
-            
-            showNotification(errorMessage, 'error');
+            showNotification('Failed to submit application. Please try again.', 'error');
         } finally {
             setSubmitting(false);
         }
-    };
-
-    // Handle form input changes
-    const handleInputChange = (section, field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [section]: {
-                ...prev[section],
-                [field]: value
-            }
-        }));
     };
 
     return (
@@ -192,14 +264,9 @@ const ApplicationFormWrapper = () => {
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: isDarkMode ? '#0f172a' : '#f8f9fa',
-            overflow: 'hidden',
-            transition: 'background-color 0.3s ease'
+            overflow: 'hidden'
         }}>
-            <div style={{
-                flex: 1,
-                padding: '2rem 1rem',
-                overflow: 'auto'
-            }}>
+            <div style={{ flex: 1, padding: '2rem 1rem', overflow: 'auto' }}>
             {/* Notification */}
             {notification && (
                 <div style={{
@@ -208,9 +275,8 @@ const ApplicationFormWrapper = () => {
                     right: '2rem',
                     zIndex: 10001,
                     minWidth: '320px',
-                    maxWidth: '500px',
                     background: notification.type === 'success' 
-                        ? 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)'
+                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
                         : 'linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)',
                     color: 'white',
                     padding: '1.25rem 1.5rem',
@@ -221,12 +287,10 @@ const ApplicationFormWrapper = () => {
                     gap: '1rem'
                 }}>
                     <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>
-                            {notification.type === 'success' ? t('success') : t('error')}
+                        <div style={{ fontWeight: 700, fontSize: '1rem' }}>
+                            {notification.type === 'success' ? 'Success' : 'Error'}
                         </div>
-                        <div style={{ fontSize: '0.9rem', opacity: 0.95 }}>
-                            {notification.message}
-                        </div>
+                        <div style={{ fontSize: '0.9rem' }}>{notification.message}</div>
                     </div>
                     <button
                         onClick={() => setNotification(null)}
@@ -255,19 +319,19 @@ const ApplicationFormWrapper = () => {
                 backgroundColor: isDarkMode ? '#1e293b' : 'white',
                 borderRadius: '16px',
                 boxShadow: isDarkMode ? '0 4px 24px rgba(0, 0, 0, 0.5)' : '0 4px 24px rgba(0, 0, 0, 0.08)',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease'
+                overflow: 'hidden'
             }}>
                 {/* Header */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     color: 'white',
-                    padding: '1.5rem 2rem'
+                    padding: '1.5rem 2rem',
+                    textAlign: 'center'
                 }}>
                     <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
-                        {t('dormitoryApplicationForm')}
+                        {t('applicationForm')}
                     </h2>
-                    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
+                    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.95 }}>
                         {t('completeAllSections')}
                     </p>
                 </div>
@@ -275,18 +339,21 @@ const ApplicationFormWrapper = () => {
                 {/* Tabs */}
                 <div style={{
                     display: 'flex',
-                    gap: '0.5rem',
-                    padding: '1rem 2rem 0',
+                    gap: '0.25rem',
+                    padding: '0.5rem 1rem',
                     borderBottom: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                     overflowX: 'auto',
                     backgroundColor: isDarkMode ? '#0f172a' : '#f9fafb',
-                    transition: 'all 0.3s ease'
+                    flexWrap: 'wrap'
                 }}>
                     {[
-                        { id: 'personal', label: t('personal'), icon: <User size={18} /> },
-                        { id: 'educational', label: t('educational'), icon: <GraduationCap size={18} /> },
-                        { id: 'school', label: t('school'), icon: <Home size={18} /> },
-                        { id: 'family', label: t('family'), icon: <Users size={18} /> }
+                        { id: 'personal', label: t('personal'), icon: <User size={16} /> },
+                        { id: 'educational', label: t('educational'), icon: <GraduationCap size={16} /> },
+                        { id: 'school', label: t('school'), icon: <Home size={16} /> },
+                        { id: 'family', label: t('family'), icon: <Users size={16} /> },
+                        { id: 'emergency', label: t('emergency'), icon: <AlertCircle size={16} /> },
+                        { id: 'agreement', label: t('agreement'), icon: <CheckSquare size={16} /> },
+                        { id: 'help', label: t('help'), icon: <HelpCircle size={16} /> }
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -294,15 +361,15 @@ const ApplicationFormWrapper = () => {
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem',
-                                padding: '0.75rem 1.25rem',
+                                gap: '0.4rem',
+                                padding: '0.6rem 1rem',
                                 border: 'none',
-                                background: activeTab === tab.id ? '#4F46E5' : 'transparent',
+                                background: activeTab === tab.id ? '#3b82f6' : 'transparent',
                                 color: activeTab === tab.id ? 'white' : (isDarkMode ? '#ffffff' : '#64748b'),
-                                borderRadius: '8px 8px 0 0',
+                                borderRadius: '6px',
                                 cursor: 'pointer',
                                 fontWeight: activeTab === tab.id ? 600 : 500,
-                                fontSize: '0.9rem',
+                                fontSize: '0.85rem',
                                 transition: 'all 0.2s',
                                 whiteSpace: 'nowrap'
                             }}
@@ -315,239 +382,530 @@ const ApplicationFormWrapper = () => {
 
                 {/* Tab Content */}
                 <div style={{
-                    padding: '1.5rem',
-                    maxHeight: 'calc(100vh - 320px)',
+                    padding: '2rem',
+                    maxHeight: 'calc(100vh - 400px)',
                     overflowY: 'auto'
                 }}>
                     {/* Personal Tab */}
                     {activeTab === 'personal' && (
                         <div>
-                            <h3 style={{ marginBottom: '1rem', color: isDarkMode ? '#ffffff' : '#1e293b', fontSize: '1.1rem', fontWeight: 600, transition: 'color 0.3s ease' }}>
-                                {t('fillFullInformation')}
-                            </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem', transition: 'color 0.3s ease' }}>
-                                        {t('fullName')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterFullName')}
-                                        value={formData.personalInfo.fullName}
-                                        onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem',
-                                            transition: 'all 0.3s ease'
-                                        }}
-                                    />
+                            {/* Basic Information Section */}
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+                                    <User size={20} />
+                                    {t('basicInformation')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('name')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Fikadu"
+                                            value={formData.personalInfo.name}
+                                            onChange={(e) => handleInputChange('personalInfo', 'name', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : '#f3f4f6',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('fatherName')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Girma"
+                                            value={formData.personalInfo.fatherName}
+                                            onChange={(e) => handleInputChange('personalInfo', 'fatherName', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : '#f3f4f6',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('gFatherName')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Wakjira"
+                                            value={formData.personalInfo.gFatherName}
+                                            onChange={(e) => handleInputChange('personalInfo', 'gFatherName', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : '#f3f4f6',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('gender')}
+                                        </label>
+                                        <select
+                                            value={formData.personalInfo.gender}
+                                            onChange={(e) => handleInputChange('personalInfo', 'gender', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="">M</option>
+                                            <option value="Male">{t('male')}</option>
+                                            <option value="Female">{t('female')}</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('dob')}
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={formData.personalInfo.dob}
+                                            onChange={(e) => handleInputChange('personalInfo', 'dob', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('placeOfBirth')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder={t('unspecified')}
+                                            value={formData.personalInfo.placeOfBirth}
+                                            onChange={(e) => handleInputChange('personalInfo', 'placeOfBirth', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : '#f3f4f6',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('motherTongue')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.personalInfo.motherTongue}
+                                            onChange={(e) => handleInputChange('personalInfo', 'motherTongue', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('nationalId')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder={t('unspecified')}
+                                            value={formData.personalInfo.nationalId}
+                                            onChange={(e) => handleInputChange('personalInfo', 'nationalId', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('healthStatus')}
+                                        </label>
+                                        <select
+                                            value={formData.personalInfo.healthStatus}
+                                            onChange={(e) => handleInputChange('personalInfo', 'healthStatus', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Normal">{t('normal')}</option>
+                                            <option value="Chronic">{t('chronic')}</option>
+                                            <option value="Disabled">{t('disabled')}</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            {t('maritalStatus')}
+                                        </label>
+                                        <select
+                                            value={formData.personalInfo.maritalStatus}
+                                            onChange={(e) => handleInputChange('personalInfo', 'maritalStatus', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Single">{t('single')}</option>
+                                            <option value="Married">{t('married')}</option>
+                                            <option value="Divorced">{t('divorced')}</option>
+                                            <option value="Widowed">{t('widowed')}</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('idNo')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterIdNumber')}
-                                        value={formData.personalInfo.idNo}
-                                        onChange={(e) => handleInputChange('personalInfo', 'idNo', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
+                            </div>
+
+                            {/* Location & Address Section */}
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+                                    📍 {t('locationAddress')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Citizenship
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Ethiopian"
+                                            value={formData.personalInfo.citizenship}
+                                            onChange={(e) => handleInputChange('personalInfo', 'citizenship', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Country
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Ethiopia"
+                                            value={formData.personalInfo.country}
+                                            onChange={(e) => handleInputChange('personalInfo', 'country', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Woreda
+                                        </label>
+                                        <select
+                                            value={formData.personalInfo.woreda}
+                                            onChange={(e) => handleInputChange('personalInfo', 'woreda', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="">~Select Woreda~</option>
+                                            <option value="Woreda1">Woreda 1</option>
+                                            <option value="Woreda2">Woreda 2</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            City (EN/AM)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Unspecified"
+                                            value={formData.personalInfo.cityEn}
+                                            onChange={(e) => handleInputChange('personalInfo', 'cityEn', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Kebele (EN/AM)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Unspecified"
+                                            value={formData.personalInfo.kebeleEn}
+                                            onChange={(e) => handleInputChange('personalInfo', 'kebeleEn', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Phone
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            placeholder="Unspecified"
+                                            value={formData.personalInfo.phone}
+                                            onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Email
+                                        </label>
+                                        <input
+                                            type="email"
+                                            placeholder="Unspecified"
+                                            value={formData.personalInfo.email}
+                                            onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            PO BOX
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.personalInfo.poBox}
+                                            onChange={(e) => handleInputChange('personalInfo', 'poBox', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
                                 </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('sex')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.personalInfo.sex}
-                                        onChange={(e) => handleInputChange('personalInfo', 'sex', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    >
-                                        <option value="">{t('select')}</option>
-                                        <option value="Male">{t('male')}</option>
-                                        <option value="Female">{t('female')}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('mealCardNo')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterMealCard')}
-                                        value={formData.personalInfo.mealCardNo}
-                                        onChange={(e) => handleInputChange('personalInfo', 'mealCardNo', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('college')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterCollege')}
-                                        value={formData.personalInfo.college}
-                                        onChange={(e) => handleInputChange('personalInfo', 'college', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('department')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterDepartment')}
-                                        value={formData.personalInfo.department}
-                                        onChange={(e) => handleInputChange('personalInfo', 'department', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('academicYear')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterYear')}
-                                        value={formData.personalInfo.academicYear}
-                                        onChange={(e) => handleInputChange('personalInfo', 'academicYear', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('dormNo')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterDormNo')}
-                                        value={formData.personalInfo.dormNo}
-                                        onChange={(e) => handleInputChange('personalInfo', 'dormNo', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('yourPhoneNumber')} <span style={{ color: '#ef4444' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        placeholder={t('enterPhone')}
-                                        value={formData.personalInfo.phone}
-                                        onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('religious')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterReligion')}
-                                        value={formData.personalInfo.religious}
-                                        onChange={(e) => handleInputChange('personalInfo', 'religious', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                        {t('yourNation')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterNationality')}
-                                        value={formData.personalInfo.nation}
-                                        onChange={(e) => handleInputChange('personalInfo', 'nation', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.6rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    />
+                            </div>
+
+                            {/* Others Section */}
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+                                    ••• {t('others')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Economical Status
+                                        </label>
+                                        <select
+                                            value={formData.personalInfo.economicalStatus}
+                                            onChange={(e) => handleInputChange('personalInfo', 'economicalStatus', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Unspecified">Unspecified</option>
+                                            <option value="Low">Low</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="High">High</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Area Type
+                                        </label>
+                                        <select
+                                            value={formData.personalInfo.areaType}
+                                            onChange={(e) => handleInputChange('personalInfo', 'areaType', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="">~ Select Area Type ~</option>
+                                            <option value="Urban">Urban</option>
+                                            <option value="Rural">Rural</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            TIN Number
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Unspecified"
+                                            value={formData.personalInfo.tinNumber}
+                                            onChange={(e) => handleInputChange('personalInfo', 'tinNumber', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Account Number
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Unspecified"
+                                            value={formData.personalInfo.accountNumber}
+                                            onChange={(e) => handleInputChange('personalInfo', 'accountNumber', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -556,194 +914,204 @@ const ApplicationFormWrapper = () => {
                     {/* Educational Tab */}
                     {activeTab === 'educational' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#4F46E5', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                {t('campusRelatedInfo')}
-                            </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('stream')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.educationalInfo.stream}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'stream', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    >
-                                        <option value="">{t('selectStream')}</option>
-                                        <option value="Natural Science">{t('naturalScience')}</option>
-                                        <option value="Social Science">{t('socialScience')}</option>
-                                        <option value="Engineering">{t('engineering')}</option>
-                                        <option value="Health Science">{t('healthScience')}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('sponsorCategory')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.educationalInfo.sponsorCategory}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'sponsorCategory', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    >
-                                        <option value="">{t('selectCategory')}</option>
-                                        <option value="Government">{t('government')}</option>
-                                        <option value="Private">{t('private')}</option>
-                                        <option value="Self-Sponsored">{t('selfSponsored')}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('nationalExamYear')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., 2015"
-                                        value={formData.educationalInfo.nationalExamYear}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'nationalExamYear', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('entryYear')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., 2016"
-                                        value={formData.educationalInfo.entryYear}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'entryYear', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('sponsoredBy')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., Family"
-                                        value={formData.educationalInfo.sponsoredBy}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'sponsoredBy', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('examinationId')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., D1729733"
-                                        value={formData.educationalInfo.examinationId}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'examinationId', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('admissionDate')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.educationalInfo.admissionDate}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'admissionDate', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('checkedInDate')}
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.educationalInfo.checkedInDate}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'checkedInDate', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('nationalExamResult')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., 454"
-                                        value={formData.educationalInfo.nationalExamResult}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'nationalExamResult', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
+                            {/* Campus Related Information */}
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem'
+                                }}>
+                                    {t('campusRelatedInformation')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Stream
+                                        </label>
+                                        <select
+                                            value={formData.educationalInfo.stream}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'stream', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Not Applicable">Not Applicable</option>
+                                            <option value="Natural Science">Natural Science</option>
+                                            <option value="Social Science">Social Science</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Sponsor Category
+                                        </label>
+                                        <select
+                                            value={formData.educationalInfo.sponsorCategory}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'sponsorCategory', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Government">Government</option>
+                                            <option value="Private">Private</option>
+                                            <option value="Self">Self</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            National Exam Year (EC)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="2017"
+                                            value={formData.educationalInfo.nationalExamYear}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'nationalExamYear', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Entry Year
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="2017"
+                                            value={formData.educationalInfo.entryYear}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'entryYear', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Sponsored By
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.educationalInfo.sponsoredBy}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'sponsoredBy', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Examination ID
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="DHAC1574"
+                                            value={formData.educationalInfo.examinationId}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'examinationId', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Admission Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={formData.educationalInfo.admissionDate}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'admissionDate', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Cheked-In Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={formData.educationalInfo.checkedInDate}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'checkedInDate', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            National Exam Result
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="0"
+                                            value={formData.educationalInfo.nationalExamResult}
+                                            onChange={(e) => handleInputChange('educationalInfo', 'nationalExamResult', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -752,167 +1120,244 @@ const ApplicationFormWrapper = () => {
                     {/* School Tab */}
                     {activeTab === 'school' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#4F46E5', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                {t('primarySchool')}
-                            </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('schoolName')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterSchoolName')}
-                                        value={formData.schoolInfo.schoolName}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('region')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterRegion')}
-                                        value={formData.schoolInfo.region}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'region', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('city')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterCity')}
-                                        value={formData.schoolInfo.city}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'city', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('zone')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterZone')}
-                                        value={formData.schoolInfo.zone}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'zone', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('schoolType')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.schoolInfo.schoolType}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    >
-                                        <option value="">{t('selectType')}</option>
-                                        <option value="Public">{t('public')}</option>
-                                        <option value="Private">{t('private')}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('woreda')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterWoreda')}
-                                        value={formData.schoolInfo.woreda}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('attendedYear')}
-                                    </label>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            {/* Primary School */}
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem'
+                                }}>
+                                    {t('primarySchool')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            School Name
+                                        </label>
                                         <input
                                             type="text"
-                                            placeholder={`${t('from')} (e.g., 2004)`}
-                                            value={formData.schoolInfo.attendedYearFrom}
-                                            onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value)}
+                                            placeholder="Unspecified"
+                                            value={formData.schoolInfo.primary.schoolName}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value, 'primary')}
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
                                                 borderRadius: '8px',
-                                                fontSize: '0.95rem'
+                                                fontSize: '0.875rem'
                                             }}
                                         />
-                                        <input
-                                            type="text"
-                                            placeholder={`${t('to')} (e.g., 2011)`}
-                                            value={formData.schoolInfo.attendedYearTo}
-                                            onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value)}
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Woreda
+                                        </label>
+                                        <select
+                                            value={formData.schoolInfo.primary.woreda}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value, 'primary')}
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
                                                 borderRadius: '8px',
-                                                fontSize: '0.95rem'
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="">~Select Woreda~</option>
+                                            <option value="Woreda1">Woreda 1</option>
+                                            <option value="Woreda2">Woreda 2</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Attended Year (From-To(E.C))
+                                        </label>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                            <input
+                                                type="text"
+                                                placeholder="Unspecified"
+                                                value={formData.schoolInfo.primary.attendedYearFrom}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value, 'primary')}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    backgroundColor: '#fef2f2',
+                                                    color: '#991b1b',
+                                                    border: '2px solid #fecaca',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.875rem'
+                                                }}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Unspecified"
+                                                value={formData.schoolInfo.primary.attendedYearTo}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value, 'primary')}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    backgroundColor: '#fef2f2',
+                                                    color: '#991b1b',
+                                                    border: '2px solid #fecaca',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.875rem'
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            School Type
+                                        </label>
+                                        <select
+                                            value={formData.schoolInfo.primary.schoolType}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value, 'primary')}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Unspecified">Unspecified</option>
+                                            <option value="Public">Public</option>
+                                            <option value="Private">Private</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Secondary School */}
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem'
+                                }}>
+                                    {t('secondarySchool')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            School Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Unspecified"
+                                            value={formData.schoolInfo.secondary.schoolName}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value, 'secondary')}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: '#fef2f2',
+                                                color: '#991b1b',
+                                                border: '2px solid #fecaca',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
                                             }}
                                         />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Woreda
+                                        </label>
+                                        <select
+                                            value={formData.schoolInfo.secondary.woreda}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value, 'secondary')}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="">~Select Woreda~</option>
+                                            <option value="Woreda1">Woreda 1</option>
+                                            <option value="Woreda2">Woreda 2</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Attended Year (From-To(E.C))
+                                        </label>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                            <input
+                                                type="text"
+                                                placeholder="Unspecified"
+                                                value={formData.schoolInfo.secondary.attendedYearFrom}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value, 'secondary')}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    backgroundColor: '#fef2f2',
+                                                    color: '#991b1b',
+                                                    border: '2px solid #fecaca',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.875rem'
+                                                }}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Unspecified"
+                                                value={formData.schoolInfo.secondary.attendedYearTo}
+                                                onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value, 'secondary')}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    backgroundColor: '#fef2f2',
+                                                    color: '#991b1b',
+                                                    border: '2px solid #fecaca',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.875rem'
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            School Type
+                                        </label>
+                                        <select
+                                            value={formData.schoolInfo.secondary.schoolType}
+                                            onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value, 'secondary')}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="Unspecified">Unspecified</option>
+                                            <option value="Public">Public</option>
+                                            <option value="Private">Private</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -922,523 +1367,6 @@ const ApplicationFormWrapper = () => {
                     {/* Family Tab */}
                     {activeTab === 'family' && (
                         <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: isDarkMode ? '#ffffff' : '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
-                                {t('birthplaceFamily')}
-                            </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('nationality')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., Ethiopia"
-                                        value={formData.familyInfo.nationality}
-                                        onChange={(e) => handleInputChange('familyInfo', 'nationality', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('region')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterYourRegion')}
-                                        value={formData.familyInfo.region}
-                                        onChange={(e) => handleInputChange('familyInfo', 'region', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('zone')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterYourZone')}
-                                        value={formData.familyInfo.zone}
-                                        onChange={(e) => handleInputChange('familyInfo', 'zone', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('woreda')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterYourWoreda')}
-                                        value={formData.familyInfo.woreda}
-                                        onChange={(e) => handleInputChange('familyInfo', 'woreda', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('kebele')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterKebele')}
-                                        value={formData.familyInfo.kebele}
-                                        onChange={(e) => handleInputChange('familyInfo', 'kebele', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('motherName')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={t('enterMotherName')}
-                                        value={formData.familyInfo.motherName}
-                                        onChange={(e) => handleInputChange('familyInfo', 'motherName', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('familyPhone')}
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        placeholder={t('enterFamilyPhone')}
-                                        value={formData.familyInfo.familyPhone}
-                                        onChange={(e) => handleInputChange('familyInfo', 'familyPhone', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                        <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: isDarkMode ? '#ffffff' : '#4F46E5', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.3s ease' }}>
-                                {t('campusRelatedInfo')}
-                            </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('stream')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.educationalInfo.stream}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'stream', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    >
-                                        <option value="">{t('selectStream')}</option>
-                                        <option value="Natural Science">{t('naturalScience')}</option>
-                                        <option value="Social Science">{t('socialScience')}</option>
-                                        <option value="Engineering">{t('engineering')}</option>
-                                        <option value="Health Science">{t('healthScience')}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('sponsorCategory')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.educationalInfo.sponsorCategory}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'sponsorCategory', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    >
-                                        <option value="">{t('selectCategory')}</option>
-                                        <option value="Government">{t('government')}</option>
-                                        <option value="Private">{t('private')}</option>
-                                        <option value="Self-Sponsored">{t('selfSponsored')}</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('nationalExamYear')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., 2015"
-                                        value={formData.educationalInfo.nationalExamYear}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'nationalExamYear', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('entryYear')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., 2016"
-                                        value={formData.educationalInfo.entryYear}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'entryYear', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('sponsoredBy')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., Family"
-                                        value={formData.educationalInfo.sponsoredBy}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'sponsoredBy', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('examinationId')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., D1729733"
-                                        value={formData.educationalInfo.examinationId}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'examinationId', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('admissionDate')} <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.educationalInfo.admissionDate}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'admissionDate', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('checkedInDate')}
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.educationalInfo.checkedInDate}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'checkedInDate', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        {t('nationalExamResult')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., 454"
-                                        value={formData.educationalInfo.nationalExamResult}
-                                        onChange={(e) => handleInputChange('educationalInfo', 'nationalExamResult', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* School Tab */}
-                    {activeTab === 'school' && (
-                        <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#4F46E5', fontSize: '1.25rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                Primary School
-                            </h3>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        School Name <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., Abdi Gudina primary school"
-                                        value={formData.schoolInfo.schoolName}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Region
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter region"
-                                        value={formData.schoolInfo.region}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'region', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        City
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter city"
-                                        value={formData.schoolInfo.city}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'city', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Zone
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter zone"
-                                        value={formData.schoolInfo.zone}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'zone', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        School Type <span style={{ color: '#F43F5E' }}>*</span>
-                                    </label>
-                                    <select 
-                                        value={formData.schoolInfo.schoolType}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'schoolType', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    >
-                                        <option value="">Select type</option>
-                                        <option value="Public">Public</option>
-                                        <option value="Private">Private</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Woreda
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter woreda"
-                                        value={formData.schoolInfo.woreda}
-                                        onChange={(e) => handleInputChange('schoolInfo', 'woreda', e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                            borderRadius: '8px',
-                                            fontSize: '0.95rem'
-                                        }}
-                                    />
-                                </div>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Attended Year (From - To E.C)
-                                    </label>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                        <input
-                                            type="text"
-                                            placeholder="From (e.g., 2004)"
-                                            value={formData.schoolInfo.attendedYearFrom}
-                                            onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value)}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                                borderRadius: '8px',
-                                                fontSize: '0.95rem'
-                                            }}
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="To (e.g., 2011)"
-                                            value={formData.schoolInfo.attendedYearTo}
-                                            onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value)}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem',
-                                            backgroundColor: isDarkMode ? '#0f172a' : 'white',
-                                            color: isDarkMode ? '#ffffff' : '#111827',
-                                            border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                                borderRadius: '8px',
-                                                fontSize: '0.95rem'
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Family Tab */}
-                    {activeTab === 'family' && (
-                        <div>
-                            <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
-                                II. Please fill your Birth place and Your Family Information
-                            </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
@@ -1583,116 +1511,423 @@ const ApplicationFormWrapper = () => {
                             </div>
                         </div>
                     )}
+
+                    {/* Emergency Tab */}
+                    {activeTab === 'emergency' && (
+                        <div>
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '1.5rem'
+                            }}>
+                                <h3 style={{
+                                    color: '#3b82f6',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 600,
+                                    marginBottom: '1rem'
+                                }}>
+                                    {t('emergencyContactInformation')}
+                                </h3>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Full Name <span style={{ color: '#F43F5E' }}>*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.emergencyInfo.fullName}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'fullName', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Relationship <span style={{ color: '#F43F5E' }}>*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.emergencyInfo.relationship}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'relationship', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Phone <span style={{ color: '#F43F5E' }}>*</span>
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            placeholder="9xxxxxxxx or 7xxxxxxxx"
+                                            value={formData.emergencyInfo.phone}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'phone', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Email
+                                        </label>
+                                        <input
+                                            type="email"
+                                            value={formData.emergencyInfo.email}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'email', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Job <span style={{ color: '#F43F5E' }}>*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.emergencyInfo.job}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'job', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Woreda
+                                        </label>
+                                        <select
+                                            value={formData.emergencyInfo.woreda}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'woreda', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            <option value="">~Select Woreda~</option>
+                                            <option value="Woreda1">Woreda 1</option>
+                                            <option value="Woreda2">Woreda 2</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Home-Town
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.emergencyInfo.homeTown}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'homeTown', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Kebele
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.emergencyInfo.kebele}
+                                            onChange={(e) => handleInputChange('emergencyInfo', 'kebele', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : 'white',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Agreement Tab */}
+                    {activeTab === 'agreement' && (
+                        <div>
+                            <div style={{
+                                border: '3px solid #f59e0b',
+                                borderRadius: '12px',
+                                padding: '2rem',
+                                backgroundColor: '#fffbeb'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.5rem' }}>
+                                    <AlertCircle size={48} color="#f59e0b" style={{ flexShrink: 0 }} />
+                                    <div>
+                                        <h3 style={{
+                                            color: '#92400e',
+                                            fontSize: '1.5rem',
+                                            fontWeight: 700,
+                                            marginBottom: '1rem'
+                                        }}>
+                                            {t('importantNotice')}
+                                        </h3>
+                                        <p style={{ 
+                                            fontSize: '1.05rem', 
+                                            color: '#78350f', 
+                                            marginBottom: '1rem',
+                                            lineHeight: '1.6'
+                                        }}>
+                                            <strong>{t('cannotEditWarning')}</strong>
+                                        </p>
+                                        <p style={{ 
+                                            fontSize: '0.95rem', 
+                                            color: '#92400e',
+                                            lineHeight: '1.6'
+                                        }}>
+                                            {t('reviewCarefully')}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    backgroundColor: 'white',
+                                    border: '2px solid #fbbf24',
+                                    borderRadius: '10px',
+                                    padding: '1.5rem',
+                                    marginTop: '1.5rem'
+                                }}>
+                                    <h4 style={{
+                                        color: '#1e293b',
+                                        fontSize: '1.1rem',
+                                        fontWeight: 600,
+                                        marginBottom: '1rem'
+                                    }}>
+                                        {t('applicationAgreement')}
+                                    </h4>
+                                    <p style={{ 
+                                        fontSize: '0.95rem', 
+                                        color: '#475569',
+                                        marginBottom: '1.5rem',
+                                        lineHeight: '1.6'
+                                    }}>
+                                        {t('agreementText')}
+                                    </p>
+
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        padding: '1rem',
+                                        backgroundColor: '#f8fafc',
+                                        border: '2px solid #cbd5e1',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        marginBottom: '1.5rem'
+                                    }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.agreement.accepted}
+                                            onChange={(e) => handleInputChange('agreement', 'accepted', e.target.checked)}
+                                            style={{
+                                                width: '20px',
+                                                height: '20px',
+                                                cursor: 'pointer'
+                                            }}
+                                        />
+                                        <span style={{ 
+                                            fontSize: '0.95rem', 
+                                            fontWeight: 600,
+                                            color: '#1e293b'
+                                        }}>
+                                            {t('agreeToTerms')}
+                                        </span>
+                                    </label>
+
+                                    <button
+                                        onClick={handleFinalSubmit}
+                                        disabled={!formData.agreement.accepted || submitting}
+                                        style={{
+                                            width: '100%',
+                                            padding: '1rem 2rem',
+                                            background: formData.agreement.accepted && !submitting
+                                                ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                                                : '#94a3b8',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 700,
+                                            cursor: formData.agreement.accepted && !submitting ? 'pointer' : 'not-allowed',
+                                            boxShadow: formData.agreement.accepted && !submitting 
+                                                ? '0 4px 12px rgba(16, 185, 129, 0.4)' 
+                                                : 'none',
+                                            transition: 'all 0.3s',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem'
+                                        }}
+                                    >
+                                        {submitting ? (
+                                            <>
+                                                <span>⏳</span>
+                                                <span>{t('submittingApplication')}</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>📤</span>
+                                                <span>{t('submitApplication')}</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Help Tab */}
+                    {activeTab === 'help' && (
+                        <div>
+                            <div style={{
+                                border: isDarkMode ? '2px solid #3b82f6' : '2px solid #3b82f6',
+                                borderRadius: '12px',
+                                padding: '2rem',
+                                textAlign: 'center'
+                            }}>
+                                <HelpCircle size={64} color="#3b82f6" style={{ margin: '0 auto 1.5rem' }} />
+                                <h3 style={{
+                                    color: isDarkMode ? '#ffffff' : '#1e293b',
+                                    fontSize: '1.5rem',
+                                    fontWeight: 700,
+                                    marginBottom: '1rem'
+                                }}>
+                                    {t('needHelp')}
+                                </h3>
+                                <p style={{ fontSize: '1rem', color: isDarkMode ? '#94a3b8' : '#64748b', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem' }}>
+                                    {t('helpDescription')}
+                                </p>
+                                
+                                <div style={{ display: 'grid', gap: '1.5rem', maxWidth: '500px', margin: '0 auto', textAlign: 'left' }}>
+                                    <div style={{
+                                        padding: '1.5rem',
+                                        backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc',
+                                        borderRadius: '12px',
+                                        border: isDarkMode ? '1px solid #475569' : '1px solid #e5e7eb'
+                                    }}>
+                                        <h4 style={{ color: '#3b82f6', marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: 600 }}>
+                                            {t('phoneSupport')}
+                                        </h4>
+                                        <p style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.95rem' }}>
+                                            +251 11 XXX XXXX
+                                        </p>
+                                    </div>
+                                    
+                                    <div style={{
+                                        padding: '1.5rem',
+                                        backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc',
+                                        borderRadius: '12px',
+                                        border: isDarkMode ? '1px solid #475569' : '1px solid #e5e7eb'
+                                    }}>
+                                        <h4 style={{ color: '#3b82f6', marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: 600 }}>
+                                            {t('emailSupport')}
+                                        </h4>
+                                        <p style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.95rem' }}>
+                                            studentservices@university.edu.et
+                                        </p>
+                                    </div>
+                                    
+                                    <div style={{
+                                        padding: '1.5rem',
+                                        backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc',
+                                        borderRadius: '12px',
+                                        border: isDarkMode ? '1px solid #475569' : '1px solid #e5e7eb'
+                                    }}>
+                                        <h4 style={{ color: '#3b82f6', marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: 600 }}>
+                                            {t('officeHours')}
+                                        </h4>
+                                        <p style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.95rem' }}>
+                                            {t('mondayToFriday')}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Footer with Save & Continue Button */}
-                <div style={{
-                    padding: '1.5rem 2rem',
-                    borderTop: '1px solid #e5e7eb',
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    gap: '1rem'
-                }}>
-                    <button
-                        onClick={handleSaveAndContinue}
-                        disabled={submitting}
-                        style={{
-                            padding: '0.75rem 2rem',
-                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontWeight: 600,
-                            fontSize: '0.95rem',
-                            cursor: submitting ? 'not-allowed' : 'pointer',
-                            opacity: submitting ? 0.6 : 1
-                        }}
-                    >
-                        {activeTab === 'family' ? t('submitApplication') : t('saveAndContinue')}
-                    </button>
-                </div>
-            </div>
-
-            {/* Agreement Modal */}
-            {showAgreementModal && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    backdropFilter: 'blur(4px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10000,
-                    padding: '1rem'
-                }}>
+                {/* Footer with Save Button - Only show on non-agreement tabs */}
+                {activeTab !== 'agreement' && activeTab !== 'help' && (
                     <div style={{
-                        background: 'white',
-                        borderRadius: '16px',
-                        maxWidth: '500px',
-                        width: '100%',
-                        padding: '2rem'
+                        padding: '1.5rem 2rem',
+                        borderTop: isDarkMode ? '1px solid #475569' : '1px solid #e5e7eb',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        backgroundColor: isDarkMode ? '#0f172a' : '#f9fafb'
                     }}>
-                        <div style={{
-                            width: '64px',
-                            height: '64px',
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 1.5rem'
-                        }}>
-                            <Check size={32} color="white" strokeWidth={3} />
-                        </div>
-                        <h3 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 700 }}>
-                            Confirm Submission
-                        </h3>
-                        <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '2rem' }}>
-                            By submitting this application, you confirm that all information provided is accurate and complete.
-                        </p>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button
-                                onClick={() => setShowAgreementModal(false)}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    background: 'white',
-                                    color: '#64748b',
-                                    border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
-                                    borderRadius: '8px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleFinalSubmit}
-                                disabled={submitting}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontWeight: 600,
-                                    cursor: submitting ? 'not-allowed' : 'pointer',
-                                    opacity: submitting ? 0.6 : 1
-                                }}
-                            >
-                                {submitting ? 'Submitting...' : 'Confirm & Submit'}
-                            </button>
-                        </div>
+                        <button
+                            onClick={handleSaveAndContinue}
+                            disabled={submitting}
+                            style={{
+                                padding: '0.875rem 2.5rem',
+                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '10px',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                cursor: submitting ? 'not-allowed' : 'pointer',
+                                opacity: submitting ? 0.6 : 1,
+                                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {submitting ? t('saving') : t('saveAndContinue')}
+                        </button>
                     </div>
-                </div>
-            )}
+                )}
             </div>
-            
+            </div>
+
             {/* Footer */}
             <footer style={{
                 backgroundColor: '#1e3a5f',
@@ -1701,13 +1936,12 @@ const ApplicationFormWrapper = () => {
                 padding: '1rem',
                 fontSize: '0.875rem',
                 borderTop: '1px solid #2d4a6f',
-                flexShrink: 0
+                marginTop: 'auto'
             }}>
-                {t('copyright')}
+                Copyright @ 2026 Oda Bultum University. All rights reserved.
             </footer>
         </div>
     );
 };
 
 export default ApplicationFormWrapper;
-
