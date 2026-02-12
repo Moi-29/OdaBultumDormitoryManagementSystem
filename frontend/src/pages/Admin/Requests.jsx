@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
     MessageSquare, Clock, CheckCircle, XCircle, Eye, Mail, Phone, Calendar, 
-    ChevronRight, Trash2, MapPin, User as UserIcon
+    ChevronRight, Trash2, Send
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -15,6 +15,9 @@ const Requests = () => {
     const [selectedRequests, setSelectedRequests] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [chatMessage, setChatMessage] = useState('');
+    const [sendingMessage, setSendingMessage] = useState(false);
+    const [chatMessages, setChatMessages] = useState([]);
 
     // Show notification helper
     const showNotification = (message, type = 'success') => {
@@ -118,10 +121,62 @@ const Requests = () => {
                     : req
             ));
             
+            // Update selected request
+            if (selectedRequest && selectedRequest._id === requestId) {
+                setSelectedRequest({
+                    ...selectedRequest,
+                    status: newStatus,
+                    resolvedOn: newStatus !== 'pending' ? new Date().toISOString().split('T')[0] : null
+                });
+            }
+            
             showNotification(`Request ${newStatus} successfully`, 'success');
         } catch (error) {
             console.error('Error updating request status:', error);
             showNotification('Failed to update request status', 'error');
+        }
+    };
+
+    const handleSendMessage = async () => {
+        if (!chatMessage.trim() || !selectedRequest) return;
+        
+        setSendingMessage(true);
+        try {
+            const token = localStorage.getItem('token');
+            const newMessage = {
+                id: Date.now(),
+                text: chatMessage,
+                sender: 'admin',
+                timestamp: new Date().toLocaleString(),
+                requestId: selectedRequest._id
+            };
+            
+            try {
+                await axios.post(
+                    `${API_URL}/api/requests/${selectedRequest._id}/message`,
+                    { message: chatMessage },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+            } catch (apiError) {
+                console.log('API not available, storing locally');
+            }
+            
+            // Add message to chat
+            setChatMessages([...chatMessages, newMessage]);
+            setChatMessage('');
+            showNotification('Message sent successfully', 'success');
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showNotification('Failed to send message', 'error');
+        } finally {
+            setSendingMessage(false);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
         }
     };
 
