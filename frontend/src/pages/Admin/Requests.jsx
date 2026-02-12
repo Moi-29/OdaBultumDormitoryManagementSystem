@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
-    MessageSquare, Users, Wrench, Building2, Send, X, Eye, 
-    CheckCircle, XCircle, Clock, Calendar, Mail, Phone, Trash2
+    MessageSquare, Users, Wrench, Building2, Send, Search, 
+    CheckCircle, XCircle, Clock, Paperclip, Mic, MoreVertical
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -13,13 +13,10 @@ const Requests = () => {
     const [maintainerRequests, setMaintainerRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState(null);
-    const [showChatPanel, setShowChatPanel] = useState(false);
     const [chatMessage, setChatMessage] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
     const [notification, setNotification] = useState(null);
-    const [selectedRequests, setSelectedRequests] = useState([]);
-    const [selectAll, setSelectAll] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
@@ -33,8 +30,46 @@ const Requests = () => {
     const fetchRequests = async () => {
         try {
             const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
             
-            // Mock data for demonstration
+            const response = await axios.get(`${API_URL}/api/requests`, config);
+            const allRequests = response.data;
+            
+            // Categorize requests by sender type
+            const students = [];
+            const proctors = [];
+            const maintainers = [];
+            
+            allRequests.forEach(request => {
+                // Determine request type based on fromUserModel
+                const requestWithType = {
+                    ...request,
+                    type: request.fromUserModel?.toLowerCase() || 'student',
+                    // Map fields for consistency
+                    studentName: request.studentName || request.fromUserName,
+                    proctorName: request.fromUserModel === 'Proctor' ? request.fromUserName : undefined,
+                    maintainerName: request.fromUserModel === 'Maintainer' ? request.fromUserName : undefined,
+                    submittedOn: request.submittedOn || new Date(request.createdAt).toISOString().split('T')[0]
+                };
+                
+                if (request.fromUserModel === 'Student') {
+                    students.push(requestWithType);
+                } else if (request.fromUserModel === 'Proctor') {
+                    proctors.push(requestWithType);
+                } else if (request.fromUserModel === 'Maintainer') {
+                    maintainers.push(requestWithType);
+                }
+            });
+            
+            setStudentRequests(students);
+            setProctorRequests(proctors);
+            setMaintainerRequests(maintainers);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching requests:', error);
+            showNotification('Failed to load requests. Using offline mode.', 'error');
+            
+            // Fallback to mock data if API fails
             const mockStudentRequests = [
                 {
                     _id: '1',
@@ -91,9 +126,6 @@ const Requests = () => {
             setProctorRequests(mockProctorRequests);
             setMaintainerRequests(mockMaintainerRequests);
             setLoading(false);
-        } catch (error) {
-            console.error('Error fetching requests:', error);
-            setLoading(false);
         }
     };
 
@@ -108,6 +140,13 @@ const Requests = () => {
 
     const handleStatusChange = async (requestId, newStatus) => {
         try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            // Update in database
+            await axios.patch(`${API_URL}/api/requests/${requestId}/status`, { status: newStatus }, config);
+            
+            // Update local state
             const requests = getCurrentRequests();
             const updatedRequests = requests.map(req => 
                 req._id === requestId ? { ...req, status: newStatus } : req
@@ -117,8 +156,14 @@ const Requests = () => {
             else if (activeTab === 'proctors') setProctorRequests(updatedRequests);
             else setMaintainerRequests(updatedRequests);
             
+            // Update selected request
+            if (selectedRequest?._id === requestId) {
+                setSelectedRequest({ ...selectedRequest, status: newStatus });
+            }
+            
             showNotification(`Request ${newStatus} successfully`, 'success');
         } catch (error) {
+            console.error('Error updating request status:', error);
             showNotification('Failed to update request status', 'error');
         }
     };
@@ -138,52 +183,22 @@ const Requests = () => {
         showNotification('Message sent successfully', 'success');
     };
 
-    const handleViewRequest = (request) => {
+    const handleSelectRequest = (request) => {
         setSelectedRequest(request);
-        setShowChatPanel(true);
         setChatHistory([]);
     };
 
-    const handleSelectAll = () => {
+    const getFilteredRequests = () => {
         const requests = getCurrentRequests();
-        if (selectAll) {
-            setSelectedRequests([]);
-        } else {
-            setSelectedRequests(requests.map(req => req._id));
-        }
-        setSelectAll(!selectAll);
-    };
-
-    const handleSelectRequest = (requestId) => {
-        if (selectedRequests.includes(requestId)) {
-            setSelectedRequests(selectedRequests.filter(id => id !== requestId));
-        } else {
-            setSelectedRequests([...selectedRequests, requestId]);
-        }
-    };
-
-    const handleDeleteSelected = async () => {
-        if (selectedRequests.length === 0) return;
+        if (!searchQuery.trim()) return requests;
         
-        if (!window.confirm(`Delete ${selectedRequests.length} request(s)?`)) return;
-        
-        setDeleting(true);
-        try {
-            const requests = getCurrentRequests();
-            const filtered = requests.filter(req => !selectedRequests.includes(req._id));
-            
-            if (activeTab === 'students') setStudentRequests(filtered);
-            else if (activeTab === 'proctors') setProctorRequests(filtered);
-            else setMaintainerRequests(filtered);
-            
-            setSelectedRequests([]);
-            setSelectAll(false);
-            showNotification(`Deleted ${selectedRequests.length} request(s)`, 'success');
-        } catch (error) {
-            showNotification('Failed to delete requests', 'error');
-        } finally {
-            setDeleting(false);
-        }
+        const query = searchQuery.toLowerCase();
+        return requests.filter(req => 
+            (req.studentName || req.proctorName || req.maintainerName || '').toLowerCase().includes(query) ||
+            (req.subject || '').toLowerCase().includes(query) ||
+            (req.message || '').toLowerCase().includes(query) ||
+            (req.email || '').toLowerCase().includes(query)
+        );
     };
 
     if (loading) {
@@ -338,11 +353,11 @@ const Requests = () => {
                     )}
                 </div>
 
-                {/* Chat Panel */}
+                {/* Chat/View Panel */}
                 {showChatPanel && selectedRequest && (
                     <div style={{ flex: '0 0 42%', background: 'white', borderRadius: '24px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column', maxHeight: '800px', animation: 'slideInRight 0.4s ease-out', position: 'sticky', top: '2rem' }}>
-                        {/* Chat Header */}
-                        <div style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', padding: '1.5rem 2rem', borderRadius: '24px 24px 0 0', color: 'white' }}>
+                        {/* Header */}
+                        <div style={{ background: selectedRequest.type === 'student' ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : selectedRequest.type === 'proctor' ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', padding: '1.5rem 2rem', borderRadius: '24px 24px 0 0', color: 'white' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                     <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem', border: '3px solid white' }}>
@@ -361,7 +376,7 @@ const Requests = () => {
                                     <X size={20} />
                                 </button>
                             </div>
-                            <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.85rem' }}>
+                            <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.85rem', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <Mail size={14} />
                                     {selectedRequest.email}
@@ -402,47 +417,72 @@ const Requests = () => {
                             </div>
                         </div>
 
-                        {/* Chat Messages */}
-                        <div style={{ flex: 1, padding: '1.5rem 2rem', overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {chatHistory.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
-                                    <MessageSquare size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
-                                    <p style={{ margin: 0, fontSize: '0.9rem' }}>No messages yet. Start the conversation!</p>
-                                </div>
-                            ) : (
-                                chatHistory.map(msg => (
-                                    <div key={msg.id} style={{ display: 'flex', justifyContent: msg.sender === 'admin' ? 'flex-end' : 'flex-start' }}>
-                                        <div style={{ maxWidth: '75%', padding: '1rem 1.25rem', borderRadius: msg.sender === 'admin' ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: msg.sender === 'admin' ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' : 'white', color: msg.sender === 'admin' ? 'white' : '#1e293b', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                                            <div style={{ fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '0.5rem' }}>{msg.message}</div>
-                                            <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>{msg.timestamp}</div>
+                        {/* Chat Messages (Only for Proctor and Maintainer) */}
+                        {selectedRequest.type !== 'student' && (
+                            <>
+                                <div style={{ flex: 1, padding: '1.5rem 2rem', overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {chatHistory.length === 0 ? (
+                                        <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                                            <MessageSquare size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+                                            <p style={{ margin: 0, fontSize: '0.9rem' }}>No messages yet. Start the conversation!</p>
                                         </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-
-                        {/* Chat Input */}
-                        <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #e2e8f0', background: 'white', borderRadius: '0 0 24px 24px' }}>
-                            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                                <input type="text" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Type your message..." style={{ flex: 1, padding: '1rem 1.25rem', border: '2px solid #e2e8f0', borderRadius: '14px', fontSize: '0.95rem', outline: 'none', transition: 'all 0.3s' }} onFocus={(e) => e.target.style.borderColor = '#8b5cf6'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
-                                <button onClick={handleSendMessage} disabled={!chatMessage.trim()} style={{ padding: '1rem 1.5rem', background: chatMessage.trim() ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' : '#e2e8f0', color: chatMessage.trim() ? 'white' : '#94a3b8', border: 'none', borderRadius: '14px', cursor: chatMessage.trim() ? 'pointer' : 'not-allowed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: chatMessage.trim() ? '0 4px 12px rgba(139, 92, 246, 0.3)' : 'none', transition: 'all 0.3s' }}>
-                                    <Send size={18} />
-                                    Send
-                                </button>
-                            </div>
-                            {selectedRequest.status === 'pending' && (
-                                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                    <button onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} style={{ flex: 1, padding: '0.875rem', background: 'white', color: '#ef4444', border: '2px solid #ef4444', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#ef4444'; }}>
-                                        <XCircle size={18} />
-                                        Reject
-                                    </button>
-                                    <button onClick={() => handleStatusChange(selectedRequest._id, 'approved')} style={{ flex: 1, padding: '0.875rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)'; }}>
-                                        <CheckCircle size={18} />
-                                        Approve
-                                    </button>
+                                    ) : (
+                                        chatHistory.map(msg => (
+                                            <div key={msg.id} style={{ display: 'flex', justifyContent: msg.sender === 'admin' ? 'flex-end' : 'flex-start' }}>
+                                                <div style={{ maxWidth: '75%', padding: '1rem 1.25rem', borderRadius: msg.sender === 'admin' ? '18px 18px 4px 18px' : '18px 18px 18px 4px', background: msg.sender === 'admin' ? (selectedRequest.type === 'proctor' ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)') : 'white', color: msg.sender === 'admin' ? 'white' : '#1e293b', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                                                    <div style={{ fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '0.5rem' }}>{msg.message}</div>
+                                                    <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>{msg.timestamp}</div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
-                            )}
-                        </div>
+
+                                {/* Chat Input (Only for Proctor and Maintainer) */}
+                                <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #e2e8f0', background: 'white', borderRadius: '0 0 24px 24px' }}>
+                                    <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                                        <input type="text" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Type your message..." style={{ flex: 1, padding: '1rem 1.25rem', border: '2px solid #e2e8f0', borderRadius: '14px', fontSize: '0.95rem', outline: 'none', transition: 'all 0.3s' }} onFocus={(e) => e.target.style.borderColor = selectedRequest.type === 'proctor' ? '#8b5cf6' : '#f97316'} onBlur={(e) => e.target.style.borderColor = '#e2e8f0'} />
+                                        <button onClick={handleSendMessage} disabled={!chatMessage.trim()} style={{ padding: '1rem 1.5rem', background: chatMessage.trim() ? (selectedRequest.type === 'proctor' ? 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)') : '#e2e8f0', color: chatMessage.trim() ? 'white' : '#94a3b8', border: 'none', borderRadius: '14px', cursor: chatMessage.trim() ? 'pointer' : 'not-allowed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: chatMessage.trim() ? (selectedRequest.type === 'proctor' ? '0 4px 12px rgba(139, 92, 246, 0.3)' : '0 4px 12px rgba(249, 115, 22, 0.3)') : 'none', transition: 'all 0.3s' }}>
+                                            <Send size={18} />
+                                            Send
+                                        </button>
+                                    </div>
+                                    {selectedRequest.status === 'pending' && (
+                                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                            <button onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} style={{ flex: 1, padding: '0.875rem', background: 'white', color: '#ef4444', border: '2px solid #ef4444', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#ef4444'; }}>
+                                                <XCircle size={18} />
+                                                Reject
+                                            </button>
+                                            <button onClick={() => handleStatusChange(selectedRequest._id, 'approved')} style={{ flex: 1, padding: '0.875rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)'; }}>
+                                                <CheckCircle size={18} />
+                                                Approve
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+
+                        {/* View Only Footer (For Student Reports) */}
+                        {selectedRequest.type === 'student' && (
+                            <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #e2e8f0', background: 'white', borderRadius: '0 0 24px 24px' }}>
+                                {selectedRequest.status === 'pending' && (
+                                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                        <button onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} style={{ flex: 1, padding: '0.875rem', background: 'white', color: '#ef4444', border: '2px solid #ef4444', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#ef4444'; }}>
+                                            <XCircle size={18} />
+                                            Reject
+                                        </button>
+                                        <button onClick={() => handleStatusChange(selectedRequest._id, 'approved')} style={{ flex: 1, padding: '0.875rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)', transition: 'all 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)'; }}>
+                                            <CheckCircle size={18} />
+                                            Approve
+                                        </button>
+                                    </div>
+                                )}
+                                <div style={{ marginTop: selectedRequest.status === 'pending' ? '1rem' : '0', padding: '1rem', background: '#f8fafc', borderRadius: '12px', textAlign: 'center', color: '#64748b', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                    📋 Student reports are view-only. Use approve/reject actions to respond.
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
