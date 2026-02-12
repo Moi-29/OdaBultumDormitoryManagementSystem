@@ -132,7 +132,7 @@ const StudentLayout = () => {
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: isDesktop ? '0.5rem' : '0.375rem',
+                    gap: isDesktop ? '0.5rem' : '0.5rem',
                     flex: isDesktop ? 'initial' : 1
                 }}>
                     {/* Desktop Hamburger Menu */}
@@ -157,28 +157,29 @@ const StudentLayout = () => {
                         </button>
                     )}
                     
+                    {/* Theme Toggle - Always visible */}
                     <button
                         onClick={toggleTheme}
                         style={{
                             background: isDarkMode ? '#374151' : '#f3f4f6',
                             border: 'none',
                             borderRadius: '8px',
-                            padding: isDesktop ? '0.5rem' : '0.5rem',
+                            padding: '0.5rem',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             transition: 'all 0.3s ease',
                             color: isDarkMode ? '#fbbf24' : '#f59e0b',
-                            minWidth: '40px',
-                            minHeight: '40px'
+                            minWidth: '44px',
+                            minHeight: '44px'
                         }}
                         title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                     >
-                        {isDarkMode ? <Sun size={isDesktop ? 20 : 18} /> : <Moon size={isDesktop ? 20 : 18} />}
+                        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
 
-                    {/* Language Selector */}
+                    {/* Language Selector - Always visible */}
                     <div style={{ position: 'relative' }}>
                         <button
                             onClick={() => setShowLanguageMenu(!showLanguageMenu)}
@@ -194,9 +195,8 @@ const StudentLayout = () => {
                                 gap: '0.25rem',
                                 transition: 'all 0.3s ease',
                                 color: isDarkMode ? '#60a5fa' : '#3b82f6',
-                                minWidth: '40px',
-                                minHeight: '40px',
-                                fontSize: isDesktop ? '1rem' : '0.875rem'
+                                minWidth: '44px',
+                                minHeight: '44px'
                             }}
                             title="Change Language"
                         >

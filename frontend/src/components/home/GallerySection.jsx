@@ -35,7 +35,19 @@ const GallerySection = () => {
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const intervalRef = useRef(null);
+  
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // All 22 gallery items
   const galleryItems = [
@@ -105,12 +117,14 @@ const GallerySection = () => {
 
   return (
     <section 
-      className="relative w-full py-12 md:py-20 overflow-hidden"
+      className="relative w-full overflow-hidden"
       style={{
         background: isDarkMode 
           ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%)'
           : 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)',
-        minHeight: 'clamp(500px, 80vh, 700px)'
+        paddingTop: isMobile ? '3rem' : '5rem',
+        paddingBottom: isMobile ? '5rem' : '5rem',
+        minHeight: isMobile ? '600px' : '700px'
       }}
     >
       {/* Premium Background Pattern */}
@@ -130,28 +144,28 @@ const GallerySection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8 md:mb-16"
+          className="text-center mb-8 md:mb-16 px-4"
         >
           <h2 style={{
-            fontSize: 'clamp(1.75rem, 6vw, 3rem)',
+            fontSize: isMobile ? '2rem' : '3rem',
             fontWeight: 800,
             color: 'white',
             marginBottom: '1rem',
             textTransform: 'uppercase',
-            letterSpacing: 'clamp(0.05em, 1.5vw, 0.1em)',
+            letterSpacing: isMobile ? '0.08em' : '0.1em',
             fontFamily: 'Montserrat, sans-serif',
             textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
           }}>
             OBU Gallery
           </h2>
           <div style={{
-            width: 'clamp(60px, 15vw, 100px)',
+            width: isMobile ? '80px' : '100px',
             height: '4px',
             background: 'linear-gradient(90deg, transparent, #ffd700, transparent)',
             margin: '0 auto 1.5rem'
           }} />
           <p style={{
-            fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
+            fontSize: isMobile ? '0.95rem' : '1.1rem',
             color: 'rgba(255, 255, 255, 0.85)',
             maxWidth: '600px',
             margin: '0 auto',
@@ -165,8 +179,8 @@ const GallerySection = () => {
 
         {/* 3D Carousel Container */}
         <div className="relative" style={{ 
-          height: 'clamp(350px, 60vh, 500px)', 
-          perspective: window.innerWidth < 768 ? '1000px' : '2000px' 
+          height: isMobile ? '400px' : '500px', 
+          perspective: isMobile ? '1000px' : '2000px' 
         }}>
           
           {/* 3D Card Stack */}
@@ -175,21 +189,20 @@ const GallerySection = () => {
               {visibleCards.map((card) => {
                 const position = card.position;
                 const isCenter = position === 0;
-                const isMobile = window.innerWidth < 768;
                 
                 // Mobile-optimized values
                 const scale = isMobile 
-                  ? (isCenter ? 1 : 0.6 - Math.abs(position) * 0.15)
+                  ? (isCenter ? 1 : 0.5 - Math.abs(position) * 0.15)
                   : (isCenter ? 1 : 0.75 - Math.abs(position) * 0.1);
                 const zIndex = 50 - Math.abs(position) * 10;
-                const opacity = isCenter ? 1 : (isMobile ? 0.3 : 0.4 - Math.abs(position) * 0.1);
-                const rotateY = isMobile ? position * 15 : position * 25;
-                const translateX = isMobile ? position * 120 : position * 280;
-                const translateZ = isCenter ? 0 : -Math.abs(position) * (isMobile ? 80 : 150);
+                const opacity = isCenter ? 1 : (isMobile ? 0.2 : 0.4 - Math.abs(position) * 0.1);
+                const rotateY = isMobile ? position * 10 : position * 25;
+                const translateX = isMobile ? position * 100 : position * 280;
+                const translateZ = isCenter ? 0 : -Math.abs(position) * (isMobile ? 60 : 150);
                 
                 // Responsive card dimensions
-                const cardWidth = isMobile ? 'min(280px, 85vw)' : '400px';
-                const cardHeight = isMobile ? 'min(350px, 70vh)' : '450px';
+                const cardWidth = isMobile ? '280px' : '400px';
+                const cardHeight = isMobile ? '350px' : '450px';
 
                 return (
                   <motion.div
@@ -283,17 +296,17 @@ const GallerySection = () => {
             </AnimatePresence>
           </div>
 
-          {/* Navigation Buttons */}
+          {/* Navigation Buttons - Desktop only */}
           <button
             onClick={goToPrev}
-            className="hidden sm:flex"
+            className="hidden md:flex"
             style={{
               position: 'absolute',
-              left: 'clamp(10px, 2vw, 20px)',
+              left: '20px',
               top: '50%',
               transform: 'translateY(-50%)',
-              width: 'clamp(50px, 8vw, 60px)',
-              height: 'clamp(50px, 8vw, 60px)',
+              width: '60px',
+              height: '60px',
               borderRadius: '50%',
               background: 'rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(10px)',
@@ -315,19 +328,19 @@ const GallerySection = () => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
             }}
           >
-            <ChevronLeft size={window.innerWidth < 768 ? 24 : 32} color="white" strokeWidth={3} />
+            <ChevronLeft size={32} color="white" strokeWidth={3} />
           </button>
 
           <button
             onClick={goToNext}
-            className="hidden sm:flex"
+            className="hidden md:flex"
             style={{
               position: 'absolute',
-              right: 'clamp(10px, 2vw, 20px)',
+              right: '20px',
               top: '50%',
               transform: 'translateY(-50%)',
-              width: 'clamp(50px, 8vw, 60px)',
-              height: 'clamp(50px, 8vw, 60px)',
+              width: '60px',
+              height: '60px',
               borderRadius: '50%',
               background: 'rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(10px)',
@@ -349,48 +362,48 @@ const GallerySection = () => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
             }}
           >
-            <ChevronRight size={window.innerWidth < 768 ? 24 : 32} color="white" strokeWidth={3} />
+            <ChevronRight size={32} color="white" strokeWidth={3} />
           </button>
           
           {/* Mobile Navigation Buttons - Bottom positioned */}
-          <div className="sm:hidden absolute bottom-4 left-0 right-0 flex justify-center gap-4 z-100">
+          <div className="md:hidden absolute bottom-0 left-0 right-0 flex justify-center gap-4 z-100" style={{ marginBottom: '-60px' }}>
             <button
               onClick={goToPrev}
               style={{
-                width: '50px',
-                height: '50px',
+                width: '54px',
+                height: '54px',
                 borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 215, 0, 0.25)',
                 backdropFilter: 'blur(10px)',
-                border: '2px solid rgba(255, 255, 255, 0.4)',
+                border: '2px solid rgba(255, 215, 0, 0.6)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+                boxShadow: '0 4px 16px rgba(255, 215, 0, 0.4)'
               }}
             >
-              <ChevronLeft size={28} color="white" strokeWidth={3} />
+              <ChevronLeft size={30} color="white" strokeWidth={3} />
             </button>
             <button
               onClick={goToNext}
               style={{
-                width: '50px',
-                height: '50px',
+                width: '54px',
+                height: '54px',
                 borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 215, 0, 0.25)',
                 backdropFilter: 'blur(10px)',
-                border: '2px solid rgba(255, 255, 255, 0.4)',
+                border: '2px solid rgba(255, 215, 0, 0.6)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+                boxShadow: '0 4px 16px rgba(255, 215, 0, 0.4)'
               }}
             >
-              <ChevronRight size={28} color="white" strokeWidth={3} />
+              <ChevronRight size={30} color="white" strokeWidth={3} />
             </button>
           </div>
         </div>

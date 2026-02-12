@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useState, useEffect } from "react";
 import SectionWrapper from "../SectionWrapper";
 import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -11,6 +12,18 @@ const WelcomeSection = () => {
   const { isDarkMode } = useTheme();
   const { language } = useLanguage();
   const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+  
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <SectionWrapper 
@@ -100,10 +113,8 @@ const WelcomeSection = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="relative z-20 rounded-full overflow-hidden"
                 style={{
-                  width: 'min(380px, 85vw)',
-                  height: 'min(380px, 85vw)',
-                  maxWidth: '380px',
-                  maxHeight: '380px',
+                  width: isMobile ? '280px' : '380px',
+                  height: isMobile ? '280px' : '380px',
                   boxShadow: isDarkMode 
                     ? '0 25px 70px rgba(0, 0, 0, 0.6), 0 15px 40px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4)'
                     : '0 25px 70px rgba(0, 0, 0, 0.4), 0 15px 40px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.25)'
@@ -133,7 +144,7 @@ const WelcomeSection = () => {
               className="text-center lg:text-left"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: 'clamp(1.75rem, 5vw, 4rem)',
+                fontSize: isMobile ? '2rem' : '3.5rem',
                 fontWeight: 600,
                 lineHeight: 1.3,
                 letterSpacing: '0.02em'
@@ -161,7 +172,7 @@ const WelcomeSection = () => {
               className="text-center lg:text-justify"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: 'clamp(1rem, 2.5vw, 1.125rem)',
+                fontSize: isMobile ? '1rem' : '1.125rem',
                 lineHeight: 1.8,
                 color: isDarkMode ? '#d1d5db' : '#4a4a4a',
                 transition: 'color 0.3s ease'
@@ -182,17 +193,18 @@ const WelcomeSection = () => {
           <h3 
             style={{
               fontFamily: "'Cinzel', serif",
-              fontSize: 'clamp(0.875rem, 3vw, 2rem)',
+              fontSize: isMobile ? '0.95rem' : '2rem',
               fontWeight: 400,
               color: isDarkMode ? '#d4af37' : '#8B7355',
-              letterSpacing: 'clamp(0.1em, 2vw, 0.25em)',
+              letterSpacing: isMobile ? '0.15em' : '0.25em',
               textTransform: 'uppercase',
               transition: 'all 0.3s ease',
               position: 'relative',
               display: 'inline-block',
-              padding: '0 clamp(1.5rem, 5vw, 3rem)',
+              padding: isMobile ? '0 1.5rem' : '0 3rem',
               wordBreak: 'break-word',
-              maxWidth: '100%'
+              maxWidth: '100%',
+              lineHeight: 1.5
             }}
           >
             <span style={{
@@ -202,20 +214,20 @@ const WelcomeSection = () => {
               {t('directorateTitle')}
             </span>
             {/* Decorative lines on sides - Hidden on very small screens */}
-            <span className="hidden sm:block" style={{
+            <span className="hidden sm:inline-block" style={{
               position: 'absolute',
               left: 0,
               top: '50%',
-              width: 'clamp(1rem, 3vw, 2rem)',
+              width: isMobile ? '1rem' : '2rem',
               height: '1px',
               backgroundColor: isDarkMode ? '#d4af37' : '#8B7355',
               opacity: 0.5
             }} />
-            <span className="hidden sm:block" style={{
+            <span className="hidden sm:inline-block" style={{
               position: 'absolute',
               right: 0,
               top: '50%',
-              width: 'clamp(1rem, 3vw, 2rem)',
+              width: isMobile ? '1rem' : '2rem',
               height: '1px',
               backgroundColor: isDarkMode ? '#d4af37' : '#8B7355',
               opacity: 0.5
