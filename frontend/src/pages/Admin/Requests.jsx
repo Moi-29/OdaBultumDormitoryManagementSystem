@@ -285,26 +285,70 @@ const Requests = () => {
                         {/* Messages Area */}
                         <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', background: '#f8fafc' }}>
                             {/* Request Details Card */}
-                            <div style={{ background: 'white', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                    <Clock size={14} color="#64748b" />
-                                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{selectedRequest.submittedOn}</span>
+                            <div style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', border: '1px solid #e2e8f0' }}>
+                                {/* Student Info */}
+                                <div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid #f1f5f9' }}>
+                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Student Information</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                        <div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Full Name</div>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{selectedRequest.studentName || selectedRequest.fromUserName}</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Student ID</div>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{selectedRequest.studentId}</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Room</div>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{selectedRequest.currentRoom || 'N/A'}</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Submitted On</div>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                <Clock size={12} color="#64748b" />
+                                                {selectedRequest.submittedOn}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1e293b', marginBottom: '0.75rem' }}>{selectedRequest.subject}</div>
-                                <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.6', marginBottom: '1rem' }}>{selectedRequest.message}</div>
-                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                    <span style={{ padding: '0.375rem 0.75rem', background: `${getTabColor()}10`, color: getTabColor(), borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600 }}>
+
+                                {/* Report Details */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Report Details</div>
+                                    <div style={{ fontWeight: 700, fontSize: '1.15rem', color: '#1e293b', marginBottom: '1rem' }}>{selectedRequest.subject}</div>
+                                    <div style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.7', padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                                        {selectedRequest.message}
+                                    </div>
+                                </div>
+
+                                {/* Status & Type */}
+                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                    <span style={{ padding: '0.5rem 1rem', background: `${getTabColor()}10`, color: getTabColor(), borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700 }}>
                                         {selectedRequest.requestType}
                                     </span>
-                                    <span style={{ padding: '0.375rem 0.75rem', background: selectedRequest.priority === 'urgent' ? '#fee2e2' : selectedRequest.priority === 'high' ? '#fef3c7' : '#dbeafe', color: selectedRequest.priority === 'urgent' ? '#991b1b' : selectedRequest.priority === 'high' ? '#92400e' : '#1e40af', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                        {selectedRequest.priority}
+                                    <span style={{ 
+                                        padding: '0.5rem 1rem', 
+                                        background: selectedRequest.status === 'pending' ? '#fef3c7' : selectedRequest.status === 'approved' ? '#dcfce7' : '#fee2e2', 
+                                        color: selectedRequest.status === 'pending' ? '#92400e' : selectedRequest.status === 'approved' ? '#166534' : '#991b1b', 
+                                        borderRadius: '8px', 
+                                        fontSize: '0.8rem', 
+                                        fontWeight: 700, 
+                                        textTransform: 'uppercase',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.375rem'
+                                    }}>
+                                        {selectedRequest.status === 'pending' && <Clock size={14} />}
+                                        {selectedRequest.status === 'approved' && <CheckCircle size={14} />}
+                                        {selectedRequest.status === 'rejected' && <XCircle size={14} />}
+                                        {selectedRequest.status}
                                     </span>
                                 </div>
                             </div>
 
-                            {/* Admin Response Section */}
+                            {/* Admin Response Section - Only for Proctor/Maintainer */}
                             {selectedRequest.type !== 'student' && (
-                                <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ marginTop: '1.5rem' }}>
                                     <div style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', marginBottom: '1rem' }}>Chat History</div>
                                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
                                         <div style={{ maxWidth: '70%', background: getTabColor(), color: 'white', padding: '0.75rem 1rem', borderRadius: '12px 12px 2px 12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
@@ -316,23 +360,89 @@ const Requests = () => {
                             )}
                         </div>
 
-                        {/* Chat Input */}
-                        <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid #e2e8f0', background: 'white' }}>
+                        {/* Action Buttons */}
+                        <div style={{ padding: '1.5rem', borderTop: '1px solid #e2e8f0', background: 'white' }}>
                             {selectedRequest.type === 'student' ? (
                                 <div>
-                                    <div style={{ padding: '0.875rem', background: '#f8fafc', borderRadius: '10px', textAlign: 'center', color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic', marginBottom: '1rem' }}>
-                                        📋 Student reports are view-only. Use approve/reject actions below.
-                                    </div>
-                                    {selectedRequest.status === 'pending' && (
-                                        <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                            <button onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} style={{ flex: 1, padding: '0.75rem', background: 'white', color: '#ef4444', border: '2px solid #ef4444', borderRadius: '10px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#ef4444'; }}>
-                                                <XCircle size={18} />
-                                                Reject
+                                    {selectedRequest.status === 'pending' ? (
+                                        <div style={{ display: 'flex', gap: '1rem' }}>
+                                            <button 
+                                                onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} 
+                                                style={{ 
+                                                    flex: 1, 
+                                                    padding: '1rem', 
+                                                    background: 'white', 
+                                                    color: '#ef4444', 
+                                                    border: '2px solid #ef4444', 
+                                                    borderRadius: '12px', 
+                                                    cursor: 'pointer', 
+                                                    fontWeight: 700, 
+                                                    fontSize: '1rem', 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center', 
+                                                    gap: '0.5rem', 
+                                                    transition: 'all 0.2s' 
+                                                }} 
+                                                onMouseEnter={(e) => { 
+                                                    e.currentTarget.style.background = '#ef4444'; 
+                                                    e.currentTarget.style.color = 'white'; 
+                                                }} 
+                                                onMouseLeave={(e) => { 
+                                                    e.currentTarget.style.background = 'white'; 
+                                                    e.currentTarget.style.color = '#ef4444'; 
+                                                }}
+                                            >
+                                                <XCircle size={20} />
+                                                Reject Report
                                             </button>
-                                            <button onClick={() => handleStatusChange(selectedRequest._id, 'approved')} style={{ flex: 1, padding: '0.75rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#059669'} onMouseLeave={(e) => e.currentTarget.style.background = '#10b981'}>
-                                                <CheckCircle size={18} />
-                                                Approve
+                                            <button 
+                                                onClick={() => handleStatusChange(selectedRequest._id, 'approved')} 
+                                                style={{ 
+                                                    flex: 1, 
+                                                    padding: '1rem', 
+                                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                                                    color: 'white', 
+                                                    border: 'none', 
+                                                    borderRadius: '12px', 
+                                                    cursor: 'pointer', 
+                                                    fontWeight: 700, 
+                                                    fontSize: '1rem', 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center', 
+                                                    gap: '0.5rem', 
+                                                    transition: 'all 0.2s',
+                                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                                                }} 
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)';
+                                                }} 
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                                                }}
+                                            >
+                                                <CheckCircle size={20} />
+                                                Approve Report
                                             </button>
+                                        </div>
+                                    ) : (
+                                        <div style={{ 
+                                            padding: '1rem', 
+                                            background: selectedRequest.status === 'approved' ? '#dcfce7' : '#fee2e2', 
+                                            borderRadius: '12px', 
+                                            textAlign: 'center',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            fontWeight: 700,
+                                            color: selectedRequest.status === 'approved' ? '#166534' : '#991b1b'
+                                        }}>
+                                            {selectedRequest.status === 'approved' ? <CheckCircle size={20} /> : <XCircle size={20} />}
+                                            Report {selectedRequest.status === 'approved' ? 'Approved' : 'Rejected'}
                                         </div>
                                     )}
                                 </div>
