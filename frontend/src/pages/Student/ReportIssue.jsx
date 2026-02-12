@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { AlertCircle, Send, CheckCircle, X, Trash2, Eye, Clock, FileText } from 'lucide-react';
+import { AlertCircle, Send, CheckCircle, X, Trash2, Clock, FileText } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 import { AuthContext } from '../../context/AuthContext';
@@ -22,7 +22,6 @@ const ReportIssue = () => {
     const [submitting, setSubmitting] = useState(false);
     const [notification, setNotification] = useState(null);
     const [myReports, setMyReports] = useState([]);
-    const [loadingReports, setLoadingReports] = useState(false);
     const [hasPendingReport, setHasPendingReport] = useState(false);
 
     useEffect(() => {
