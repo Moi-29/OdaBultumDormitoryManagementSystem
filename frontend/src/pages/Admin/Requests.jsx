@@ -11,9 +11,13 @@ const Requests = () => {
     const [studentRequests, setStudentRequests] = useState([]);
     const [proctorRequests, setProctorRequests] = useState([]);
     const [maintainerRequests, setMaintainerRequests] = useState([]);
+    const [allProctors, setAllProctors] = useState([]);
+    const [allMaintainers, setAllMaintainers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [chatMessage, setChatMessage] = useState('');
+    const [messages, setMessages] = useState([]);
+    const [loadingMessages, setLoadingMessages] = useState(false);
     const [notification, setNotification] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -24,7 +28,25 @@ const Requests = () => {
 
     useEffect(() => {
         fetchRequests();
+        fetchProctorsAndMaintainers();
     }, []);
+
+    const fetchProctorsAndMaintainers = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            // Fetch proctors
+            const proctorsResponse = await axios.get(`${API_URL}/api/user-management/proctors`, config);
+            setAllProctors(proctorsResponse.data.filter(p => p.status === 'Active'));
+            
+            // Fetch maintainers
+            const maintainersResponse = await axios.get(`${API_URL}/api/user-management/maintainers`, config);
+            setAllMaintainers(maintainersResponse.data.filter(m => m.status === 'Active'));
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
 
     const fetchRequests = async () => {
         try {
@@ -69,12 +91,59 @@ const Requests = () => {
     };
 
     const getCurrentRequests = () => {
+        let requests = [];
+        let activeUsers = [];
+        
         switch (activeTab) {
-            case 'students': return studentRequests;
-            case 'proctors': return proctorRequests;
-            case 'maintainers': return maintainerRequests;
-            default: return [];
+            case 'students': 
+                return studentRequests;
+            case 'proctors': 
+                requests = proctorRequests;
+                activeUsers = allProctors;
+                break;
+            case 'maintainers': 
+                requests = maintainerRequests;
+                activeUsers = allMaintainers;
+                break;
+            default: 
+                return [];
         }
+        
+        // Merge requests with active users
+        // Create a map of existing requests by user ID
+        const requestMap = new Map();
+        requests.forEach(req => {
+            if (req.fromUserId) {
+                requestMap.set(req.fromUserId.toString(), req);
+            }
+        });
+        
+        // Add active users who don't have requests yet
+        const mergedList = [...requests];
+        activeUsers.forEach(user => {
+            if (!requestMap.has(user._id.toString())) {
+                // Create a placeholder for users without requests
+                mergedList.push({
+                    _id: `user-${user._id}`,
+                    fromUserId: user._id,
+                    fromUserModel: activeTab === 'proctors' ? 'Proctor' : 'Maintainer',
+                    fromUserName: user.username,
+                    proctorName: activeTab === 'proctors' ? user.username : undefined,
+                    maintainerName: activeTab === 'maintainers' ? user.username : undefined,
+                    blockId: user.blockId,
+                    specialization: user.specialization,
+                    subject: 'No conversation yet',
+                    message: 'Start a conversation',
+                    status: 'active',
+                    priority: 'medium',
+                    type: activeTab === 'proctors' ? 'proctor' : 'maintainer',
+                    isNewConversation: true,
+                    createdAt: new Date().toISOString()
+                });
+            }
+        });
+        
+        return mergedList;
     };
 
     const getFilteredRequests = () => {
@@ -116,10 +185,108 @@ const Requests = () => {
         }
     };
 
-    const handleSendMessage = () => {
-        if (!chatMessage.trim()) return;
-        showNotification('Message sent successfully', 'success');
-        setChatMessage('');
+    const handleSendMessage = async () => {
+        if (!chatMessage.trim() || !selectedRequest) return;
+        
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            let requestId = selectedRequest._id;
+            
+            // If this is a new conversation, create a request first
+            if (selectedRequest.isNewConversation) {
+                const requestData = {
+                    fromUserId: selectedRequest.fromUserId,
+                    fromUserModel: selectedRequest.fromUserModel,
+                    fromUserName: selectedRequest.fromUserName,
+                    toUserModel: 'Admin',
+                    requestType: 'Message',
+                    subject: `Message from Admin`,
+                    message: chatMessage,
+                    priority: 'medium',
+                    status: 'pending',
+                    blockId: selectedRequest.blockId,
+                    specialization: selectedRequest.specialization
+                };
+                
+                const requestResponse = await axios.post(`${API_URL}/api/requests`, requestData, config);
+                requestId = requestResponse.data._id;
+                
+                // Update the selected request to no longer be new
+                setSelectedRequest({
+                    ...selectedRequest,
+                    _id: requestId,
+                    isNewConversation: false
+                });
+                
+                // Refresh requests to show the new one
+                fetchRequests();
+            }
+            
+            // Send the message
+            const messageData = {
+                requestId: requestId,
+                message: chatMessage,
+                senderModel: 'Admin'
+            };
+            
+            const response = await axios.post(`${API_URL}/api/messages`, messageData, config);
+            
+            setMessages([...messages, response.data]);
+            setChatMessage('');
+            showNotification('Message sent successfully', 'success');
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showNotification('Failed to send message', 'error');
+        }
+    };
+
+    const fetchMessages = async (requestId) => {
+        setLoadingMessages(true);
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            const response = await axios.get(`${API_URL}/api/messages/${requestId}`, config);
+            setMessages(response.data);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+            setMessages([]);
+        } finally {
+            setLoadingMessages(false);
+        }
+    };
+
+    const handleDeleteMessage = async (messageId) => {
+        if (!window.confirm('Are you sure you want to delete this message?')) return;
+        
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            await axios.delete(`${API_URL}/api/messages/${messageId}`, config);
+            
+            setMessages(messages.filter(msg => msg._id !== messageId));
+            showNotification('Message deleted successfully', 'success');
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            showNotification('Failed to delete message', 'error');
+        }
+    };
+
+    const handleSelectRequest = (request) => {
+        setSelectedRequest(request);
+        if (request.type !== 'student') {
+            if (request.isNewConversation) {
+                // New conversation - no messages yet
+                setMessages([]);
+                setLoadingMessages(false);
+            } else {
+                // Existing conversation - fetch messages
+                fetchMessages(request._id);
+            }
+        }
     };
 
     const getTabColor = () => {
@@ -222,7 +389,7 @@ const Requests = () => {
                                 return (
                                     <div
                                         key={request._id}
-                                        onClick={() => setSelectedRequest(request)}
+                                        onClick={() => handleSelectRequest(request)}
                                         style={{
                                             padding: '1rem 1.25rem',
                                             borderBottom: '1px solid #f1f5f9',
@@ -246,9 +413,15 @@ const Requests = () => {
                                             </div>
                                             <div style={{ fontSize: '0.85rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '0.375rem' }}>{request.subject}</div>
                                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                <span style={{ padding: '0.125rem 0.5rem', background: request.status === 'pending' ? '#fef3c7' : request.status === 'approved' ? '#dcfce7' : '#fee2e2', color: request.status === 'pending' ? '#92400e' : request.status === 'approved' ? '#166534' : '#991b1b', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                                    {request.status}
-                                                </span>
+                                                {request.isNewConversation ? (
+                                                    <span style={{ padding: '0.125rem 0.5rem', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                                        New
+                                                    </span>
+                                                ) : (
+                                                    <span style={{ padding: '0.125rem 0.5rem', background: request.status === 'pending' ? '#fef3c7' : request.status === 'approved' ? '#dcfce7' : request.status === 'active' ? '#e0e7ff' : '#fee2e2', color: request.status === 'pending' ? '#92400e' : request.status === 'approved' ? '#166534' : request.status === 'active' ? '#3730a3' : '#991b1b', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                                        {request.status}
+                                                    </span>
+                                                )}
                                                 <span style={{ padding: '0.125rem 0.5rem', background: `${getTabColor()}15`, color: getTabColor(), borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
                                                     {request.priority}
                                                 </span>
@@ -350,12 +523,62 @@ const Requests = () => {
                             {selectedRequest.type !== 'student' && (
                                 <div style={{ marginTop: '1.5rem' }}>
                                     <div style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', marginBottom: '1rem' }}>Chat History</div>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-                                        <div style={{ maxWidth: '70%', background: getTabColor(), color: 'white', padding: '0.75rem 1rem', borderRadius: '12px 12px 2px 12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                                            <div style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>Sample admin response message</div>
-                                            <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '0.25rem', textAlign: 'right' }}>2:45 PM</div>
+                                    
+                                    {loadingMessages ? (
+                                        <div style={{ textAlign: 'center', padding: '2rem' }}>
+                                            <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: getTabColor(), borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
                                         </div>
-                                    </div>
+                                    ) : messages.length === 0 ? (
+                                        <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8', fontSize: '0.9rem' }}>
+                                            No messages yet. Start the conversation!
+                                        </div>
+                                    ) : (
+                                        <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                            {messages.map((msg) => {
+                                                const isAdmin = msg.senderModel === 'Admin';
+                                                return (
+                                                    <div key={msg._id} style={{ display: 'flex', justifyContent: isAdmin ? 'flex-end' : 'flex-start', marginBottom: '0.5rem' }}>
+                                                        <div style={{ maxWidth: '70%', position: 'relative', group: true }}>
+                                                            <div style={{ 
+                                                                background: isAdmin ? getTabColor() : '#f1f5f9', 
+                                                                color: isAdmin ? 'white' : '#1e293b', 
+                                                                padding: '0.75rem 1rem', 
+                                                                borderRadius: isAdmin ? '12px 12px 2px 12px' : '12px 12px 12px 2px', 
+                                                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)' 
+                                                            }}>
+                                                                {!isAdmin && (
+                                                                    <div style={{ fontSize: '0.7rem', fontWeight: 600, marginBottom: '0.25rem', opacity: 0.7 }}>
+                                                                        {msg.senderName}
+                                                                    </div>
+                                                                )}
+                                                                <div style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>{msg.message}</div>
+                                                                <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '0.25rem', textAlign: 'right', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                    <span>{formatTime(msg.createdAt)}</span>
+                                                                    {isAdmin && (
+                                                                        <button
+                                                                            onClick={() => handleDeleteMessage(msg._id)}
+                                                                            style={{
+                                                                                background: 'rgba(255,255,255,0.2)',
+                                                                                border: 'none',
+                                                                                color: 'white',
+                                                                                padding: '0.25rem 0.5rem',
+                                                                                borderRadius: '4px',
+                                                                                cursor: 'pointer',
+                                                                                fontSize: '0.7rem',
+                                                                                marginLeft: '0.5rem'
+                                                                            }}
+                                                                        >
+                                                                            Delete
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

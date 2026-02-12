@@ -49,31 +49,28 @@ const ReportIssue = () => {
 
         setVerifying(true);
         try {
-            // Fetch student's reports
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            
-            const response = await axios.get(`${API_URL}/api/requests`, config);
-            const allRequests = response.data;
-            
-            // Filter reports for this student ID
-            const studentReports = allRequests.filter(req => 
-                req.studentId === studentId && req.fromUserModel === 'Student'
-            );
-            
-            // Check if there's a pending report
-            const pending = studentReports.some(r => r.status === 'pending');
-            setHasPendingReport(pending);
+            // Fetch student's reports using public endpoint
+            try {
+                const response = await axios.get(`${API_URL}/api/requests/student/${studentId}`);
+                const studentReports = response.data;
+                
+                // Check if there's a pending report
+                const pending = studentReports.some(r => r.status === 'pending');
+                setHasPendingReport(pending);
+                
+                // Also load in sidebar
+                setSidebarStudentId(studentId);
+                setMyReports(studentReports);
+            } catch (fetchError) {
+                console.log('Could not fetch existing reports:', fetchError.message);
+                // Continue anyway - student can still submit
+            }
             
             setVerified(true);
             setStep('form');
             
             // Pre-fill student ID in form
             setFormData(prev => ({ ...prev, studentId: studentId }));
-            
-            // Also load in sidebar
-            setSidebarStudentId(studentId);
-            setMyReports(studentReports);
             
             showNotification('ID verified successfully!', 'success');
         } catch (error) {
@@ -94,16 +91,15 @@ const ReportIssue = () => {
 
         setLoadingSidebarReports(true);
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
+            console.log('Fetching reports for Student ID:', sidebarStudentId);
+            console.log('API URL:', `${API_URL}/api/requests/student/${sidebarStudentId}`);
             
-            const response = await axios.get(`${API_URL}/api/requests`, config);
-            const allRequests = response.data;
+            // Use public endpoint to fetch reports by student ID
+            const response = await axios.get(`${API_URL}/api/requests/student/${sidebarStudentId}`);
             
-            // Filter reports for this student ID
-            const studentReports = allRequests.filter(req => 
-                req.studentId === sidebarStudentId && req.fromUserModel === 'Student'
-            );
+            console.log('Response:', response.data);
+            
+            const studentReports = response.data;
             
             setMyReports(studentReports);
             
@@ -114,7 +110,12 @@ const ReportIssue = () => {
             }
         } catch (error) {
             console.error('Error loading reports:', error);
-            showNotification('Failed to load reports. Please try again.', 'error');
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            console.error('Error message:', error.message);
+            
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to load reports. Please try again.';
+            showNotification(errorMessage, 'error');
         } finally {
             setLoadingSidebarReports(false);
         }
@@ -185,7 +186,11 @@ const ReportIssue = () => {
         } catch (error) {
             console.error('Error submitting report:', error);
             console.error('Error response:', error.response?.data);
-            showNotification(error.response?.data?.message || 'Failed to submit report. Please try again.', 'error');
+            console.error('Error status:', error.response?.status);
+            console.error('Error message:', error.message);
+            
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to submit report. Please try again.';
+            showNotification(errorMessage, 'error');
         } finally {
             setSubmitting(false);
         }
@@ -196,6 +201,12 @@ const ReportIssue = () => {
         
         try {
             const token = localStorage.getItem('token');
+            
+            if (!token) {
+                showNotification('Please log in to delete reports', 'error');
+                return;
+            }
+            
             const config = { headers: { Authorization: `Bearer ${token}` } };
             
             await axios.delete(`${API_URL}/api/requests/${reportId}`, config);
@@ -211,7 +222,7 @@ const ReportIssue = () => {
             showNotification('Report deleted successfully', 'success');
         } catch (error) {
             console.error('Error deleting report:', error);
-            showNotification('Failed to delete report', 'error');
+            showNotification('Failed to delete report. Please log in first.', 'error');
         }
     };
 

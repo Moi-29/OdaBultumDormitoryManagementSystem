@@ -208,6 +208,7 @@ app.use('/api/cache', require('./routes/cacheRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
+app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/proctor', require('./routes/proctorRoutes'));
 app.use('/api/maintainer', require('./routes/maintainerRoutes'));
 app.use('/api/user-management', require('./routes/userManagementRoutes'));
