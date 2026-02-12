@@ -28,8 +28,47 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // Multi-role login
-    const login = async (username, password, role = 'admin') => {
+    // Multi-role login - tries all roles automatically
+    const login = async (username, password, role = null) => {
+        // If no role specified, try to login and let backend determine role
+        if (!role) {
+            // Try each role until one succeeds
+            const roles = ['admin', 'proctor', 'maintainer'];
+            
+            for (const tryRole of roles) {
+                try {
+                    const response = await axios.post(`${API_URL}/api/multi-auth/login`, {
+                        username,
+                        password,
+                        role: tryRole
+                    });
+
+                    const { token, user: userData } = response.data;
+
+                    // Store token and user data
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    
+                    // Set default authorization header
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                    
+                    setUser(userData);
+
+                    return { success: true, user: userData };
+                } catch (error) {
+                    // Continue to next role if this one fails
+                    continue;
+                }
+            }
+            
+            // If all roles failed, return error
+            return {
+                success: false,
+                message: 'Invalid credentials. Please check your username and password.'
+            };
+        }
+        
+        // If role is specified, use it directly
         try {
             const response = await axios.post(`${API_URL}/api/multi-auth/login`, {
                 username,
