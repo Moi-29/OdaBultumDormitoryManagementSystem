@@ -369,7 +369,7 @@ const StudentLayout = () => {
                     style={{
                         position: 'fixed',
                         top: '0.75rem',
-                        left: '0.75rem',
+                        left: sidebarOpen ? 'calc(min(70vw, 280px) - 60px)' : '0.75rem',
                         background: '#2d9f6e',
                         border: 'none',
                         cursor: 'pointer',
