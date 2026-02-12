@@ -142,7 +142,7 @@ const GallerySection = () => {
             fontFamily: 'Montserrat, sans-serif',
             textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
           }}>
-            {getTranslation(language, 'galleryTitle')}
+            OBU Gallery
           </h2>
           <div style={{
             width: 'clamp(60px, 15vw, 100px)',
