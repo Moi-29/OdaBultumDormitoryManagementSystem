@@ -7,7 +7,78 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const login = async (username, password, role = null) => {
+            // If no role specified, try to login and let backend determine role
+            if (!role) {
+                // Try each role until one succeeds
+                const roles = ['admin', 'proctor', 'maintainer'];
+                let lastError = null;
+
+                for (const tryRole of roles) {
+                    try {
+                        const response = await axios.post(`${API_URL}/api/multi-auth/login`, {
+                            username,
+                            password,
+                            role: tryRole
+                        });
+
+                        const { token, user: userData } = response.data;
+
+                        // Store token and user data
+                        localStorage.setItem('token', token);
+                        localStorage.setItem('user', JSON.stringify(userData));
+
+                        // Set default authorization header
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+                        setUser(userData);
+
+                        return { success: true, user: userData };
+                    } catch (error) {
+                        // Store the error and continue to next role
+                        lastError = error;
+                        continue;
+                    }
+                }
+
+                // If all roles failed, return error
+                logError('AuthContext.login', lastError);
+                const { message } = getErrorMessage(lastError);
+                return {
+                    success: false,
+                    message: message || 'Invalid credentials. Please check your username and password.'
+                };
+            }
+
+            // If role is specified, use it directly
+            try {
+                const response = await axios.post(`${API_URL}/api/multi-auth/login`, {
+                    username,
+                    password,
+                    role
+                });
+
+                const { token, user: userData } = response.data;
+
+                // Store token and user data
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                // Set default authorization header
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+                setUser(userData);
+
+                return { success: true, user: userData };
+            } catch (error) {
+                logError('AuthContext.login', error);
+                const { message } = getErrorMessage(error);
+                return {
+                    success: false,
+                    message: message
+                };
+            }
+        }
 
     useEffect(() => {
         // Check if user is logged in on mount

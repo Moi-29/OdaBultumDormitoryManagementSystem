@@ -409,11 +409,11 @@ const Requests = () => {
                         {deleting ? 'Deleting...' : 'Delete Selected'}
                     </button>
                 </div>
-                {/* Premium Table with Chat Panel */}
+                {/* Premium Table with Details Panel */}
                 <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
                     {/* Requests Table */}
                     <div style={{ 
-                        flex: showChatPanel ? '0 0 60%' : '1',
+                        flex: showDetailsPanel ? '0 0 60%' : '1',
                         background: 'white',
                         borderRadius: '20px',
                         overflow: 'hidden',
@@ -587,8 +587,8 @@ const Requests = () => {
                             </div>
                         )}
                     </div>
-                    {/* Premium Chat Panel */}
-                    {showChatPanel && selectedRequest && (
+                    {/* Premium Details Panel */}
+                    {showDetailsPanel && selectedRequest && (
                         <div style={{
                             flex: '0 0 38%',
                             background: 'white',
@@ -602,7 +602,7 @@ const Requests = () => {
                             position: 'sticky',
                             top: '2rem'
                         }}>
-                            {/* Chat Header */}
+                            {/* Details Header */}
                             <div style={{
                                 background: 'linear-gradient(135deg, #001F3F 0%, #003366 100%)',
                                 padding: '1.5rem',
@@ -619,7 +619,7 @@ const Requests = () => {
                                         </p>
                                     </div>
                                     <button
-                                        onClick={() => setShowChatPanel(false)}
+                                        onClick={() => setShowDetailsPanel(false)}
                                         style={{
                                             background: 'rgba(255,255,255,0.2)',
                                             border: 'none',
