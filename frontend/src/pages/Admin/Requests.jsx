@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
-    MessageSquare, Users, Wrench, Building2, Send, Search, 
-    CheckCircle, XCircle, Clock, Paperclip, Mic, MoreVertical
+    MessageSquare, Users, Wrench, Building2, Send, X, Eye, 
+    CheckCircle, XCircle, Clock, Calendar, Mail, Phone, Trash2
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -13,10 +13,13 @@ const Requests = () => {
     const [maintainerRequests, setMaintainerRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState(null);
+    const [showChatPanel, setShowChatPanel] = useState(false);
     const [chatMessage, setChatMessage] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
     const [notification, setNotification] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedRequests, setSelectedRequests] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
