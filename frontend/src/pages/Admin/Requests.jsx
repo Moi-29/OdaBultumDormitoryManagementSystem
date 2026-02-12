@@ -494,14 +494,14 @@ const Requests = () => {
                                                         fontSize: '0.9rem',
                                                         boxShadow: '0 4px 12px rgba(0,191,255,0.3)'
                                                     }}>
-                                                        {request.studentName.charAt(0)}
+                                                        {request.studentName ? request.studentName.charAt(0).toUpperCase() : '?'}
                                                     </div>
                                                     <div>
                                                         <div style={{ fontWeight: 700, color: '#001F3F', fontSize: '0.95rem' }}>
-                                                            {request.studentName}
+                                                            {request.studentName || 'Unknown Student'}
                                                         </div>
                                                         <div style={{ fontSize: '0.85rem', color: '#00BFFF', fontWeight: 600 }}>
-                                                            {request.studentId}
+                                                            {request.studentId || 'N/A'}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -612,10 +612,10 @@ const Requests = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
                                     <div style={{ flex: 1 }}>
                                         <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>
-                                            {selectedRequest.studentName}
+                                            {selectedRequest.studentName || 'Unknown Student'}
                                         </h3>
                                         <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
-                                            {selectedRequest.studentId} • {selectedRequest.currentRoom}
+                                            {selectedRequest.studentId || 'N/A'} • {selectedRequest.currentRoom || 'N/A'}
                                         </p>
                                     </div>
                                     <button
@@ -642,11 +642,11 @@ const Requests = () => {
                                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                                         <Mail size={14} />
-                                        {selectedRequest.email}
+                                        {selectedRequest.email || 'N/A'}
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                                         <Phone size={14} />
-                                        {selectedRequest.phone}
+                                        {selectedRequest.phone || 'N/A'}
                                     </div>
                                 </div>
                             </div>
@@ -658,7 +658,7 @@ const Requests = () => {
                                         Request Type
                                     </div>
                                     <div style={{ fontWeight: 700, color: '#001F3F', fontSize: '1rem' }}>
-                                        {selectedRequest.requestType}
+                                        {selectedRequest.requestType || 'N/A'}
                                     </div>
                                 </div>
                                 <div style={{ marginBottom: '1rem' }}>
@@ -666,7 +666,7 @@ const Requests = () => {
                                         Subject
                                     </div>
                                     <div style={{ fontWeight: 600, color: '#333', fontSize: '0.95rem' }}>
-                                        {selectedRequest.subject}
+                                        {selectedRequest.subject || 'N/A'}
                                     </div>
                                 </div>
                                 <div style={{ marginBottom: '1rem' }}>
@@ -682,7 +682,7 @@ const Requests = () => {
                                         fontSize: '0.95rem',
                                         border: '1px solid #E8E8E8'
                                     }}>
-                                        {selectedRequest.message}
+                                        {selectedRequest.message || 'No message provided'}
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '1rem' }}>
@@ -690,13 +690,13 @@ const Requests = () => {
                                         <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
                                             Priority
                                         </div>
-                                        <PriorityBadge priority={selectedRequest.priority} />
+                                        <PriorityBadge priority={selectedRequest.priority || 'low'} />
                                     </div>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>
                                             Status
                                         </div>
-                                        <StatusBadge status={selectedRequest.status} />
+                                        <StatusBadge status={selectedRequest.status || 'pending'} />
                                     </div>
                                 </div>
                             </div>
