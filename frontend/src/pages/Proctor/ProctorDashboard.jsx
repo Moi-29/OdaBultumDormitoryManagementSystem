@@ -127,9 +127,6 @@ const ProctorDashboard = () => {
             setSubmitting(false);
         }
     };
-            setSubmitting(false);
-        }
-    };
 
     const handleLogout = () => {
         logout();
