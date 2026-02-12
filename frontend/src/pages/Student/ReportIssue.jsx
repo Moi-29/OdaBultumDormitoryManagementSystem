@@ -1,11 +1,11 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertCircle, Send, CheckCircle, X, Trash2, Clock, FileText } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const ReportIssue = () => {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuth();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [step, setStep] = useState('id-verification'); // 'id-verification', 'form'
     const [studentId, setStudentId] = useState('');
