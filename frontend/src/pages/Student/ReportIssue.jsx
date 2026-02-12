@@ -46,22 +46,26 @@ const ReportIssue = () => {
         setSubmitting(true);
         try {
             const requestData = {
-                fromUserId: user?._id,
+                fromUserId: user?._id || null,
                 fromUserModel: 'Student',
-                fromUserName: user?.fullName || user?.name || 'Student',
-                studentId: user?.studentId || user?.id,
-                studentName: user?.fullName || user?.name,
-                email: user?.email,
+                fromUserName: user?.fullName || user?.name || user?.username || 'Student',
+                studentId: user?.studentId || user?.id || 'N/A',
+                studentName: user?.fullName || user?.name || user?.username || 'Student',
+                email: user?.email || '',
                 phone: user?.phone || '',
                 requestType: formData.requestType,
                 subject: formData.subject,
                 message: formData.message,
                 priority: formData.priority,
-                currentRoom: formData.currentRoom,
+                currentRoom: formData.currentRoom || '',
                 status: 'pending'
             };
 
-            await axios.post(`${API_URL}/api/requests`, requestData);
+            console.log('Submitting report:', requestData);
+            
+            const response = await axios.post(`${API_URL}/api/requests`, requestData);
+            
+            console.log('Response:', response.data);
             
             showNotification('Report submitted successfully! Admin will review it soon.', 'success');
             
@@ -75,7 +79,8 @@ const ReportIssue = () => {
             });
         } catch (error) {
             console.error('Error submitting report:', error);
-            showNotification('Failed to submit report. Please try again.', 'error');
+            console.error('Error response:', error.response?.data);
+            showNotification(error.response?.data?.message || 'Failed to submit report. Please try again.', 'error');
         } finally {
             setSubmitting(false);
         }

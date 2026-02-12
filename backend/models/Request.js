@@ -4,17 +4,18 @@ const requestSchema = new mongoose.Schema({
     // Sender information
     fromUserId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         refPath: 'fromUserModel'
     },
     fromUserModel: {
         type: String,
-        required: true,
-        enum: ['Student', 'Proctor', 'Maintainer', 'Admin']
+        required: false,
+        enum: ['Student', 'Proctor', 'Maintainer', 'Admin'],
+        default: 'Student'
     },
     fromUserName: {
         type: String,
-        required: true
+        required: false
     },
     
     // Recipient information (usually admin)
@@ -59,6 +60,11 @@ const requestSchema = new mongoose.Schema({
     
     // Block information (for proctor requests)
     blockId: {
+        type: String
+    },
+    
+    // Specialization (for maintainer requests)
+    specialization: {
         type: String
     },
     

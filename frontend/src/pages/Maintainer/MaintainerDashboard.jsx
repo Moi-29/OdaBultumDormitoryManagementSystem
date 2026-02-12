@@ -97,11 +97,11 @@ const MaintainerDashboard = () => {
         setSubmitting(true);
         try {
             const requestData = {
-                fromUserId: user?._id,
+                fromUserId: user?._id || null,
                 fromUserModel: 'Maintainer',
-                fromUserName: user?.fullName || user?.name || 'Maintainer',
-                specialization: user?.specialization,
-                email: user?.email,
+                fromUserName: user?.fullName || user?.name || user?.username || 'Maintainer',
+                specialization: user?.specialization || 'General',
+                email: user?.email || '',
                 phone: user?.phone || '',
                 requestType: requestForm.requestType,
                 subject: requestForm.subject,
@@ -110,13 +110,19 @@ const MaintainerDashboard = () => {
                 status: 'pending'
             };
 
-            await axios.post(`${API_URL}/api/requests`, requestData);
+            console.log('Submitting request:', requestData);
+            
+            const response = await axios.post(`${API_URL}/api/requests`, requestData);
+            
+            console.log('Response:', response.data);
             
             showNotification('Request submitted successfully', 'success');
             setShowRequestModal(false);
             setRequestForm({ subject: '', message: '', priority: 'medium', requestType: 'Tool Request' });
             fetchData();
         } catch (error) {
+            console.error('Error submitting request:', error);
+            console.error('Error response:', error.response?.data);
             showNotification(error.response?.data?.message || 'Failed to submit request', 'error');
         } finally {
             setSubmitting(false);

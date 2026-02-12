@@ -19,6 +19,11 @@ const getRequests = async (req, res) => {
 const createRequest = async (req, res) => {
     try {
         const {
+            fromUserId,
+            fromUserModel,
+            fromUserName,
+            toUserId,
+            toUserModel,
             studentId,
             studentName,
             email,
@@ -29,14 +34,28 @@ const createRequest = async (req, res) => {
             status,
             priority,
             currentRoom,
-            submittedOn
+            submittedOn,
+            blockId,
+            specialization
         } = req.body;
 
+        // Validate required fields
+        if (!subject || !message) {
+            return res.status(400).json({ message: 'Subject and message are required' });
+        }
+
         const request = await Request.create({
+            fromUserId: fromUserId || null,
+            fromUserModel: fromUserModel || 'Student',
+            fromUserName: fromUserName || studentName || 'Unknown',
+            toUserId: toUserId || null,
+            toUserModel: toUserModel || 'Admin',
             studentId,
             studentName,
             email,
             phone,
+            blockId,
+            specialization,
             requestType,
             subject,
             message,

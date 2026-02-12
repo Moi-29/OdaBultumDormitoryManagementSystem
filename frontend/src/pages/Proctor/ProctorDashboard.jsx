@@ -95,29 +95,38 @@ const ProctorDashboard = () => {
         setSubmitting(true);
         try {
             const requestData = {
-                fromUserId: user?._id,
+                fromUserId: user?._id || null,
                 fromUserModel: 'Proctor',
-                fromUserName: user?.fullName || user?.name || 'Proctor',
-                blockId: user?.blockId,
-                email: user?.email,
+                fromUserName: user?.fullName || user?.name || user?.username || 'Proctor',
+                blockId: user?.blockId || 'N/A',
+                email: user?.email || '',
                 phone: user?.phone || '',
                 requestType: 'Maintenance',
                 subject: reportForm.subject,
                 message: reportForm.message,
                 priority: reportForm.priority,
-                currentRoom: reportForm.currentRoom,
+                currentRoom: reportForm.currentRoom || '',
                 status: 'pending'
             };
 
-            await axios.post(`${API_URL}/api/requests`, requestData);
+            console.log('Submitting request:', requestData);
+            
+            const response = await axios.post(`${API_URL}/api/requests`, requestData);
+            
+            console.log('Response:', response.data);
             
             showNotification('Report submitted successfully', 'success');
             setShowReportModal(false);
             setReportForm({ subject: '', message: '', priority: 'medium', currentRoom: '' });
             fetchData();
         } catch (error) {
+            console.error('Error submitting report:', error);
+            console.error('Error response:', error.response?.data);
             showNotification(error.response?.data?.message || 'Failed to submit report', 'error');
         } finally {
+            setSubmitting(false);
+        }
+    };
             setSubmitting(false);
         }
     };
