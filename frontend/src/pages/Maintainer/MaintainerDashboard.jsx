@@ -40,18 +40,44 @@ const MaintainerDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const [statsRes, requestsRes, workOrdersRes] = await Promise.all([
-                axios.get(`${API_URL}/api/maintainer/stats`, config),
-                axios.get(`${API_URL}/api/maintainer/requests`, config),
-                axios.get(`${API_URL}/api/maintainer/work-orders`, config)
-            ]);
-
-            if (statsRes.data.success) setStats(statsRes.data.stats);
-            if (requestsRes.data.success) setRequests(requestsRes.data.requests);
-            if (workOrdersRes.data.success) setWorkOrders(workOrdersRes.data.workOrders);
+            // Fetch all requests and filter for maintainer's requests
+            const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
+            
+            if (requestsRes.data) {
+                const allRequests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
+                
+                // Filter requests from this maintainer
+                const maintainerRequests = allRequests.filter(req => 
+                    req.fromUserModel === 'Maintainer' && req.fromUserId === user?._id
+                );
+                
+                setRequests(maintainerRequests);
+                setWorkOrders(maintainerRequests); // Work orders are the same as requests with admin responses
+                
+                // Calculate stats
+                const stats = {
+                    totalRequests: maintainerRequests.length,
+                    pendingRequests: maintainerRequests.filter(r => r.status === 'pending').length,
+                    assignedWorkOrders: maintainerRequests.length,
+                    completedWorkOrders: maintainerRequests.filter(r => r.status === 'approved' || r.status === 'resolved').length,
+                    pendingWorkOrders: maintainerRequests.filter(r => r.status === 'pending').length
+                };
+                setStats(stats);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
             showNotification('Failed to load data', 'error');
+            
+            // Set empty data on error
+            setStats({
+                totalRequests: 0,
+                pendingRequests: 0,
+                assignedWorkOrders: 0,
+                completedWorkOrders: 0,
+                pendingWorkOrders: 0
+            });
+            setRequests([]);
+            setWorkOrders([]);
         } finally {
             setLoading(false);
         }
@@ -70,19 +96,26 @@ const MaintainerDashboard = () => {
 
         setSubmitting(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                `${API_URL}/api/maintainer/requests`,
-                requestForm,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const requestData = {
+                fromUserId: user?._id,
+                fromUserModel: 'Maintainer',
+                fromUserName: user?.fullName || user?.name || 'Maintainer',
+                specialization: user?.specialization,
+                email: user?.email,
+                phone: user?.phone || '',
+                requestType: requestForm.requestType,
+                subject: requestForm.subject,
+                message: requestForm.message,
+                priority: requestForm.priority,
+                status: 'pending'
+            };
 
-            if (response.data.success) {
-                showNotification('Request submitted successfully', 'success');
-                setShowRequestModal(false);
-                setRequestForm({ subject: '', message: '', priority: 'medium', requestType: 'Tool Request' });
-                fetchData();
-            }
+            await axios.post(`${API_URL}/api/requests`, requestData);
+            
+            showNotification('Request submitted successfully', 'success');
+            setShowRequestModal(false);
+            setRequestForm({ subject: '', message: '', priority: 'medium', requestType: 'Tool Request' });
+            fetchData();
         } catch (error) {
             showNotification(error.response?.data?.message || 'Failed to submit request', 'error');
         } finally {

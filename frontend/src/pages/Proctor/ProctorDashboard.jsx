@@ -40,18 +40,42 @@ const ProctorDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const [statsRes, reportsRes, messagesRes] = await Promise.all([
-                axios.get(`${API_URL}/api/proctor/stats`, config),
-                axios.get(`${API_URL}/api/proctor/reports`, config),
-                axios.get(`${API_URL}/api/proctor/messages`, config)
-            ]);
-
-            if (statsRes.data.success) setStats(statsRes.data.stats);
-            if (reportsRes.data.success) setReports(reportsRes.data.reports);
-            if (messagesRes.data.success) setMessages(messagesRes.data.messages);
+            // Fetch all requests and filter for proctor's requests
+            const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
+            
+            if (requestsRes.data) {
+                const allRequests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
+                
+                // Filter requests from this proctor
+                const proctorRequests = allRequests.filter(req => 
+                    req.fromUserModel === 'Proctor' && req.fromUserId === user?._id
+                );
+                
+                setReports(proctorRequests);
+                setMessages(proctorRequests); // Messages are the same as requests with admin responses
+                
+                // Calculate stats
+                const stats = {
+                    totalReports: proctorRequests.length,
+                    pendingReports: proctorRequests.filter(r => r.status === 'pending').length,
+                    resolvedReports: proctorRequests.filter(r => r.status === 'approved' || r.status === 'resolved').length,
+                    unreadMessages: proctorRequests.filter(r => r.status === 'pending').length
+                };
+                setStats(stats);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
             showNotification('Failed to load data', 'error');
+            
+            // Set empty data on error
+            setStats({
+                totalReports: 0,
+                pendingReports: 0,
+                resolvedReports: 0,
+                unreadMessages: 0
+            });
+            setReports([]);
+            setMessages([]);
         } finally {
             setLoading(false);
         }
@@ -70,19 +94,27 @@ const ProctorDashboard = () => {
 
         setSubmitting(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                `${API_URL}/api/proctor/reports`,
-                reportForm,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const requestData = {
+                fromUserId: user?._id,
+                fromUserModel: 'Proctor',
+                fromUserName: user?.fullName || user?.name || 'Proctor',
+                blockId: user?.blockId,
+                email: user?.email,
+                phone: user?.phone || '',
+                requestType: 'Maintenance',
+                subject: reportForm.subject,
+                message: reportForm.message,
+                priority: reportForm.priority,
+                currentRoom: reportForm.currentRoom,
+                status: 'pending'
+            };
 
-            if (response.data.success) {
-                showNotification('Report submitted successfully', 'success');
-                setShowReportModal(false);
-                setReportForm({ subject: '', message: '', priority: 'medium', currentRoom: '' });
-                fetchData();
-            }
+            await axios.post(`${API_URL}/api/requests`, requestData);
+            
+            showNotification('Report submitted successfully', 'success');
+            setShowReportModal(false);
+            setReportForm({ subject: '', message: '', priority: 'medium', currentRoom: '' });
+            fetchData();
         } catch (error) {
             showNotification(error.response?.data?.message || 'Failed to submit report', 'error');
         } finally {
