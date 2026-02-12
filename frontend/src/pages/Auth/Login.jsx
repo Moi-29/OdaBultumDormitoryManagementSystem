@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, LogIn, Shield, Wrench, UserCheck } from 'lucide-react';
+import { Lock, User, LogIn } from 'lucide-react';
 import { getErrorMessage, logError } from '../../utils/errorHandler';
 
 const Login = () => {
-    const [formData, setFormData] = useState({ username: '', password: '', role: 'admin' });
+    const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
@@ -20,16 +20,17 @@ const Login = () => {
         setError('');
         setIsLoading(true);
         try {
-            const result = await login(formData.username, formData.password, formData.role);
+            // Try to login without specifying role - backend will determine role from credentials
+            const result = await login(formData.username, formData.password);
             if (result.success) {
                 // Get the role - handle both string and object cases
                 const userRole = typeof result.user.role === 'string' 
                     ? result.user.role 
-                    : result.user.role?.name || formData.role;
+                    : result.user.role?.name;
                 
                 console.log('Login successful, redirecting based on role:', userRole);
                 
-                // Redirect based on role
+                // Redirect based on role returned from backend
                 switch (userRole.toLowerCase()) {
                     case 'admin':
                         navigate('/admin/dashboard');
@@ -55,14 +56,6 @@ const Login = () => {
             setIsLoading(false);
         }
     };
-
-    const roles = [
-        { value: 'admin', label: 'Administrator', icon: Shield, color: '#10b981' },
-        { value: 'proctor', label: 'Proctor', icon: UserCheck, color: '#3b82f6' },
-        { value: 'maintainer', label: 'Maintainer', icon: Wrench, color: '#f59e0b' }
-    ];
-
-    const selectedRole = roles.find(r => r.value === formData.role);
 
     return (
         <div style={{ 
@@ -191,52 +184,6 @@ const Login = () => {
                             <label style={{ 
                                 fontSize: '0.9rem',
                                 fontWeight: '600',
-                                marginBottom: '0.75rem',
-                                display: 'block',
-                                color: '#2d3748'
-                            }}>
-                                Login As
-                            </label>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
-                                {roles.map((role) => {
-                                    const Icon = role.icon;
-                                    const isSelected = formData.role === role.value;
-                                    return (
-                                        <button
-                                            key={role.value}
-                                            type="button"
-                                            onClick={() => setFormData({ ...formData, role: role.value })}
-                                            style={{
-                                                padding: '0.75rem 0.5rem',
-                                                border: `2px solid ${isSelected ? role.color : '#e2e8f0'}`,
-                                                borderRadius: '8px',
-                                                background: isSelected ? `${role.color}10` : 'white',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.3s',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: '0.5rem'
-                                            }}
-                                        >
-                                            <Icon size={24} color={isSelected ? role.color : '#a0aec0'} />
-                                            <span style={{
-                                                fontSize: '0.75rem',
-                                                fontWeight: isSelected ? '600' : '500',
-                                                color: isSelected ? role.color : '#718096'
-                                            }}>
-                                                {role.label}
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label style={{ 
-                                fontSize: '0.9rem',
-                                fontWeight: '600',
                                 marginBottom: '0.5rem',
                                 display: 'block',
                                 color: '#2d3748'
@@ -270,7 +217,7 @@ const Login = () => {
                                         transition: 'all 0.3s ease',
                                         outline: 'none'
                                     }}
-                                    onFocus={(e) => e.target.style.borderColor = selectedRole.color}
+                                    onFocus={(e) => e.target.style.borderColor = '#10b981'}
                                     onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                                 />
                             </div>
@@ -313,7 +260,7 @@ const Login = () => {
                                         transition: 'all 0.3s ease',
                                         outline: 'none'
                                     }}
-                                    onFocus={(e) => e.target.style.borderColor = selectedRole.color}
+                                    onFocus={(e) => e.target.style.borderColor = '#10b981'}
                                     onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                                 />
                             </div>
@@ -327,7 +274,7 @@ const Login = () => {
                                 padding: '0.875rem',
                                 background: isLoading 
                                     ? 'linear-gradient(135deg, #a0aec0 0%, #718096 100%)'
-                                    : `linear-gradient(135deg, ${selectedRole.color} 0%, ${selectedRole.color}dd 100%)`,
+                                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '8px',
@@ -339,18 +286,18 @@ const Login = () => {
                                 alignItems: 'center',
                                 gap: '0.5rem',
                                 transition: 'all 0.3s ease',
-                                boxShadow: `0 4px 15px ${selectedRole.color}66`,
+                                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
                                 transform: 'translateY(0)'
                             }}
                             onMouseEnter={(e) => {
                                 if (!isLoading) {
                                     e.target.style.transform = 'translateY(-2px)';
-                                    e.target.style.boxShadow = `0 6px 20px ${selectedRole.color}88`;
+                                    e.target.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.5)';
                                 }
                             }}
                             onMouseLeave={(e) => {
                                 e.target.style.transform = 'translateY(0)';
-                                e.target.style.boxShadow = `0 4px 15px ${selectedRole.color}66`;
+                                e.target.style.boxShadow = '0 4px 15px rgba(16, 185, 129, 0.4)';
                             }}
                         >
                             {isLoading ? (
@@ -368,7 +315,7 @@ const Login = () => {
                             ) : (
                                 <>
                                     <LogIn size={20} />
-                                    Log In as {selectedRole.label}
+                                    Log In
                                 </>
                             )}
                         </button>
