@@ -7,7 +7,7 @@ import { AuthContext } from '../../context/AuthContext';
 const ReportIssue = () => {
     const { user } = useContext(AuthContext);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const [step, setStep] = useState('id-verification'); // 'id-verification', 'form', 'reports'
+    const [step, setStep] = useState('id-verification'); // 'id-verification', 'form'
     const [studentId, setStudentId] = useState('');
     const [verifying, setVerifying] = useState(false);
     const [verified, setVerified] = useState(false);
@@ -23,6 +23,10 @@ const ReportIssue = () => {
     const [notification, setNotification] = useState(null);
     const [myReports, setMyReports] = useState([]);
     const [hasPendingReport, setHasPendingReport] = useState(false);
+    
+    // Sidebar state
+    const [sidebarStudentId, setSidebarStudentId] = useState('');
+    const [loadingSidebarReports, setLoadingSidebarReports] = useState(false);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -57,8 +61,6 @@ const ReportIssue = () => {
                 req.studentId === studentId && req.fromUserModel === 'Student'
             );
             
-            setMyReports(studentReports);
-            
             // Check if there's a pending report
             const pending = studentReports.some(r => r.status === 'pending');
             setHasPendingReport(pending);
@@ -69,12 +71,52 @@ const ReportIssue = () => {
             // Pre-fill student ID in form
             setFormData(prev => ({ ...prev, studentId: studentId }));
             
+            // Also load in sidebar
+            setSidebarStudentId(studentId);
+            setMyReports(studentReports);
+            
             showNotification('ID verified successfully!', 'success');
         } catch (error) {
             console.error('Error verifying ID:', error);
             showNotification('Failed to verify ID. Please try again.', 'error');
         } finally {
             setVerifying(false);
+        }
+    };
+
+    const handleLoadSidebarReports = async (e) => {
+        e.preventDefault();
+        
+        if (!sidebarStudentId.trim()) {
+            showNotification('Please enter your Student ID', 'error');
+            return;
+        }
+
+        setLoadingSidebarReports(true);
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            const response = await axios.get(`${API_URL}/api/requests`, config);
+            const allRequests = response.data;
+            
+            // Filter reports for this student ID
+            const studentReports = allRequests.filter(req => 
+                req.studentId === sidebarStudentId && req.fromUserModel === 'Student'
+            );
+            
+            setMyReports(studentReports);
+            
+            if (studentReports.length === 0) {
+                showNotification('No reports found for this Student ID', 'info');
+            } else {
+                showNotification(`Found ${studentReports.length} report(s)`, 'success');
+            }
+        } catch (error) {
+            console.error('Error loading reports:', error);
+            showNotification('Failed to load reports. Please try again.', 'error');
+        } finally {
+            setLoadingSidebarReports(false);
         }
     };
 
@@ -244,7 +286,7 @@ const ReportIssue = () => {
                 flexDirection: isMobile ? 'column' : 'row'
             }}>
                 {/* Left Side - Form Section */}
-                <div style={{ flex: verified ? '0 0 60%' : '1' }}>
+                <div style={{ flex: '0 0 60%' }}>
                     <div style={{
                         backgroundColor: 'white',
                         borderRadius: isMobile ? '20px' : '24px',
@@ -592,114 +634,158 @@ const ReportIssue = () => {
                     </div>
                 </div>
 
-                {/* Right Side - My Reports */}
-                {verified && (
-                    <div style={{ flex: '0 0 38%' }}>
-                        <div style={{
-                            backgroundColor: 'white',
-                            borderRadius: isMobile ? '20px' : '24px',
-                            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.12)',
-                            padding: isMobile ? '1.5rem' : '2rem',
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
-                            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <FileText size={24} color="#3b82f6" />
-                                My Reports
-                            </h3>
+                {/* Right Side - My Reports (Always Visible) */}
+                <div style={{ flex: '0 0 38%' }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: isMobile ? '20px' : '24px',
+                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.12)',
+                        padding: isMobile ? '1.5rem' : '2rem',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.3rem', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <FileText size={24} color="#3b82f6" />
+                            My Reports
+                        </h3>
 
-                            <div style={{ flex: 1, overflowY: 'auto' }}>
-                                {myReports.length === 0 ? (
-                                    <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-                                        <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.2, color: '#94a3b8' }} />
-                                        <p style={{ fontSize: '0.95rem', color: '#64748b', margin: 0 }}>No reports yet</p>
-                                        <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '0.5rem 0 0 0' }}>Your submitted reports will appear here</p>
-                                    </div>
-                                ) : (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                        {myReports.map(report => {
-                                            const statusStyle = getStatusColor(report.status);
-                                            return (
-                                                <div key={report._id} style={{
-                                                    padding: '1.25rem',
-                                                    background: '#f8fafc',
-                                                    borderRadius: '12px',
-                                                    border: '1px solid #e2e8f0',
-                                                    transition: 'all 0.2s'
-                                                }}>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
-                                                        <div style={{ flex: 1 }}>
-                                                            <div style={{ fontWeight: 700, fontSize: '1rem', color: '#1e293b', marginBottom: '0.5rem' }}>
-                                                                {report.subject}
-                                                            </div>
-                                                            <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                                <Clock size={12} />
-                                                                {report.submittedOn}
-                                                            </div>
-                                                        </div>
-                                                        <span style={{
-                                                            padding: '0.375rem 0.75rem',
-                                                            background: statusStyle.bg,
-                                                            color: statusStyle.color,
-                                                            borderRadius: '6px',
-                                                            fontSize: '0.75rem',
-                                                            fontWeight: 700,
-                                                            textTransform: 'uppercase'
-                                                        }}>
-                                                            {report.status}
-                                                        </span>
-                                                    </div>
-                                                    
-                                                    <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1rem', lineHeight: '1.5' }}>
-                                                        {report.message}
-                                                    </div>
-
-                                                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: '#64748b', marginBottom: '1rem' }}>
-                                                        <span style={{ padding: '0.25rem 0.5rem', background: '#e0e7ff', color: '#3730a3', borderRadius: '4px', fontWeight: 600 }}>
-                                                            {report.currentRoom}
-                                                        </span>
-                                                    </div>
-
-                                                    <button
-                                                        onClick={() => handleDeleteReport(report._id)}
-                                                        style={{
-                                                            width: '100%',
-                                                            padding: '0.625rem',
-                                                            background: 'white',
-                                                            color: '#ef4444',
-                                                            border: '1px solid #ef4444',
-                                                            borderRadius: '8px',
-                                                            cursor: 'pointer',
-                                                            fontWeight: 600,
-                                                            fontSize: '0.85rem',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            gap: '0.5rem',
-                                                            transition: 'all 0.2s'
-                                                        }}
-                                                        onMouseEnter={(e) => {
-                                                            e.currentTarget.style.background = '#ef4444';
-                                                            e.currentTarget.style.color = 'white';
-                                                        }}
-                                                        onMouseLeave={(e) => {
-                                                            e.currentTarget.style.background = 'white';
-                                                            e.currentTarget.style.color = '#ef4444';
-                                                        }}
-                                                    >
-                                                        <Trash2 size={16} />
-                                                        Delete Report
-                                                    </button>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
+                        {/* Student ID Input for Sidebar */}
+                        <form onSubmit={handleLoadSidebarReports} style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
+                                Enter Student ID to view reports
+                            </label>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input
+                                    type="text"
+                                    value={sidebarStudentId}
+                                    onChange={(e) => setSidebarStudentId(e.target.value)}
+                                    placeholder="e.g., RU/1270/18"
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem 1rem',
+                                        border: '2px solid #e5e7eb',
+                                        borderRadius: '10px',
+                                        fontSize: '0.9rem',
+                                        outline: 'none',
+                                        transition: 'all 0.3s'
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={loadingSidebarReports}
+                                    style={{
+                                        padding: '0.75rem 1.25rem',
+                                        background: loadingSidebarReports 
+                                            ? '#e5e7eb' 
+                                            : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                        color: loadingSidebarReports ? '#9ca3af' : 'white',
+                                        border: 'none',
+                                        borderRadius: '10px',
+                                        fontSize: '0.85rem',
+                                        fontWeight: 700,
+                                        cursor: loadingSidebarReports ? 'not-allowed' : 'pointer',
+                                        transition: 'all 0.3s',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {loadingSidebarReports ? 'Loading...' : 'Load'}
+                                </button>
                             </div>
+                        </form>
+
+                        <div style={{ flex: 1, overflowY: 'auto' }}>
+                            {myReports.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                                    <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.2, color: '#94a3b8' }} />
+                                    <p style={{ fontSize: '0.95rem', color: '#64748b', margin: 0 }}>No reports yet</p>
+                                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '0.5rem 0 0 0' }}>Enter your Student ID above to view your reports</p>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {myReports.map(report => {
+                                        const statusStyle = getStatusColor(report.status);
+                                        return (
+                                            <div key={report._id} style={{
+                                                padding: '1.25rem',
+                                                background: '#f8fafc',
+                                                borderRadius: '12px',
+                                                border: '1px solid #e2e8f0',
+                                                transition: 'all 0.2s'
+                                            }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ fontWeight: 700, fontSize: '1rem', color: '#1e293b', marginBottom: '0.5rem' }}>
+                                                            {report.subject}
+                                                        </div>
+                                                        <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                            <Clock size={12} />
+                                                            {report.submittedOn}
+                                                        </div>
+                                                    </div>
+                                                    <span style={{
+                                                        padding: '0.375rem 0.75rem',
+                                                        background: statusStyle.bg,
+                                                        color: statusStyle.color,
+                                                        borderRadius: '6px',
+                                                        fontSize: '0.75rem',
+                                                        fontWeight: 700,
+                                                        textTransform: 'uppercase'
+                                                    }}>
+                                                        {report.status}
+                                                    </span>
+                                                </div>
+                                                
+                                                <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1rem', lineHeight: '1.5' }}>
+                                                    {report.message}
+                                                </div>
+
+                                                <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: '#64748b', marginBottom: '1rem' }}>
+                                                    <span style={{ padding: '0.25rem 0.5rem', background: '#e0e7ff', color: '#3730a3', borderRadius: '4px', fontWeight: 600 }}>
+                                                        {report.currentRoom}
+                                                    </span>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => handleDeleteReport(report._id)}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '0.625rem',
+                                                        background: 'white',
+                                                        color: '#ef4444',
+                                                        border: '1px solid #ef4444',
+                                                        borderRadius: '8px',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 600,
+                                                        fontSize: '0.85rem',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '0.5rem',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.background = '#ef4444';
+                                                        e.currentTarget.style.color = 'white';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.background = 'white';
+                                                        e.currentTarget.style.color = '#ef4444';
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                    Delete Report
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
-                )}
+                </div>
             </div>
             
             <footer style={{
