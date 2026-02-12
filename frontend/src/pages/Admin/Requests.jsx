@@ -186,9 +186,87 @@ const Requests = () => {
         showNotification('Message sent successfully', 'success');
     };
 
-    const handleSelectRequest = (request) => {
+    const handleViewRequest = (request) => {
         setSelectedRequest(request);
+        setShowChatPanel(true);
         setChatHistory([]);
+    };
+
+    const handleSelectAll = () => {
+        const requests = getCurrentRequests();
+        if (selectAll) {
+            setSelectedRequests([]);
+        } else {
+            setSelectedRequests(requests.map(req => req._id));
+        }
+        setSelectAll(!selectAll);
+    };
+
+    const handleSelectRequest = (requestId) => {
+        if (selectedRequests.includes(requestId)) {
+            setSelectedRequests(selectedRequests.filter(id => id !== requestId));
+        } else {
+            setSelectedRequests([...selectedRequests, requestId]);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        if (selectedRequests.length === 0) return;
+        
+        if (!window.confirm(`Delete ${selectedRequests.length} request(s)? This action cannot be undone.`)) return;
+        
+        setDeleting(true);
+        const successfulDeletes = [];
+        const failedDeletes = [];
+        
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            // Delete from database
+            for (const requestId of selectedRequests) {
+                try {
+                    await axios.delete(`${API_URL}/api/requests/${requestId}`, config);
+                    successfulDeletes.push(requestId);
+                } catch (apiError) {
+                    console.error(`Failed to delete request ${requestId}:`, apiError);
+                    failedDeletes.push(requestId);
+                }
+            }
+            
+            // Update local state only for successfully deleted requests
+            if (successfulDeletes.length > 0) {
+                const requests = getCurrentRequests();
+                const filtered = requests.filter(req => !successfulDeletes.includes(req._id));
+                
+                if (activeTab === 'students') setStudentRequests(filtered);
+                else if (activeTab === 'proctors') setProctorRequests(filtered);
+                else setMaintainerRequests(filtered);
+                
+                // Close chat panel if the selected request was deleted
+                if (selectedRequest && successfulDeletes.includes(selectedRequest._id)) {
+                    setShowChatPanel(false);
+                    setSelectedRequest(null);
+                }
+            }
+            
+            setSelectedRequests([]);
+            setSelectAll(false);
+            
+            // Show appropriate notification
+            if (failedDeletes.length === 0) {
+                showNotification(`Successfully deleted ${successfulDeletes.length} request(s)`, 'success');
+            } else if (successfulDeletes.length === 0) {
+                showNotification('Failed to delete all requests', 'error');
+            } else {
+                showNotification(`Deleted ${successfulDeletes.length} request(s), ${failedDeletes.length} failed`, 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting requests:', error);
+            showNotification('Failed to delete requests', 'error');
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const getFilteredRequests = () => {
