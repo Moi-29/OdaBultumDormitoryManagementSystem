@@ -369,7 +369,7 @@ const StudentLayout = () => {
                     style={{
                         position: 'fixed',
                         top: '0.75rem',
-                        left: sidebarOpen ? 'calc(min(70vw, 280px) - 60px)' : '0.75rem',
+                        left: sidebarOpen ? 'calc(min(45vw, 240px) - 60px)' : '0.75rem',
                         background: '#2d9f6e',
                         border: 'none',
                         cursor: 'pointer',
@@ -418,7 +418,7 @@ const StudentLayout = () => {
                     top: 0,
                     left: 0,
                     bottom: 0,
-                    width: isDesktop ? '260px' : 'min(70vw, 280px)',
+                    width: isDesktop ? '260px' : 'min(45vw, 240px)',
                     background: isDarkMode 
                         ? 'linear-gradient(180deg, #2d9f6e 0%, #27916a 50%, #238360 100%)'
                         : 'linear-gradient(180deg, #2d9f6e 0%, #27916a 50%, #238360 100%)',
