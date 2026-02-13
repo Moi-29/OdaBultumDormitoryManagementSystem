@@ -12,12 +12,23 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
+    // Always default to English on first load
     const saved = localStorage.getItem('language');
-    return saved || 'en';
+    // Only use saved language if it's valid, otherwise default to 'en'
+    return saved && ['en', 'am', 'om', 'so', 'ti', 'ar'].includes(saved) ? saved : 'en';
   });
 
   useEffect(() => {
     localStorage.setItem('language', language);
+    
+    // Reset Google Translate to English if language is 'en'
+    if (language === 'en') {
+      const googleTranslateCombo = document.querySelector('.goog-te-combo');
+      if (googleTranslateCombo && googleTranslateCombo.value !== '') {
+        googleTranslateCombo.value = '';
+        googleTranslateCombo.dispatchEvent(new Event('change'));
+      }
+    }
   }, [language]);
 
   const changeLanguage = (lang) => {

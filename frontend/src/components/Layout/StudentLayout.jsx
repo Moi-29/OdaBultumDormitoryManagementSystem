@@ -49,6 +49,29 @@ const StudentLayout = () => {
         };
     }, [sidebarOpen, isDesktop]);
 
+    // Initialize with English on mount
+    useEffect(() => {
+        // Ensure English is the default language
+        if (language !== 'en') {
+            changeLanguage('en');
+        }
+        
+        // Reset Google Translate to English on mount
+        const resetToEnglish = setInterval(() => {
+            const googleTranslateCombo = document.querySelector('.goog-te-combo');
+            if (googleTranslateCombo) {
+                clearInterval(resetToEnglish);
+                if (googleTranslateCombo.value !== '') {
+                    googleTranslateCombo.value = '';
+                    googleTranslateCombo.dispatchEvent(new Event('change'));
+                }
+            }
+        }, 100);
+        
+        // Clear interval after 3 seconds
+        setTimeout(() => clearInterval(resetToEnglish), 3000);
+    }, []);
+
     const navItems = [
         { path: '/student/home', label: t('home'), icon: Home },
         { path: '/student/dormitory', label: t('dormitoryView'), icon: Building2 },
