@@ -51,25 +51,27 @@ const StudentLayout = () => {
 
     // Initialize with English on mount
     useEffect(() => {
-        // Ensure English is the default language
-        if (language !== 'en') {
-            changeLanguage('en');
-        }
+        // Force page to be in English on mount
+        const htmlElement = document.documentElement;
+        htmlElement.setAttribute('lang', 'en');
         
-        // Reset Google Translate to English on mount
-        const resetToEnglish = setInterval(() => {
-            const googleTranslateCombo = document.querySelector('.goog-te-combo');
-            if (googleTranslateCombo) {
-                clearInterval(resetToEnglish);
-                if (googleTranslateCombo.value !== '') {
-                    googleTranslateCombo.value = '';
-                    googleTranslateCombo.dispatchEvent(new Event('change'));
+        // Remove any Google Translate cookies/storage on mount if language is English
+        if (language === 'en' || !language) {
+            // Clear Google Translate cookies
+            document.cookie.split(";").forEach((c) => {
+                if (c.trim().startsWith('googtrans')) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                 }
+            });
+            
+            // Remove Google Translate classes from body
+            document.body.classList.remove('translated-ltr', 'translated-rtl');
+            
+            // Ensure language is set to English
+            if (language !== 'en') {
+                changeLanguage('en');
             }
-        }, 100);
-        
-        // Clear interval after 3 seconds
-        setTimeout(() => clearInterval(resetToEnglish), 3000);
+        }
     }, []);
 
     const navItems = [
@@ -109,8 +111,10 @@ const StudentLayout = () => {
         
         // Trigger Google Translate
         if (langCode === 'en') {
-            // Reset to English (original)
-            triggerGoogleTranslate('');
+            // Reset to original English (no translation)
+            // Reload page to clear any Google Translate modifications
+            const currentPath = window.location.pathname + window.location.search;
+            window.location.href = currentPath.split('#')[0].split('?')[0];
         } else {
             triggerGoogleTranslate(langCode);
         }
