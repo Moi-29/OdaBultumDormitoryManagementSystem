@@ -81,25 +81,53 @@ const Gallery = () => {
             return;
         }
 
-        
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
             
-            const imageData = {
-                imageUrl: formData.imageUrl || null
-            };
-            
-            if (modalMode === 'create') {
-                await axios.post(`${API_URL}/api/gallery`, imageData, config);
-                showNotification('Image added successfully', 'success');
+            // Handle image upload - convert file to base64 if file is selected
+            if (imageUploadType === 'upload' && formData.imageFile) {
+                // Convert file to base64
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const imageData = {
+                        imageUrl: reader.result // base64 string
+                    };
+                    
+                    try {
+                        if (modalMode === 'create') {
+                            await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                            showNotification('Image added successfully', 'success');
+                        } else {
+                            await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                            showNotification('Image updated successfully', 'success');
+                        }
+                        
+                        handleCloseModal();
+                        fetchImages();
+                    } catch (error) {
+                        console.error('Error saving image:', error);
+                        showNotification(error.response?.data?.message || 'Failed to save image', 'error');
+                    }
+                };
+                reader.readAsDataURL(formData.imageFile);
             } else {
-                await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
-                showNotification('Image updated successfully', 'success');
+                // Use URL directly
+                const imageData = {
+                    imageUrl: formData.imageUrl
+                };
+                
+                if (modalMode === 'create') {
+                    await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                    showNotification('Image added successfully', 'success');
+                } else {
+                    await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                    showNotification('Image updated successfully', 'success');
+                }
+                
+                handleCloseModal();
+                fetchImages();
             }
-            
-            handleCloseModal();
-            fetchImages();
         } catch (error) {
             console.error('Error saving image:', error);
             showNotification(error.response?.data?.message || 'Failed to save image', 'error');
@@ -369,7 +397,10 @@ const Gallery = () => {
                                     <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                                         <button
                                             type="button"
-                                            onClick={() => setImageUploadType('url')}
+                                            onClick={() => {
+                                                setImageUploadType('url');
+                                                setFormData({ ...formData, imageFile: null });
+                                            }}
                                             style={{ flex: 1, padding: '0.625rem 1rem', background: imageUploadType === 'url' ? '#3b82f6' : 'white', border: `2px solid ${imageUploadType === 'url' ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: imageUploadType === 'url' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
                                         >
                                             <LinkIcon size={16} />
@@ -377,7 +408,10 @@ const Gallery = () => {
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => setImageUploadType('upload')}
+                                            onClick={() => {
+                                                setImageUploadType('upload');
+                                                setFormData({ ...formData, imageUrl: '' });
+                                            }}
                                             style={{ flex: 1, padding: '0.625rem 1rem', background: imageUploadType === 'upload' ? '#3b82f6' : 'white', border: `2px solid ${imageUploadType === 'upload' ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: imageUploadType === 'upload' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
                                         >
                                             <Upload size={16} />

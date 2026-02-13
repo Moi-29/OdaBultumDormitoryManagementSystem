@@ -7,30 +7,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { getTranslation } from "../../translations/translations";
 
-// Import fallback images (in case API fails or no images in database)
-import im from "../../assets/im.jpg";
-import im1 from "../../assets/im1.jpg";
-import im2 from "../../assets/im2.jpg";
-import im3 from "../../assets/im3.jpg";
-import im4 from "../../assets/im4.jpg";
-import im5 from "../../assets/im5.jpg";
-import im6 from "../../assets/im6.jpg";
-import im7 from "../../assets/im7.jpg";
-import im8 from "../../assets/im8.jpg";
-import im9 from "../../assets/im9.jpg";
-import im10 from "../../assets/im10.jpg";
-import im11 from "../../assets/im11.jpg";
-import im12 from "../../assets/im12.jpg";
-import im13 from "../../assets/im13.jpg";
-import im15 from "../../assets/im15.jpg";
-import im16 from "../../assets/im16.jpg";
-import im17 from "../../assets/im17.jpg";
-import im18 from "../../assets/im18.jpg";
-import im19 from "../../assets/im19.jpg";
-import im20 from "../../assets/im20.jpg";
-import im21 from "../../assets/im21.jpg";
-import im22 from "../../assets/im22.jpg";
-
 const GallerySection = () => {
   const { isDarkMode } = useTheme();
   const { language } = useLanguage();
@@ -41,32 +17,6 @@ const GallerySection = () => {
   const [galleryItems, setGalleryItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const intervalRef = useRef(null);
-  
-  // Fallback images if API fails or no images in database
-  const fallbackImages = [
-    { imageUrl: im },
-    { imageUrl: im1 },
-    { imageUrl: im2 },
-    { imageUrl: im3 },
-    { imageUrl: im4 },
-    { imageUrl: im5 },
-    { imageUrl: im6 },
-    { imageUrl: im7 },
-    { imageUrl: im8 },
-    { imageUrl: im9 },
-    { imageUrl: im10 },
-    { imageUrl: im11 },
-    { imageUrl: im12 },
-    { imageUrl: im13 },
-    { imageUrl: im15 },
-    { imageUrl: im16 },
-    { imageUrl: im17 },
-    { imageUrl: im18 },
-    { imageUrl: im19 },
-    { imageUrl: im20 },
-    { imageUrl: im21 },
-    { imageUrl: im22 }
-  ];
 
   // Fetch gallery images from API
   useEffect(() => {
@@ -76,14 +26,12 @@ const GallerySection = () => {
         if (response.data.images && response.data.images.length > 0) {
           setGalleryItems(response.data.images);
         } else {
-          // Use fallback images if no images in database
-          setGalleryItems(fallbackImages);
+          setGalleryItems([]);
         }
         setLoading(false);
       } catch (error) {
         console.error('Error fetching gallery images:', error);
-        // Use fallback images on error
-        setGalleryItems(fallbackImages);
+        setGalleryItems([]);
         setLoading(false);
       }
     };
