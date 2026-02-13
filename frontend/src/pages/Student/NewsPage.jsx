@@ -16,7 +16,7 @@ const NewsPage = () => {
 
     const fetchAnnouncements = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/announcements`);
+            const response = await axios.get(`${API_URL}/api/announcements/public`);
             setAnnouncements(response.data.announcements || []);
             setLoading(false);
         } catch (error) {
@@ -170,7 +170,7 @@ const NewsPage = () => {
                         </div>
                     </div>
 
-                    {/* Announcements List */}
+                    {/* Announcements Grid */}
                     {announcements.length === 0 ? (
                         <div style={{
                             textAlign: 'center',
@@ -189,8 +189,8 @@ const NewsPage = () => {
                         </div>
                     ) : (
                         <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
                             gap: '2rem'
                         }}>
                             {announcements.map((announcement, index) => (
@@ -203,10 +203,7 @@ const NewsPage = () => {
                                         boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
                                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                         cursor: 'pointer',
-                                        animation: `slideUp 0.6s ease-out ${index * 0.05}s both`,
-                                        display: 'grid',
-                                        gridTemplateColumns: announcement.imageUrl ? '45% 55%' : '1fr',
-                                        minHeight: '320px'
+                                        animation: `slideUp 0.6s ease-out ${index * 0.05}s both`
                                     }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.transform = 'translateY(-8px)';
@@ -217,13 +214,14 @@ const NewsPage = () => {
                                         e.currentTarget.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.15)';
                                     }}
                                 >
-                                    {/* Image Section */}
+                                    {/* Image Section - AT THE TOP */}
                                     {announcement.imageUrl && (
                                         <div style={{
                                             position: 'relative',
+                                            width: '100%',
+                                            height: '280px',
                                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                            overflow: 'hidden',
-                                            minHeight: '320px'
+                                            overflow: 'hidden'
                                         }}>
                                             <img
                                                 src={announcement.imageUrl}
@@ -232,42 +230,33 @@ const NewsPage = () => {
                                                     width: '100%',
                                                     height: '100%',
                                                     objectFit: 'cover',
-                                                    transition: 'transform 0.4s ease',
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0
+                                                    transition: 'transform 0.4s ease'
                                                 }}
                                                 onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
                                                 onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                                             />
                                             <div style={{
                                                 position: 'absolute',
-                                                top: 0,
+                                                bottom: 0,
                                                 left: 0,
                                                 right: 0,
-                                                bottom: 0,
-                                                background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%)'
+                                                height: '120px',
+                                                background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)'
                                             }} />
                                         </div>
                                     )}
 
-                                    {/* Content Section */}
-                                    <div style={{ 
-                                        padding: '2.5rem',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center'
-                                    }}>
+                                    {/* Content Section - BELOW IMAGE */}
+                                    <div style={{ padding: '2rem' }}>
                                         {/* Date Badge */}
                                         <div style={{
                                             display: 'inline-flex',
                                             alignItems: 'center',
                                             gap: '0.5rem',
-                                            marginBottom: '1.5rem',
+                                            marginBottom: '1.25rem',
                                             padding: '0.625rem 1.25rem',
                                             background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
                                             borderRadius: '12px',
-                                            width: 'fit-content',
                                             border: '1px solid #667eea30'
                                         }}>
                                             <Calendar size={18} color="#667eea" strokeWidth={2.5} />
@@ -286,10 +275,10 @@ const NewsPage = () => {
 
                                         {/* Title */}
                                         <h3 style={{
-                                            fontSize: '2rem',
+                                            fontSize: '1.75rem',
                                             fontWeight: 900,
                                             color: '#0f172a',
-                                            margin: '0 0 1.25rem 0',
+                                            margin: '0 0 1rem 0',
                                             lineHeight: '1.2',
                                             letterSpacing: '-0.5px',
                                             display: '-webkit-box',
@@ -305,7 +294,7 @@ const NewsPage = () => {
                                             fontSize: '1.05rem',
                                             color: '#64748b',
                                             lineHeight: '1.8',
-                                            margin: '0 0 2rem 0',
+                                            margin: '0 0 1.75rem 0',
                                             display: '-webkit-box',
                                             WebkitLineClamp: 3,
                                             WebkitBoxOrient: 'vertical',
@@ -331,15 +320,16 @@ const NewsPage = () => {
                                                 gap: '0.75rem',
                                                 transition: 'all 0.3s ease',
                                                 boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-                                                width: 'fit-content',
+                                                width: '100%',
+                                                justifyContent: 'center',
                                                 letterSpacing: '0.3px'
                                             }}
                                             onMouseEnter={(e) => {
-                                                e.currentTarget.style.transform = 'translateX(4px)';
+                                                e.currentTarget.style.transform = 'translateY(-2px)';
                                                 e.currentTarget.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.5)';
                                             }}
                                             onMouseLeave={(e) => {
-                                                e.currentTarget.style.transform = 'translateX(0)';
+                                                e.currentTarget.style.transform = 'translateY(0)';
                                                 e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.4)';
                                             }}
                                         >
@@ -372,32 +362,6 @@ const NewsPage = () => {
 
                     @keyframes spin {
                         to { transform: rotate(360deg); }
-                    }
-
-                    @media (max-width: 1024px) {
-                        /* Make cards stack vertically on tablets */
-                        div[style*="grid-template-columns"] > div {
-                            grid-template-columns: 1fr !important;
-                        }
-                    }
-
-                    @media (max-width: 768px) {
-                        /* Stack image and content vertically on mobile */
-                        div[style*="grid-template-columns"] > div > div:first-child {
-                            min-height: 250px !important;
-                        }
-                        
-                        div[style*="grid-template-columns"] > div > div:last-child {
-                            padding: 1.5rem !important;
-                        }
-                        
-                        div[style*="grid-template-columns"] > div > div:last-child h3 {
-                            font-size: 1.5rem !important;
-                        }
-                        
-                        div[style*="grid-template-columns"] > div > div:last-child p {
-                            font-size: 0.95rem !important;
-                        }
                     }
                 `}</style>
             </div>

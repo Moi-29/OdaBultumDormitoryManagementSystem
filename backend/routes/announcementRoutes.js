@@ -10,6 +10,9 @@ const {
 } = require('../controllers/announcementController');
 const { protect } = require('../middleware/authMiddleware');
 
+// Public route for students to view announcements
+router.get('/public', getAnnouncements);
+
 router.route('/')
     .get(protect, getAnnouncements)
     .post(protect, createAnnouncement);
