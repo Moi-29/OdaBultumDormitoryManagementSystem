@@ -41,7 +41,7 @@ const MaintainerDashboard = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
             console.log('Maintainer Dashboard - Current user:', user);
-            console.log('Maintainer Dashboard - User ID:', user?._id);
+            console.log('Maintainer Dashboard - User ID:', user?.id);
 
             // Fetch all requests
             const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
@@ -52,18 +52,18 @@ const MaintainerDashboard = () => {
                 
                 // Filter requests FROM this maintainer (requests sent by maintainer to admin)
                 const maintainerRequests = allRequests.filter(req => 
-                    req.fromUserModel === 'Maintainer' && req.fromUserId === user?._id
+                    req.fromUserModel === 'Maintainer' && req.fromUserId === user?.id
                 );
                 console.log('Maintainer Dashboard - Requests FROM maintainer:', maintainerRequests);
                 
                 // Filter requests TO this maintainer (orders from admin to maintainer)
                 const ordersToMaintainer = allRequests.filter(req => {
                     const isToMaintainer = req.toUserModel === 'Maintainer';
-                    const userIdMatch = req.toUserId && user?._id && (req.toUserId.toString() === user._id.toString());
+                    const userIdMatch = req.toUserId && user?.id && (req.toUserId.toString() === user.id.toString());
                     console.log(`Checking request ${req._id}:`, {
                         toUserModel: req.toUserModel,
                         toUserId: req.toUserId,
-                        currentUserId: user?._id,
+                        currentUserId: user?.id,
                         isToMaintainer,
                         userIdMatch
                     });
@@ -117,7 +117,7 @@ const MaintainerDashboard = () => {
         setSubmitting(true);
         try {
             const requestData = {
-                fromUserId: user?._id || null,
+                fromUserId: user?.id || null,
                 fromUserModel: 'Maintainer',
                 fromUserName: user?.fullName || user?.name || user?.username || 'Maintainer',
                 specialization: user?.specialization || 'General',

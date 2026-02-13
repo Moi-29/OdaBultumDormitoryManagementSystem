@@ -41,7 +41,7 @@ const ProctorDashboard = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
             console.log('Proctor Dashboard - Current user:', user);
-            console.log('Proctor Dashboard - User ID:', user?._id);
+            console.log('Proctor Dashboard - User ID:', user?.id);
 
             // Fetch all requests
             const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
@@ -52,18 +52,18 @@ const ProctorDashboard = () => {
                 
                 // Filter requests FROM this proctor (reports sent by proctor to admin)
                 const proctorRequests = allRequests.filter(req => 
-                    req.fromUserModel === 'Proctor' && req.fromUserId === user?._id
+                    req.fromUserModel === 'Proctor' && req.fromUserId === user?.id
                 );
                 console.log('Proctor Dashboard - Requests FROM proctor:', proctorRequests);
                 
                 // Filter requests TO this proctor (orders from admin to proctor)
                 const ordersToProctor = allRequests.filter(req => {
                     const isToProctor = req.toUserModel === 'Proctor';
-                    const userIdMatch = req.toUserId && user?._id && (req.toUserId.toString() === user._id.toString());
+                    const userIdMatch = req.toUserId && user?.id && (req.toUserId.toString() === user.id.toString());
                     console.log(`Checking request ${req._id}:`, {
                         toUserModel: req.toUserModel,
                         toUserId: req.toUserId,
-                        currentUserId: user?._id,
+                        currentUserId: user?.id,
                         isToProctor,
                         userIdMatch
                     });
@@ -115,7 +115,7 @@ const ProctorDashboard = () => {
         setSubmitting(true);
         try {
             const requestData = {
-                fromUserId: user?._id || null,
+                fromUserId: user?.id || null,
                 fromUserModel: 'Proctor',
                 fromUserName: user?.fullName || user?.name || user?.username || 'Proctor',
                 blockId: user?.blockId || 'N/A',
