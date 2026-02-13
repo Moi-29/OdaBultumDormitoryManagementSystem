@@ -439,6 +439,8 @@ body {
   transition: all 0.3s ease !important;
   min-width: 140px !important;
   outline: none !important;
+  display: block !important;
+  width: 100% !important;
 }
 
 .goog-te-combo:hover {
@@ -459,7 +461,11 @@ body {
 
 /* Additional styling for better integration */
 #google_translate_element {
-  display: inline-block;
+  display: flex !important;
+  align-items: center !important;
+  vertical-align: middle !important;
+  min-height: 44px !important;
+  z-index: 100 !important;
 }
 
 /* Style the select element container */
@@ -467,7 +473,23 @@ body {
   background-color: transparent !important;
   border: none !important;
   padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Make sure the select is visible */
+.goog-te-gadget-simple .goog-te-menu-value {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span {
   display: inline-block !important;
+  color: white !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span:first-child {
+  display: none !important;
 }
 
 /* Hide the arrow icon from gadget */
@@ -497,4 +519,25 @@ body {
 .dark .goog-te-combo option {
   background-color: #374151 !important;
   color: #f3f4f6 !important;
+}
+
+/* Mobile responsive styling */
+@media (max-width: 768px) {
+  .goog-te-combo {
+    min-width: 120px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+  }
+  
+  #google_translate_element {
+    display: inline-block !important;
+  }
+}
+
+/* Ensure visibility on all screen sizes */
+.goog-te-gadget,
+.goog-te-gadget-simple,
+#google_translate_element {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
