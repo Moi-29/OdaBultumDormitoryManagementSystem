@@ -17,6 +17,19 @@ const Students = () => {
     
     // Confirmation modal state
     const [confirmModal, setConfirmModal] = useState({ show: false, step: 1 });
+    
+    // Add Student Modal state
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [studentForm, setStudentForm] = useState({
+        studentId: '',
+        fullName: '',
+        gender: 'M',
+        department: '',
+        year: 1,
+        email: '',
+        phone: ''
+    });
 
     useEffect(() => {
         fetchStudents();
@@ -87,6 +100,38 @@ const Students = () => {
             showToast('error', 'Deletion Failed', error.response?.data?.message || error.message);
         } finally {
             setDeleting(false);
+        }
+    };
+
+    const handleAddStudent = async (e) => {
+        e.preventDefault();
+        
+        // Validation
+        if (!studentForm.studentId || !studentForm.fullName || !studentForm.department) {
+            showToast('error', 'Validation Error', 'Please fill in all required fields');
+            return;
+        }
+        
+        setSubmitting(true);
+        try {
+            const { data } = await axios.post(`${API_URL}/api/students`, studentForm);
+            showToast('success', 'Student Added', `${studentForm.fullName} has been added successfully`);
+            setShowAddModal(false);
+            setStudentForm({
+                studentId: '',
+                fullName: '',
+                gender: 'M',
+                department: '',
+                year: 1,
+                email: '',
+                phone: ''
+            });
+            await fetchStudents();
+        } catch (error) {
+            console.error('Error adding student:', error);
+            showToast('error', 'Failed to Add Student', error.response?.data?.message || error.message);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -242,7 +287,11 @@ const Students = () => {
                     </h1>
                     <p style={{ color: 'var(--text-muted)' }}>Manage student records</p>
                 </div>
-                <button className="btn btn-primary" style={{ gap: '0.5rem' }}>
+                <button 
+                    onClick={() => setShowAddModal(true)}
+                    className="btn btn-primary" 
+                    style={{ gap: '0.5rem' }}
+                >
                     <UserPlus size={18} /> Add Student
                 </button>
             </div>
@@ -380,6 +429,240 @@ const Students = () => {
                 )}
             </div>
             
+            {/* Add Student Modal */}
+            {showAddModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10000,
+                    animation: 'fadeIn 0.2s ease-out'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        borderRadius: '16px',
+                        maxWidth: '600px',
+                        width: '90%',
+                        maxHeight: '90vh',
+                        overflow: 'auto',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                        animation: 'slideUp 0.3s ease-out'
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            padding: '1.5rem 2rem',
+                            borderBottom: '2px solid #e5e7eb',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: 'white',
+                            borderRadius: '16px 16px 0 0'
+                        }}>
+                            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <UserPlus size={28} />
+                                Add New Student
+                            </h2>
+                            <button
+                                onClick={() => setShowAddModal(false)}
+                                style={{
+                                    background: 'rgba(255,255,255,0.2)',
+                                    border: 'none',
+                                    color: 'white',
+                                    fontSize: '1.5rem',
+                                    cursor: 'pointer',
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.3s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <form onSubmit={handleAddStudent} style={{ padding: '2rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                                {/* Student ID */}
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Student ID <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="input-field"
+                                        placeholder="e.g., STU001"
+                                        value={studentForm.studentId}
+                                        onChange={(e) => setStudentForm({ ...studentForm, studentId: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                {/* Full Name */}
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Full Name <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="input-field"
+                                        placeholder="Enter full name"
+                                        value={studentForm.fullName}
+                                        onChange={(e) => setStudentForm({ ...studentForm, fullName: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                {/* Gender */}
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Gender <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <select
+                                        className="input-field"
+                                        value={studentForm.gender}
+                                        onChange={(e) => setStudentForm({ ...studentForm, gender: e.target.value })}
+                                        required
+                                    >
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                    </select>
+                                </div>
+
+                                {/* Year */}
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Year <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <select
+                                        className="input-field"
+                                        value={studentForm.year}
+                                        onChange={(e) => setStudentForm({ ...studentForm, year: parseInt(e.target.value) })}
+                                        required
+                                    >
+                                        <option value={1}>Year 1</option>
+                                        <option value={2}>Year 2</option>
+                                        <option value={3}>Year 3</option>
+                                        <option value={4}>Year 4</option>
+                                        <option value={5}>Year 5</option>
+                                    </select>
+                                </div>
+
+                                {/* Department */}
+                                <div style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Department <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="input-field"
+                                        placeholder="e.g., Computer Science"
+                                        value={studentForm.department}
+                                        onChange={(e) => setStudentForm({ ...studentForm, department: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                {/* Email */}
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        className="input-field"
+                                        placeholder="student@example.com"
+                                        value={studentForm.email}
+                                        onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
+                                    />
+                                </div>
+
+                                {/* Phone */}
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>
+                                        Phone
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        className="input-field"
+                                        placeholder="+251912345678"
+                                        value={studentForm.phone}
+                                        onChange={(e) => setStudentForm({ ...studentForm, phone: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Modal Footer */}
+                            <div style={{
+                                marginTop: '2rem',
+                                paddingTop: '1.5rem',
+                                borderTop: '2px solid #e5e7eb',
+                                display: 'flex',
+                                gap: '1rem',
+                                justifyContent: 'flex-end'
+                            }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddModal(false)}
+                                    disabled={submitting}
+                                    className="btn btn-secondary"
+                                    style={{ minWidth: '120px' }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="btn btn-primary"
+                                    style={{
+                                        minWidth: '120px',
+                                        background: submitting ? '#9ca3af' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        border: 'none',
+                                        cursor: submitting ? 'not-allowed' : 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem'
+                                    }}
+                                >
+                                    {submitting ? (
+                                        <>
+                                            <div style={{
+                                                width: '16px',
+                                                height: '16px',
+                                                border: '2px solid white',
+                                                borderTopColor: 'transparent',
+                                                borderRadius: '50%',
+                                                animation: 'spin 0.6s linear infinite'
+                                            }} />
+                                            Adding...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <UserPlus size={18} />
+                                            Add Student
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            
             <style>{`
                 .input-field {
                     border: 2px solid #000000 !important;
@@ -419,6 +702,23 @@ const Students = () => {
                     }
                     to {
                         opacity: 1;
+                    }
+                }
+                
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes spin {
+                    to {
+                        transform: rotate(360deg);
                     }
                 }
 
