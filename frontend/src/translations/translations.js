@@ -840,6 +840,33 @@ export const translations = {
     loading: "Fe'aa jira...",
     mainCampus: "Kaampasii Guddaa",
   },
+
+  so: {
+    home: "Guriga",
+    dormitoryView: "Muuqaalka Qolka Hurdada",
+    success: "Guul!",
+    error: "Khalad",
+    loading: "Waa La Rariyaa...",
+    mainCampus: "Xerada Weyn"
+  },
+
+  ti: {
+    home: "ገጽ",
+    dormitoryView: "ናይ መደቀሲ ቤት ትርኢት",
+    success: "ዓወት!",
+    error: "ጌጋ",
+    loading: "ይጽዕን ኣሎ...",
+    mainCampus: "ቀንዲ ካምፓስ"
+  },
+
+  ar: {
+    home: "الرئيسية",
+    dormitoryView: "عرض السكن",
+    success: "نجح!",
+    error: "خطأ",
+    loading: "جاري التحميل...",
+    mainCampus: "الحرم الرئيسي"
+  }
 };
 
 export const getTranslation = (language, key) => {
