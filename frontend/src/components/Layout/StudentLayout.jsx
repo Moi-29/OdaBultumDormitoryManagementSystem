@@ -2,26 +2,14 @@ import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Home, Building2, FileText, AlertCircle, Sun, Moon, Menu } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { getTranslation } from '../../translations/translations';
 
 const StudentLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [sidebarVisible, setSidebarVisible] = useState(true); // New state for desktop sidebar toggle
+    const [sidebarVisible, setSidebarVisible] = useState(true);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
-    const [showLanguageMenu, setShowLanguageMenu] = useState(false);
     const { isDarkMode, toggleTheme } = useTheme();
-    const { language, changeLanguage } = useLanguage();
     const navigate = useNavigate();
     const location = useLocation();
-
-    const t = (key) => getTranslation(language, key);
-
-    const languages = [
-        { code: 'en', name: 'English', flag: '🇬🇧', icon: 'uk' },
-        { code: 'am', name: 'አማርኛ', flag: '🗺️', icon: 'ethiopia' },
-        { code: 'om', name: 'Afaan Oromo', flag: '�', icon: 'oromia' }
-    ];
 
     // Handle window resize
     useEffect(() => {
@@ -47,60 +35,16 @@ const StudentLayout = () => {
     }, [sidebarOpen, isDesktop]);
 
     const navItems = [
-        { path: '/student/home', label: t('home'), icon: Home },
-        { path: '/student/dormitory', label: t('dormitoryView'), icon: Building2 },
-        { path: '/student/application', label: t('applicationForm'), icon: FileText },
-        { path: '/student/report', label: t('reportIssue'), icon: AlertCircle }
+        { path: '/student/home', label: 'Home', icon: Home },
+        { path: '/student/dormitory', label: 'Dormitory View', icon: Building2 },
+        { path: '/student/application', label: 'Application Form', icon: FileText },
+        { path: '/student/report', label: 'Report Issue', icon: AlertCircle }
     ];
 
     const handleNavigation = (path) => {
         navigate(path);
         if (!isDesktop) {
             setSidebarOpen(false);
-        }
-    };
-
-    // Function to render language icon
-    const renderLanguageIcon = (langCode) => {
-        switch(langCode) {
-            case 'en':
-                return (
-                    <img 
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF54k1aVJnnTDoRQQOMZ79rJkFdSvdMToHsA&s" 
-                        alt="UK Flag"
-                        style={{ 
-                            width: '24px', 
-                            height: '24px', 
-                            objectFit: 'cover',
-                            borderRadius: '2px'
-                        }}
-                    />
-                );
-            case 'am':
-                return (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ display: 'inline-block' }}>
-                        <rect width="24" height="8" fill="#078930"/>
-                        <rect y="8" width="24" height="8" fill="#FCDD09"/>
-                        <rect y="16" width="24" height="8" fill="#DA121A"/>
-                        <circle cx="12" cy="12" r="4" fill="#0F47AF"/>
-                        <path d="M12 8 L13 11 L16 11 L13.5 13 L14.5 16 L12 14 L9.5 16 L10.5 13 L8 11 L11 11 Z" fill="#FCDD09"/>
-                    </svg>
-                );
-            case 'om':
-                return (
-                    <img 
-                        src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Flag_of_the_Oromia_Region.svg" 
-                        alt="Oromia Flag"
-                        style={{ 
-                            width: '24px', 
-                            height: '24px', 
-                            objectFit: 'cover',
-                            borderRadius: '2px'
-                        }}
-                    />
-                );
-            default:
-                return <span style={{ fontSize: '1.5rem' }}>🌐</span>;
         }
     };
 
@@ -183,103 +127,6 @@ const StudentLayout = () => {
 
                     {/* Google Translate Widget */}
                     <div id="google_translate_element" style={{ flexShrink: 0 }}></div>
-
-                    {/* Language Selector - Always visible on both mobile and desktop */}
-                    <div style={{ position: 'relative', flexShrink: 0 }}>
-                        <button
-                            onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                            style={{
-                                background: isDarkMode ? '#374151' : '#f3f4f6',
-                                border: 'none',
-                                borderRadius: '8px',
-                                padding: '0.5rem',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '0.25rem',
-                                transition: 'all 0.3s ease',
-                                color: isDarkMode ? '#60a5fa' : '#3b82f6',
-                                minWidth: '44px',
-                                minHeight: '44px'
-                            }}
-                            title="Change Language"
-                        >
-                            {renderLanguageIcon(language)}
-                        </button>
-
-                        {/* Language Dropdown */}
-                        {showLanguageMenu && (
-                            <>
-                                <div
-                                    onClick={() => setShowLanguageMenu(false)}
-                                    style={{
-                                        position: 'fixed',
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        zIndex: 999
-                                    }}
-                                />
-                                <div style={{
-                                    position: 'absolute',
-                                    top: 'calc(100% + 0.5rem)',
-                                    left: 0,
-                                    backgroundColor: isDarkMode ? '#1f2937' : 'white',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-                                    border: isDarkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-                                    overflow: 'hidden',
-                                    zIndex: 1000,
-                                    minWidth: '180px'
-                                }}>
-                                    {languages.map((lang) => (
-                                        <button
-                                            key={lang.code}
-                                            onClick={() => {
-                                                changeLanguage(lang.code);
-                                                setShowLanguageMenu(false);
-                                            }}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.75rem 1rem',
-                                                border: 'none',
-                                                background: language === lang.code 
-                                                    ? (isDarkMode ? '#374151' : '#f3f4f6')
-                                                    : 'transparent',
-                                                color: isDarkMode ? '#ffffff' : '#111827',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.75rem',
-                                                fontSize: '0.875rem',
-                                                fontWeight: language === lang.code ? 600 : 400,
-                                                transition: 'all 0.2s ease',
-                                                textAlign: 'left'
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                if (language !== lang.code) {
-                                                    e.currentTarget.style.background = isDarkMode ? '#374151' : '#f9fafb';
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (language !== lang.code) {
-                                                    e.currentTarget.style.background = 'transparent';
-                                                }
-                                            }}
-                                        >
-                                            <span style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center' }}>{renderLanguageIcon(lang.code)}</span>
-                                            <span>{lang.name}</span>
-                                            {language === lang.code && (
-                                                <span style={{ marginLeft: 'auto', color: '#10b981' }}>✓</span>
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    </div>
                 </div>
 
                 {/* Center - University Name (Hidden on small mobile) */}
