@@ -48,6 +48,36 @@ const addGalleryImage = async (req, res) => {
     }
 };
 
+// @desc    Update gallery image
+// @route   PUT /api/gallery/:id
+// @access  Private (Admin)
+const updateGalleryImage = async (req, res) => {
+    try {
+        const { imageUrl } = req.body;
+        
+        const image = await Gallery.findById(req.params.id);
+        
+        if (!image) {
+            return res.status(404).json({ success: false, message: 'Image not found' });
+        }
+        
+        if (imageUrl) {
+            image.imageUrl = imageUrl;
+        }
+        
+        await image.save();
+        
+        res.json({
+            success: true,
+            message: 'Image updated successfully',
+            image
+        });
+    } catch (error) {
+        console.error('Error updating gallery image:', error);
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+};
+
 // @desc    Delete gallery image
 // @route   DELETE /api/gallery/:id
 // @access  Private (Admin)
@@ -59,11 +89,13 @@ const deleteGalleryImage = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Image not found' });
         }
         
+        console.log(`Deleting image ${req.params.id} from database`);
         await image.deleteOne();
+        console.log(`Image ${req.params.id} deleted successfully from database`);
         
         res.json({
             success: true,
-            message: 'Image deleted successfully'
+            message: 'Image deleted successfully from database'
         });
     } catch (error) {
         console.error('Error deleting gallery image:', error);
@@ -82,11 +114,13 @@ const bulkDeleteGalleryImages = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Image IDs array is required' });
         }
         
+        console.log(`Bulk deleting ${imageIds.length} images from database`);
         const result = await Gallery.deleteMany({ _id: { $in: imageIds } });
+        console.log(`Bulk delete completed: ${result.deletedCount} images deleted from database`);
         
         res.json({
             success: true,
-            message: `Successfully deleted ${result.deletedCount} images`,
+            message: `Successfully deleted ${result.deletedCount} images from database`,
             deletedCount: result.deletedCount
         });
     } catch (error) {
@@ -98,6 +132,7 @@ const bulkDeleteGalleryImages = async (req, res) => {
 module.exports = {
     getGalleryImages,
     addGalleryImage,
+    updateGalleryImage,
     deleteGalleryImage,
     bulkDeleteGalleryImages
 };

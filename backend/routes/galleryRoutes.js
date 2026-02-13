@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     getGalleryImages,
     addGalleryImage,
+    updateGalleryImage,
     deleteGalleryImage,
     bulkDeleteGalleryImages
 } = require('../controllers/galleryController');
@@ -15,6 +16,7 @@ router.route('/')
 router.post('/bulk-delete', protect, bulkDeleteGalleryImages);
 
 router.route('/:id')
+    .put(protect, updateGalleryImage)
     .delete(protect, deleteGalleryImage);
 
 module.exports = router;

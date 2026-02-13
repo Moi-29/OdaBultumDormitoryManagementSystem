@@ -1,5 +1,5 @@
 addimport { useState, useEffect } from 'react';
-import { Image as ImageIcon, Plus, Trash2, X, Upload, Link as LinkIcon, CheckSquare } from 'lucide-react';
+import { Image as ImageIcon, Plus, Trash2, X, Upload, Link as LinkIcon, CheckSquare, Edit } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -8,6 +8,8 @@ const Gallery = () => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [modalMode, setModalMode] = useState('create');
+    const [selectedImage, setSelectedImage] = useState(null);
     const [notification, setNotification] = useState(null);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -43,17 +45,28 @@ const Gallery = () => {
         }
     };
 
-    const handleOpenModal = () => {
+    const handleOpenModal = (mode = 'create', image = null) => {
+        setModalMode(mode);
         setImageUploadType('url');
-        setFormData({
-            imageUrl: '',
-            imageFile: null
-        });
+        if (image) {
+            setFormData({
+                imageUrl: image.imageUrl || '',
+                imageFile: null
+            });
+            setSelectedImage(image);
+        } else {
+            setFormData({
+                imageUrl: '',
+                imageFile: null
+            });
+            setSelectedImage(null);
+        }
         setShowModal(true);
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setSelectedImage(null);
         setFormData({
             imageUrl: '',
             imageFile: null
@@ -77,21 +90,26 @@ const Gallery = () => {
                 imageUrl: formData.imageUrl || null
             };
             
-            await axios.post(`${API_URL}/api/gallery`, imageData, config);
-            showNotification('Image added successfully', 'success');
+            if (modalMode === 'create') {
+                await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                showNotification('Image added successfully', 'success');
+            } else {
+                await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                showNotification('Image updated successfully', 'success');
+            }
             
             handleCloseModal();
             fetchImages();
         } catch (error) {
-            console.error('Error adding image:', error);
-            showNotification(error.response?.data?.message || 'Failed to add image', 'error');
+            console.error('Error saving image:', error);
+            showNotification(error.response?.data?.message || 'Failed to save image', 'error');
         }
     };
 
     const handleDelete = (image) => {
         setConfirmDialog({
             title: 'Delete Image',
-            message: 'Are you sure you want to delete this image?\n\nThis action cannot be undone.',
+            message: 'Are you sure you want to delete this image?\n\nThis action cannot be undone and will permanently remove the image from the database.',
             type: 'danger',
             confirmText: 'Delete',
             cancelText: 'Cancel',
@@ -99,14 +117,19 @@ const Gallery = () => {
                 setConfirmDialog(null);
                 try {
                     const token = localStorage.getItem('token');
-                    await axios.delete(`${API_URL}/api/gallery/${image._id}`, {
+                    console.log('Deleting image:', image._id);
+                    
+                    const response = await axios.delete(`${API_URL}/api/gallery/${image._id}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    showNotification('Image deleted successfully', 'success');
+                    
+                    console.log('Delete response:', response.data);
+                    showNotification('Image deleted successfully from database', 'success');
                     fetchImages();
                 } catch (error) {
                     console.error('Error deleting image:', error);
-                    showNotification('Failed to delete image', 'error');
+                    console.error('Error response:', error.response?.data);
+                    showNotification('Failed to delete image from database', 'error');
                 }
             },
             onCancel: () => setConfirmDialog(null)
@@ -118,7 +141,7 @@ const Gallery = () => {
         
         setConfirmDialog({
             title: 'Delete Images',
-            message: `Are you sure you want to delete ${selectedItems.length} ${selectedItems.length === 1 ? 'image' : 'images'}?\n\nThis action cannot be undone.`,
+            message: `Are you sure you want to delete ${selectedItems.length} ${selectedItems.length === 1 ? 'image' : 'images'}?\n\nThis action cannot be undone and will permanently remove the images from the database.`,
             type: 'danger',
             confirmText: 'Delete',
             cancelText: 'Cancel',
@@ -126,17 +149,22 @@ const Gallery = () => {
                 setConfirmDialog(null);
                 try {
                     const token = localStorage.getItem('token');
-                    await axios.post(`${API_URL}/api/gallery/bulk-delete`, 
+                    console.log('Bulk deleting images:', selectedItems);
+                    
+                    const response = await axios.post(`${API_URL}/api/gallery/bulk-delete`, 
                         { imageIds: selectedItems },
                         { headers: { Authorization: `Bearer ${token}` } }
                     );
-                    showNotification(`Successfully deleted ${selectedItems.length} images`, 'success');
+                    
+                    console.log('Bulk delete response:', response.data);
+                    showNotification(`Successfully deleted ${response.data.deletedCount || selectedItems.length} images from database`, 'success');
                     setSelectedItems([]);
                     setIsSelectionMode(false);
                     fetchImages();
                 } catch (error) {
                     console.error('Error deleting images:', error);
-                    showNotification('Failed to delete images', 'error');
+                    console.error('Error response:', error.response?.data);
+                    showNotification('Failed to delete images from database', 'error');
                 }
             },
             onCancel: () => setConfirmDialog(null)
@@ -287,7 +315,15 @@ const Gallery = () => {
                                 )}
                                 
                                 {!isSelectionMode && (
-                                    <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
+                                    <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', display: 'flex', gap: '0.5rem' }}>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', image); }}
+                                            style={{ padding: '0.5rem', background: 'rgba(59, 130, 246, 0.95)', border: 'none', borderRadius: '8px', cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+                                            onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+                                            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.95)'}
+                                        >
+                                            <Edit size={16} />
+                                        </button>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleDelete(image); }}
                                             style={{ padding: '0.5rem', background: 'rgba(239, 68, 68, 0.95)', border: 'none', borderRadius: '8px', cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
@@ -311,10 +347,10 @@ const Gallery = () => {
                         <div style={{ padding: '2rem 2.5rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.5rem 0' }}>
-                                    Add Image
+                                    {modalMode === 'create' ? 'Add Image' : 'Edit Image'}
                                 </h2>
                                 <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0 }}>
-                                    Upload an image or provide a URL
+                                    {modalMode === 'create' ? 'Upload an image or provide a URL' : 'Update the image URL'}
                                 </p>
                             </div>
                             <button
@@ -401,7 +437,7 @@ const Gallery = () => {
                                     type="submit"
                                     style={{ flex: 1, padding: '0.875rem', border: 'none', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', color: 'white', borderRadius: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)', transition: 'all 0.2s' }}
                                 >
-                                    Add Image
+                                    {modalMode === 'create' ? 'Add Image' : 'Update Image'}
                                 </button>
                             </div>
                         </form>
