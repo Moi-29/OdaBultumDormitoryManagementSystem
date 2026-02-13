@@ -76,6 +76,11 @@ const Gallery = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        console.log('=== GALLERY SUBMIT START ===');
+        console.log('Modal mode:', modalMode);
+        console.log('Image upload type:', imageUploadType);
+        console.log('Form data:', formData);
+        
         if (!formData.imageUrl && !formData.imageFile) {
             showNotification('Please provide an image URL or upload a file', 'error');
             return;
@@ -83,23 +88,30 @@ const Gallery = () => {
 
         try {
             const token = localStorage.getItem('token');
+            console.log('Token exists:', !!token);
             const config = { headers: { Authorization: `Bearer ${token}` } };
             
             // Handle image upload - convert file to base64 if file is selected
             if (imageUploadType === 'upload' && formData.imageFile) {
+                console.log('Processing file upload...');
                 // Convert file to base64
                 const reader = new FileReader();
                 reader.onloadend = async () => {
+                    console.log('File converted to base64, length:', reader.result?.length);
                     const imageData = {
                         imageUrl: reader.result // base64 string
                     };
                     
                     try {
                         if (modalMode === 'create') {
-                            await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                            console.log('Sending POST request to create image...');
+                            const response = await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                            console.log('Create response:', response.data);
                             showNotification('Image added successfully', 'success');
                         } else if (modalMode === 'edit' && selectedImage) {
-                            await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                            console.log('Sending PUT request to update image...');
+                            const response = await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                            console.log('Update response:', response.data);
                             showNotification('Image updated successfully', 'success');
                         }
                         
@@ -107,31 +119,42 @@ const Gallery = () => {
                         fetchImages();
                     } catch (error) {
                         console.error('Error saving image:', error);
+                        console.error('Error response:', error.response?.data);
                         showNotification(error.response?.data?.message || 'Failed to save image', 'error');
                     }
                 };
                 reader.readAsDataURL(formData.imageFile);
             } else if (formData.imageUrl) {
+                console.log('Using URL directly:', formData.imageUrl);
                 // Use URL directly
                 const imageData = {
                     imageUrl: formData.imageUrl
                 };
                 
                 if (modalMode === 'create') {
-                    await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                    console.log('Sending POST request to create image...');
+                    const response = await axios.post(`${API_URL}/api/gallery`, imageData, config);
+                    console.log('Create response:', response.data);
                     showNotification('Image added successfully', 'success');
                 } else if (modalMode === 'edit' && selectedImage) {
-                    await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                    console.log('Sending PUT request to update image...');
+                    const response = await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
+                    console.log('Update response:', response.data);
                     showNotification('Image updated successfully', 'success');
                 }
                 
                 handleCloseModal();
                 fetchImages();
+            } else {
+                console.log('No valid image data to submit');
             }
         } catch (error) {
             console.error('Error saving image:', error);
+            console.error('Error response:', error.response?.data);
             showNotification(error.response?.data?.message || 'Failed to save image', 'error');
         }
+        
+        console.log('=== GALLERY SUBMIT END ===');
     };
 
     const handleDelete = (image) => {
