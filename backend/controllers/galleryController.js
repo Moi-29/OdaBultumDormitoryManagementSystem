@@ -23,19 +23,26 @@ const getGalleryImages = async (req, res) => {
 // @access  Private (Admin)
 const addGalleryImage = async (req, res) => {
     try {
+        console.log('Add gallery image request received');
+        console.log('Request body:', req.body);
+        console.log('Request user:', req.user);
+        
         const { imageUrl } = req.body;
         
         if (!imageUrl) {
+            console.log('Error: No imageUrl provided');
             return res.status(400).json({ success: false, message: 'Image URL is required' });
         }
         
         const imageData = {
             imageUrl,
             uploadedBy: req.user?.id,
-            uploadedByName: req.user?.username || 'Admin'
+            uploadedByName: req.user?.username || req.user?.fullName || 'Admin'
         };
         
+        console.log('Creating image with data:', imageData);
         const image = await Gallery.create(imageData);
+        console.log('Image created successfully:', image._id);
         
         res.status(201).json({
             success: true,
@@ -44,6 +51,7 @@ const addGalleryImage = async (req, res) => {
         });
     } catch (error) {
         console.error('Error adding gallery image:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
 };

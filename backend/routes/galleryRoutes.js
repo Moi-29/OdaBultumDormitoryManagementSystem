@@ -7,19 +7,19 @@ const {
     deleteGalleryImage,
     bulkDeleteGalleryImages
 } = require('../controllers/galleryController');
-const { protect, restrictTo } = require('../middleware/multiAuthMiddleware');
+const { protect } = require('../middleware/multiAuthMiddleware');
 
 // Public route for students to view gallery
 router.get('/public', getGalleryImages);
 
 router.route('/')
-    .get(protect, restrictTo('admin'), getGalleryImages)
-    .post(protect, restrictTo('admin'), addGalleryImage);
+    .get(protect, getGalleryImages)
+    .post(protect, addGalleryImage);
 
-router.post('/bulk-delete', protect, restrictTo('admin'), bulkDeleteGalleryImages);
+router.post('/bulk-delete', protect, bulkDeleteGalleryImages);
 
 router.route('/:id')
-    .put(protect, restrictTo('admin'), updateGalleryImage)
-    .delete(protect, restrictTo('admin'), deleteGalleryImage);
+    .put(protect, updateGalleryImage)
+    .delete(protect, deleteGalleryImage);
 
 module.exports = router;
