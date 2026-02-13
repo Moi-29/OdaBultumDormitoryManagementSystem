@@ -961,25 +961,6 @@ const MaintainerDashboard = () => {
                         <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                    Request Type
-                                </label>
-                                <select
-                                    value={requestForm.requestType}
-                                    onChange={(e) => setRequestForm({ ...requestForm, requestType: e.target.value })}
-                                    style={{
-                                        width: '100%', padding: '0.75rem', border: '2px solid #e5e7eb',
-                                        borderRadius: '8px', fontSize: '1rem', cursor: 'pointer'
-                                    }}
-                                >
-                                    <option value="Tool Request">Tool Request</option>
-                                    <option value="Material Request">Material Request</option>
-                                    <option value="Support Request">Support Request</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
                                     Subject <span style={{ color: '#ef4444' }}>*</span>
                                 </label>
                                 <input
