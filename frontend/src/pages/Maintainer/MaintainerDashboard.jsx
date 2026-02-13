@@ -40,21 +40,36 @@ const MaintainerDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
+            console.log('Maintainer Dashboard - Current user:', user);
+            console.log('Maintainer Dashboard - User ID:', user?._id);
+
             // Fetch all requests
             const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
             
             if (requestsRes.data) {
                 const allRequests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
+                console.log('Maintainer Dashboard - All requests:', allRequests);
                 
                 // Filter requests FROM this maintainer (requests sent by maintainer to admin)
                 const maintainerRequests = allRequests.filter(req => 
                     req.fromUserModel === 'Maintainer' && req.fromUserId === user?._id
                 );
+                console.log('Maintainer Dashboard - Requests FROM maintainer:', maintainerRequests);
                 
                 // Filter requests TO this maintainer (orders from admin to maintainer)
-                const ordersToMaintainer = allRequests.filter(req =>
-                    req.toUserModel === 'Maintainer' && req.toUserId === user?._id
-                );
+                const ordersToMaintainer = allRequests.filter(req => {
+                    const isToMaintainer = req.toUserModel === 'Maintainer';
+                    const userIdMatch = req.toUserId && user?._id && (req.toUserId.toString() === user._id.toString());
+                    console.log(`Checking request ${req._id}:`, {
+                        toUserModel: req.toUserModel,
+                        toUserId: req.toUserId,
+                        currentUserId: user?._id,
+                        isToMaintainer,
+                        userIdMatch
+                    });
+                    return isToMaintainer && userIdMatch;
+                });
+                console.log('Maintainer Dashboard - Orders TO maintainer:', ordersToMaintainer);
                 
                 setRequests(maintainerRequests);
                 setWorkOrders(ordersToMaintainer); // Work orders are orders from admin TO this maintainer

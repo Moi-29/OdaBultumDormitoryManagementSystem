@@ -40,21 +40,36 @@ const ProctorDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
+            console.log('Proctor Dashboard - Current user:', user);
+            console.log('Proctor Dashboard - User ID:', user?._id);
+
             // Fetch all requests
             const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
             
             if (requestsRes.data) {
                 const allRequests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
+                console.log('Proctor Dashboard - All requests:', allRequests);
                 
                 // Filter requests FROM this proctor (reports sent by proctor to admin)
                 const proctorRequests = allRequests.filter(req => 
                     req.fromUserModel === 'Proctor' && req.fromUserId === user?._id
                 );
+                console.log('Proctor Dashboard - Requests FROM proctor:', proctorRequests);
                 
                 // Filter requests TO this proctor (orders from admin to proctor)
-                const ordersToProctor = allRequests.filter(req =>
-                    req.toUserModel === 'Proctor' && req.toUserId === user?._id
-                );
+                const ordersToProctor = allRequests.filter(req => {
+                    const isToProctor = req.toUserModel === 'Proctor';
+                    const userIdMatch = req.toUserId && user?._id && (req.toUserId.toString() === user._id.toString());
+                    console.log(`Checking request ${req._id}:`, {
+                        toUserModel: req.toUserModel,
+                        toUserId: req.toUserId,
+                        currentUserId: user?._id,
+                        isToProctor,
+                        userIdMatch
+                    });
+                    return isToProctor && userIdMatch;
+                });
+                console.log('Proctor Dashboard - Orders TO proctor:', ordersToProctor);
                 
                 setReports(proctorRequests);
                 setMessages(ordersToProctor); // Messages are orders from admin TO this proctor
