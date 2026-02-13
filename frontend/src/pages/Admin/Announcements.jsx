@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
-    Megaphone, Plus, Edit, Trash2, Eye, Calendar, MapPin, 
-    Users, AlertCircle, CheckCircle, Clock, X, Search, CheckSquare, Square
+    Megaphone, Plus, Edit, Trash2, Calendar, MapPin, 
+    X, Search, CheckSquare, Upload, Link as LinkIcon
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -10,7 +10,6 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 const Announcements = () => {
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('all');
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('create');
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
@@ -19,16 +18,14 @@ const Announcements = () => {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const [confirmDialog, setConfirmDialog] = useState(null);
+    const [imageUploadType, setImageUploadType] = useState('url');
     const [formData, setFormData] = useState({
         title: '',
         content: '',
-        type: 'announcement',
-        priority: 'medium',
-        targetAudience: ['all'],
-        status: 'draft',
+        imageUrl: '',
+        imageFile: null,
         eventDate: '',
-        eventLocation: '',
-        expiresAt: ''
+        eventLocation: ''
     });
 
     const showNotification = (message, type = 'success') => {
@@ -58,30 +55,25 @@ const Announcements = () => {
 
     const handleOpenModal = (mode, announcement = null) => {
         setModalMode(mode);
+        setImageUploadType('url');
         if (announcement) {
             setFormData({
                 title: announcement.title,
                 content: announcement.content,
-                type: announcement.type,
-                priority: announcement.priority,
-                targetAudience: announcement.targetAudience,
-                status: announcement.status,
+                imageUrl: announcement.imageUrl || '',
+                imageFile: null,
                 eventDate: announcement.eventDate ? new Date(announcement.eventDate).toISOString().split('T')[0] : '',
-                eventLocation: announcement.eventLocation || '',
-                expiresAt: announcement.expiresAt ? new Date(announcement.expiresAt).toISOString().split('T')[0] : ''
+                eventLocation: announcement.eventLocation || ''
             });
             setSelectedAnnouncement(announcement);
         } else {
             setFormData({
                 title: '',
                 content: '',
-                type: 'announcement',
-                priority: 'medium',
-                targetAudience: ['all'],
-                status: 'draft',
+                imageUrl: '',
+                imageFile: null,
                 eventDate: '',
-                eventLocation: '',
-                expiresAt: ''
+                eventLocation: ''
             });
         }
         setShowModal(true);
@@ -180,10 +172,6 @@ const Announcements = () => {
     const getFilteredAnnouncements = () => {
         let filtered = announcements;
         
-        if (activeTab !== 'all') {
-            filtered = filtered.filter(a => a.status === activeTab);
-        }
-        
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
             filtered = filtered.filter(a => 
@@ -193,25 +181,6 @@ const Announcements = () => {
         }
         
         return filtered;
-    };
-
-    const getPriorityColor = (priority) => {
-        switch (priority) {
-            case 'urgent': return '#dc2626';
-            case 'high': return '#ea580c';
-            case 'medium': return '#3b82f6';
-            case 'low': return '#64748b';
-            default: return '#64748b';
-        }
-    };
-
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'published': return <CheckCircle size={16} />;
-            case 'draft': return <Clock size={16} />;
-            case 'archived': return <AlertCircle size={16} />;
-            default: return <Clock size={16} />;
-        }
     };
 
     if (loading) {
@@ -279,24 +248,6 @@ const Announcements = () => {
                             <Plus size={20} strokeWidth={2.5} />
                             Create New
                         </button>
-                    </div>
-
-                    {/* Tabs */}
-                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                        {[
-                            { id: 'all', label: 'All', count: announcements.length },
-                            { id: 'published', label: 'Published', count: announcements.filter(a => a.status === 'published').length },
-                            { id: 'draft', label: 'Drafts', count: announcements.filter(a => a.status === 'draft').length },
-                            { id: 'archived', label: 'Archived', count: announcements.filter(a => a.status === 'archived').length }
-                        ].map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                style={{ padding: '0.625rem 1.25rem', background: activeTab === tab.id ? 'white' : 'transparent', border: activeTab === tab.id ? '2px solid #3b82f6' : '2px solid transparent', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', color: activeTab === tab.id ? '#3b82f6' : '#64748b', transition: 'all 0.2s' }}
-                            >
-                                {tab.label} ({tab.count})
-                            </button>
-                        ))}
                     </div>
 
                     {/* Search & Actions */}
@@ -475,6 +426,69 @@ const Announcements = () => {
 
                         <form onSubmit={handleSubmit} style={{ padding: '2rem 2.5rem' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                {/* Image Upload/URL Section */}
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.75rem' }}>
+                                        Image
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setImageUploadType('url')}
+                                            style={{ flex: 1, padding: '0.625rem 1rem', background: imageUploadType === 'url' ? '#3b82f6' : 'white', border: `2px solid ${imageUploadType === 'url' ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: imageUploadType === 'url' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
+                                        >
+                                            <LinkIcon size={16} />
+                                            Image URL
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setImageUploadType('upload')}
+                                            style={{ flex: 1, padding: '0.625rem 1rem', background: imageUploadType === 'upload' ? '#3b82f6' : 'white', border: `2px solid ${imageUploadType === 'upload' ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: imageUploadType === 'upload' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
+                                        >
+                                            <Upload size={16} />
+                                            Upload Image
+                                        </button>
+                                    </div>
+                                    
+                                    {imageUploadType === 'url' ? (
+                                        <input
+                                            type="url"
+                                            value={formData.imageUrl}
+                                            onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                                            placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s' }}
+                                            onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                                            onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                        />
+                                    ) : (
+                                        <div>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => setFormData({ ...formData, imageFile: e.target.files[0] })}
+                                                style={{ display: 'none' }}
+                                                id="imageUpload"
+                                            />
+                                            <label
+                                                htmlFor="imageUpload"
+                                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', width: '100%', padding: '2rem', border: '2px dashed #cbd5e1', borderRadius: '12px', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.background = '#eff6ff'; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.background = '#f8fafc'; }}
+                                            >
+                                                <Upload size={24} color="#64748b" />
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b', margin: 0 }}>
+                                                        {formData.imageFile ? formData.imageFile.name : 'Click to upload image'}
+                                                    </p>
+                                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '0.25rem 0 0 0' }}>
+                                                        PNG, JPG, GIF up to 10MB
+                                                    </p>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div>
                                     <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
                                         Title <span style={{ color: '#ef4444' }}>*</span>
@@ -508,110 +522,28 @@ const Announcements = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                            Type
+                                            Event Date
                                         </label>
-                                        <select
-                                            value={formData.type}
-                                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', background: 'white', cursor: 'pointer' }}
-                                        >
-                                            <option value="announcement">Announcement</option>
-                                            <option value="event">Event</option>
-                                        </select>
+                                        <input
+                                            type="date"
+                                            value={formData.eventDate}
+                                            onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
+                                        />
                                     </div>
 
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                            Priority
+                                            Event Location
                                         </label>
-                                        <select
-                                            value={formData.priority}
-                                            onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', background: 'white', cursor: 'pointer' }}
-                                        >
-                                            <option value="low">Low</option>
-                                            <option value="medium">Medium</option>
-                                            <option value="high">High</option>
-                                            <option value="urgent">Urgent</option>
-                                        </select>
+                                        <input
+                                            type="text"
+                                            value={formData.eventLocation}
+                                            onChange={(e) => setFormData({ ...formData, eventLocation: e.target.value })}
+                                            placeholder="Enter event location"
+                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
+                                        />
                                     </div>
-                                </div>
-
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                        Target Audience
-                                    </label>
-                                    <select
-                                        multiple
-                                        value={formData.targetAudience}
-                                        onChange={(e) => setFormData({ ...formData, targetAudience: Array.from(e.target.selectedOptions, option => option.value) })}
-                                        style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', background: 'white', minHeight: '100px' }}
-                                    >
-                                        <option value="all">All Users</option>
-                                        <option value="students">Students</option>
-                                        <option value="proctors">Proctors</option>
-                                        <option value="maintainers">Maintainers</option>
-                                        <option value="admins">Admins</option>
-                                    </select>
-                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '0.5rem 0 0 0' }}>Hold Ctrl/Cmd to select multiple</p>
-                                </div>
-
-                                {formData.type === 'event' && (
-                                    <>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                            <div>
-                                                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                                    Event Date
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    value={formData.eventDate}
-                                                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                                                    style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                                    Expires At
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    value={formData.expiresAt}
-                                                    onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
-                                                    style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                                Event Location
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={formData.eventLocation}
-                                                onChange={(e) => setFormData({ ...formData, eventLocation: e.target.value })}
-                                                placeholder="Enter event location"
-                                                style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
-                                            />
-                                        </div>
-                                    </>
-                                )}
-
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                        Status
-                                    </label>
-                                    <select
-                                        value={formData.status}
-                                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                        style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', background: 'white', cursor: 'pointer' }}
-                                    >
-                                        <option value="draft">Draft</option>
-                                        <option value="published">Published</option>
-                                        <option value="archived">Archived</option>
-                                    </select>
                                 </div>
                             </div>
 
