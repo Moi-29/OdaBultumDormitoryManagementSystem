@@ -233,6 +233,16 @@
   background-color: #dc2626;
 }
 
+.btn-success {
+  background-color: var(--color-success);
+  color: white;
+  border-color: var(--color-success);
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
 /* Card Styles */
 .card {
   background-color: var(--surface-color);

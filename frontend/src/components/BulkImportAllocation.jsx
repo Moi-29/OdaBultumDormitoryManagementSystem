@@ -767,9 +767,37 @@ const BulkImportAllocation = ({ onImportComplete, onAllocationComplete }) => {
                     onClick={handleAutoAllocate}
                     className="btn btn-success"
                     disabled={allocating}
-                    style={{ width: '100%' }}
+                    style={{ 
+                        width: '100%',
+                        background: allocating ? '#9ca3af' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        color: 'white',
+                        border: '2px solid #10b981',
+                        padding: '0.875rem 1.5rem',
+                        fontSize: '1rem',
+                        fontWeight: 700,
+                        borderRadius: '12px',
+                        cursor: allocating ? 'not-allowed' : 'pointer',
+                        boxShadow: allocating ? 'none' : '0 4px 12px rgba(16, 185, 129, 0.3)',
+                        transition: 'all 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem'
+                    }}
+                    onMouseEnter={(e) => !allocating && (e.currentTarget.style.transform = 'translateY(-2px)')}
+                    onMouseLeave={(e) => !allocating && (e.currentTarget.style.transform = 'translateY(0)')}
                 >
-                    {allocating ? 'Allocating...' : 'Run Allocation'}
+                    {allocating ? (
+                        <>
+                            <Loader size={18} style={{ animation: 'spin 0.6s linear infinite' }} />
+                            Allocating...
+                        </>
+                    ) : (
+                        <>
+                            <Building size={18} />
+                            Run Allocation
+                        </>
+                    )}
                 </button>
 
                 {/* Allocation Progress Bar */}
