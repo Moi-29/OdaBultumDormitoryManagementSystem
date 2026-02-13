@@ -190,14 +190,27 @@ const deleteProctor = async (req, res) => {
             return res.status(404).json({ message: 'Proctor not found' });
         }
 
-        // Soft delete - set status to dismissed
-        proctor.status = 'dismissed';
-        await proctor.save();
+        // Check if permanent delete is requested
+        const { permanent } = req.query;
+        
+        if (permanent === 'true') {
+            // Hard delete - permanently remove from database
+            await proctor.deleteOne();
+            
+            res.json({
+                success: true,
+                message: 'Proctor permanently deleted from database'
+            });
+        } else {
+            // Soft delete - set status to dismissed
+            proctor.status = 'dismissed';
+            await proctor.save();
 
-        res.json({
-            success: true,
-            message: 'Proctor dismissed successfully'
-        });
+            res.json({
+                success: true,
+                message: 'Proctor dismissed successfully'
+            });
+        }
     } catch (error) {
         console.error('Error deleting proctor:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -370,11 +383,32 @@ const deleteMaintainer = async (req, res) => {
             return res.status(404).json({ message: 'Maintainer not found' });
         }
 
-        // Soft delete - set status to dismissed
-        maintainer.status = 'dismissed';
-        await maintainer.save();
+        // Check if permanent delete is requested
+        const { permanent } = req.query;
+        
+        if (permanent === 'true') {
+            // Hard delete - permanently remove from database
+            await maintainer.deleteOne();
+            
+            res.json({
+                success: true,
+                message: 'Maintainer permanently deleted from database'
+            });
+        } else {
+            // Soft delete - set status to dismissed
+            maintainer.status = 'dismissed';
+            await maintainer.save();
 
-        res.json({
+            res.json({
+                success: true,
+                message: 'Maintainer dismissed successfully'
+            });
+        }
+    } catch (error) {
+        console.error('Error deleting maintainer:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
             success: true,
             message: 'Maintainer dismissed successfully'
         });

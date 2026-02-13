@@ -42,6 +42,36 @@ const Requests = () => {
         fetchProctorsAndMaintainers();
     }, []);
 
+    useEffect(() => {
+        // Refetch users when tab changes to proctor or maintainer
+        if (activeTab === 'proctors' || activeTab === 'maintainers') {
+            fetchProctorsAndMaintainers();
+        }
+    }, [activeTab]);
+
+    useEffect(() => {
+        // Refetch users when modal opens to ensure fresh data
+        if (showNewOrderForm) {
+            fetchProctorsAndMaintainers();
+        }
+    }, [showNewOrderForm]);
+
+    useEffect(() => {
+        // Set up periodic refresh every 30 seconds when on proctor/maintainer tabs
+        let intervalId;
+        if (activeTab === 'proctors' || activeTab === 'maintainers') {
+            intervalId = setInterval(() => {
+                fetchProctorsAndMaintainers();
+            }, 30000); // Refresh every 30 seconds
+        }
+        
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [activeTab]);
+
     const fetchProctorsAndMaintainers = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -49,13 +79,18 @@ const Requests = () => {
             
             // Fetch proctors
             const proctorsResponse = await axios.get(`${API_URL}/api/user-management/proctors`, config);
-            setAllProctors(proctorsResponse.data.filter(p => p.status === 'Active'));
+            const activeProctors = proctorsResponse.data.filter(p => p.status === 'Active');
+            setAllProctors(activeProctors);
+            console.log('Fetched Proctors:', activeProctors.length, activeProctors);
             
             // Fetch maintainers
             const maintainersResponse = await axios.get(`${API_URL}/api/user-management/maintainers`, config);
-            setAllMaintainers(maintainersResponse.data.filter(m => m.status === 'Active'));
+            const activeMaintainers = maintainersResponse.data.filter(m => m.status === 'Active');
+            setAllMaintainers(activeMaintainers);
+            console.log('Fetched Maintainers:', activeMaintainers.length, activeMaintainers);
         } catch (error) {
             console.error('Error fetching users:', error);
+            showNotification('Failed to fetch users. Please try again.', 'error');
         }
     };
 
@@ -480,6 +515,357 @@ const Requests = () => {
                     onCancel={confirmDialog.onCancel}
                 />
             )}
+
+            {/* New Order/Request Modal */}
+            {showNewOrderForm && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10002,
+                    padding: '1rem',
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        maxWidth: '600px',
+                        width: '100%',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            padding: '2rem 2.5rem 1.5rem',
+                            borderBottom: '1px solid #e2e8f0',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div style={{ flex: 1 }}>
+                                <h2 style={{
+                                    fontSize: '1.75rem',
+                                    fontWeight: 800,
+                                    color: '#1e293b',
+                                    margin: '0 0 0.5rem 0',
+                                    letterSpacing: '-0.5px'
+                                }}>
+                                    New Order/Request
+                                </h2>
+                                <p style={{
+                                    fontSize: '0.9rem',
+                                    color: '#64748b',
+                                    margin: 0
+                                }}>
+                                    Send an order to {activeTab === 'proctors' ? 'a proctor' : 'a maintainer'} 
+                                    <span style={{ 
+                                        marginLeft: '0.5rem',
+                                        padding: '0.25rem 0.625rem',
+                                        background: `${getTabColor()}15`,
+                                        color: getTabColor(),
+                                        borderRadius: '6px',
+                                        fontSize: '0.8rem',
+                                        fontWeight: 700
+                                    }}>
+                                        {activeTab === 'proctors' ? allProctors.length : allMaintainers.length} Available
+                                    </span>
+                                </p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                <button
+                                    onClick={fetchProctorsAndMaintainers}
+                                    title="Refresh user list"
+                                    style={{
+                                        background: '#f1f5f9',
+                                        border: 'none',
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: '50%',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: getTabColor(),
+                                        transition: 'all 0.2s',
+                                        flexShrink: 0
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = `${getTabColor()}15`;
+                                        e.currentTarget.style.transform = 'rotate(180deg)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = '#f1f5f9';
+                                        e.currentTarget.style.transform = 'rotate(0deg)';
+                                    }}
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowNewOrderForm(false);
+                                        setNewOrderForm({ toWhom: '', title: '', issue: '' });
+                                    }}
+                                    style={{
+                                        background: '#f1f5f9',
+                                        border: 'none',
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: '50%',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: '#64748b',
+                                        transition: 'all 0.2s',
+                                        flexShrink: 0
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = '#e2e8f0';
+                                        e.currentTarget.style.transform = 'rotate(90deg)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = '#f1f5f9';
+                                        e.currentTarget.style.transform = 'rotate(0deg)';
+                                    }}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div style={{ padding: '2rem 2.5rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                {/* To Whom Dropdown */}
+                                <div>
+                                    <label style={{
+                                        display: 'block',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.625rem',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                    }}>
+                                        To Whom <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    {(activeTab === 'proctors' ? allProctors : allMaintainers).length === 0 ? (
+                                        <div style={{
+                                            padding: '1rem',
+                                            background: '#fef3c7',
+                                            border: '1px solid #fbbf24',
+                                            borderRadius: '12px',
+                                            color: '#92400e',
+                                            fontSize: '0.9rem',
+                                            textAlign: 'center'
+                                        }}>
+                                            No active {activeTab === 'proctors' ? 'proctors' : 'maintainers'} found. Please add users in User Management.
+                                        </div>
+                                    ) : (
+                                        <select
+                                            name="toWhom"
+                                            value={newOrderForm.toWhom}
+                                            onChange={handleNewOrderChange}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.875rem 1.125rem',
+                                                border: '2px solid #e5e7eb',
+                                                borderRadius: '12px',
+                                                fontSize: '0.95rem',
+                                                outline: 'none',
+                                                background: 'white',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                                fontWeight: 500
+                                            }}
+                                            onFocus={(e) => {
+                                                e.target.style.borderColor = getTabColor();
+                                                e.target.style.boxShadow = `0 0 0 3px ${getTabColor()}15`;
+                                            }}
+                                            onBlur={(e) => {
+                                                e.target.style.borderColor = '#e5e7eb';
+                                                e.target.style.boxShadow = 'none';
+                                            }}
+                                        >
+                                            <option value="">Select {activeTab === 'proctors' ? 'Proctor' : 'Maintainer'}</option>
+                                            {(activeTab === 'proctors' ? allProctors : allMaintainers).map(user => (
+                                                <option key={user._id} value={user._id}>
+                                                    {user.username} {user.blockId ? `- Block ${user.blockId}` : ''} {user.specialization ? `(${user.specialization})` : ''}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                {/* Title */}
+                                <div>
+                                    <label style={{
+                                        display: 'block',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.625rem',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                    }}>
+                                        Title <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="title"
+                                        value={newOrderForm.title}
+                                        onChange={handleNewOrderChange}
+                                        placeholder="Enter order title"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.875rem 1.125rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '12px',
+                                            fontSize: '0.95rem',
+                                            outline: 'none',
+                                            transition: 'all 0.2s',
+                                            fontWeight: 500
+                                        }}
+                                        onFocus={(e) => {
+                                            e.target.style.borderColor = getTabColor();
+                                            e.target.style.boxShadow = `0 0 0 3px ${getTabColor()}15`;
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.style.borderColor = '#e5e7eb';
+                                            e.target.style.boxShadow = 'none';
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Issue */}
+                                <div>
+                                    <label style={{
+                                        display: 'block',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.625rem',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                    }}>
+                                        Issue/Description <span style={{ color: '#ef4444' }}>*</span>
+                                    </label>
+                                    <textarea
+                                        name="issue"
+                                        value={newOrderForm.issue}
+                                        onChange={handleNewOrderChange}
+                                        placeholder="Describe the order or request in detail..."
+                                        rows={6}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.875rem 1.125rem',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '12px',
+                                            fontSize: '0.95rem',
+                                            outline: 'none',
+                                            resize: 'vertical',
+                                            fontFamily: 'inherit',
+                                            transition: 'all 0.2s',
+                                            fontWeight: 500,
+                                            lineHeight: '1.6'
+                                        }}
+                                        onFocus={(e) => {
+                                            e.target.style.borderColor = getTabColor();
+                                            e.target.style.boxShadow = `0 0 0 3px ${getTabColor()}15`;
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.style.borderColor = '#e5e7eb';
+                                            e.target.style.boxShadow = 'none';
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            padding: '1.5rem 2.5rem 2rem',
+                            borderTop: '1px solid #e2e8f0',
+                            display: 'flex',
+                            gap: '1rem',
+                            justifyContent: 'flex-end'
+                        }}>
+                            <button
+                                onClick={() => {
+                                    setShowNewOrderForm(false);
+                                    setNewOrderForm({ toWhom: '', title: '', issue: '' });
+                                }}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: '2px solid #e5e7eb',
+                                    background: 'white',
+                                    color: '#64748b',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#cbd5e1';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitNewOrder}
+                                disabled={submittingOrder}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    border: 'none',
+                                    background: submittingOrder ? '#e2e8f0' : `linear-gradient(135deg, ${getTabColor()} 0%, ${getTabColor()}dd 100%)`,
+                                    color: submittingOrder ? '#94a3b8' : 'white',
+                                    borderRadius: '12px',
+                                    cursor: submittingOrder ? 'not-allowed' : 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.625rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: submittingOrder ? 'none' : `0 4px 12px ${getTabColor()}40`
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (!submittingOrder) {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = `0 6px 16px ${getTabColor()}50`;
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!submittingOrder) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = `0 4px 12px ${getTabColor()}40`;
+                                    }
+                                }}
+                            >
+                                <Send size={18} />
+                                {submittingOrder ? 'Sending...' : 'Send Order/Request'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             
             {/* Notification */}
             {notification && (
@@ -522,6 +908,43 @@ const Requests = () => {
             <div style={{ flex: 1, display: 'flex', maxWidth: '1400px', width: '100%', margin: '0 auto', overflow: 'hidden' }}>
                 {/* Conversations List */}
                 <div style={{ width: selectedRequest ? '380px' : '100%', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', background: 'white', transition: 'width 0.3s' }}>
+                    {/* New Order Button - Only for Proctor/Maintainer tabs */}
+                    {(activeTab === 'proctors' || activeTab === 'maintainers') && (
+                        <div style={{ padding: '1rem', borderBottom: '1px solid #e2e8f0' }}>
+                            <button
+                                onClick={() => setShowNewOrderForm(true)}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.875rem 1.25rem',
+                                    background: `linear-gradient(135deg, ${getTabColor()} 0%, ${getTabColor()}dd 100%)`,
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.625rem',
+                                    transition: 'all 0.2s',
+                                    boxShadow: `0 4px 12px ${getTabColor()}40`
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = `0 6px 16px ${getTabColor()}50`;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = `0 4px 12px ${getTabColor()}40`;
+                                }}
+                            >
+                                <Plus size={20} strokeWidth={2.5} />
+                                New Order/Request
+                            </button>
+                        </div>
+                    )}
+                    
                     {/* Search Bar & Selection Controls */}
                     <div style={{ padding: '1rem', borderBottom: '1px solid #e2e8f0' }}>
                         <div style={{ position: 'relative', marginBottom: isSelectionMode ? '0.75rem' : '0' }}>
@@ -805,249 +1228,220 @@ const Requests = () => {
                         {/* Messages Area */}
                         <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', background: '#f8fafc' }}>
                             {/* Request Details Card */}
-                            <div style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', border: '1px solid #e2e8f0' }}>
-                                {/* Student Info */}
-                                <div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid #f1f5f9' }}>
-                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Student Information</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                                {/* User Info Header */}
+                                <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '2px solid #f1f5f9' }}>
+                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '1rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        {selectedRequest.type === 'student' ? 'Student Information' : selectedRequest.type === 'proctor' ? 'Proctor Information' : 'Maintainer Information'}
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                                         <div>
-                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Full Name</div>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{selectedRequest.studentName || selectedRequest.fromUserName}</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.375rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</div>
+                                            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b' }}>{selectedRequest.studentName || selectedRequest.proctorName || selectedRequest.maintainerName || selectedRequest.fromUserName}</div>
                                         </div>
+                                        {selectedRequest.type === 'student' && (
+                                            <>
+                                                <div>
+                                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.375rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Student ID</div>
+                                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b' }}>{selectedRequest.studentId || 'N/A'}</div>
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.375rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Room</div>
+                                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b' }}>{selectedRequest.currentRoom || 'N/A'}</div>
+                                                </div>
+                                            </>
+                                        )}
+                                        {selectedRequest.type !== 'student' && (
+                                            <>
+                                                <div>
+                                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.375rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                                        {selectedRequest.type === 'proctor' ? 'Block' : 'Specialization'}
+                                                    </div>
+                                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b' }}>
+                                                        {selectedRequest.blockId || selectedRequest.specialization || 'N/A'}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
                                         <div>
-                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Student ID</div>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{selectedRequest.studentId}</div>
-                                        </div>
-                                        <div>
-                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Room</div>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{selectedRequest.currentRoom || 'N/A'}</div>
-                                        </div>
-                                        <div>
-                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Submitted On</div>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                <Clock size={12} color="#64748b" />
-                                                {selectedRequest.submittedOn}
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.375rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Submitted On</div>
+                                            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                                                <Clock size={14} color="#64748b" />
+                                                {selectedRequest.submittedOn || new Date(selectedRequest.createdAt).toLocaleDateString()}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Report Details */}
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Report Details</div>
-                                    <div style={{ fontWeight: 700, fontSize: '1.15rem', color: '#1e293b', marginBottom: '1rem' }}>{selectedRequest.subject}</div>
-                                    <div style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.7', padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                                {/* Request Details */}
+                                <div style={{ marginBottom: '2rem' }}>
+                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '1rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        {selectedRequest.type === 'student' ? 'Report Details' : 'Request Details'}
+                                    </div>
+                                    <div style={{ 
+                                        fontWeight: 800, 
+                                        fontSize: '1.5rem', 
+                                        color: '#1e293b', 
+                                        marginBottom: '1.25rem',
+                                        lineHeight: '1.3'
+                                    }}>
+                                        {selectedRequest.subject}
+                                    </div>
+                                    <div style={{ 
+                                        fontSize: '1rem', 
+                                        color: '#475569', 
+                                        lineHeight: '1.8', 
+                                        padding: '1.5rem', 
+                                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+                                        borderRadius: '12px', 
+                                        border: '1px solid #e2e8f0',
+                                        whiteSpace: 'pre-wrap'
+                                    }}>
                                         {selectedRequest.message}
                                     </div>
                                 </div>
 
-                                {/* Status & Type */}
-                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                                    <span style={{ padding: '0.5rem 1rem', background: `${getTabColor()}10`, color: getTabColor(), borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700 }}>
-                                        {selectedRequest.requestType}
+                                {/* Status & Type Badges */}
+                                <div style={{ display: 'flex', gap: '0.875rem', flexWrap: 'wrap' }}>
+                                    <span style={{ 
+                                        padding: '0.625rem 1.25rem', 
+                                        background: `linear-gradient(135deg, ${getTabColor()}15 0%, ${getTabColor()}25 100%)`, 
+                                        color: getTabColor(), 
+                                        borderRadius: '10px', 
+                                        fontSize: '0.85rem', 
+                                        fontWeight: 700,
+                                        border: `1px solid ${getTabColor()}30`,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem'
+                                    }}>
+                                        <FileText size={14} />
+                                        {selectedRequest.requestType || 'Request'}
                                     </span>
                                     <span style={{ 
-                                        padding: '0.5rem 1rem', 
-                                        background: selectedRequest.status === 'pending' ? '#fef3c7' : selectedRequest.status === 'approved' ? '#dcfce7' : '#fee2e2', 
+                                        padding: '0.625rem 1.25rem', 
+                                        background: selectedRequest.status === 'pending' ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' : selectedRequest.status === 'approved' ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' : 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)', 
                                         color: selectedRequest.status === 'pending' ? '#92400e' : selectedRequest.status === 'approved' ? '#166534' : '#991b1b', 
-                                        borderRadius: '8px', 
-                                        fontSize: '0.8rem', 
+                                        borderRadius: '10px', 
+                                        fontSize: '0.85rem', 
                                         fontWeight: 700, 
                                         textTransform: 'uppercase',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '0.375rem'
+                                        gap: '0.5rem',
+                                        border: selectedRequest.status === 'pending' ? '1px solid #fbbf24' : selectedRequest.status === 'approved' ? '1px solid #10b981' : '1px solid #ef4444'
                                     }}>
                                         {selectedRequest.status === 'pending' && <Clock size={14} />}
                                         {selectedRequest.status === 'approved' && <CheckCircle size={14} />}
                                         {selectedRequest.status === 'rejected' && <XCircle size={14} />}
                                         {selectedRequest.status}
                                     </span>
-                                </div>
-                            </div>
-
-                            {/* Admin Response Section - Only for Proctor/Maintainer */}
-                            {selectedRequest.type !== 'student' && (
-                                <div style={{ marginTop: '1.5rem' }}>
-                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', marginBottom: '1rem' }}>Chat History</div>
-                                    
-                                    {loadingMessages ? (
-                                        <div style={{ textAlign: 'center', padding: '2rem' }}>
-                                            <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: getTabColor(), borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
-                                        </div>
-                                    ) : messages.length === 0 ? (
-                                        <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8', fontSize: '0.9rem' }}>
-                                            No messages yet. Start the conversation!
-                                        </div>
-                                    ) : (
-                                        <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                            {messages.map((msg) => {
-                                                const isAdmin = msg.senderModel === 'Admin';
-                                                return (
-                                                    <div key={msg._id} style={{ display: 'flex', justifyContent: isAdmin ? 'flex-end' : 'flex-start', marginBottom: '0.5rem' }}>
-                                                        <div style={{ maxWidth: '70%', position: 'relative', group: true }}>
-                                                            <div style={{ 
-                                                                background: isAdmin ? getTabColor() : '#f1f5f9', 
-                                                                color: isAdmin ? 'white' : '#1e293b', 
-                                                                padding: '0.75rem 1rem', 
-                                                                borderRadius: isAdmin ? '12px 12px 2px 12px' : '12px 12px 12px 2px', 
-                                                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)' 
-                                                            }}>
-                                                                {!isAdmin && (
-                                                                    <div style={{ fontSize: '0.7rem', fontWeight: 600, marginBottom: '0.25rem', opacity: 0.7 }}>
-                                                                        {msg.senderName}
-                                                                    </div>
-                                                                )}
-                                                                <div style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>{msg.message}</div>
-                                                                <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '0.25rem', textAlign: 'right', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                    <span>{formatTime(msg.createdAt)}</span>
-                                                                    {isAdmin && (
-                                                                        <button
-                                                                            onClick={() => handleDeleteMessage(msg._id)}
-                                                                            style={{
-                                                                                background: 'rgba(255,255,255,0.2)',
-                                                                                border: 'none',
-                                                                                color: 'white',
-                                                                                padding: '0.25rem 0.5rem',
-                                                                                borderRadius: '4px',
-                                                                                cursor: 'pointer',
-                                                                                fontSize: '0.7rem',
-                                                                                marginLeft: '0.5rem'
-                                                                            }}
-                                                                        >
-                                                                            Delete
-                                                                        </button>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
+                                    {selectedRequest.priority && (
+                                        <span style={{ 
+                                            padding: '0.625rem 1.25rem', 
+                                            background: '#f1f5f9', 
+                                            color: '#64748b', 
+                                            borderRadius: '10px', 
+                                            fontSize: '0.85rem', 
+                                            fontWeight: 700,
+                                            textTransform: 'capitalize',
+                                            border: '1px solid #e2e8f0'
+                                        }}>
+                                            Priority: {selectedRequest.priority}
+                                        </span>
                                     )}
                                 </div>
-                            )}
+                            </div>
                         </div>
 
                         {/* Action Buttons */}
                         <div style={{ padding: '1.5rem', borderTop: '1px solid #e2e8f0', background: 'white' }}>
-                            {selectedRequest.type === 'student' ? (
-                                <div>
-                                    {selectedRequest.status === 'pending' ? (
-                                        <div style={{ display: 'flex', gap: '1rem' }}>
-                                            <button 
-                                                onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} 
-                                                style={{ 
-                                                    flex: 1, 
-                                                    padding: '1rem', 
-                                                    background: 'white', 
-                                                    color: '#ef4444', 
-                                                    border: '2px solid #ef4444', 
-                                                    borderRadius: '12px', 
-                                                    cursor: 'pointer', 
-                                                    fontWeight: 700, 
-                                                    fontSize: '1rem', 
-                                                    display: 'flex', 
-                                                    alignItems: 'center', 
-                                                    justifyContent: 'center', 
-                                                    gap: '0.5rem', 
-                                                    transition: 'all 0.2s' 
-                                                }} 
-                                                onMouseEnter={(e) => { 
-                                                    e.currentTarget.style.background = '#ef4444'; 
-                                                    e.currentTarget.style.color = 'white'; 
-                                                }} 
-                                                onMouseLeave={(e) => { 
-                                                    e.currentTarget.style.background = 'white'; 
-                                                    e.currentTarget.style.color = '#ef4444'; 
-                                                }}
-                                            >
-                                                <XCircle size={20} />
-                                                Reject Report
-                                            </button>
-                                            <button 
-                                                onClick={() => handleStatusChange(selectedRequest._id, 'approved')} 
-                                                style={{ 
-                                                    flex: 1, 
-                                                    padding: '1rem', 
-                                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-                                                    color: 'white', 
-                                                    border: 'none', 
-                                                    borderRadius: '12px', 
-                                                    cursor: 'pointer', 
-                                                    fontWeight: 700, 
-                                                    fontSize: '1rem', 
-                                                    display: 'flex', 
-                                                    alignItems: 'center', 
-                                                    justifyContent: 'center', 
-                                                    gap: '0.5rem', 
-                                                    transition: 'all 0.2s',
-                                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
-                                                }} 
-                                                onMouseEnter={(e) => {
-                                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.4)';
-                                                }} 
-                                                onMouseLeave={(e) => {
-                                                    e.currentTarget.style.transform = 'translateY(0)';
-                                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
-                                                }}
-                                            >
-                                                <CheckCircle size={20} />
-                                                Approve Report
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div style={{ 
-                                            padding: '1rem', 
-                                            background: selectedRequest.status === 'approved' ? '#dcfce7' : '#fee2e2', 
-                                            borderRadius: '12px', 
-                                            textAlign: 'center',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '0.5rem',
-                                            fontWeight: 700,
-                                            color: selectedRequest.status === 'approved' ? '#166534' : '#991b1b'
-                                        }}>
-                                            {selectedRequest.status === 'approved' ? <CheckCircle size={20} /> : <XCircle size={20} />}
-                                            Report {selectedRequest.status === 'approved' ? 'Approved' : 'Rejected'}
-                                        </div>
-                                    )}
+                            {selectedRequest.status === 'pending' ? (
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button 
+                                        onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} 
+                                        style={{ 
+                                            flex: 1, 
+                                            padding: '1.125rem 1.5rem', 
+                                            background: 'white', 
+                                            color: '#ef4444', 
+                                            border: '2px solid #ef4444', 
+                                            borderRadius: '14px', 
+                                            cursor: 'pointer', 
+                                            fontWeight: 700, 
+                                            fontSize: '1.05rem', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center', 
+                                            gap: '0.625rem', 
+                                            transition: 'all 0.2s',
+                                            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.15)'
+                                        }} 
+                                        onMouseEnter={(e) => { 
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'; 
+                                            e.currentTarget.style.color = 'white';
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.3)';
+                                        }} 
+                                        onMouseLeave={(e) => { 
+                                            e.currentTarget.style.background = 'white'; 
+                                            e.currentTarget.style.color = '#ef4444';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(239, 68, 68, 0.15)';
+                                        }}
+                                    >
+                                        <XCircle size={22} strokeWidth={2.5} />
+                                        Reject {selectedRequest.type === 'student' ? 'Report' : 'Request'}
+                                    </button>
+                                    <button 
+                                        onClick={() => handleStatusChange(selectedRequest._id, 'approved')} 
+                                        style={{ 
+                                            flex: 1, 
+                                            padding: '1.125rem 1.5rem', 
+                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                                            color: 'white', 
+                                            border: 'none', 
+                                            borderRadius: '14px', 
+                                            cursor: 'pointer', 
+                                            fontWeight: 700, 
+                                            fontSize: '1.05rem', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center', 
+                                            gap: '0.625rem', 
+                                            transition: 'all 0.2s',
+                                            boxShadow: '0 6px 16px rgba(16, 185, 129, 0.3)'
+                                        }} 
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.4)';
+                                        }} 
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(16, 185, 129, 0.3)';
+                                        }}
+                                    >
+                                        <CheckCircle size={22} strokeWidth={2.5} />
+                                        Approve {selectedRequest.type === 'student' ? 'Report' : 'Request'}
+                                    </button>
                                 </div>
                             ) : (
-                                <div>
-                                    <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                        <button style={{ padding: '0.625rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', color: '#64748b' }}>
-                                            <Paperclip size={18} />
-                                        </button>
-                                        <input
-                                            type="text"
-                                            value={chatMessage}
-                                            onChange={(e) => setChatMessage(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                            placeholder="Type a message..."
-                                            style={{ flex: 1, padding: '0.75rem 1rem', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '0.9rem', outline: 'none' }}
-                                            onFocus={(e) => e.target.style.borderColor = getTabColor()}
-                                            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                                        />
-                                        <button onClick={handleSendMessage} disabled={!chatMessage.trim()} style={{ padding: '0.75rem 1.25rem', background: chatMessage.trim() ? getTabColor() : '#e2e8f0', color: chatMessage.trim() ? 'white' : '#94a3b8', border: 'none', borderRadius: '10px', cursor: chatMessage.trim() ? 'pointer' : 'not-allowed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'all 0.2s' }}>
-                                            <Send size={18} />
-                                        </button>
-                                    </div>
-                                    {selectedRequest.status === 'pending' && (
-                                        <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                            <button onClick={() => handleStatusChange(selectedRequest._id, 'rejected')} style={{ flex: 1, padding: '0.625rem', background: 'white', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#fef2f2'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; }}>
-                                                <XCircle size={16} />
-                                                Reject
-                                            </button>
-                                            <button onClick={() => handleStatusChange(selectedRequest._id, 'approved')} style={{ flex: 1, padding: '0.625rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', transition: 'all 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#059669'} onMouseLeave={(e) => e.currentTarget.style.background = '#10b981'}>
-                                                <CheckCircle size={16} />
-                                                Approve
-                                            </button>
-                                        </div>
-                                    )}
+                                <div style={{ 
+                                    padding: '1.25rem 1.5rem', 
+                                    background: selectedRequest.status === 'approved' ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' : 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)', 
+                                    borderRadius: '14px', 
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.625rem',
+                                    fontWeight: 700,
+                                    fontSize: '1.05rem',
+                                    color: selectedRequest.status === 'approved' ? '#166534' : '#991b1b',
+                                    border: selectedRequest.status === 'approved' ? '2px solid #10b981' : '2px solid #ef4444'
+                                }}>
+                                    {selectedRequest.status === 'approved' ? <CheckCircle size={22} strokeWidth={2.5} /> : <XCircle size={22} strokeWidth={2.5} />}
+                                    {selectedRequest.type === 'student' ? 'Report' : 'Request'} {selectedRequest.status === 'approved' ? 'Approved' : 'Rejected'}
                                 </div>
                             )}
                         </div>

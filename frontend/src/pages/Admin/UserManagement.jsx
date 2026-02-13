@@ -164,27 +164,36 @@ const UserManagement = () => {
         }
     };
 
-    const handleDelete = async (userId) => {
+    const handleDelete = async (userId, permanent = false) => {
         setConfirmDialog({
-            title: 'Dismiss User',
-            message: 'Are you sure you want to dismiss this user? This action will deactivate their account.',
+            title: permanent ? 'Permanently Delete User' : 'Dismiss User',
+            message: permanent 
+                ? 'Are you sure you want to PERMANENTLY DELETE this user from the database?\n\nThis action CANNOT be undone and will remove all user data permanently.' 
+                : 'Are you sure you want to dismiss this user? This action will deactivate their account.',
+            type: permanent ? 'danger' : 'warning',
+            confirmText: permanent ? 'Delete Permanently' : 'Dismiss',
+            cancelText: 'Cancel',
             onConfirm: async () => {
                 try {
                     const token = localStorage.getItem('token');
                     const config = { headers: { Authorization: `Bearer ${token}` } };
 
-                    const response = await axios.delete(
-                        `${API_URL}/api/user-management/${activeTab}/${userId}`,
-                        config
-                    );
+                    const url = permanent 
+                        ? `${API_URL}/api/user-management/${activeTab}/${userId}?permanent=true`
+                        : `${API_URL}/api/user-management/${activeTab}/${userId}`;
+
+                    const response = await axios.delete(url, config);
 
                     if (response.data.success) {
-                        showNotification('User dismissed successfully', 'success');
+                        showNotification(
+                            permanent ? 'User permanently deleted from database' : 'User dismissed successfully', 
+                            'success'
+                        );
                         fetchData();
                     }
                 } catch (error) {
                     showNotification(
-                        error.response?.data?.message || 'Failed to dismiss user',
+                        error.response?.data?.message || `Failed to ${permanent ? 'delete' : 'dismiss'} user`,
                         'error'
                     );
                 }
@@ -386,18 +395,70 @@ const UserManagement = () => {
                                         </td>
                                         <td style={{ padding: '1rem' }}>
                                             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                                                <button onClick={() => handleOpenModal(user)} style={{
-                                                    padding: '0.5rem', background: '#dbeafe', color: '#1e40af',
-                                                    border: 'none', borderRadius: '8px', cursor: 'pointer',
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                                }}>
+                                                <button 
+                                                    onClick={() => handleOpenModal(user)} 
+                                                    title="Edit user"
+                                                    style={{
+                                                        padding: '0.5rem', 
+                                                        background: '#dbeafe', 
+                                                        color: '#1e40af',
+                                                        border: 'none', 
+                                                        borderRadius: '8px', 
+                                                        cursor: 'pointer',
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.background = '#bfdbfe'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.background = '#dbeafe'}
+                                                >
                                                     <Edit2 size={16} />
                                                 </button>
-                                                <button onClick={() => handleDelete(user._id)} style={{
-                                                    padding: '0.5rem', background: '#fee2e2', color: '#991b1b',
-                                                    border: 'none', borderRadius: '8px', cursor: 'pointer',
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                                }}>
+                                                <button 
+                                                    onClick={() => handleDelete(user._id, false)} 
+                                                    title="Dismiss user (soft delete)"
+                                                    style={{
+                                                        padding: '0.5rem', 
+                                                        background: '#fef3c7', 
+                                                        color: '#92400e',
+                                                        border: 'none', 
+                                                        borderRadius: '8px', 
+                                                        cursor: 'pointer',
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.background = '#fde68a'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.background = '#fef3c7'}
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDelete(user._id, true)} 
+                                                    title="Permanently delete from database"
+                                                    style={{
+                                                        padding: '0.5rem', 
+                                                        background: '#fee2e2', 
+                                                        color: '#991b1b',
+                                                        border: 'none', 
+                                                        borderRadius: '8px', 
+                                                        cursor: 'pointer',
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.background = '#fecaca';
+                                                        e.currentTarget.style.transform = 'scale(1.1)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.background = '#fee2e2';
+                                                        e.currentTarget.style.transform = 'scale(1)';
+                                                    }}
+                                                >
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
