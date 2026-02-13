@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Newspaper, ArrowRight, X, Calendar, Eye } from 'lucide-react';
+import { ArrowRight, X, Calendar, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -91,51 +91,42 @@ const NewsSection = () => {
                 }} />
                 <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                     {/* Section Header */}
-                    <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
-                        alignItems: 'center', 
+                    <div style={{
+                        position: 'relative',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
                         marginBottom: '3rem',
                         flexWrap: 'wrap',
                         gap: '1rem'
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{
-                                width: '60px',
-                                height: '60px',
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                borderRadius: '16px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
+                        <div style={{ textAlign: 'center' }}>
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                fontWeight: 900,
+                                color: isDarkMode ? '#f1f5f9' : '#0f172a',
+                                margin: 0,
+                                letterSpacing: '-1px'
                             }}>
-                                <Newspaper size={32} color="white" strokeWidth={2} />
-                            </div>
-                            <div>
-                                <h2 style={{
-                                    fontSize: '2.5rem',
-                                    fontWeight: 900,
-                                    color: isDarkMode ? '#f1f5f9' : '#0f172a',
-                                    margin: 0,
-                                    letterSpacing: '-1px'
-                                }}>
-                                    News
-                                </h2>
-                                <p style={{
-                                    fontSize: '1rem',
-                                    color: isDarkMode ? '#94a3b8' : '#64748b',
-                                    margin: '0.25rem 0 0 0'
-                                }}>
-                                    Stay updated with latest announcements
-                                </p>
-                            </div>
+                                News
+                            </h2>
+                            <p style={{
+                                fontSize: '1rem',
+                                color: isDarkMode ? '#94a3b8' : '#64748b',
+                                margin: '0.25rem 0 0 0'
+                            }}>
+                                Stay updated with latest announcements
+                            </p>
                         </div>
 
                         {hasMore && (
                             <button
                                 onClick={handleViewAll}
                                 style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
                                     padding: '0.875rem 2rem',
                                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     border: 'none',
@@ -148,19 +139,19 @@ const NewsSection = () => {
                                     alignItems: 'center',
                                     gap: '0.5rem',
                                     boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    transition: 'all 0.3s ease'
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.transform = 'translateY(-50%) translateY(-2px)';
                                     e.currentTarget.style.boxShadow = '0 12px 40px rgba(102, 126, 234, 0.4)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.transform = 'translateY(-50%)';
                                     e.currentTarget.style.boxShadow = '0 8px 32px rgba(102, 126, 234, 0.3)';
                                 }}
                             >
                                 View All
-                                <ArrowRight size={20} strokeWidth={2.5} />
+                                <ArrowRight size={20} />
                             </button>
                         )}
                     </div>
