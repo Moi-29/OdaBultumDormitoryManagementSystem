@@ -829,21 +829,40 @@ const Requests = () => {
             <div style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '1rem 1.5rem' }}>
                 <div style={{ display: 'flex', gap: '0.75rem', maxWidth: '1400px', margin: '0 auto' }}>
                     {[
-                        { id: 'students', label: 'Student Reports', icon: Users, count: studentRequests.length, color: '#3b82f6' },
-                        { id: 'proctors', label: 'Proctor Requests', icon: Building2, count: proctorRequests.length, color: '#8b5cf6' },
-                        { id: 'maintainers', label: 'Maintainer Requests', icon: Wrench, count: maintainerRequests.length, color: '#f97316' }
+                        { id: 'students', label: 'Student Reports', icon: Users, count: studentRequests.length, unreadCount: studentRequests.filter(r => !r.isRead).length, color: '#3b82f6' },
+                        { id: 'proctors', label: 'Proctor Requests', icon: Building2, count: proctorRequests.length, unreadCount: proctorRequests.filter(r => !r.isRead).length, color: '#8b5cf6' },
+                        { id: 'maintainers', label: 'Maintainer Requests', icon: Wrench, count: maintainerRequests.length, unreadCount: maintainerRequests.filter(r => !r.isRead).length, color: '#f97316' }
                     ].map(tab => {
                         const Icon = tab.icon;
                         const isActive = activeTab === tab.id;
                         return (
-                            <button key={tab.id} onClick={() => handleTabChange(tab.id)} style={{ flex: 1, padding: '0.875rem 1.25rem', background: isActive ? 'white' : 'transparent', border: isActive ? `2px solid ${tab.color}` : '2px solid transparent', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'center' }}>
+                            <button key={tab.id} onClick={() => handleTabChange(tab.id)} style={{ flex: 1, padding: '0.875rem 1.25rem', background: isActive ? 'white' : 'transparent', border: isActive ? `2px solid ${tab.color}` : '2px solid transparent', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'center', position: 'relative' }}>
                                 <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${tab.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Icon size={20} color={tab.color} strokeWidth={2.5} />
                                 </div>
-                                <div style={{ textAlign: 'left' }}>
+                                <div style={{ textAlign: 'left', flex: 1 }}>
                                     <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b' }}>{tab.label}</div>
                                     <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{tab.count} {tab.count === 1 ? 'Request' : 'Requests'}</div>
                                 </div>
+                                {tab.unreadCount > 0 && (
+                                    <span style={{
+                                        minWidth: '22px',
+                                        height: '22px',
+                                        padding: '0 7px',
+                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                        color: 'white',
+                                        borderRadius: '11px',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 700,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+                                        animation: 'pulse 2s infinite'
+                                    }}>
+                                        {tab.unreadCount > 99 ? '99+' : tab.unreadCount}
+                                    </span>
+                                )}
                             </button>
                         );
                     })}
