@@ -26,6 +26,8 @@ const MaintainerDashboard = () => {
     const [submitting, setSubmitting] = useState(false);
     const [selectedWorkOrders, setSelectedWorkOrders] = useState([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [selectedRequests, setSelectedRequests] = useState([]);
+    const [isRequestSelectionMode, setIsRequestSelectionMode] = useState(false);
     const [selectedDetail, setSelectedDetail] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
@@ -210,6 +212,50 @@ const MaintainerDashboard = () => {
         } catch (error) {
             console.error('Error deleting work orders:', error);
             showNotification('Failed to delete some work orders', 'error');
+        }
+    };
+
+    const handleToggleRequestSelection = (requestId) => {
+        setSelectedRequests(prev =>
+            prev.includes(requestId)
+                ? prev.filter(id => id !== requestId)
+                : [...prev, requestId]
+        );
+    };
+
+    const handleSelectAllRequests = () => {
+        if (selectedRequests.length === requests.length) {
+            setSelectedRequests([]);
+        } else {
+            setSelectedRequests(requests.map(request => request._id));
+        }
+    };
+
+    const handleDeleteSelectedRequests = async () => {
+        if (selectedRequests.length === 0) return;
+
+        if (!window.confirm(`Are you sure you want to permanently delete ${selectedRequests.length} ${selectedRequests.length === 1 ? 'request' : 'requests'}? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+
+            // Delete each selected request
+            await Promise.all(
+                selectedRequests.map(id =>
+                    axios.delete(`${API_URL}/api/requests/${id}`, config)
+                )
+            );
+
+            showNotification(`Successfully deleted ${selectedRequests.length} ${selectedRequests.length === 1 ? 'request' : 'requests'}`, 'success');
+            setSelectedRequests([]);
+            setIsRequestSelectionMode(false);
+            await fetchData();
+        } catch (error) {
+            console.error('Error deleting requests:', error);
+            showNotification('Failed to delete some requests', 'error');
         }
     };
 
@@ -437,14 +483,100 @@ const MaintainerDashboard = () => {
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                             <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, color: '#1e293b' }}>My Requests</h1>
-                            <button onClick={() => setShowRequestModal(true)} style={{
-                                padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                                color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer',
-                                display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600
-                            }}>
-                                <Plus size={18} />
-                                New Request
-                            </button>
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                {requests.length > 0 && !isRequestSelectionMode && (
+                                    <button
+                                        onClick={() => setIsRequestSelectionMode(true)}
+                                        style={{
+                                            padding: '0.75rem 1.5rem',
+                                            background: 'white',
+                                            color: '#f97316',
+                                            border: '2px solid #f97316',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            fontWeight: 600,
+                                            fontSize: '0.9rem',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = '#f97316';
+                                            e.currentTarget.style.color = 'white';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'white';
+                                            e.currentTarget.style.color = '#f97316';
+                                        }}
+                                    >
+                                        Select Items
+                                    </button>
+                                )}
+                                {isRequestSelectionMode && (
+                                    <>
+                                        <button
+                                            onClick={handleSelectAllRequests}
+                                            style={{
+                                                padding: '0.75rem 1.5rem',
+                                                background: 'white',
+                                                color: '#f97316',
+                                                border: '2px solid #f97316',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                transition: 'all 0.3s'
+                                            }}
+                                        >
+                                            {selectedRequests.length === requests.length ? 'Deselect All' : 'Select All'}
+                                        </button>
+                                        {selectedRequests.length > 0 && (
+                                            <button
+                                                onClick={handleDeleteSelectedRequests}
+                                                style={{
+                                                    padding: '0.75rem 1.5rem',
+                                                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.9rem',
+                                                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            >
+                                                Delete ({selectedRequests.length})
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => {
+                                                setIsRequestSelectionMode(false);
+                                                setSelectedRequests([]);
+                                            }}
+                                            style={{
+                                                padding: '0.75rem 1.5rem',
+                                                background: '#f1f5f9',
+                                                color: '#64748b',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                transition: 'all 0.3s'
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </>
+                                )}
+                                <button onClick={() => setShowRequestModal(true)} style={{
+                                    padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                                    color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600
+                                }}>
+                                    <Plus size={18} />
+                                    New Request
+                                </button>
+                            </div>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -457,11 +589,36 @@ const MaintainerDashboard = () => {
                             ) : (
                                 requests.map(request => (
                                     <div key={request._id} style={{
-                                        background: 'white', padding: '1.5rem', borderRadius: '16px',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb'
+                                        background: selectedRequests.includes(request._id) ? '#fff7ed' : 'white',
+                                        padding: '1.5rem',
+                                        borderRadius: '16px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                        border: selectedRequests.includes(request._id) ? '2px solid #f97316' : '1px solid #e5e7eb',
+                                        position: 'relative',
+                                        transition: 'all 0.3s'
                                     }}>
+                                        {isRequestSelectionMode && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '1rem',
+                                                right: '1rem',
+                                                zIndex: 10
+                                            }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedRequests.includes(request._id)}
+                                                    onChange={() => handleToggleRequestSelection(request._id)}
+                                                    style={{
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        cursor: 'pointer',
+                                                        accentColor: '#f97316'
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                                            <div style={{ flex: 1 }}>
+                                            <div style={{ flex: 1, paddingRight: isRequestSelectionMode ? '3rem' : '0' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                                                     <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>
                                                         {request.subject}
@@ -505,14 +662,16 @@ const MaintainerDashboard = () => {
                                                     View Full Details
                                                 </button>
                                             </div>
-                                            <span style={{
-                                                padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem',
-                                                fontWeight: 600, textTransform: 'uppercase',
-                                                background: request.status === 'resolved' ? '#dcfce7' : '#fef3c7',
-                                                color: request.status === 'resolved' ? '#166534' : '#92400e'
-                                            }}>
-                                                {request.status}
-                                            </span>
+                                            {!isRequestSelectionMode && (
+                                                <span style={{
+                                                    padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem',
+                                                    fontWeight: 600, textTransform: 'uppercase',
+                                                    background: request.status === 'resolved' ? '#dcfce7' : '#fef3c7',
+                                                    color: request.status === 'resolved' ? '#166534' : '#92400e'
+                                                }}>
+                                                    {request.status}
+                                                </span>
+                                            )}
                                         </div>
                                         <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
                                             <span>Submitted: {request.submittedOn}</span>

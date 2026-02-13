@@ -26,6 +26,8 @@ const ProctorDashboard = () => {
     const [submitting, setSubmitting] = useState(false);
     const [selectedMessages, setSelectedMessages] = useState([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [selectedReports, setSelectedReports] = useState([]);
+    const [isReportSelectionMode, setIsReportSelectionMode] = useState(false);
     const [selectedDetail, setSelectedDetail] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
@@ -191,6 +193,50 @@ const ProctorDashboard = () => {
         } catch (error) {
             console.error('Error deleting messages:', error);
             showNotification('Failed to delete some messages', 'error');
+        }
+    };
+
+    const handleToggleReportSelection = (reportId) => {
+        setSelectedReports(prev =>
+            prev.includes(reportId)
+                ? prev.filter(id => id !== reportId)
+                : [...prev, reportId]
+        );
+    };
+
+    const handleSelectAllReports = () => {
+        if (selectedReports.length === reports.length) {
+            setSelectedReports([]);
+        } else {
+            setSelectedReports(reports.map(report => report._id));
+        }
+    };
+
+    const handleDeleteSelectedReports = async () => {
+        if (selectedReports.length === 0) return;
+
+        if (!window.confirm(`Are you sure you want to permanently delete ${selectedReports.length} ${selectedReports.length === 1 ? 'report' : 'reports'}? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+
+            // Delete each selected report
+            await Promise.all(
+                selectedReports.map(id =>
+                    axios.delete(`${API_URL}/api/requests/${id}`, config)
+                )
+            );
+
+            showNotification(`Successfully deleted ${selectedReports.length} ${selectedReports.length === 1 ? 'report' : 'reports'}`, 'success');
+            setSelectedReports([]);
+            setIsReportSelectionMode(false);
+            await fetchData();
+        } catch (error) {
+            console.error('Error deleting reports:', error);
+            showNotification('Failed to delete some reports', 'error');
         }
     };
 
@@ -412,14 +458,100 @@ const ProctorDashboard = () => {
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                             <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, color: '#1e293b' }}>My Reports</h1>
-                            <button onClick={() => setShowReportModal(true)} style={{
-                                padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer',
-                                display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600
-                            }}>
-                                <Plus size={18} />
-                                New Report
-                            </button>
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                {reports.length > 0 && !isReportSelectionMode && (
+                                    <button
+                                        onClick={() => setIsReportSelectionMode(true)}
+                                        style={{
+                                            padding: '0.75rem 1.5rem',
+                                            background: 'white',
+                                            color: '#3b82f6',
+                                            border: '2px solid #3b82f6',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            fontWeight: 600,
+                                            fontSize: '0.9rem',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = '#3b82f6';
+                                            e.currentTarget.style.color = 'white';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'white';
+                                            e.currentTarget.style.color = '#3b82f6';
+                                        }}
+                                    >
+                                        Select Items
+                                    </button>
+                                )}
+                                {isReportSelectionMode && (
+                                    <>
+                                        <button
+                                            onClick={handleSelectAllReports}
+                                            style={{
+                                                padding: '0.75rem 1.5rem',
+                                                background: 'white',
+                                                color: '#3b82f6',
+                                                border: '2px solid #3b82f6',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                transition: 'all 0.3s'
+                                            }}
+                                        >
+                                            {selectedReports.length === reports.length ? 'Deselect All' : 'Select All'}
+                                        </button>
+                                        {selectedReports.length > 0 && (
+                                            <button
+                                                onClick={handleDeleteSelectedReports}
+                                                style={{
+                                                    padding: '0.75rem 1.5rem',
+                                                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.9rem',
+                                                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            >
+                                                Delete ({selectedReports.length})
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => {
+                                                setIsReportSelectionMode(false);
+                                                setSelectedReports([]);
+                                            }}
+                                            style={{
+                                                padding: '0.75rem 1.5rem',
+                                                background: '#f1f5f9',
+                                                color: '#64748b',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                transition: 'all 0.3s'
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </>
+                                )}
+                                <button onClick={() => setShowReportModal(true)} style={{
+                                    padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                    color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600
+                                }}>
+                                    <Plus size={18} />
+                                    New Report
+                                </button>
+                            </div>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -432,11 +564,36 @@ const ProctorDashboard = () => {
                             ) : (
                                 reports.map(report => (
                                     <div key={report._id} style={{
-                                        background: 'white', padding: '1.5rem', borderRadius: '16px',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb'
+                                        background: selectedReports.includes(report._id) ? '#eff6ff' : 'white',
+                                        padding: '1.5rem',
+                                        borderRadius: '16px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                        border: selectedReports.includes(report._id) ? '2px solid #3b82f6' : '1px solid #e5e7eb',
+                                        position: 'relative',
+                                        transition: 'all 0.3s'
                                     }}>
+                                        {isReportSelectionMode && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '1rem',
+                                                right: '1rem',
+                                                zIndex: 10
+                                            }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedReports.includes(report._id)}
+                                                    onChange={() => handleToggleReportSelection(report._id)}
+                                                    style={{
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        cursor: 'pointer',
+                                                        accentColor: '#3b82f6'
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                                            <div style={{ flex: 1 }}>
+                                            <div style={{ flex: 1, paddingRight: isReportSelectionMode ? '3rem' : '0' }}>
                                                 <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>
                                                     {report.subject}
                                                 </h3>
@@ -471,14 +628,16 @@ const ProctorDashboard = () => {
                                                     View Full Details
                                                 </button>
                                             </div>
-                                            <span style={{
-                                                padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem',
-                                                fontWeight: 600, textTransform: 'uppercase',
-                                                background: report.status === 'resolved' ? '#dcfce7' : '#fef3c7',
-                                                color: report.status === 'resolved' ? '#166534' : '#92400e'
-                                            }}>
-                                                {report.status}
-                                            </span>
+                                            {!isReportSelectionMode && (
+                                                <span style={{
+                                                    padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem',
+                                                    fontWeight: 600, textTransform: 'uppercase',
+                                                    background: report.status === 'resolved' ? '#dcfce7' : '#fef3c7',
+                                                    color: report.status === 'resolved' ? '#166534' : '#92400e'
+                                                }}>
+                                                    {report.status}
+                                                </span>
+                                            )}
                                         </div>
                                         <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
                                             <span>Submitted: {report.submittedOn}</span>
