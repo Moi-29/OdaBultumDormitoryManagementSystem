@@ -22,37 +22,25 @@ const AdminLayout = () => {
     useEffect(() => {
         const fetchRequestCount = async () => {
             try {
-                console.log('AdminLayout - Fetching request count...');
-                const userInfo = localStorage.getItem('userInfo');
-                if (!userInfo) {
-                    console.log('AdminLayout - No userInfo found');
+                const token = localStorage.getItem('token');
+                if (!token) {
                     return;
                 }
-
-                const { token } = JSON.parse(userInfo);
-                console.log('AdminLayout - Token exists:', !!token);
                 
                 const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/requests', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                console.log('AdminLayout - Response received:', response.data);
                 
                 if (response.data) {
                     const requests = Array.isArray(response.data) ? response.data : [];
                     // Count unread requests
                     const unreadCount = requests.filter(req => !req.isRead).length;
-                    console.log('AdminLayout - Total requests:', requests.length);
-                    console.log('AdminLayout - Unread requests:', unreadCount);
-                    console.log('AdminLayout - Setting requestCount to:', unreadCount);
                     setRequestCount(unreadCount);
                 } else {
-                    console.log('AdminLayout - No data in response');
                     setRequestCount(0);
                 }
             } catch (error) {
-                console.error('AdminLayout - Error fetching request count:', error);
-                console.error('AdminLayout - Error response:', error.response?.data);
+                console.error('Error fetching request count:', error);
                 setRequestCount(0);
             }
         };
@@ -68,10 +56,9 @@ const AdminLayout = () => {
     useEffect(() => {
         const checkMaintenanceMode = async () => {
             try {
-                const userInfo = localStorage.getItem('userInfo');
-                if (!userInfo) return;
+                const token = localStorage.getItem('token');
+                if (!token) return;
 
-                const { token } = JSON.parse(userInfo);
                 const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings', {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -366,11 +353,6 @@ const AdminLayout = () => {
 };
 
 const NavItem = ({ to, icon, label, active, onClick, badge }) => {
-    // Debug log
-    if (label === 'Requests') {
-        console.log('NavItem Requests - badge value:', badge);
-    }
-    
     return (
         <li>
             <Link
