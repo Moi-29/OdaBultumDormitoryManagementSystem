@@ -63,6 +63,36 @@ const StudentLayout = () => {
         }
     };
 
+    // Function to trigger Google Translate
+    const triggerGoogleTranslate = (langCode) => {
+        // Wait for Google Translate to be ready
+        const checkGoogleTranslate = setInterval(() => {
+            const googleTranslateCombo = document.querySelector('.goog-te-combo');
+            if (googleTranslateCombo) {
+                clearInterval(checkGoogleTranslate);
+                googleTranslateCombo.value = langCode;
+                googleTranslateCombo.dispatchEvent(new Event('change'));
+            }
+        }, 100);
+        
+        // Clear interval after 5 seconds if not found
+        setTimeout(() => clearInterval(checkGoogleTranslate), 5000);
+    };
+
+    // Handle language change
+    const handleLanguageChange = (langCode) => {
+        changeLanguage(langCode);
+        setShowLanguageMenu(false);
+        
+        // Trigger Google Translate
+        if (langCode === 'en') {
+            // Reset to English (original)
+            triggerGoogleTranslate('');
+        } else {
+            triggerGoogleTranslate(langCode);
+        }
+    };
+
     // Function to render language icon
     const renderLanguageIcon = (langCode) => {
         switch(langCode) {
@@ -140,6 +170,9 @@ const StudentLayout = () => {
             display: 'flex',
             transition: 'background-color 0.3s ease'
         }}>
+            {/* Hidden Google Translate Element */}
+            <div id="google_translate_element" style={{ display: 'none' }}></div>
+            
             {/* Responsive Top Navbar */}
             <nav style={{
                 position: 'fixed',
@@ -263,10 +296,7 @@ const StudentLayout = () => {
                                     {languages.map((lang) => (
                                         <button
                                             key={lang.code}
-                                            onClick={() => {
-                                                changeLanguage(lang.code);
-                                                setShowLanguageMenu(false);
-                                            }}
+                                            onClick={() => handleLanguageChange(lang.code)}
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem 1rem',

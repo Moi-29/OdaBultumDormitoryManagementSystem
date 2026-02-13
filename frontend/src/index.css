@@ -390,3 +390,36 @@ table tbody tr:hover {
   }
 }
 
+
+/* ============================================
+   Google Translate - Hidden Integration
+   ============================================ */
+
+/* Hide the Google Translate widget completely */
+#google_translate_element {
+  display: none !important;
+}
+
+/* Hide Google Translate toolbar/banner */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+/* Prevent page jump */
+body {
+  top: 0px !important;
+}
+
+/* Hide Google Translate iframe */
+.skiptranslate iframe {
+  display: none !important;
+}
+
+/* Remove any Google branding */
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  display: none !important;
+}
