@@ -60,7 +60,7 @@ const NewsSection = () => {
                 borderTop: '4px solid transparent',
                 borderImage: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
                 borderImageSlice: 1,
-                boxShadow: '0 -4px 20px rgba(102, 126, 234, 0.1)'
+                boxShadow: '0 -8px 40px rgba(102, 126, 234, 0.15), 0 8px 40px rgba(102, 126, 234, 0.15), inset 0 1px 0 rgba(102, 126, 234, 0.1)'
             }}>
                 {/* Decorative Corner Elements */}
                 <div style={{
