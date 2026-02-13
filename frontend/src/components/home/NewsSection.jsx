@@ -56,8 +56,31 @@ const NewsSection = () => {
                 padding: '4rem 2rem',
                 background: 'white',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                borderTop: '4px solid transparent',
+                borderImage: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
+                borderImageSlice: 1,
+                boxShadow: '0 -4px 20px rgba(102, 126, 234, 0.1)'
             }}>
+                {/* Decorative Corner Elements */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100px',
+                    height: '100px',
+                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%)',
+                    borderRadius: '0 0 100% 0'
+                }} />
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    width: '100px',
+                    height: '100px',
+                    background: 'linear-gradient(225deg, rgba(118, 75, 162, 0.1) 0%, transparent 100%)',
+                    borderRadius: '0 0 0 100%'
+                }} />
                 <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                     {/* Section Header */}
                     <div style={{ 
