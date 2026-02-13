@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
     Megaphone, Plus, Edit, Trash2, Calendar, MapPin, 
-    X, Search, CheckSquare, Upload, Link as LinkIcon
+    X, Search, CheckSquare, Upload, Link as LinkIcon, Users
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
@@ -535,6 +535,26 @@ const Announcements = () => {
             )}
         </div>
     );
+};
+
+// Helper functions
+const getPriorityColor = (priority) => {
+    switch (priority) {
+        case 'urgent': return '#dc2626';
+        case 'high': return '#ea580c';
+        case 'medium': return '#3b82f6';
+        case 'low': return '#64748b';
+        default: return '#64748b';
+    }
+};
+
+const getStatusIcon = (status) => {
+    switch (status) {
+        case 'published': return '✓';
+        case 'draft': return '○';
+        case 'archived': return '✕';
+        default: return '○';
+    }
 };
 
 export default Announcements;

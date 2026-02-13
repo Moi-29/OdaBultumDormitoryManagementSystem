@@ -55,6 +55,7 @@ const createAnnouncement = async (req, res) => {
         const {
             title,
             content,
+            imageUrl,
             type,
             priority,
             targetAudience,
@@ -79,6 +80,7 @@ const createAnnouncement = async (req, res) => {
             publishedByName: req.user?.username || 'Admin'
         };
         
+        if (imageUrl) announcementData.imageUrl = imageUrl;
         if (eventDate) announcementData.eventDate = eventDate;
         if (eventLocation) announcementData.eventLocation = eventLocation;
         if (expiresAt) announcementData.expiresAt = expiresAt;
@@ -114,6 +116,7 @@ const updateAnnouncement = async (req, res) => {
         const {
             title,
             content,
+            imageUrl,
             type,
             priority,
             targetAudience,
@@ -125,6 +128,7 @@ const updateAnnouncement = async (req, res) => {
         
         if (title) announcement.title = title;
         if (content) announcement.content = content;
+        if (imageUrl !== undefined) announcement.imageUrl = imageUrl;
         if (type) announcement.type = type;
         if (priority) announcement.priority = priority;
         if (targetAudience) announcement.targetAudience = targetAudience;

@@ -10,6 +10,10 @@ const announcementSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    imageUrl: {
+        type: String,
+        trim: true
+    },
     type: {
         type: String,
         enum: ['announcement', 'event'],

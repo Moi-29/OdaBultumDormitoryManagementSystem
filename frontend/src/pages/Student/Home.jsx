@@ -4,6 +4,7 @@ import WelcomeSection from "../../components/home/WelcomeSection";
 import { useTheme } from "../../context/ThemeContext";
 
 const GuidelinesSection = lazy(() => import("../../components/home/GuidelinesSection"));
+const NewsSection = lazy(() => import("../../components/home/NewsSection"));
 const StudentUnionSection = lazy(() => import("../../components/home/StudentUnionSection"));
 const DiversitySection = lazy(() => import("../../components/home/DiversitySection"));
 const CafeteriaSection = lazy(() => import("../../components/home/CafeteriaSection"));
@@ -27,6 +28,7 @@ const Home = () => {
         <HeroSection />
         <WelcomeSection />
         <Suspense fallback={<SectionLoader />}>
+          <NewsSection />
           <GuidelinesSection />
           <StudentUnionSection />
           <DiversitySection />

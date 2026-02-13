@@ -3,6 +3,7 @@ import Login from './pages/Auth/Login';
 import StudentPortal from './pages/StudentPortal';
 import StudentLayout from './components/Layout/StudentLayout';
 import Home from './pages/Student/Home';
+import NewsPage from './pages/Student/NewsPage';
 import DormitoryView from './pages/Student/DormitoryView';
 import ApplicationFormWrapper from './pages/Student/ApplicationFormWrapper';
 import ReportIssueWrapper from './pages/Student/ReportIssueWrapper';
@@ -80,6 +81,7 @@ function App() {
           <Route path="/student" element={<StudentLayout />}>
             <Route index element={<Navigate to="/student/home" replace />} />
             <Route path="home" element={<Home />} />
+            <Route path="news" element={<NewsPage />} />
             <Route path="dormitory" element={<DormitoryView />} />
             <Route path="application" element={<ApplicationFormWrapper />} />
             <Route path="report" element={<ReportIssueWrapper />} />
