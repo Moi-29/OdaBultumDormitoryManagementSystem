@@ -1210,6 +1210,27 @@ const Modal = ({ children, onClose, title }) => (
             {children}
         </div>
         <style>{`
+            .input-field {
+                border: 2px solid #000000 !important;
+                border-radius: 8px;
+                padding: 0.75rem;
+                width: 100%;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+            }
+            
+            .input-field:focus {
+                outline: none;
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+            
+            .input-field:disabled {
+                background-color: #f3f4f6;
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+            
             @keyframes slideUp {
                 from {
                     opacity: 0;
