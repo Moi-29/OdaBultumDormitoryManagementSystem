@@ -163,52 +163,53 @@ const NewsSection = () => {
 
                     {/* Announcement Cards */}
                     <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: displayedAnnouncements.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(450px, 1fr))',
+                        display: 'flex',
+                        flexDirection: 'column',
                         gap: '2rem'
                     }}>
-
                         {displayedAnnouncements.map((announcement, index) => (
                             <div
                                 key={announcement._id}
                                 style={{
-                                    background: 'rgba(255, 255, 255, 0.95)',
-                                    backdropFilter: 'blur(20px)',
+                                    background: 'white',
                                     borderRadius: '24px',
                                     overflow: 'hidden',
-                                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)',
+                                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
                                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                     cursor: 'pointer',
-                                    animation: `slideUp 0.6s ease-out ${index * 0.1}s both`
+                                    animation: `slideUp 0.6s ease-out ${index * 0.1}s both`,
+                                    display: 'grid',
+                                    gridTemplateColumns: announcement.imageUrl ? '45% 55%' : '1fr',
+                                    minHeight: '320px'
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-8px)';
-                                    e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.25)';
+                                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.2)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.2)';
+                                    e.currentTarget.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.15)';
                                 }}
                             >
-                                {/* Image */}
+                                {/* Image Section */}
                                 {announcement.imageUrl && (
                                     <div style={{
                                         position: 'relative',
-                                        paddingTop: '56.25%',
                                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        overflow: 'hidden'
+                                        overflow: 'hidden',
+                                        minHeight: '320px'
                                     }}>
                                         <img
                                             src={announcement.imageUrl}
                                             alt={announcement.title}
                                             style={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
                                                 width: '100%',
                                                 height: '100%',
                                                 objectFit: 'cover',
-                                                transition: 'transform 0.4s ease'
+                                                transition: 'transform 0.4s ease',
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0
                                             }}
                                             onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
                                             onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
@@ -219,25 +220,35 @@ const NewsSection = () => {
                                             left: 0,
                                             right: 0,
                                             bottom: 0,
-                                            background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 100%)'
+                                            background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%)'
                                         }} />
                                     </div>
                                 )}
 
-                                {/* Content */}
-                                <div style={{ padding: '2rem' }}>
-                                    {/* Date */}
+                                {/* Content Section */}
+                                <div style={{ 
+                                    padding: '2.5rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center'
+                                }}>
+                                    {/* Date Badge */}
                                     <div style={{
-                                        display: 'flex',
+                                        display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: '0.5rem',
-                                        marginBottom: '1rem'
+                                        marginBottom: '1.5rem',
+                                        padding: '0.625rem 1.25rem',
+                                        background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
+                                        borderRadius: '12px',
+                                        width: 'fit-content',
+                                        border: '1px solid #667eea30'
                                     }}>
-                                        <Calendar size={16} color="#667eea" />
+                                        <Calendar size={18} color="#667eea" strokeWidth={2.5} />
                                         <span style={{
-                                            fontSize: '0.875rem',
+                                            fontSize: '0.9rem',
                                             color: '#667eea',
-                                            fontWeight: 600
+                                            fontWeight: 700
                                         }}>
                                             {new Date(announcement.createdAt).toLocaleDateString('en-US', {
                                                 year: 'numeric',
@@ -249,11 +260,12 @@ const NewsSection = () => {
 
                                     {/* Title */}
                                     <h3 style={{
-                                        fontSize: '1.5rem',
-                                        fontWeight: 800,
-                                        color: '#1e293b',
-                                        margin: '0 0 1rem 0',
-                                        lineHeight: '1.3',
+                                        fontSize: '2rem',
+                                        fontWeight: 900,
+                                        color: '#0f172a',
+                                        margin: '0 0 1.25rem 0',
+                                        lineHeight: '1.2',
+                                        letterSpacing: '-0.5px',
                                         display: '-webkit-box',
                                         WebkitLineClamp: 2,
                                         WebkitBoxOrient: 'vertical',
@@ -264,10 +276,10 @@ const NewsSection = () => {
 
                                     {/* Content Preview */}
                                     <p style={{
-                                        fontSize: '1rem',
+                                        fontSize: '1.05rem',
                                         color: '#64748b',
-                                        lineHeight: '1.7',
-                                        margin: '0 0 1.5rem 0',
+                                        lineHeight: '1.8',
+                                        margin: '0 0 2rem 0',
                                         display: '-webkit-box',
                                         WebkitLineClamp: 3,
                                         WebkitBoxOrient: 'vertical',
@@ -280,30 +292,32 @@ const NewsSection = () => {
                                     <button
                                         onClick={() => handleViewDetails(announcement)}
                                         style={{
-                                            padding: '0.875rem 2rem',
+                                            padding: '1rem 2.5rem',
                                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                             border: 'none',
-                                            borderRadius: '12px',
+                                            borderRadius: '14px',
                                             color: 'white',
-                                            fontWeight: 700,
-                                            fontSize: '0.95rem',
+                                            fontWeight: 800,
+                                            fontSize: '1rem',
                                             cursor: 'pointer',
-                                            display: 'flex',
+                                            display: 'inline-flex',
                                             alignItems: 'center',
-                                            gap: '0.5rem',
+                                            gap: '0.75rem',
                                             transition: 'all 0.3s ease',
-                                            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)'
+                                            boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
+                                            width: 'fit-content',
+                                            letterSpacing: '0.3px'
                                         }}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.transform = 'translateX(4px)';
-                                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.5)';
+                                            e.currentTarget.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.5)';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.transform = 'translateX(0)';
-                                            e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.4)';
                                         }}
                                     >
-                                        <Eye size={18} />
+                                        <Eye size={20} strokeWidth={2.5} />
                                         View Details
                                     </button>
                                 </div>
@@ -329,10 +343,34 @@ const NewsSection = () => {
                         }
                     }
 
-                    @media (max-width: 768px) {
+                    @media (max-width: 1024px) {
                         section > div > div:first-child {
                             flex-direction: column;
                             align-items: flex-start !important;
+                        }
+                        
+                        /* Make cards stack vertically on tablets */
+                        section > div > div:last-of-type > div {
+                            grid-template-columns: 1fr !important;
+                        }
+                    }
+
+                    @media (max-width: 768px) {
+                        /* Stack image and content vertically on mobile */
+                        section > div > div:last-of-type > div > div:first-child {
+                            min-height: 250px !important;
+                        }
+                        
+                        section > div > div:last-of-type > div > div:last-child {
+                            padding: 1.5rem !important;
+                        }
+                        
+                        section > div > div:last-of-type > div > div:last-child h3 {
+                            font-size: 1.5rem !important;
+                        }
+                        
+                        section > div > div:last-of-type > div > div:last-child p {
+                            font-size: 0.95rem !important;
                         }
                     }
                 `}</style>

@@ -308,85 +308,347 @@ const Announcements = () => {
                         </p>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '2rem' }}>
                         {filteredAnnouncements.map(announcement => (
                             <div
                                 key={announcement._id}
-                                style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '1.5rem', transition: 'all 0.2s', cursor: isSelectionMode ? 'pointer' : 'default', boxShadow: selectedItems.includes(announcement._id) ? '0 4px 12px rgba(59, 130, 246, 0.2)' : 'none', borderColor: selectedItems.includes(announcement._id) ? '#3b82f6' : '#e2e8f0' }}
+                                style={{ 
+                                    background: 'white', 
+                                    borderRadius: '20px', 
+                                    overflow: 'hidden',
+                                    boxShadow: selectedItems.includes(announcement._id) 
+                                        ? '0 20px 60px rgba(59, 130, 246, 0.3), 0 0 0 3px #3b82f6' 
+                                        : '0 4px 20px rgba(0, 0, 0, 0.08)',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    cursor: isSelectionMode ? 'pointer' : 'default',
+                                    position: 'relative'
+                                }}
                                 onClick={() => isSelectionMode && setSelectedItems(prev => prev.includes(announcement._id) ? prev.filter(id => id !== announcement._id) : [...prev, announcement._id])}
+                                onMouseEnter={(e) => {
+                                    if (!isSelectionMode) {
+                                        e.currentTarget.style.transform = 'translateY(-4px)';
+                                        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.12)';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (!isSelectionMode) {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = selectedItems.includes(announcement._id) 
+                                            ? '0 20px 60px rgba(59, 130, 246, 0.3), 0 0 0 3px #3b82f6' 
+                                            : '0 4px 20px rgba(0, 0, 0, 0.08)';
+                                    }
+                                }}
                             >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                            <span style={{ padding: '0.25rem 0.75rem', background: announcement.type === 'event' ? '#dbeafe' : '#f1f5f9', color: announcement.type === 'event' ? '#1e40af' : '#475569', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                                                {announcement.type}
-                                            </span>
-                                            <span style={{ padding: '0.25rem 0.75rem', background: `${getPriorityColor(announcement.priority)}15`, color: getPriorityColor(announcement.priority), borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                                                {announcement.priority}
-                                            </span>
-                                        </div>
-                                        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1e293b', margin: '0 0 0.5rem 0', lineHeight: '1.4' }}>
-                                            {announcement.title}
-                                        </h3>
-                                        <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0, lineHeight: '1.6', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                            {announcement.content}
-                                        </p>
-                                    </div>
-                                    {isSelectionMode && (
-                                        <div style={{ width: '24px', height: '24px', borderRadius: '6px', border: `2px solid ${selectedItems.includes(announcement._id) ? '#3b82f6' : '#cbd5e1'}`, background: selectedItems.includes(announcement._id) ? '#3b82f6' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: '1rem', flexShrink: 0 }}>
-                                            {selectedItems.includes(announcement._id) && <CheckSquare size={16} color="white" />}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {announcement.type === 'event' && (announcement.eventDate || announcement.eventLocation) && (
-                                    <div style={{ padding: '0.75rem', background: '#f8fafc', borderRadius: '8px', marginBottom: '1rem' }}>
-                                        {announcement.eventDate && (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b', marginBottom: announcement.eventLocation ? '0.5rem' : 0 }}>
-                                                <Calendar size={14} />
-                                                {new Date(announcement.eventDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                            </div>
-                                        )}
-                                        {announcement.eventLocation && (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b' }}>
-                                                <MapPin size={14} />
-                                                {announcement.eventLocation}
-                                            </div>
-                                        )}
+                                {/* Selection Checkbox Overlay */}
+                                {isSelectionMode && (
+                                    <div style={{ 
+                                        position: 'absolute', 
+                                        top: '1rem', 
+                                        right: '1rem', 
+                                        zIndex: 10,
+                                        width: '32px', 
+                                        height: '32px', 
+                                        borderRadius: '8px', 
+                                        border: `3px solid ${selectedItems.includes(announcement._id) ? '#3b82f6' : 'white'}`, 
+                                        background: selectedItems.includes(announcement._id) ? '#3b82f6' : 'rgba(255, 255, 255, 0.9)',
+                                        backdropFilter: 'blur(10px)',
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                                    }}>
+                                        {selectedItems.includes(announcement._id) && <CheckSquare size={20} color="white" strokeWidth={3} />}
                                     </div>
                                 )}
 
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.375rem 0.75rem', background: '#f8fafc', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>
-                                            {getStatusIcon(announcement.status)}
-                                            {announcement.status}
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', color: '#94a3b8' }}>
-                                            <Users size={14} />
-                                            {announcement.targetAudience.join(', ')}
+                                {/* Image Section */}
+                                {announcement.imageUrl && (
+                                    <div style={{
+                                        position: 'relative',
+                                        width: '100%',
+                                        height: '240px',
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        overflow: 'hidden'
+                                    }}>
+                                        <img
+                                            src={announcement.imageUrl}
+                                            alt={announcement.title}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                                transition: 'transform 0.4s ease'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                                            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                                        />
+                                        <div style={{
+                                            position: 'absolute',
+                                            bottom: 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: '100px',
+                                            background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)'
+                                        }} />
+                                        
+                                        {/* Badges on Image */}
+                                        <div style={{ 
+                                            position: 'absolute', 
+                                            top: '1rem', 
+                                            left: '1rem',
+                                            display: 'flex',
+                                            gap: '0.5rem',
+                                            flexWrap: 'wrap'
+                                        }}>
+                                            <span style={{ 
+                                                padding: '0.5rem 1rem', 
+                                                background: 'rgba(255, 255, 255, 0.95)',
+                                                backdropFilter: 'blur(10px)',
+                                                color: announcement.type === 'event' ? '#1e40af' : '#475569', 
+                                                borderRadius: '8px', 
+                                                fontSize: '0.75rem', 
+                                                fontWeight: 800, 
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px',
+                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                                            }}>
+                                                {announcement.type}
+                                            </span>
+                                            <span style={{ 
+                                                padding: '0.5rem 1rem', 
+                                                background: 'rgba(255, 255, 255, 0.95)',
+                                                backdropFilter: 'blur(10px)',
+                                                color: getPriorityColor(announcement.priority), 
+                                                borderRadius: '8px', 
+                                                fontSize: '0.75rem', 
+                                                fontWeight: 800, 
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px',
+                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                                            }}>
+                                                {announcement.priority}
+                                            </span>
                                         </div>
                                     </div>
-                                    {!isSelectionMode && (
-                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', announcement); }}
-                                                style={{ padding: '0.5rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-                                                onMouseEnter={(e) => e.currentTarget.style.background = '#e2e8f0'}
-                                                onMouseLeave={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                                            >
-                                                <Edit size={16} />
-                                            </button>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleDelete(announcement); }}
-                                                style={{ padding: '0.5rem', background: '#fef2f2', border: 'none', borderRadius: '8px', cursor: 'pointer', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-                                                onMouseEnter={(e) => e.currentTarget.style.background = '#fee2e2'}
-                                                onMouseLeave={(e) => e.currentTarget.style.background = '#fef2f2'}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                )}
+
+                                {/* Content Section */}
+                                <div style={{ padding: '1.75rem' }}>
+                                    {/* Title and Badges (if no image) */}
+                                    {!announcement.imageUrl && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                                            <span style={{ 
+                                                padding: '0.5rem 1rem', 
+                                                background: announcement.type === 'event' ? '#dbeafe' : '#f1f5f9', 
+                                                color: announcement.type === 'event' ? '#1e40af' : '#475569', 
+                                                borderRadius: '8px', 
+                                                fontSize: '0.75rem', 
+                                                fontWeight: 800, 
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px'
+                                            }}>
+                                                {announcement.type}
+                                            </span>
+                                            <span style={{ 
+                                                padding: '0.5rem 1rem', 
+                                                background: `${getPriorityColor(announcement.priority)}15`, 
+                                                color: getPriorityColor(announcement.priority), 
+                                                borderRadius: '8px', 
+                                                fontSize: '0.75rem', 
+                                                fontWeight: 800, 
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px'
+                                            }}>
+                                                {announcement.priority}
+                                            </span>
                                         </div>
                                     )}
+
+                                    {/* Title */}
+                                    <h3 style={{ 
+                                        fontSize: '1.35rem', 
+                                        fontWeight: 800, 
+                                        color: '#0f172a', 
+                                        margin: '0 0 0.75rem 0', 
+                                        lineHeight: '1.3',
+                                        letterSpacing: '-0.5px',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: 'vertical',
+                                        overflow: 'hidden'
+                                    }}>
+                                        {announcement.title}
+                                    </h3>
+
+                                    {/* Content Preview */}
+                                    <p style={{ 
+                                        fontSize: '0.95rem', 
+                                        color: '#64748b', 
+                                        margin: '0 0 1.25rem 0', 
+                                        lineHeight: '1.7', 
+                                        display: '-webkit-box', 
+                                        WebkitLineClamp: 3, 
+                                        WebkitBoxOrient: 'vertical', 
+                                        overflow: 'hidden' 
+                                    }}>
+                                        {announcement.content}
+                                    </p>
+
+                                    {/* Event Details */}
+                                    {announcement.type === 'event' && (announcement.eventDate || announcement.eventLocation) && (
+                                        <div style={{ 
+                                            padding: '1rem', 
+                                            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+                                            borderRadius: '12px', 
+                                            marginBottom: '1.25rem',
+                                            border: '1px solid #e2e8f0'
+                                        }}>
+                                            {announcement.eventDate && (
+                                                <div style={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    gap: '0.625rem', 
+                                                    fontSize: '0.875rem', 
+                                                    color: '#475569',
+                                                    fontWeight: 600,
+                                                    marginBottom: announcement.eventLocation ? '0.625rem' : 0 
+                                                }}>
+                                                    <div style={{
+                                                        width: '32px',
+                                                        height: '32px',
+                                                        borderRadius: '8px',
+                                                        background: 'white',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+                                                    }}>
+                                                        <Calendar size={16} color="#3b82f6" strokeWidth={2.5} />
+                                                    </div>
+                                                    {new Date(announcement.eventDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                </div>
+                                            )}
+                                            {announcement.eventLocation && (
+                                                <div style={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    gap: '0.625rem', 
+                                                    fontSize: '0.875rem', 
+                                                    color: '#475569',
+                                                    fontWeight: 600
+                                                }}>
+                                                    <div style={{
+                                                        width: '32px',
+                                                        height: '32px',
+                                                        borderRadius: '8px',
+                                                        background: 'white',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
+                                                    }}>
+                                                        <MapPin size={16} color="#3b82f6" strokeWidth={2.5} />
+                                                    </div>
+                                                    {announcement.eventLocation}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Footer */}
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'space-between', 
+                                        paddingTop: '1.25rem', 
+                                        borderTop: '2px solid #f1f5f9' 
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                gap: '0.375rem', 
+                                                padding: '0.5rem 0.875rem', 
+                                                background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+                                                borderRadius: '8px', 
+                                                fontSize: '0.8rem', 
+                                                fontWeight: 700, 
+                                                color: '#475569',
+                                                border: '1px solid #e2e8f0'
+                                            }}>
+                                                <span style={{ fontSize: '1rem' }}>{getStatusIcon(announcement.status)}</span>
+                                                {announcement.status}
+                                            </div>
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                gap: '0.375rem', 
+                                                fontSize: '0.8rem', 
+                                                color: '#94a3b8',
+                                                fontWeight: 600
+                                            }}>
+                                                <Users size={14} strokeWidth={2.5} />
+                                                {announcement.targetAudience.join(', ')}
+                                            </div>
+                                        </div>
+                                        
+                                        {!isSelectionMode && (
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', announcement); }}
+                                                    style={{ 
+                                                        padding: '0.625rem', 
+                                                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', 
+                                                        border: 'none', 
+                                                        borderRadius: '10px', 
+                                                        cursor: 'pointer', 
+                                                        color: 'white', 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        transition: 'all 0.2s',
+                                                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.4)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                                                    }}
+                                                >
+                                                    <Edit size={16} strokeWidth={2.5} />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleDelete(announcement); }}
+                                                    style={{ 
+                                                        padding: '0.625rem', 
+                                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', 
+                                                        border: 'none', 
+                                                        borderRadius: '10px', 
+                                                        cursor: 'pointer', 
+                                                        color: 'white', 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        transition: 'all 0.2s',
+                                                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.4)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+                                                    }}
+                                                >
+                                                    <Trash2 size={16} strokeWidth={2.5} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}
