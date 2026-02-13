@@ -416,27 +416,40 @@ body {
 /* Hide the gadget text */
 .goog-te-gadget {
   font-size: 0px;
+  color: transparent !important;
+}
+
+/* Remove "Powered by" text */
+.goog-te-gadget .goog-te-gadget-simple {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
 /* Style the dropdown selector */
 .goog-te-combo {
-  border-radius: 8px;
-  padding: 6px 12px;
-  background-color: #1f2937;
-  color: white;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  background-color: #1f2937 !important;
+  color: white !important;
+  border: 1px solid #374151 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  min-width: 140px !important;
+  outline: none !important;
 }
 
 .goog-te-combo:hover {
-  background-color: #374151;
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
 }
 
 .goog-te-combo:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+  border-color: #3b82f6 !important;
 }
 
 /* Hide the iframe that causes layout issues */
@@ -449,12 +462,39 @@ body {
   display: inline-block;
 }
 
+/* Style the select element container */
+.goog-te-gadget-simple {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  display: inline-block !important;
+}
+
+/* Hide the arrow icon from gadget */
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
 /* Dark mode support for translate widget */
 .dark .goog-te-combo {
-  background-color: #374151;
-  color: #f3f4f6;
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
 }
 
 .dark .goog-te-combo:hover {
-  background-color: #4b5563;
+  background-color: #4b5563 !important;
+  border-color: #6b7280 !important;
+}
+
+/* Style dropdown options */
+.goog-te-combo option {
+  background-color: #1f2937 !important;
+  color: white !important;
+  padding: 8px !important;
+}
+
+.dark .goog-te-combo option {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
 }
