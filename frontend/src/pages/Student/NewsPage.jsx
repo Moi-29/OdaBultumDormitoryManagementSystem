@@ -44,19 +44,19 @@ const NewsPage = () => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                background: 'white'
             }}>
-                <div style={{ textAlign: 'center', color: 'white' }}>
+                <div style={{ textAlign: 'center' }}>
                     <div style={{ 
                         width: '60px', 
                         height: '60px', 
-                        border: '4px solid rgba(255,255,255,0.3)', 
-                        borderTopColor: 'white', 
+                        border: '4px solid #e2e8f0', 
+                        borderTopColor: '#667eea', 
                         borderRadius: '50%', 
                         animation: 'spin 1s linear infinite', 
                         margin: '0 auto 1rem' 
                     }} />
-                    <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>Loading...</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 600, color: '#64748b' }}>Loading...</div>
                 </div>
             </div>
         );
@@ -66,34 +66,10 @@ const NewsPage = () => {
         <>
             <div style={{
                 minHeight: '100vh',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'white',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
-                {/* Animated Background */}
-                <div style={{
-                    position: 'absolute',
-                    top: '-50%',
-                    right: '-10%',
-                    width: '600px',
-                    height: '600px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '50%',
-                    filter: 'blur(80px)',
-                    animation: 'float 20s ease-in-out infinite'
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    bottom: '-30%',
-                    left: '-5%',
-                    width: '500px',
-                    height: '500px',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '50%',
-                    filter: 'blur(70px)',
-                    animation: 'float 15s ease-in-out infinite reverse'
-                }} />
-
                 <div style={{ 
                     maxWidth: '1400px', 
                     margin: '0 auto', 
@@ -107,27 +83,27 @@ const NewsPage = () => {
                             onClick={handleBack}
                             style={{
                                 padding: '0.875rem 1.5rem',
-                                background: 'rgba(255, 255, 255, 0.95)',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 border: 'none',
                                 borderRadius: '12px',
-                                color: '#667eea',
+                                color: 'white',
                                 fontWeight: 700,
                                 fontSize: '1rem',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '0.5rem',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+                                boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
                                 transition: 'all 0.3s ease',
                                 marginBottom: '2rem'
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateX(-4px)';
-                                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                                e.currentTarget.style.boxShadow = '0 12px 40px rgba(102, 126, 234, 0.4)';
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = 'translateX(0)';
-                                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.15)';
+                                e.currentTarget.style.boxShadow = '0 8px 32px rgba(102, 126, 234, 0.3)';
                             }}
                         >
                             <ArrowLeft size={20} strokeWidth={2.5} />
@@ -138,13 +114,12 @@ const NewsPage = () => {
                             <div style={{
                                 width: '70px',
                                 height: '70px',
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                backdropFilter: 'blur(10px)',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 borderRadius: '20px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                                boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
                             }}>
                                 <Newspaper size={36} color="white" strokeWidth={2} />
                             </div>
@@ -152,16 +127,15 @@ const NewsPage = () => {
                                 <h1 style={{
                                     fontSize: '3rem',
                                     fontWeight: 900,
-                                    color: 'white',
+                                    color: '#0f172a',
                                     margin: 0,
-                                    letterSpacing: '-1px',
-                                    textShadow: '0 2px 20px rgba(0, 0, 0, 0.2)'
+                                    letterSpacing: '-1px'
                                 }}>
                                     All News & Announcements
                                 </h1>
                                 <p style={{
                                     fontSize: '1.1rem',
-                                    color: 'rgba(255, 255, 255, 0.9)',
+                                    color: '#64748b',
                                     margin: '0.5rem 0 0 0'
                                 }}>
                                     {announcements.length} {announcements.length === 1 ? 'announcement' : 'announcements'} available
@@ -175,9 +149,10 @@ const NewsPage = () => {
                         <div style={{
                             textAlign: 'center',
                             padding: '4rem 2rem',
-                            background: 'rgba(255, 255, 255, 0.95)',
+                            background: 'white',
                             borderRadius: '24px',
-                            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)'
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
                         }}>
                             <Newspaper size={64} style={{ margin: '0 auto 1.5rem', opacity: 0.3, color: '#667eea' }} />
                             <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1e293b', margin: '0 0 0.5rem 0' }}>
@@ -346,11 +321,6 @@ const NewsPage = () => {
                 </div>
 
                 <style>{`
-                    @keyframes float {
-                        0%, 100% { transform: translateY(0) rotate(0deg); }
-                        50% { transform: translateY(-20px) rotate(5deg); }
-                    }
-
                     @keyframes slideUp {
                         from {
                             opacity: 0;
