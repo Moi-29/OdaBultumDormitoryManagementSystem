@@ -450,6 +450,9 @@ const Requests = () => {
             setMaintainerRequests(prev => prev.map(req => 
                 req._id === requestId ? { ...req, isRead: true } : req
             ));
+            
+            // Dispatch custom event to notify AdminLayout
+            window.dispatchEvent(new CustomEvent('requestMarkedAsRead'));
         } catch (error) {
             // Silently handle errors
             console.error('Error marking as read:', error);

@@ -47,10 +47,19 @@ const AdminLayout = () => {
 
         fetchRequestCount();
         
+        // Listen for request marked as read events
+        const handleRequestMarkedAsRead = () => {
+            fetchRequestCount();
+        };
+        window.addEventListener('requestMarkedAsRead', handleRequestMarkedAsRead);
+        
         // Poll every 30 seconds for real-time updates
         const interval = setInterval(fetchRequestCount, 30000);
         
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('requestMarkedAsRead', handleRequestMarkedAsRead);
+        };
     }, []);
 
     useEffect(() => {
