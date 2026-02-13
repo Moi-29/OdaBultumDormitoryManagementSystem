@@ -48,7 +48,7 @@ const createProctor = async (req, res) => {
             phone: phone || '',
             email: email || '',
             blockId,
-            status: 'Active'
+            status: 'active'
         };
 
         // Add createdBy only if admin exists
@@ -295,7 +295,7 @@ const createMaintainer = async (req, res) => {
             phone: phone || '',
             email: email || '',
             specialization: specialization || 'general',
-            status: 'Active'
+            status: 'active'
         };
 
         // Add createdBy only if admin exists

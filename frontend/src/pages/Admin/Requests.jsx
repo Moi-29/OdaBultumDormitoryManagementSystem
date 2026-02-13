@@ -232,11 +232,13 @@ const Requests = () => {
             console.log('Parsed users:', users);
             console.log('Looking for username:', newOrderForm.toWhom.trim());
             
-            // Find user by username (case-insensitive)
-            const selectedUser = users.find(u => 
-                u.username.toLowerCase() === newOrderForm.toWhom.trim().toLowerCase() && 
-                u.status === 'Active'
-            );
+            // Find user by username (case-insensitive) and check if active
+            const selectedUser = users.find(u => {
+                const usernameMatch = u.username.toLowerCase() === newOrderForm.toWhom.trim().toLowerCase();
+                const isActive = u.status && u.status.toLowerCase() === 'active';
+                console.log(`Checking user ${u.username}: usernameMatch=${usernameMatch}, status=${u.status}, isActive=${isActive}`);
+                return usernameMatch && isActive;
+            });
             
             console.log('Selected user:', selectedUser);
             
