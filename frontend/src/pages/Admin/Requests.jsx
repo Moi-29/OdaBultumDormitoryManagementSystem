@@ -149,12 +149,16 @@ const Requests = () => {
                     const token = localStorage.getItem('token');
                     const config = { headers: { Authorization: `Bearer ${token}` } };
                     
-                    // Use bulk delete endpoint for better performance
+                    console.log('Deleting requests:', selectedItems);
+                    
+                    // Use bulk delete endpoint to permanently remove from database
                     const response = await axios.post(
                         `${API_URL}/api/requests/bulk-delete`,
                         { requestIds: selectedItems },
                         config
                     );
+                    
+                    console.log('Delete response:', response.data);
                     
                     // Refresh the requests list
                     await fetchRequests();
@@ -171,10 +175,14 @@ const Requests = () => {
                     // Notify AdminLayout to update badge count
                     window.dispatchEvent(new CustomEvent('requestMarkedAsRead'));
                     
-                    showNotification(response.data.message || `Successfully deleted ${selectedItems.length} ${selectedItems.length === 1 ? 'request' : 'requests'}`, 'success');
+                    showNotification(
+                        response.data.message || `Successfully deleted ${response.data.deletedCount || selectedItems.length} ${selectedItems.length === 1 ? 'request' : 'requests'} from database`, 
+                        'success'
+                    );
                 } catch (error) {
                     console.error('Error deleting requests:', error);
-                    showNotification(error.response?.data?.message || 'Failed to delete some requests', 'error');
+                    console.error('Error response:', error.response?.data);
+                    showNotification(error.response?.data?.message || 'Failed to delete requests from database', 'error');
                 }
             },
             onCancel: () => setConfirmDialog(null)

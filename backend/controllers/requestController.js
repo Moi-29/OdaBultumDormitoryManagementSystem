@@ -119,22 +119,27 @@ const deleteRequest = async (req, res) => {
         const request = await Request.findById(req.params.id);
         
         if (!request) {
-            return res.status(404).json({ message: 'Request not found' });
+            return res.status(404).json({ success: false, message: 'Request not found' });
         }
 
-        // Delete all messages associated with this request
-        await Message.deleteMany({ requestId: req.params.id });
+        console.log(`Deleting request ${req.params.id} from database`);
         
-        // Delete the request
+        // Delete all messages associated with this request
+        const messagesResult = await Message.deleteMany({ requestId: req.params.id });
+        console.log(`Deleted ${messagesResult.deletedCount} messages`);
+        
+        // Delete the request from database
         await request.deleteOne();
+        console.log(`Request ${req.params.id} deleted from database`);
         
         res.json({ 
-            message: 'Request and associated messages deleted successfully',
+            success: true,
+            message: 'Request and associated messages deleted successfully from database',
             deletedRequestId: req.params.id
         });
     } catch (error) {
         console.error('Error deleting request:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
 };
 
@@ -146,24 +151,30 @@ const bulkDeleteRequests = async (req, res) => {
         const { requestIds } = req.body;
         
         if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
-            return res.status(400).json({ message: 'Request IDs array is required' });
+            return res.status(400).json({ success: false, message: 'Request IDs array is required' });
         }
 
-        // Delete all messages associated with these requests
-        await Message.deleteMany({ requestId: { $in: requestIds } });
+        console.log(`Bulk delete: Attempting to delete ${requestIds.length} requests`);
         
-        // Delete all requests
+        // Delete all messages associated with these requests
+        const messagesResult = await Message.deleteMany({ requestId: { $in: requestIds } });
+        console.log(`Bulk delete: Deleted ${messagesResult.deletedCount} messages`);
+        
+        // Delete all requests from database
         const result = await Request.deleteMany({ _id: { $in: requestIds } });
+        console.log(`Bulk delete: Deleted ${result.deletedCount} requests from database`);
         
         res.json({ 
-            message: `Successfully deleted ${result.deletedCount} requests and their associated messages`,
-            deletedCount: result.deletedCount
+            success: true,
+            message: `Successfully deleted ${result.deletedCount} requests and ${messagesResult.deletedCount} messages from database`,
+            deletedCount: result.deletedCount,
+            deletedMessagesCount: messagesResult.deletedCount
         });
     } catch (error) {
         console.error('Error bulk deleting requests:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
-};
+};;
 
 // @desc    Mark request as read
 // @route   PATCH /api/requests/:id/read
