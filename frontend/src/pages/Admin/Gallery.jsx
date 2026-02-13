@@ -98,7 +98,7 @@ const Gallery = () => {
                         if (modalMode === 'create') {
                             await axios.post(`${API_URL}/api/gallery`, imageData, config);
                             showNotification('Image added successfully', 'success');
-                        } else {
+                        } else if (modalMode === 'edit' && selectedImage) {
                             await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
                             showNotification('Image updated successfully', 'success');
                         }
@@ -111,7 +111,7 @@ const Gallery = () => {
                     }
                 };
                 reader.readAsDataURL(formData.imageFile);
-            } else {
+            } else if (formData.imageUrl) {
                 // Use URL directly
                 const imageData = {
                     imageUrl: formData.imageUrl
@@ -120,7 +120,7 @@ const Gallery = () => {
                 if (modalMode === 'create') {
                     await axios.post(`${API_URL}/api/gallery`, imageData, config);
                     showNotification('Image added successfully', 'success');
-                } else {
+                } else if (modalMode === 'edit' && selectedImage) {
                     await axios.put(`${API_URL}/api/gallery/${selectedImage._id}`, imageData, config);
                     showNotification('Image updated successfully', 'success');
                 }
