@@ -126,15 +126,7 @@ const StudentLayout = () => {
                     </button>
 
                     {/* Google Translate Widget */}
-                    <div 
-                        id="google_translate_element" 
-                        style={{ 
-                            flexShrink: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            minHeight: '44px'
-                        }}
-                    ></div>
+                    <div id="google_translate_element" style={{ flexShrink: 0 }}></div>
                 </div>
 
                 {/* Center - University Name (Hidden on small mobile) */}

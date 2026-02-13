@@ -461,11 +461,8 @@ body {
 
 /* Additional styling for better integration */
 #google_translate_element {
-  display: flex !important;
-  align-items: center !important;
+  display: inline-block !important;
   vertical-align: middle !important;
-  min-height: 44px !important;
-  z-index: 100 !important;
 }
 
 /* Style the select element container */
@@ -473,23 +470,7 @@ body {
   background-color: transparent !important;
   border: none !important;
   padding: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-/* Make sure the select is visible */
-.goog-te-gadget-simple .goog-te-menu-value {
-  display: flex !important;
-  align-items: center !important;
-}
-
-.goog-te-gadget-simple .goog-te-menu-value span {
   display: inline-block !important;
-  color: white !important;
-}
-
-.goog-te-gadget-simple .goog-te-menu-value span:first-child {
-  display: none !important;
 }
 
 /* Hide the arrow icon from gadget */
