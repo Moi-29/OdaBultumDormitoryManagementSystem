@@ -36,23 +36,38 @@ const UserManagement = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
+            console.log('Fetching data for tab:', activeTab);
+
             const [blocksRes, usersRes] = await Promise.all([
                 axios.get(`${API_URL}/api/user-management/blocks`, config),
                 axios.get(`${API_URL}/api/user-management/${activeTab}`, config)
             ]);
 
-            if (blocksRes.data.success) setBlocks(blocksRes.data.blocks);
+            console.log('Blocks response:', blocksRes.data);
+            console.log('Users response:', usersRes.data);
+
+            if (blocksRes.data.success) {
+                setBlocks(blocksRes.data.blocks);
+                console.log('Blocks set:', blocksRes.data.blocks);
+            } else {
+                console.error('Blocks fetch failed:', blocksRes.data);
+            }
             
             if (usersRes.data.success) {
                 if (activeTab === 'proctors') {
                     setProctors(usersRes.data.proctors);
+                    console.log('Proctors set:', usersRes.data.proctors.length);
                 } else {
                     setMaintainers(usersRes.data.maintainers);
+                    console.log('Maintainers set:', usersRes.data.maintainers.length);
                 }
+            } else {
+                console.error('Users fetch failed:', usersRes.data);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
-            showNotification('Failed to load data', 'error');
+            console.error('Error response:', error.response?.data);
+            showNotification(error.response?.data?.message || 'Failed to load data', 'error');
         } finally {
             setLoading(false);
         }
@@ -109,6 +124,8 @@ const UserManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        console.log('Submitting form with data:', formData);
+
         if (!formData.fullName || !formData.username) {
             showNotification('Full name and username are required', 'error');
             return;
@@ -133,6 +150,9 @@ const UserManagement = () => {
                 delete payload.password;
             }
 
+            console.log('Sending payload:', payload);
+            console.log('To endpoint:', `${API_URL}/api/user-management/${activeTab}`);
+
             let response;
             if (editingUser) {
                 response = await axios.put(
@@ -148,6 +168,8 @@ const UserManagement = () => {
                 );
             }
 
+            console.log('Response:', response.data);
+
             if (response.data.success) {
                 showNotification(
                     editingUser ? 'User updated successfully' : 'User created successfully',
@@ -155,16 +177,22 @@ const UserManagement = () => {
                 );
                 handleCloseModal();
                 fetchData();
+            } else {
+                showNotification(response.data.message || 'Operation failed', 'error');
             }
         } catch (error) {
+            console.error('Submit error:', error);
+            console.error('Error response:', error.response?.data);
             showNotification(
-                error.response?.data?.message || 'Operation failed',
+                error.response?.data?.message || error.message || 'Operation failed',
                 'error'
             );
         }
     };
 
     const handleDelete = async (userId, permanent = false) => {
+        console.log('handleDelete called with:', { userId, permanent, activeTab });
+        
         setConfirmDialog({
             title: permanent ? 'Permanently Delete User' : 'Dismiss User',
             message: permanent 
@@ -182,7 +210,11 @@ const UserManagement = () => {
                         ? `${API_URL}/api/user-management/${activeTab}/${userId}?permanent=true`
                         : `${API_URL}/api/user-management/${activeTab}/${userId}`;
 
+                    console.log('Deleting user:', { url, permanent });
+
                     const response = await axios.delete(url, config);
+
+                    console.log('Delete response:', response.data);
 
                     if (response.data.success) {
                         showNotification(
@@ -190,8 +222,12 @@ const UserManagement = () => {
                             'success'
                         );
                         fetchData();
+                    } else {
+                        showNotification(response.data.message || 'Delete operation failed', 'error');
                     }
                 } catch (error) {
+                    console.error('Delete error:', error);
+                    console.error('Delete error response:', error.response?.data);
                     showNotification(
                         error.response?.data?.message || `Failed to ${permanent ? 'delete' : 'dismiss'} user`,
                         'error'
@@ -199,7 +235,10 @@ const UserManagement = () => {
                 }
                 setConfirmDialog(null);
             },
-            onCancel: () => setConfirmDialog(null)
+            onCancel: () => {
+                console.log('Delete cancelled');
+                setConfirmDialog(null);
+            }
         });
     };
 

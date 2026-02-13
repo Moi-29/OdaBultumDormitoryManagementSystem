@@ -11,9 +11,12 @@ const createProctor = async (req, res) => {
     try {
         const { fullName, username, password, phone, email, blockId } = req.body;
 
+        console.log('Creating proctor with data:', { fullName, username, blockId, phone, email });
+
         // Validation
         if (!fullName || !username || !password || !blockId) {
             return res.status(400).json({ 
+                success: false,
                 message: 'Full name, username, password, and block assignment are required' 
             });
         }
@@ -21,7 +24,10 @@ const createProctor = async (req, res) => {
         // Check if username already exists
         const existingProctor = await Proctor.findOne({ username: username.toLowerCase() });
         if (existingProctor) {
-            return res.status(400).json({ message: 'Username already exists' });
+            return res.status(400).json({ 
+                success: false,
+                message: 'Username already exists' 
+            });
         }
 
         // Verify block exists in Room collection (real data)
@@ -29,21 +35,30 @@ const createProctor = async (req, res) => {
         const blockExists = await Room.findOne({ building: blockId });
         if (!blockExists) {
             return res.status(400).json({ 
+                success: false,
                 message: 'Invalid block ID. Block must exist in Dormitories section first.' 
             });
         }
 
         // Create proctor
-        const proctor = await Proctor.create({
+        const proctorData = {
             fullName,
             username: username.toLowerCase(),
             password,
-            phone,
-            email,
+            phone: phone || '',
+            email: email || '',
             blockId,
-            status: 'active',
-            createdBy: req.admin._id
-        });
+            status: 'Active'
+        };
+
+        // Add createdBy only if admin exists
+        if (req.admin && req.admin._id) {
+            proctorData.createdBy = req.admin._id;
+        }
+
+        const proctor = await Proctor.create(proctorData);
+
+        console.log('Proctor created successfully:', proctor._id);
 
         res.status(201).json({
             success: true,
@@ -58,7 +73,12 @@ const createProctor = async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating proctor:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
     }
 };
 
@@ -184,30 +204,53 @@ const updateProctor = async (req, res) => {
 // @access  Private (Admin)
 const deleteProctor = async (req, res) => {
     try {
+        console.log('deleteProctor called:', { id: req.params.id, permanent: req.query.permanent });
+        
         const proctor = await Proctor.findById(req.params.id);
         
         if (!proctor) {
-            return res.status(404).json({ message: 'Proctor not found' });
+            console.log('Proctor not found:', req.params.id);
+            return res.status(404).json({ 
+                success: false,
+                message: 'Proctor not found' 
+            });
         }
 
         // Check if permanent delete is requested
         const { permanent } = req.query;
         
         if (permanent === 'true') {
+            console.log('Permanently deleting proctor:', proctor._id);
             // Hard delete - permanently remove from database
             await proctor.deleteOne();
+            console.log('Proctor permanently deleted');
             
             res.json({
                 success: true,
                 message: 'Proctor permanently deleted from database'
             });
         } else {
+            console.log('Soft deleting proctor (dismissing):', proctor._id);
             // Soft delete - set status to dismissed
             proctor.status = 'dismissed';
             await proctor.save();
+            console.log('Proctor dismissed');
 
             res.json({
                 success: true,
+                message: 'Proctor dismissed successfully'
+            });
+        }
+    } catch (error) {
+        console.error('Error deleting proctor:', error);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
+    }
+};
                 message: 'Proctor dismissed successfully'
             });
         }
@@ -226,9 +269,12 @@ const createMaintainer = async (req, res) => {
     try {
         const { fullName, username, password, phone, email, specialization } = req.body;
 
+        console.log('Creating maintainer with data:', { fullName, username, specialization, phone, email });
+
         // Validation
         if (!fullName || !username || !password) {
             return res.status(400).json({ 
+                success: false,
                 message: 'Full name, username, and password are required' 
             });
         }
@@ -236,20 +282,31 @@ const createMaintainer = async (req, res) => {
         // Check if username already exists
         const existingMaintainer = await Maintainer.findOne({ username: username.toLowerCase() });
         if (existingMaintainer) {
-            return res.status(400).json({ message: 'Username already exists' });
+            return res.status(400).json({ 
+                success: false,
+                message: 'Username already exists' 
+            });
         }
 
         // Create maintainer
-        const maintainer = await Maintainer.create({
+        const maintainerData = {
             fullName,
             username: username.toLowerCase(),
             password,
-            phone,
-            email,
+            phone: phone || '',
+            email: email || '',
             specialization: specialization || 'general',
-            status: 'active',
-            createdBy: req.admin._id
-        });
+            status: 'Active'
+        };
+
+        // Add createdBy only if admin exists
+        if (req.admin && req.admin._id) {
+            maintainerData.createdBy = req.admin._id;
+        }
+
+        const maintainer = await Maintainer.create(maintainerData);
+
+        console.log('Maintainer created successfully:', maintainer._id);
 
         res.status(201).json({
             success: true,
@@ -264,7 +321,12 @@ const createMaintainer = async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating maintainer:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
     }
 };
 
@@ -377,27 +439,37 @@ const updateMaintainer = async (req, res) => {
 // @access  Private (Admin)
 const deleteMaintainer = async (req, res) => {
     try {
+        console.log('deleteMaintainer called:', { id: req.params.id, permanent: req.query.permanent });
+        
         const maintainer = await Maintainer.findById(req.params.id);
         
         if (!maintainer) {
-            return res.status(404).json({ message: 'Maintainer not found' });
+            console.log('Maintainer not found:', req.params.id);
+            return res.status(404).json({ 
+                success: false,
+                message: 'Maintainer not found' 
+            });
         }
 
         // Check if permanent delete is requested
         const { permanent } = req.query;
         
         if (permanent === 'true') {
+            console.log('Permanently deleting maintainer:', maintainer._id);
             // Hard delete - permanently remove from database
             await maintainer.deleteOne();
+            console.log('Maintainer permanently deleted');
             
             res.json({
                 success: true,
                 message: 'Maintainer permanently deleted from database'
             });
         } else {
+            console.log('Soft deleting maintainer (dismissing):', maintainer._id);
             // Soft delete - set status to dismissed
             maintainer.status = 'dismissed';
             await maintainer.save();
+            console.log('Maintainer dismissed');
 
             res.json({
                 success: true,
@@ -406,7 +478,12 @@ const deleteMaintainer = async (req, res) => {
         }
     } catch (error) {
         console.error('Error deleting maintainer:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
     }
 };
             success: true,
