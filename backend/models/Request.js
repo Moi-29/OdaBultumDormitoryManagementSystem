@@ -78,6 +78,10 @@ const requestSchema = new mongoose.Schema({
         enum: ['low', 'medium', 'high', 'urgent'],
         default: 'medium'
     },
+    isRead: {
+        type: Boolean,
+        default: false
+    },
     currentRoom: {
         type: String
     },
@@ -109,5 +113,6 @@ requestSchema.index({ fromUserId: 1, status: 1 });
 requestSchema.index({ toUserId: 1, status: 1 });
 requestSchema.index({ blockId: 1, status: 1 });
 requestSchema.index({ requestType: 1, status: 1 });
+requestSchema.index({ isRead: 1 });
 
 module.exports = mongoose.model('Request', requestSchema);

@@ -415,6 +415,10 @@ const Requests = () => {
 
     const handleSelectRequest = (request) => {
         setSelectedRequest(request);
+        
+        // Mark as read when selecting/viewing
+        markAsRead(request._id);
+        
         if (request.type !== 'student') {
             if (request.isNewConversation) {
                 // New conversation - no messages yet
@@ -424,6 +428,31 @@ const Requests = () => {
                 // Existing conversation - fetch messages
                 fetchMessages(request._id);
             }
+        }
+    };
+
+    const markAsRead = async (requestId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `${API_URL}/api/requests/${requestId}/read`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            
+            // Update local state to reflect the read status
+            setStudentRequests(prev => prev.map(req => 
+                req._id === requestId ? { ...req, isRead: true } : req
+            ));
+            setProctorRequests(prev => prev.map(req => 
+                req._id === requestId ? { ...req, isRead: true } : req
+            ));
+            setMaintainerRequests(prev => prev.map(req => 
+                req._id === requestId ? { ...req, isRead: true } : req
+            ));
+        } catch (error) {
+            // Silently handle errors
+            console.error('Error marking as read:', error);
         }
     };
 

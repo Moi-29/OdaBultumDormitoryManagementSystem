@@ -155,10 +155,32 @@ const bulkDeleteRequests = async (req, res) => {
     }
 };
 
+// @desc    Mark request as read
+// @route   PATCH /api/requests/:id/read
+// @access  Private
+const markRequestAsRead = async (req, res) => {
+    try {
+        const request = await Request.findById(req.params.id);
+        
+        if (!request) {
+            return res.status(404).json({ success: false, message: 'Request not found' });
+        }
+
+        request.isRead = true;
+        await request.save();
+        
+        res.json({ success: true, message: 'Request marked as read', request });
+    } catch (error) {
+        console.error('Error marking request as read:', error);
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+};
+
 module.exports = {
     getRequests,
     createRequest,
     updateRequestStatus,
     deleteRequest,
-    bulkDeleteRequests
+    bulkDeleteRequests,
+    markRequestAsRead
 };

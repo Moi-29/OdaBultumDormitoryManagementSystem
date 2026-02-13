@@ -197,6 +197,27 @@ const ProctorDashboard = () => {
     const handleViewDetail = (item) => {
         setSelectedDetail(item);
         setShowDetailModal(true);
+        
+        // Mark as read when viewing
+        markAsRead(item._id);
+    };
+
+    const markAsRead = async (requestId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `${API_URL}/api/requests/${requestId}/read`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            
+            // Update local state to reflect the read status
+            setMessages(prev => prev.map(msg => 
+                msg._id === requestId ? { ...msg, isRead: true } : msg
+            ));
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
     };
 
     const handleLogout = () => {
@@ -277,7 +298,7 @@ const ProctorDashboard = () => {
                     {[
                         { id: 'dashboard', label: 'Dashboard', icon: Home },
                         { id: 'reports', label: 'My Reports', icon: FileText, badge: reports.filter(r => r.status === 'pending').length },
-                        { id: 'messages', label: 'Messages', icon: MessageSquare, badge: messages.filter(m => m.status === 'pending').length }
+                        { id: 'messages', label: 'Messages', icon: MessageSquare, badge: messages.filter(m => !m.isRead).length }
                     ].map(item => {
                         const Icon = item.icon;
                         const isActive = activeTab === item.id;

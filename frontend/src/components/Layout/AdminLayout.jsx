@@ -32,9 +32,9 @@ const AdminLayout = () => {
 
                 if (response.data) {
                     const requests = Array.isArray(response.data) ? response.data : [];
-                    // Count pending requests
-                    const pendingCount = requests.filter(req => req.status === 'pending').length;
-                    setRequestCount(pendingCount);
+                    // Count unread requests
+                    const unreadCount = requests.filter(req => !req.isRead).length;
+                    setRequestCount(unreadCount);
                 }
             } catch (error) {
                 // Silently handle errors

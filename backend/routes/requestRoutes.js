@@ -5,7 +5,8 @@ const {
     createRequest,
     updateRequestStatus,
     deleteRequest,
-    bulkDeleteRequests
+    bulkDeleteRequests,
+    markRequestAsRead
 } = require('../controllers/requestController');
 const { protect: adminProtect } = require('../middleware/adminAuth');
 const { protect: multiProtect } = require('../middleware/multiAuthMiddleware');
@@ -33,6 +34,7 @@ router.get('/student/:studentId', async (req, res) => {
 router.get('/', multiProtect, getRequests);
 router.post('/bulk-delete', adminProtect, bulkDeleteRequests);
 router.patch('/:id/status', multiProtect, updateRequestStatus);
+router.patch('/:id/read', multiProtect, markRequestAsRead);
 router.delete('/:id', multiProtect, deleteRequest);
 
 module.exports = router;

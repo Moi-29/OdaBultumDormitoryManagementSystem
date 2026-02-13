@@ -216,6 +216,30 @@ const MaintainerDashboard = () => {
     const handleViewDetail = (item) => {
         setSelectedDetail(item);
         setShowDetailModal(true);
+        
+        // Mark as read when viewing
+        markAsRead(item._id);
+    };
+
+    const markAsRead = async (requestId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `${API_URL}/api/requests/${requestId}/read`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            
+            // Update local state to reflect the read status
+            setWorkOrders(prev => prev.map(wo => 
+                wo._id === requestId ? { ...wo, isRead: true } : wo
+            ));
+            setRequests(prev => prev.map(req => 
+                req._id === requestId ? { ...req, isRead: true } : req
+            ));
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
     };
 
     const handleLogout = () => {
@@ -298,7 +322,7 @@ const MaintainerDashboard = () => {
                     {[
                         { id: 'dashboard', label: 'Dashboard', icon: Home },
                         { id: 'requests', label: 'My Requests', icon: FileText, badge: requests.filter(r => r.status === 'pending').length },
-                        { id: 'workOrders', label: 'Work Orders', icon: MessageSquare, badge: workOrders.filter(w => w.status === 'pending').length }
+                        { id: 'workOrders', label: 'Work Orders', icon: MessageSquare, badge: workOrders.filter(w => !w.isRead).length }
                     ].map(item => {
                         const Icon = item.icon;
                         const isActive = activeTab === item.id;
