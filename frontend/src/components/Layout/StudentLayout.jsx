@@ -145,7 +145,7 @@ const StudentLayout = () => {
                         textOverflow: 'ellipsis',
                         transition: 'color 0.3s ease'
                     }}>
-                        {t('universityName')}
+                        Oda Bultum University
                     </div>
                 )}
 
