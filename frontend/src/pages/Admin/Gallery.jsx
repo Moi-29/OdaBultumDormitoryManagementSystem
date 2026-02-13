@@ -276,7 +276,7 @@ const Gallery = () => {
                             </div>
                         </div>
                         <button
-                            onClick={handleOpenModal}
+                            onClick={() => handleOpenModal('create')}
                             style={{ padding: '0.875rem 1.5rem', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)', transition: 'all 0.2s' }}
                             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                             onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
