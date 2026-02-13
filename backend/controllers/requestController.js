@@ -1,4 +1,5 @@
 const Request = require('../models/Request');
+const Message = require('../models/Message');
 
 // @desc    Get all requests
 // @route   GET /api/requests
@@ -111,10 +112,45 @@ const deleteRequest = async (req, res) => {
             return res.status(404).json({ message: 'Request not found' });
         }
 
+        // Delete all messages associated with this request
+        await Message.deleteMany({ requestId: req.params.id });
+        
+        // Delete the request
         await request.deleteOne();
-        res.json({ message: 'Request deleted successfully' });
+        
+        res.json({ 
+            message: 'Request and associated messages deleted successfully',
+            deletedRequestId: req.params.id
+        });
     } catch (error) {
         console.error('Error deleting request:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Bulk delete requests
+// @route   POST /api/requests/bulk-delete
+// @access  Private (Admin)
+const bulkDeleteRequests = async (req, res) => {
+    try {
+        const { requestIds } = req.body;
+        
+        if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
+            return res.status(400).json({ message: 'Request IDs array is required' });
+        }
+
+        // Delete all messages associated with these requests
+        await Message.deleteMany({ requestId: { $in: requestIds } });
+        
+        // Delete all requests
+        const result = await Request.deleteMany({ _id: { $in: requestIds } });
+        
+        res.json({ 
+            message: `Successfully deleted ${result.deletedCount} requests and their associated messages`,
+            deletedCount: result.deletedCount
+        });
+    } catch (error) {
+        console.error('Error bulk deleting requests:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -123,5 +159,6 @@ module.exports = {
     getRequests,
     createRequest,
     updateRequestStatus,
-    deleteRequest
+    deleteRequest,
+    bulkDeleteRequests
 };

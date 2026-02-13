@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { 
     MessageSquare, Users, Wrench, Building2, Send, X, 
-    CheckCircle, XCircle, Clock, Search, Paperclip
+    CheckCircle, XCircle, Clock, Search, Paperclip, Trash2, CheckSquare, Square, Plus, FileText
 } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const Requests = () => {
     const [activeTab, setActiveTab] = useState('students');
@@ -20,6 +21,16 @@ const Requests = () => {
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [notification, setNotification] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [confirmDialog, setConfirmDialog] = useState(null);
+    const [showNewOrderForm, setShowNewOrderForm] = useState(false);
+    const [newOrderForm, setNewOrderForm] = useState({
+        toWhom: '',
+        title: '',
+        issue: ''
+    });
+    const [submittingOrder, setSubmittingOrder] = useState(false);
 
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
@@ -158,6 +169,136 @@ const Requests = () => {
         );
     };
 
+    const handleToggleSelection = (requestId) => {
+        setSelectedItems(prev => 
+            prev.includes(requestId) 
+                ? prev.filter(id => id !== requestId)
+                : [...prev, requestId]
+        );
+    };
+
+    const handleSelectAll = () => {
+        const filteredRequests = getFilteredRequests();
+        const allIds = filteredRequests.map(req => req._id);
+        if (selectedItems.length === allIds.length) {
+            setSelectedItems([]);
+        } else {
+            setSelectedItems(allIds);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedItems.length === 0) return;
+        
+        setConfirmDialog({
+            title: 'Delete Requests',
+            message: `Are you sure you want to delete ${selectedItems.length} ${selectedItems.length === 1 ? 'request' : 'requests'}?\n\nThis action cannot be undone and will permanently remove the ${selectedItems.length === 1 ? 'request' : 'requests'} and all associated messages from the database.`,
+            type: 'danger',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            onConfirm: async () => {
+                setConfirmDialog(null);
+                try {
+                    const token = localStorage.getItem('token');
+                    const config = { headers: { Authorization: `Bearer ${token}` } };
+                    
+                    // Use bulk delete endpoint for better performance
+                    const response = await axios.post(
+                        `${API_URL}/api/requests/bulk-delete`,
+                        { requestIds: selectedItems },
+                        config
+                    );
+                    
+                    // Refresh the requests list
+                    await fetchRequests();
+                    
+                    // Clear selection
+                    setSelectedItems([]);
+                    setIsSelectionMode(false);
+                    
+                    // Close detail panel if selected request was deleted
+                    if (selectedRequest && selectedItems.includes(selectedRequest._id)) {
+                        setSelectedRequest(null);
+                    }
+                    
+                    showNotification(response.data.message || `Successfully deleted ${selectedItems.length} ${selectedItems.length === 1 ? 'request' : 'requests'}`, 'success');
+                } catch (error) {
+                    console.error('Error deleting requests:', error);
+                    showNotification(error.response?.data?.message || 'Failed to delete some requests', 'error');
+                }
+            },
+            onCancel: () => setConfirmDialog(null)
+        });
+    };
+
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+        setSelectedRequest(null);
+        setSelectedItems([]);
+        setIsSelectionMode(false);
+        setShowNewOrderForm(false);
+        setNewOrderForm({ toWhom: '', title: '', issue: '' });
+    };
+
+    const handleNewOrderChange = (e) => {
+        setNewOrderForm({
+            ...newOrderForm,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmitNewOrder = async () => {
+        if (!newOrderForm.toWhom || !newOrderForm.title.trim() || !newOrderForm.issue.trim()) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+
+        setSubmittingOrder(true);
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            // Find the selected user details
+            const userList = activeTab === 'proctors' ? allProctors : allMaintainers;
+            const selectedUser = userList.find(u => u._id === newOrderForm.toWhom);
+            
+            if (!selectedUser) {
+                showNotification('Selected user not found', 'error');
+                setSubmittingOrder(false);
+                return;
+            }
+
+            const requestData = {
+                fromUserId: null, // Admin doesn't have a user ID in the system
+                fromUserModel: 'Admin',
+                fromUserName: 'Admin',
+                toUserId: selectedUser._id,
+                toUserModel: activeTab === 'proctors' ? 'Proctor' : 'Maintainer',
+                requestType: 'Order',
+                subject: newOrderForm.title,
+                message: newOrderForm.issue,
+                priority: 'high',
+                status: 'pending',
+                blockId: selectedUser.blockId,
+                specialization: selectedUser.specialization
+            };
+
+            await axios.post(`${API_URL}/api/requests`, requestData, config);
+            
+            showNotification('Order sent successfully!', 'success');
+            setShowNewOrderForm(false);
+            setNewOrderForm({ toWhom: '', title: '', issue: '' });
+            
+            // Refresh requests
+            await fetchRequests();
+        } catch (error) {
+            console.error('Error sending order:', error);
+            showNotification(error.response?.data?.message || 'Failed to send order', 'error');
+        } finally {
+            setSubmittingOrder(false);
+        }
+    };
+
     const handleStatusChange = async (requestId, newStatus) => {
         try {
             const token = localStorage.getItem('token');
@@ -259,20 +400,29 @@ const Requests = () => {
     };
 
     const handleDeleteMessage = async (messageId) => {
-        if (!window.confirm('Are you sure you want to delete this message?')) return;
-        
-        try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            
-            await axios.delete(`${API_URL}/api/messages/${messageId}`, config);
-            
-            setMessages(messages.filter(msg => msg._id !== messageId));
-            showNotification('Message deleted successfully', 'success');
-        } catch (error) {
-            console.error('Error deleting message:', error);
-            showNotification('Failed to delete message', 'error');
-        }
+        setConfirmDialog({
+            title: 'Delete Message',
+            message: 'Are you sure you want to delete this message?\n\nThis action cannot be undone.',
+            type: 'danger',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            onConfirm: async () => {
+                setConfirmDialog(null);
+                try {
+                    const token = localStorage.getItem('token');
+                    const config = { headers: { Authorization: `Bearer ${token}` } };
+                    
+                    await axios.delete(`${API_URL}/api/messages/${messageId}`, config);
+                    
+                    setMessages(messages.filter(msg => msg._id !== messageId));
+                    showNotification('Message deleted successfully', 'success');
+                } catch (error) {
+                    console.error('Error deleting message:', error);
+                    showNotification('Failed to delete message', 'error');
+                }
+            },
+            onCancel: () => setConfirmDialog(null)
+        });
     };
 
     const handleSelectRequest = (request) => {
@@ -318,6 +468,19 @@ const Requests = () => {
 
     return (
         <div style={{ height: '100vh', background: 'white', display: 'flex', flexDirection: 'column' }}>
+            {/* Confirmation Dialog */}
+            {confirmDialog && (
+                <ConfirmDialog
+                    title={confirmDialog.title}
+                    message={confirmDialog.message}
+                    type={confirmDialog.type}
+                    confirmText={confirmDialog.confirmText}
+                    cancelText={confirmDialog.cancelText}
+                    onConfirm={confirmDialog.onConfirm}
+                    onCancel={confirmDialog.onCancel}
+                />
+            )}
+            
             {/* Notification */}
             {notification && (
                 <div style={{ position: 'fixed', top: '1.5rem', right: '1.5rem', zIndex: 10001, minWidth: '320px', background: notification.type === 'success' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', color: 'white', padding: '1rem 1.25rem', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', animation: 'slideInRight 0.3s ease-out' }}>
@@ -341,7 +504,7 @@ const Requests = () => {
                         const Icon = tab.icon;
                         const isActive = activeTab === tab.id;
                         return (
-                            <button key={tab.id} onClick={() => { setActiveTab(tab.id); setSelectedRequest(null); }} style={{ flex: 1, padding: '0.875rem 1.25rem', background: isActive ? 'white' : 'transparent', border: isActive ? `2px solid ${tab.color}` : '2px solid transparent', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'center' }}>
+                            <button key={tab.id} onClick={() => handleTabChange(tab.id)} style={{ flex: 1, padding: '0.875rem 1.25rem', background: isActive ? 'white' : 'transparent', border: isActive ? `2px solid ${tab.color}` : '2px solid transparent', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'center' }}>
                                 <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${tab.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Icon size={20} color={tab.color} strokeWidth={2.5} />
                                 </div>
@@ -359,9 +522,9 @@ const Requests = () => {
             <div style={{ flex: 1, display: 'flex', maxWidth: '1400px', width: '100%', margin: '0 auto', overflow: 'hidden' }}>
                 {/* Conversations List */}
                 <div style={{ width: selectedRequest ? '380px' : '100%', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', background: 'white', transition: 'width 0.3s' }}>
-                    {/* Search Bar */}
+                    {/* Search Bar & Selection Controls */}
                     <div style={{ padding: '1rem', borderBottom: '1px solid #e2e8f0' }}>
-                        <div style={{ position: 'relative' }}>
+                        <div style={{ position: 'relative', marginBottom: isSelectionMode ? '0.75rem' : '0' }}>
                             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                             <input
                                 type="text"
@@ -373,6 +536,145 @@ const Requests = () => {
                                 onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                             />
                         </div>
+                        
+                        {/* Selection Mode Controls */}
+                        {isSelectionMode ? (
+                            <div style={{ 
+                                display: 'flex', 
+                                gap: '0.5rem', 
+                                alignItems: 'center',
+                                padding: '0.75rem',
+                                background: `${getTabColor()}08`,
+                                borderRadius: '10px',
+                                border: `1px solid ${getTabColor()}20`,
+                                animation: 'slideDown 0.3s ease-out'
+                            }}>
+                                <button
+                                    onClick={handleSelectAll}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.625rem 1rem',
+                                        background: 'white',
+                                        border: `1px solid ${getTabColor()}`,
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: 600,
+                                        fontSize: '0.85rem',
+                                        color: getTabColor(),
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = getTabColor();
+                                        e.currentTarget.style.color = 'white';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = 'white';
+                                        e.currentTarget.style.color = getTabColor();
+                                    }}
+                                >
+                                    {selectedItems.length === getFilteredRequests().length ? <CheckSquare size={16} /> : <Square size={16} />}
+                                    {selectedItems.length === getFilteredRequests().length ? 'Deselect All' : 'Select All'}
+                                </button>
+                                <button
+                                    onClick={handleBulkDelete}
+                                    disabled={selectedItems.length === 0}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.625rem 1rem',
+                                        background: selectedItems.length > 0 ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : '#e2e8f0',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        cursor: selectedItems.length > 0 ? 'pointer' : 'not-allowed',
+                                        fontWeight: 600,
+                                        fontSize: '0.85rem',
+                                        color: selectedItems.length > 0 ? 'white' : '#94a3b8',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s',
+                                        boxShadow: selectedItems.length > 0 ? '0 4px 12px rgba(239, 68, 68, 0.3)' : 'none'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (selectedItems.length > 0) {
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.4)';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (selectedItems.length > 0) {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+                                        }
+                                    }}
+                                >
+                                    <Trash2 size={16} />
+                                    Delete {selectedItems.length > 0 ? `(${selectedItems.length})` : ''}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsSelectionMode(false);
+                                        setSelectedItems([]);
+                                    }}
+                                    style={{
+                                        padding: '0.625rem',
+                                        background: '#f1f5f9',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        color: '#64748b',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = '#e2e8f0';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = '#f1f5f9';
+                                    }}
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setIsSelectionMode(true)}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.625rem 1rem',
+                                    background: 'white',
+                                    border: `1px solid ${getTabColor()}30`,
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    fontSize: '0.85rem',
+                                    color: getTabColor(),
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.5rem',
+                                    transition: 'all 0.2s',
+                                    marginTop: '0.75rem'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = `${getTabColor()}08`;
+                                    e.currentTarget.style.borderColor = getTabColor();
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'white';
+                                    e.currentTarget.style.borderColor = `${getTabColor()}30`;
+                                }}
+                            >
+                                <CheckSquare size={16} />
+                                Select Items
+                            </button>
+                        )}
                     </div>
 
                     {/* Conversations */}
@@ -385,46 +687,91 @@ const Requests = () => {
                         ) : (
                             filteredRequests.map(request => {
                                 const isSelected = selectedRequest?._id === request._id;
+                                const isChecked = selectedItems.includes(request._id);
                                 const name = request.studentName || request.proctorName || request.maintainerName || 'Unknown';
                                 return (
                                     <div
                                         key={request._id}
-                                        onClick={() => handleSelectRequest(request)}
                                         style={{
                                             padding: '1rem 1.25rem',
                                             borderBottom: '1px solid #f1f5f9',
                                             cursor: 'pointer',
-                                            background: isSelected ? '#f8fafc' : 'white',
-                                            transition: 'background 0.2s',
+                                            background: isSelected ? '#f8fafc' : isChecked ? `${getTabColor()}08` : 'white',
+                                            transition: 'all 0.2s',
                                             display: 'flex',
                                             gap: '0.875rem',
-                                            alignItems: 'start'
+                                            alignItems: 'start',
+                                            position: 'relative'
                                         }}
-                                        onMouseEnter={(e) => !isSelected && (e.currentTarget.style.background = '#fafbfc')}
-                                        onMouseLeave={(e) => !isSelected && (e.currentTarget.style.background = 'white')}
+                                        onMouseEnter={(e) => !isSelected && !isChecked && (e.currentTarget.style.background = '#fafbfc')}
+                                        onMouseLeave={(e) => !isSelected && !isChecked && (e.currentTarget.style.background = 'white')}
                                     >
-                                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: `linear-gradient(135deg, ${getTabColor()} 0%, ${getTabColor()}dd 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.1rem', flexShrink: 0 }}>
-                                            {name.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.25rem' }}>
-                                                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
-                                                <div style={{ fontSize: '0.7rem', color: '#94a3b8', flexShrink: 0, marginLeft: '0.5rem' }}>{formatTime(request.createdAt || request.submittedOn)}</div>
+                                        {/* Selection Checkbox */}
+                                        {isSelectionMode && (
+                                            <div 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleToggleSelection(request._id);
+                                                }}
+                                                style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '6px',
+                                                    border: `2px solid ${isChecked ? getTabColor() : '#cbd5e1'}`,
+                                                    background: isChecked ? getTabColor() : 'white',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    flexShrink: 0,
+                                                    marginTop: '0.75rem',
+                                                    animation: 'scaleIn 0.2s ease-out'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    if (!isChecked) {
+                                                        e.currentTarget.style.borderColor = getTabColor();
+                                                        e.currentTarget.style.background = `${getTabColor()}10`;
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    if (!isChecked) {
+                                                        e.currentTarget.style.borderColor = '#cbd5e1';
+                                                        e.currentTarget.style.background = 'white';
+                                                    }
+                                                }}
+                                            >
+                                                {isChecked && <CheckCircle size={14} color="white" strokeWidth={3} />}
                                             </div>
-                                            <div style={{ fontSize: '0.85rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '0.375rem' }}>{request.subject}</div>
-                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                {request.isNewConversation ? (
-                                                    <span style={{ padding: '0.125rem 0.5rem', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                                        New
+                                        )}
+                                        
+                                        <div 
+                                            onClick={() => !isSelectionMode && handleSelectRequest(request)}
+                                            style={{ display: 'flex', gap: '0.875rem', flex: 1, alignItems: 'start' }}
+                                        >
+                                            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: `linear-gradient(135deg, ${getTabColor()} 0%, ${getTabColor()}dd 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.1rem', flexShrink: 0 }}>
+                                                {name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.25rem' }}>
+                                                    <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
+                                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', flexShrink: 0, marginLeft: '0.5rem' }}>{formatTime(request.createdAt || request.submittedOn)}</div>
+                                                </div>
+                                                <div style={{ fontSize: '0.85rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '0.375rem' }}>{request.subject}</div>
+                                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                    {request.isNewConversation ? (
+                                                        <span style={{ padding: '0.125rem 0.5rem', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                                            New
+                                                        </span>
+                                                    ) : (
+                                                        <span style={{ padding: '0.125rem 0.5rem', background: request.status === 'pending' ? '#fef3c7' : request.status === 'approved' ? '#dcfce7' : request.status === 'active' ? '#e0e7ff' : '#fee2e2', color: request.status === 'pending' ? '#92400e' : request.status === 'approved' ? '#166534' : request.status === 'active' ? '#3730a3' : '#991b1b', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
+                                                            {request.status}
+                                                        </span>
+                                                    )}
+                                                    <span style={{ padding: '0.125rem 0.5rem', background: `${getTabColor()}15`, color: getTabColor(), borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
+                                                        {request.priority}
                                                     </span>
-                                                ) : (
-                                                    <span style={{ padding: '0.125rem 0.5rem', background: request.status === 'pending' ? '#fef3c7' : request.status === 'approved' ? '#dcfce7' : request.status === 'active' ? '#e0e7ff' : '#fee2e2', color: request.status === 'pending' ? '#92400e' : request.status === 'approved' ? '#166534' : request.status === 'active' ? '#3730a3' : '#991b1b', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                                                        {request.status}
-                                                    </span>
-                                                )}
-                                                <span style={{ padding: '0.125rem 0.5rem', background: `${getTabColor()}15`, color: getTabColor(), borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
-                                                    {request.priority}
-                                                </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -715,6 +1062,14 @@ const Requests = () => {
                 }
                 @keyframes spin {
                     to { transform: rotate(360deg); }
+                }
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes scaleIn {
+                    from { opacity: 0; transform: scale(0.8); }
+                    to { opacity: 1; transform: scale(1); }
                 }
             `}</style>
         </div>

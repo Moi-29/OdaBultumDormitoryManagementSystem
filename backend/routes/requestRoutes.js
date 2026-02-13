@@ -4,7 +4,8 @@ const {
     getRequests,
     createRequest,
     updateRequestStatus,
-    deleteRequest
+    deleteRequest,
+    bulkDeleteRequests
 } = require('../controllers/requestController');
 const { protect } = require('../middleware/adminAuth');
 
@@ -29,6 +30,7 @@ router.get('/student/:studentId', async (req, res) => {
 
 // Admin routes - require authentication
 router.get('/', protect, getRequests);
+router.post('/bulk-delete', protect, bulkDeleteRequests);
 router.patch('/:id/status', protect, updateRequestStatus);
 router.delete('/:id', protect, deleteRequest);
 
