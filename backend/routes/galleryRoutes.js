@@ -9,6 +9,9 @@ const {
 } = require('../controllers/galleryController');
 const { protect } = require('../middleware/authMiddleware');
 
+// Public route for students to view gallery
+router.get('/public', getGalleryImages);
+
 router.route('/')
     .get(protect, getGalleryImages)
     .post(protect, addGalleryImage);

@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
+import API_URL from "../../config/api";
 import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { getTranslation } from "../../translations/translations";
 
-// Import all gallery images
+// Import fallback images (in case API fails or no images in database)
 import im from "../../assets/im.jpg";
 import im1 from "../../assets/im1.jpg";
 import im2 from "../../assets/im2.jpg";
@@ -36,7 +38,58 @@ const GallerySection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const intervalRef = useRef(null);
+  
+  // Fallback images if API fails or no images in database
+  const fallbackImages = [
+    { imageUrl: im },
+    { imageUrl: im1 },
+    { imageUrl: im2 },
+    { imageUrl: im3 },
+    { imageUrl: im4 },
+    { imageUrl: im5 },
+    { imageUrl: im6 },
+    { imageUrl: im7 },
+    { imageUrl: im8 },
+    { imageUrl: im9 },
+    { imageUrl: im10 },
+    { imageUrl: im11 },
+    { imageUrl: im12 },
+    { imageUrl: im13 },
+    { imageUrl: im15 },
+    { imageUrl: im16 },
+    { imageUrl: im17 },
+    { imageUrl: im18 },
+    { imageUrl: im19 },
+    { imageUrl: im20 },
+    { imageUrl: im21 },
+    { imageUrl: im22 }
+  ];
+
+  // Fetch gallery images from API
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/gallery/public`);
+        if (response.data.images && response.data.images.length > 0) {
+          setGalleryItems(response.data.images);
+        } else {
+          // Use fallback images if no images in database
+          setGalleryItems(fallbackImages);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching gallery images:', error);
+        // Use fallback images on error
+        setGalleryItems(fallbackImages);
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryImages();
+  }, []);
   
   // Detect mobile screen size
   useEffect(() => {
@@ -48,32 +101,6 @@ const GallerySection = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
-  // All 22 gallery items
-  const galleryItems = [
-    { src: im },
-    { src: im1 },
-    { src: im2 },
-    { src: im3 },
-    { src: im4 },
-    { src: im5 },
-    { src: im6 },
-    { src: im7 },
-    { src: im8 },
-    { src: im9 },
-    { src: im10 },
-    { src: im11 },
-    { src: im12 },
-    { src: im13 },
-    { src: im15 },
-    { src: im16 },
-    { src: im17 },
-    { src: im18 },
-    { src: im19 },
-    { src: im20 },
-    { src: im21 },
-    { src: im22 }
-  ];
 
   // Auto-advance carousel
   useEffect(() => {
@@ -114,6 +141,15 @@ const GallerySection = () => {
   };
 
   const visibleCards = getVisibleCards();
+
+  // Don't render if loading or no images
+  if (loading) {
+    return null;
+  }
+
+  if (galleryItems.length === 0) {
+    return null;
+  }
 
   return (
     <section 
@@ -252,7 +288,7 @@ const GallerySection = () => {
                         position: 'relative'
                       }}>
                         <img
-                          src={card.src}
+                          src={card.imageUrl}
                           alt="OBU Campus"
                           style={{
                             width: '100%',
