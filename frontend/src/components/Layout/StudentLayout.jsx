@@ -20,7 +20,10 @@ const StudentLayout = () => {
     const languages = [
         { code: 'en', name: 'English', flag: '🇬🇧', icon: 'uk' },
         { code: 'am', name: 'አማርኛ', flag: '🗺️', icon: 'ethiopia' },
-        { code: 'om', name: 'Afaan Oromo', flag: '🌍', icon: 'oromia' }
+        { code: 'om', name: 'Afaan Oromo', flag: '🌍', icon: 'oromia' },
+        { code: 'so', name: 'Af-Somali', flag: '🇸🇴', icon: 'somalia' },
+        { code: 'ti', name: 'ትግርኛ', flag: '🇪🇷', icon: 'tigrinya' },
+        { code: 'ar', name: 'العربية', flag: '🇸🇦', icon: 'arabic' }
     ];
 
     // Handle window resize
@@ -98,6 +101,32 @@ const StudentLayout = () => {
                             borderRadius: '2px'
                         }}
                     />
+                );
+            case 'so':
+                return (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ display: 'inline-block' }}>
+                        <rect width="24" height="8" fill="#4189DD"/>
+                        <rect y="8" width="24" height="16" fill="#4189DD"/>
+                        <path d="M12 8 L13.5 12.5 L18 12.5 L14.5 15.5 L16 20 L12 17 L8 20 L9.5 15.5 L6 12.5 L10.5 12.5 Z" fill="white"/>
+                    </svg>
+                );
+            case 'ti':
+                return (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ display: 'inline-block' }}>
+                        <rect width="24" height="8" fill="#078930"/>
+                        <rect y="8" width="24" height="8" fill="#FCDD09"/>
+                        <rect y="16" width="24" height="8" fill="#DA121A"/>
+                        <circle cx="12" cy="12" r="4" fill="#0F47AF"/>
+                        <path d="M12 8 L13 11 L16 11 L13.5 13 L14.5 16 L12 14 L9.5 16 L10.5 13 L8 11 L11 11 Z" fill="#FCDD09"/>
+                    </svg>
+                );
+            case 'ar':
+                return (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ display: 'inline-block' }}>
+                        <rect width="24" height="8" fill="#006C35"/>
+                        <rect y="8" width="24" height="8" fill="white"/>
+                        <rect y="16" width="24" height="8" fill="#000000"/>
+                    </svg>
                 );
             default:
                 return <span style={{ fontSize: '1.5rem' }}>🌐</span>;
