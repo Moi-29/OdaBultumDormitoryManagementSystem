@@ -683,7 +683,7 @@ const MaintainerDashboard = () => {
                     </div>
                 )}
 
-                {/* Work Orders Tab - Premium Chat Interface */}
+                {/* Work Orders Tab */}
                 {activeTab === 'workOrders' && (
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -774,148 +774,81 @@ const MaintainerDashboard = () => {
                             )}
                         </div>
 
-                        <div style={{
-                            background: 'linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%)',
-                            borderRadius: '24px',
-                            boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
-                            overflow: 'hidden',
-                            maxWidth: '900px',
-                            margin: '0 auto'
-                        }}>
-                            {/* Chat Header */}
+                        {loading ? (
+                            <div style={{ textAlign: 'center', padding: '4rem' }}>
+                                <div style={{ fontSize: '1.2rem', color: '#64748b' }}>Loading work orders...</div>
+                            </div>
+                        ) : workOrders.length === 0 ? (
                             <div style={{
-                                background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-                                padding: '1.25rem 1.5rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '1rem',
-                                boxShadow: '0 4px 12px rgba(234, 88, 12, 0.3)'
+                                background: 'white',
+                                borderRadius: '16px',
+                                padding: '4rem 2rem',
+                                textAlign: 'center',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
                             }}>
                                 <div style={{
-                                    width: '48px',
-                                    height: '48px',
+                                    width: '80px',
+                                    height: '80px',
                                     borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                    background: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    color: 'white',
-                                    fontWeight: 700,
-                                    fontSize: '1.2rem',
-                                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
-                                    border: '3px solid white'
+                                    margin: '0 auto 1.5rem'
                                 }}>
-                                    A
+                                    <MessageSquare size={40} color="#ea580c" />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'white' }}>
-                                        Admin Team
-                                    </h3>
-                                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.9)' }}>
-                                        Work Order Assignments
-                                    </p>
-                                </div>
-                                <div style={{
-                                    padding: '0.5rem 1rem',
-                                    background: 'rgba(255,255,255,0.2)',
-                                    borderRadius: '20px',
-                                    fontSize: '0.75rem',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    backdropFilter: 'blur(10px)'
-                                }}>
-                                    {workOrders.length} {workOrders.length === 1 ? 'Order' : 'Orders'}
-                                </div>
+                                <p style={{ fontSize: '1.2rem', fontWeight: 600, color: '#64748b', margin: '0 0 0.5rem 0' }}>
+                                    No work orders yet
+                                </p>
+                                <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.9rem' }}>
+                                    Work orders from admin will appear here
+                                </p>
                             </div>
-
-                            {/* Chat Messages Area */}
-                            <div style={{ 
-                                padding: '2rem 1.5rem',
-                                minHeight: '400px',
-                                maxHeight: '600px',
-                                overflowY: 'auto',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '1.5rem',
-                                background: '#f8f9fa'
-                            }}>
-                                {workOrders.length === 0 ? (
-                                    <div style={{ 
-                                        textAlign: 'center', 
-                                        padding: '4rem 2rem',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        flex: 1
-                                    }}>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                {workOrders.map((workOrder, index) => (
+                                    <div
+                                        key={workOrder._id}
+                                        style={{
+                                            background: selectedWorkOrders.includes(workOrder._id) ? '#fff7ed' : 'white',
+                                            borderRadius: '16px',
+                                            padding: '1.5rem',
+                                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                                            border: selectedWorkOrders.includes(workOrder._id) ? '2px solid #ea580c' : '2px solid #e5e7eb',
+                                            transition: 'all 0.3s',
+                                            position: 'relative'
+                                        }}
+                                    >
+                                        {isSelectionMode && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '1rem',
+                                                right: '1rem',
+                                                zIndex: 10
+                                            }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedWorkOrders.includes(workOrder._id)}
+                                                    onChange={() => handleToggleWorkOrderSelection(workOrder._id)}
+                                                    style={{
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        cursor: 'pointer',
+                                                        accentColor: '#ea580c'
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                         <div style={{
-                                            width: '80px',
-                                            height: '80px',
-                                            borderRadius: '50%',
-                                            background: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'center',
-                                            marginBottom: '1.5rem'
+                                            justifyContent: 'space-between',
+                                            marginBottom: '1rem',
+                                            paddingBottom: '1rem',
+                                            borderBottom: '1px solid #e5e7eb'
                                         }}>
-                                            <MessageSquare size={40} color="#ea580c" />
-                                        </div>
-                                        <p style={{ fontSize: '1.2rem', fontWeight: 600, color: '#64748b', margin: '0 0 0.5rem 0' }}>
-                                            No work orders yet
-                                        </p>
-                                        <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.9rem' }}>
-                                            Work orders from admin will appear here
-                                        </p>
-                                    </div>
-                                ) : (
-                                    workOrders.map((workOrder, index) => (
-                                        <div key={workOrder._id} style={{
-                                            animation: `messageSlideIn 0.3s ease-out ${index * 0.1}s both`,
-                                            position: 'relative'
-                                        }}>
-                                            {isSelectionMode && (
-                                                <div style={{
-                                                    position: 'absolute',
-                                                    top: '1rem',
-                                                    right: '1rem',
-                                                    zIndex: 10
-                                                }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedWorkOrders.includes(workOrder._id)}
-                                                        onChange={() => handleToggleWorkOrderSelection(workOrder._id)}
-                                                        style={{
-                                                            width: '20px',
-                                                            height: '20px',
-                                                            cursor: 'pointer',
-                                                            accentColor: '#ea580c'
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-                                            {/* Date Separator */}
-                                            {(index === 0 || workOrders[index - 1].submittedOn !== workOrder.submittedOn) && (
-                                                <div style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    marginBottom: '1rem'
-                                                }}>
-                                                    <div style={{
-                                                        background: 'rgba(234, 88, 12, 0.1)',
-                                                        padding: '0.5rem 1rem',
-                                                        borderRadius: '20px',
-                                                        fontSize: '0.75rem',
-                                                        color: '#ea580c',
-                                                        fontWeight: 600
-                                                    }}>
-                                                        {workOrder.submittedOn}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Admin Work Order Bubble */}
-                                            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                 <div style={{
                                                     width: '40px',
                                                     height: '40px',
@@ -926,223 +859,77 @@ const MaintainerDashboard = () => {
                                                     justifyContent: 'center',
                                                     color: 'white',
                                                     fontWeight: 700,
-                                                    fontSize: '0.9rem',
-                                                    flexShrink: 0,
-                                                    boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
+                                                    fontSize: '1rem'
                                                 }}>
                                                     A
                                                 </div>
-                                                <div style={{ flex: 1, maxWidth: '85%' }}>
-                                                    <div style={{
-                                                        background: 'white',
-                                                        padding: '1rem 1.25rem',
-                                                        borderRadius: '18px 18px 18px 4px',
-                                                        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                                                        border: '1px solid rgba(0,0,0,0.05)'
-                                                    }}>
-                                                        <div style={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: '0.5rem',
-                                                            marginBottom: '0.75rem',
-                                                            flexWrap: 'wrap'
-                                                        }}>
-                                                            <span style={{
-                                                                padding: '0.25rem 0.75rem',
-                                                                background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-                                                                color: 'white',
-                                                                borderRadius: '12px',
-                                                                fontSize: '0.7rem',
-                                                                fontWeight: 700,
-                                                                textTransform: 'uppercase',
-                                                                letterSpacing: '0.5px'
-                                                            }}>
-                                                                Work Order
-                                                            </span>
-                                                            <span style={{
-                                                                padding: '0.25rem 0.75rem',
-                                                                background: workOrder.status === 'resolved' ? '#dcfce7' : 
-                                                                           workOrder.status === 'in-progress' ? '#dbeafe' : '#fef3c7',
-                                                                color: workOrder.status === 'resolved' ? '#166534' : 
-                                                                       workOrder.status === 'in-progress' ? '#1e40af' : '#92400e',
-                                                                borderRadius: '12px',
-                                                                fontSize: '0.7rem',
-                                                                fontWeight: 700,
-                                                                textTransform: 'uppercase'
-                                                            }}>
-                                                                {workOrder.status}
-                                                            </span>
-                                                        </div>
-                                                        <div style={{
-                                                            fontWeight: 700,
-                                                            color: '#1e293b',
-                                                            fontSize: '1rem',
-                                                            marginBottom: '0.75rem'
-                                                        }}>
-                                                            {workOrder.subject}
-                                                        </div>
-                                                        <div style={{
-                                                            color: '#475569',
-                                                            fontSize: '0.9rem',
-                                                            lineHeight: '1.6',
-                                                            whiteSpace: 'pre-wrap',
-                                                            marginBottom: '0.75rem',
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 3,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden'
-                                                        }}>
-                                                            {workOrder.message}
-                                                        </div>
-                                                        <button
-                                                            onClick={() => handleViewDetail(workOrder)}
-                                                            style={{
-                                                                padding: '0.5rem 1rem',
-                                                                background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                                                                color: 'white',
-                                                                border: 'none',
-                                                                borderRadius: '8px',
-                                                                cursor: 'pointer',
-                                                                fontSize: '0.8rem',
-                                                                fontWeight: 600,
-                                                                transition: 'all 0.3s',
-                                                                boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3)',
-                                                                marginBottom: '0.75rem'
-                                                            }}
-                                                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                                                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                                                        >
-                                                            View Full Details
-                                                        </button>
-                                                        {workOrder.blockId && (
-                                                            <div style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '0.5rem',
-                                                                padding: '0.5rem 0.75rem',
-                                                                background: '#f1f5f9',
-                                                                borderRadius: '8px',
-                                                                fontSize: '0.8rem',
-                                                                color: '#475569',
-                                                                marginBottom: '0.75rem'
-                                                            }}>
-                                                                <Building2 size={14} />
-                                                                <span>Block: <strong>{workOrder.blockId}</strong></span>
-                                                            </div>
-                                                        )}
-                                                        {workOrder.adminResponse && (
-                                                            <div style={{
-                                                                background: '#eff6ff',
-                                                                padding: '0.75rem 1rem',
-                                                                borderRadius: '8px',
-                                                                borderLeft: '3px solid #3b82f6',
-                                                                marginTop: '0.75rem'
-                                                            }}>
-                                                                <p style={{ margin: '0 0 0.25rem 0', fontSize: '0.7rem', fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase' }}>
-                                                                    Admin Note
-                                                                </p>
-                                                                <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.5' }}>
-                                                                    {workOrder.adminResponse}
-                                                                </p>
-                                                            </div>
-                                                        )}
-                                                        {workOrder.status !== 'resolved' && (
-                                                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                                                {workOrder.status === 'pending' && (
-                                                                    <button onClick={() => handleUpdateWorkOrder(workOrder._id, 'in-progress')} style={{
-                                                                        padding: '0.625rem 1rem',
-                                                                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                                                        color: 'white',
-                                                                        border: 'none',
-                                                                        borderRadius: '10px',
-                                                                        cursor: 'pointer',
-                                                                        fontSize: '0.8rem',
-                                                                        fontWeight: 700,
-                                                                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                                                                        transition: 'all 0.3s'
-                                                                    }}
-                                                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                                                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                                                                    >
-                                                                        Start Work
-                                                                    </button>
-                                                                )}
-                                                                {workOrder.status === 'in-progress' && (
-                                                                    <button onClick={() => handleUpdateWorkOrder(workOrder._id, 'resolved')} style={{
-                                                                        padding: '0.625rem 1rem',
-                                                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                                                        color: 'white',
-                                                                        border: 'none',
-                                                                        borderRadius: '10px',
-                                                                        cursor: 'pointer',
-                                                                        fontSize: '0.8rem',
-                                                                        fontWeight: 700,
-                                                                        boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
-                                                                        transition: 'all 0.3s'
-                                                                    }}
-                                                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                                                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                                                                    >
-                                                                        <CheckCircle size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />
-                                                                        Mark as Resolved
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        )}
+                                                <div>
+                                                    <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
+                                                        Admin Team
                                                     </div>
-                                                    <div style={{
-                                                        fontSize: '0.7rem',
-                                                        color: '#94a3b8',
-                                                        marginTop: '0.5rem',
-                                                        marginLeft: '0.5rem',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.5rem'
-                                                    }}>
-                                                        <Clock size={12} />
-                                                        Assigned: {workOrder.submittedOn}
+                                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                                                        {workOrder.submittedOn || new Date(workOrder.createdAt).toLocaleDateString()}
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div style={{
+                                                padding: '0.5rem 1rem',
+                                                background: workOrder.status === 'pending' ? '#fef3c7' : workOrder.status === 'resolved' ? '#d1fae5' : workOrder.status === 'in-progress' ? '#dbeafe' : '#e0e7ff',
+                                                color: workOrder.status === 'pending' ? '#92400e' : workOrder.status === 'resolved' ? '#065f46' : workOrder.status === 'in-progress' ? '#1e40af' : '#3730a3',
+                                                borderRadius: '20px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 700,
+                                                textTransform: 'uppercase'
+                                            }}>
+                                                {workOrder.status}
+                                            </div>
                                         </div>
-                                    ))
-                                )}
+                                        <div>
+                                            <h3 style={{
+                                                margin: '0 0 0.75rem 0',
+                                                fontSize: '1.1rem',
+                                                fontWeight: 700,
+                                                color: '#1e293b'
+                                            }}>
+                                                {workOrder.subject}
+                                            </h3>
+                                            <p style={{
+                                                margin: '0 0 1rem 0',
+                                                color: '#475569',
+                                                fontSize: '0.95rem',
+                                                lineHeight: '1.6',
+                                                whiteSpace: 'pre-wrap',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 3,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden'
+                                            }}>
+                                                {workOrder.message}
+                                            </p>
+                                            <button
+                                                onClick={() => handleViewDetail(workOrder)}
+                                                style={{
+                                                    padding: '0.5rem 1rem',
+                                                    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: 600,
+                                                    transition: 'all 0.3s',
+                                                    boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3)'
+                                                }}
+                                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                            >
+                                                View Full Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-
-                            {/* Chat Footer */}
-                            <div style={{
-                                padding: '1.25rem 1.5rem',
-                                background: 'white',
-                                borderTop: '1px solid #e2e8f0',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.75rem'
-                            }}>
-                                <div style={{
-                                    flex: 1,
-                                    padding: '0.875rem 1.25rem',
-                                    background: '#f1f5f9',
-                                    borderRadius: '14px',
-                                    color: '#94a3b8',
-                                    fontSize: '0.9rem',
-                                    fontStyle: 'italic'
-                                }}>
-                                    Work orders assigned by admin team
-                                </div>
-                                <div style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '50%',
-                                    background: '#e2e8f0',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: '#94a3b8'
-                                }}>
-                                    <Wrench size={20} />
-                                </div>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -1574,3 +1361,4 @@ const MaintainerDashboard = () => {
 };
 
 export default MaintainerDashboard;
+
