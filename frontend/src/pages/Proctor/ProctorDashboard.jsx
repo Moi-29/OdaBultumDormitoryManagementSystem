@@ -40,26 +40,31 @@ const ProctorDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            // Fetch all requests and filter for proctor's requests
+            // Fetch all requests
             const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
             
             if (requestsRes.data) {
                 const allRequests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
                 
-                // Filter requests from this proctor
+                // Filter requests FROM this proctor (reports sent by proctor to admin)
                 const proctorRequests = allRequests.filter(req => 
                     req.fromUserModel === 'Proctor' && req.fromUserId === user?._id
                 );
                 
+                // Filter requests TO this proctor (orders from admin to proctor)
+                const ordersToProctor = allRequests.filter(req =>
+                    req.toUserModel === 'Proctor' && req.toUserId === user?._id
+                );
+                
                 setReports(proctorRequests);
-                setMessages(proctorRequests); // Messages are the same as requests with admin responses
+                setMessages(ordersToProctor); // Messages are orders from admin TO this proctor
                 
                 // Calculate stats
                 const stats = {
                     totalReports: proctorRequests.length,
                     pendingReports: proctorRequests.filter(r => r.status === 'pending').length,
                     resolvedReports: proctorRequests.filter(r => r.status === 'approved' || r.status === 'resolved').length,
-                    unreadMessages: proctorRequests.filter(r => r.status === 'pending').length
+                    unreadMessages: ordersToProctor.filter(r => r.status === 'pending').length
                 };
                 setStats(stats);
             }

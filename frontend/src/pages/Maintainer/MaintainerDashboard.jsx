@@ -40,27 +40,32 @@ const MaintainerDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            // Fetch all requests and filter for maintainer's requests
+            // Fetch all requests
             const requestsRes = await axios.get(`${API_URL}/api/requests`, config);
             
             if (requestsRes.data) {
                 const allRequests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
                 
-                // Filter requests from this maintainer
+                // Filter requests FROM this maintainer (requests sent by maintainer to admin)
                 const maintainerRequests = allRequests.filter(req => 
                     req.fromUserModel === 'Maintainer' && req.fromUserId === user?._id
                 );
                 
+                // Filter requests TO this maintainer (orders from admin to maintainer)
+                const ordersToMaintainer = allRequests.filter(req =>
+                    req.toUserModel === 'Maintainer' && req.toUserId === user?._id
+                );
+                
                 setRequests(maintainerRequests);
-                setWorkOrders(maintainerRequests); // Work orders are the same as requests with admin responses
+                setWorkOrders(ordersToMaintainer); // Work orders are orders from admin TO this maintainer
                 
                 // Calculate stats
                 const stats = {
                     totalRequests: maintainerRequests.length,
                     pendingRequests: maintainerRequests.filter(r => r.status === 'pending').length,
-                    assignedWorkOrders: maintainerRequests.length,
-                    completedWorkOrders: maintainerRequests.filter(r => r.status === 'approved' || r.status === 'resolved').length,
-                    pendingWorkOrders: maintainerRequests.filter(r => r.status === 'pending').length
+                    assignedWorkOrders: ordersToMaintainer.length,
+                    completedWorkOrders: ordersToMaintainer.filter(r => r.status === 'approved' || r.status === 'resolved').length,
+                    pendingWorkOrders: ordersToMaintainer.filter(r => r.status === 'pending').length
                 };
                 setStats(stats);
             }
