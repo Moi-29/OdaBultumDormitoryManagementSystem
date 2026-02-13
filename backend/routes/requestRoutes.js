@@ -33,6 +33,6 @@ router.get('/student/:studentId', async (req, res) => {
 router.get('/', multiProtect, getRequests);
 router.post('/bulk-delete', adminProtect, bulkDeleteRequests);
 router.patch('/:id/status', multiProtect, updateRequestStatus);
-router.delete('/:id', adminProtect, deleteRequest);
+router.delete('/:id', multiProtect, deleteRequest);
 
 module.exports = router;
