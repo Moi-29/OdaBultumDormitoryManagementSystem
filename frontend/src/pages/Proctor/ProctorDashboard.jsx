@@ -26,6 +26,8 @@ const ProctorDashboard = () => {
     const [submitting, setSubmitting] = useState(false);
     const [selectedMessages, setSelectedMessages] = useState([]);
     const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [selectedDetail, setSelectedDetail] = useState(null);
+    const [showDetailModal, setShowDetailModal] = useState(false);
 
     useEffect(() => {
         if (!user || user.role !== 'proctor') {
@@ -190,6 +192,11 @@ const ProctorDashboard = () => {
             console.error('Error deleting messages:', error);
             showNotification('Failed to delete some messages', 'error');
         }
+    };
+
+    const handleViewDetail = (item) => {
+        setSelectedDetail(item);
+        setShowDetailModal(true);
     };
 
     const handleLogout = () => {
@@ -393,9 +400,36 @@ const ProctorDashboard = () => {
                                                 <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>
                                                     {report.subject}
                                                 </h3>
-                                                <p style={{ margin: 0, color: '#64748b', fontSize: '0.875rem' }}>
+                                                <p style={{
+                                                    margin: '0 0 1rem 0',
+                                                    color: '#64748b',
+                                                    fontSize: '0.875rem',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 3,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden'
+                                                }}>
                                                     {report.message}
                                                 </p>
+                                                <button
+                                                    onClick={() => handleViewDetail(report)}
+                                                    style={{
+                                                        padding: '0.5rem 1rem',
+                                                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '0.85rem',
+                                                        fontWeight: 600,
+                                                        transition: 'all 0.3s',
+                                                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
+                                                    }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                                >
+                                                    View Full Details
+                                                </button>
                                             </div>
                                             <span style={{
                                                 padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem',
@@ -633,14 +667,37 @@ const ProctorDashboard = () => {
                                                 {order.subject}
                                             </h3>
                                             <p style={{
-                                                margin: 0,
+                                                margin: '0 0 1rem 0',
                                                 color: '#475569',
                                                 fontSize: '0.95rem',
                                                 lineHeight: '1.6',
-                                                whiteSpace: 'pre-wrap'
+                                                whiteSpace: 'pre-wrap',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 3,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden'
                                             }}>
                                                 {order.message}
                                             </p>
+                                            <button
+                                                onClick={() => handleViewDetail(order)}
+                                                style={{
+                                                    padding: '0.5rem 1rem',
+                                                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: 600,
+                                                    transition: 'all 0.3s',
+                                                    boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
+                                                }}
+                                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                            >
+                                                View Full Details
+                                            </button>
                                         </div>
                                     </div>
                                 ))}
@@ -771,6 +828,243 @@ const ProctorDashboard = () => {
                 </div>
             )}
 
+            {/* Detail View Modal - Premium */}
+            {showDetailModal && selectedDetail && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000,
+                    animation: 'fadeIn 0.3s ease-out'
+                }}>
+                    <div style={{
+                        background: 'white', borderRadius: '24px', maxWidth: '700px',
+                        width: '90%', maxHeight: '85vh', overflow: 'hidden',
+                        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                        animation: 'slideUp 0.4s ease-out'
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)',
+                            padding: '2rem',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}>
+                            <div style={{
+                                position: 'absolute',
+                                top: '-50%',
+                                right: '-10%',
+                                width: '300px',
+                                height: '300px',
+                                background: 'rgba(255,255,255,0.1)',
+                                borderRadius: '50%',
+                                filter: 'blur(40px)'
+                            }} />
+                            <div style={{ position: 'relative', zIndex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                            <div style={{
+                                                width: '48px',
+                                                height: '48px',
+                                                borderRadius: '50%',
+                                                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontWeight: 700,
+                                                fontSize: '1.2rem',
+                                                boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)'
+                                            }}>
+                                                A
+                                            </div>
+                                            <div>
+                                                <div style={{ color: 'white', fontWeight: 700, fontSize: '1.1rem' }}>
+                                                    Admin Team
+                                                </div>
+                                                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem' }}>
+                                                    Official Communication
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowDetailModal(false)}
+                                        style={{
+                                            background: 'rgba(255,255,255,0.2)',
+                                            border: 'none',
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '50%',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            transition: 'all 0.3s',
+                                            backdropFilter: 'blur(10px)'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+                                            e.currentTarget.style.transform = 'rotate(90deg)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                                            e.currentTarget.style.transform = 'rotate(0deg)';
+                                        }}
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <h2 style={{
+                                    margin: 0,
+                                    color: 'white',
+                                    fontSize: '1.75rem',
+                                    fontWeight: 800,
+                                    letterSpacing: '-0.5px'
+                                }}>
+                                    {selectedDetail.subject}
+                                </h2>
+                            </div>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div style={{ padding: '2rem', maxHeight: 'calc(85vh - 250px)', overflowY: 'auto' }}>
+                            {/* Status and Date */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '1rem',
+                                marginBottom: '2rem',
+                                flexWrap: 'wrap'
+                            }}>
+                                <div style={{
+                                    padding: '0.75rem 1.25rem',
+                                    background: selectedDetail.status === 'pending' ? '#fef3c7' : selectedDetail.status === 'resolved' ? '#d1fae5' : '#e0e7ff',
+                                    color: selectedDetail.status === 'pending' ? '#92400e' : selectedDetail.status === 'resolved' ? '#065f46' : '#3730a3',
+                                    borderRadius: '12px',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+                                    <Clock size={16} />
+                                    {selectedDetail.status}
+                                </div>
+                                <div style={{
+                                    padding: '0.75rem 1.25rem',
+                                    background: '#f1f5f9',
+                                    color: '#64748b',
+                                    borderRadius: '12px',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600
+                                }}>
+                                    {selectedDetail.submittedOn || new Date(selectedDetail.createdAt).toLocaleDateString()}
+                                </div>
+                            </div>
+
+                            {/* Message Content */}
+                            <div style={{
+                                background: '#f8f9fa',
+                                padding: '1.5rem',
+                                borderRadius: '16px',
+                                border: '1px solid #e2e8f0'
+                            }}>
+                                <h3 style={{
+                                    margin: '0 0 1rem 0',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 700,
+                                    color: '#64748b',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    Message Details
+                                </h3>
+                                <p style={{
+                                    margin: 0,
+                                    color: '#1e293b',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.8',
+                                    whiteSpace: 'pre-wrap'
+                                }}>
+                                    {selectedDetail.message}
+                                </p>
+                            </div>
+
+                            {/* Additional Info */}
+                            {(selectedDetail.blockId || selectedDetail.currentRoom) && (
+                                <div style={{
+                                    marginTop: '1.5rem',
+                                    padding: '1.5rem',
+                                    background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                                    borderRadius: '16px',
+                                    border: '1px solid #bfdbfe'
+                                }}>
+                                    <h3 style={{
+                                        margin: '0 0 1rem 0',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 700,
+                                        color: '#1e40af',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.5px'
+                                    }}>
+                                        Location Information
+                                    </h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        {selectedDetail.blockId && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                <Building2 size={18} color="#3b82f6" />
+                                                <span style={{ color: '#1e40af', fontWeight: 600 }}>
+                                                    Block: {selectedDetail.blockId}
+                                                </span>
+                                            </div>
+                                        )}
+                                        {selectedDetail.currentRoom && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                <Home size={18} color="#3b82f6" />
+                                                <span style={{ color: '#1e40af', fontWeight: 600 }}>
+                                                    Room: {selectedDetail.currentRoom}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div style={{
+                            padding: '1.5rem 2rem',
+                            borderTop: '1px solid #e2e8f0',
+                            background: '#f8f9fa',
+                            display: 'flex',
+                            justifyContent: 'flex-end'
+                        }}>
+                            <button
+                                onClick={() => setShowDetailModal(false)}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                                    transition: 'all 0.3s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <style>{`
                 @keyframes slideInRight {
                     from { opacity: 0; transform: translateX(100px); }
@@ -780,6 +1074,20 @@ const ProctorDashboard = () => {
                     from {
                         opacity: 0;
                         transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
                     }
                     to {
                         opacity: 1;
