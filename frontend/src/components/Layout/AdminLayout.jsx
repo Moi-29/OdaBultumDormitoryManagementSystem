@@ -34,6 +34,9 @@ const AdminLayout = () => {
                     const requests = Array.isArray(response.data) ? response.data : [];
                     // Count unread requests
                     const unreadCount = requests.filter(req => !req.isRead).length;
+                    console.log('AdminLayout - Total requests:', requests.length);
+                    console.log('AdminLayout - Unread requests:', unreadCount);
+                    console.log('AdminLayout - Setting requestCount to:', unreadCount);
                     setRequestCount(unreadCount);
                 }
             } catch (error) {
@@ -352,47 +355,54 @@ const AdminLayout = () => {
     );
 };
 
-const NavItem = ({ to, icon, label, active, onClick, badge }) => (
-    <li>
-        <Link
-            to={to}
-            onClick={onClick}
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '0.75rem 1rem',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: active ? 'var(--color-primary-light)' : 'transparent',
-                color: active ? 'var(--color-primary)' : 'var(--text-main)',
-                transition: 'all 0.2s',
-                textDecoration: 'none',
-                position: 'relative'
-            }}
-        >
-            {icon}
-            <span style={{ fontWeight: 500, flex: 1 }}>{label}</span>
-            {badge !== null && badge !== undefined && badge > 0 && (
-                <span style={{
-                    minWidth: '24px',
-                    height: '24px',
-                    padding: '0 8px',
-                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    color: 'white',
-                    borderRadius: '12px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
+const NavItem = ({ to, icon, label, active, onClick, badge }) => {
+    // Debug log
+    if (label === 'Requests') {
+        console.log('NavItem Requests - badge value:', badge);
+    }
+    
+    return (
+        <li>
+            <Link
+                to={to}
+                onClick={onClick}
+                style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
-                    animation: badge > 0 ? 'pulse 2s infinite' : 'none'
-                }}>
-                    {badge > 99 ? '99+' : badge}
-                </span>
-            )}
-        </Link>
-    </li>
-);
+                    gap: '0.75rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: active ? 'var(--color-primary-light)' : 'transparent',
+                    color: active ? 'var(--color-primary)' : 'var(--text-main)',
+                    transition: 'all 0.2s',
+                    textDecoration: 'none',
+                    position: 'relative'
+                }}
+            >
+                {icon}
+                <span style={{ fontWeight: 500, flex: 1 }}>{label}</span>
+                {badge !== null && badge !== undefined && badge > 0 && (
+                    <span style={{
+                        minWidth: '24px',
+                        height: '24px',
+                        padding: '0 8px',
+                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        color: 'white',
+                        borderRadius: '12px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+                        animation: badge > 0 ? 'pulse 2s infinite' : 'none'
+                    }}>
+                        {badge > 99 ? '99+' : badge}
+                    </span>
+                )}
+            </Link>
+        </li>
+    );
+};
 
 export default AdminLayout;

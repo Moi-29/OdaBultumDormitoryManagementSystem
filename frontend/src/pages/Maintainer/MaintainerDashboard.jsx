@@ -20,8 +20,7 @@ const MaintainerDashboard = () => {
     const [showRequestModal, setShowRequestModal] = useState(false);
     const [requestForm, setRequestForm] = useState({
         subject: '',
-        message: '',
-        requestType: 'Tool Request'
+        message: ''
     });
     const [submitting, setSubmitting] = useState(false);
     const [selectedWorkOrders, setSelectedWorkOrders] = useState([]);
@@ -128,7 +127,7 @@ const MaintainerDashboard = () => {
                 specialization: user?.specialization || 'General',
                 email: user?.email || '',
                 phone: user?.phone || '',
-                requestType: requestForm.requestType,
+                requestType: 'Other',
                 subject: requestForm.subject,
                 message: requestForm.message,
                 status: 'pending'
@@ -136,13 +135,15 @@ const MaintainerDashboard = () => {
 
             console.log('Submitting request:', requestData);
             
-            const response = await axios.post(`${API_URL}/api/requests`, requestData);
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const response = await axios.post(`${API_URL}/api/requests`, requestData, config);
             
             console.log('Response:', response.data);
             
             showNotification('Request submitted successfully', 'success');
             setShowRequestModal(false);
-            setRequestForm({ subject: '', message: '', requestType: 'Tool Request' });
+            setRequestForm({ subject: '', message: '' });
             fetchData();
         } catch (error) {
             console.error('Error submitting request:', error);
