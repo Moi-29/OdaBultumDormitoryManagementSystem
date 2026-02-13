@@ -54,34 +54,10 @@ const NewsSection = () => {
         <>
             <section style={{
                 padding: '4rem 2rem',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'white',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
-                {/* Animated Background Elements */}
-                <div style={{
-                    position: 'absolute',
-                    top: '-50%',
-                    right: '-10%',
-                    width: '500px',
-                    height: '500px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    borderRadius: '50%',
-                    filter: 'blur(60px)',
-                    animation: 'float 20s ease-in-out infinite'
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    bottom: '-30%',
-                    left: '-5%',
-                    width: '400px',
-                    height: '400px',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '50%',
-                    filter: 'blur(50px)',
-                    animation: 'float 15s ease-in-out infinite reverse'
-                }} />
-
                 <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
                     {/* Section Header */}
                     <div style={{ 
@@ -96,13 +72,12 @@ const NewsSection = () => {
                             <div style={{
                                 width: '60px',
                                 height: '60px',
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                backdropFilter: 'blur(10px)',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 borderRadius: '16px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                                boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
                             }}>
                                 <Newspaper size={32} color="white" strokeWidth={2} />
                             </div>
@@ -110,16 +85,15 @@ const NewsSection = () => {
                                 <h2 style={{
                                     fontSize: '2.5rem',
                                     fontWeight: 900,
-                                    color: 'white',
+                                    color: '#0f172a',
                                     margin: 0,
-                                    letterSpacing: '-1px',
-                                    textShadow: '0 2px 20px rgba(0, 0, 0, 0.2)'
+                                    letterSpacing: '-1px'
                                 }}>
                                     News
                                 </h2>
                                 <p style={{
                                     fontSize: '1rem',
-                                    color: 'rgba(255, 255, 255, 0.9)',
+                                    color: '#64748b',
                                     margin: '0.25rem 0 0 0'
                                 }}>
                                     Stay updated with latest announcements
@@ -132,27 +106,26 @@ const NewsSection = () => {
                                 onClick={handleViewAll}
                                 style={{
                                     padding: '0.875rem 2rem',
-                                    background: 'rgba(255, 255, 255, 0.95)',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     border: 'none',
                                     borderRadius: '12px',
-                                    color: '#667eea',
+                                    color: 'white',
                                     fontWeight: 700,
                                     fontSize: '1rem',
                                     cursor: 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.5rem',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    backdropFilter: 'blur(10px)'
+                                    boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.2)';
+                                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(102, 126, 234, 0.4)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.15)';
+                                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(102, 126, 234, 0.3)';
                                 }}
                             >
                                 View All
@@ -317,11 +290,6 @@ const NewsSection = () => {
                 </div>
 
                 <style>{`
-                    @keyframes float {
-                        0%, 100% { transform: translateY(0) rotate(0deg); }
-                        50% { transform: translateY(-20px) rotate(5deg); }
-                    }
-
                     @keyframes slideUp {
                         from {
                             opacity: 0;
