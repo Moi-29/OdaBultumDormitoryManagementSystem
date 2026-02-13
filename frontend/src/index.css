@@ -389,3 +389,72 @@ table tbody tr:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ============================================
+   Google Translate Widget Styling
+   ============================================ */
+
+/* Hide Google branding and logo */
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget span {
+  display: none !important;
+}
+
+/* Hide the annoying top banner */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+/* Prevent page jump when translating */
+body {
+  top: 0px !important;
+}
+
+/* Hide the gadget text */
+.goog-te-gadget {
+  font-size: 0px;
+}
+
+/* Style the dropdown selector */
+.goog-te-combo {
+  border-radius: 8px;
+  padding: 6px 12px;
+  background-color: #1f2937;
+  color: white;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.goog-te-combo:hover {
+  background-color: #374151;
+}
+
+.goog-te-combo:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Hide the iframe that causes layout issues */
+.skiptranslate iframe {
+  display: none !important;
+}
+
+/* Additional styling for better integration */
+#google_translate_element {
+  display: inline-block;
+}
+
+/* Dark mode support for translate widget */
+.dark .goog-te-combo {
+  background-color: #374151;
+  color: #f3f4f6;
+}
+
+.dark .goog-te-combo:hover {
+  background-color: #4b5563;
+}

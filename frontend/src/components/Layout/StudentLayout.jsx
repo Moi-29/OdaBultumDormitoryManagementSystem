@@ -181,6 +181,9 @@ const StudentLayout = () => {
                         {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
 
+                    {/* Google Translate Widget */}
+                    <div id="google_translate_element" style={{ flexShrink: 0 }}></div>
+
                     {/* Language Selector - Always visible on both mobile and desktop */}
                     <div style={{ position: 'relative', flexShrink: 0 }}>
                         <button
