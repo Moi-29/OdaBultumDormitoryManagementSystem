@@ -13,6 +13,7 @@ import Dorms from './pages/Admin/Dorms';
 import Reports from './pages/Admin/Reports';
 import Applications from './pages/Admin/Applications';
 import Requests from './pages/Admin/Requests';
+import Announcements from './pages/Admin/Announcements';
 import Settings from './pages/Admin/Settings';
 import AdminManagement from './pages/Admin/AdminManagement';
 import UserManagement from './pages/Admin/UserManagement';
@@ -123,6 +124,11 @@ function App() {
             <Route path="requests" element={
               <ProtectedRoute requiredPermission="dashboard.view">
                 <Requests />
+              </ProtectedRoute>
+            } />
+            <Route path="announcements" element={
+              <ProtectedRoute requiredPermission="dashboard.view">
+                <Announcements />
               </ProtectedRoute>
             } />
             <Route path="settings" element={
