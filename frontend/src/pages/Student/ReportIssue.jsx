@@ -3,9 +3,11 @@ import { AlertCircle, Send, CheckCircle, X } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const ReportIssue = () => {
     const { user } = useAuth();
+    const { isDarkMode } = useTheme();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [formData, setFormData] = useState({
         fullName: '',
@@ -105,7 +107,9 @@ const ReportIssue = () => {
             minHeight: isMobile ? 'calc(100vh - 64px)' : 'calc(100vh - 81px)',
             display: 'flex',
             flexDirection: 'column',
-            background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+            background: isDarkMode 
+                ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
             overflow: 'auto'
         }}>
             {/* Notification */}
@@ -164,9 +168,11 @@ const ReportIssue = () => {
                 {/* Report Form */}
                 <div style={{ width: '100%' }}>
                     <div style={{
-                        backgroundColor: 'white',
+                        backgroundColor: isDarkMode ? '#1e293b' : 'white',
                         borderRadius: isMobile ? '20px' : '24px',
-                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.12)',
+                        boxShadow: isDarkMode 
+                            ? '0 20px 60px rgba(0, 0, 0, 0.4)'
+                            : '0 20px 60px rgba(0, 0, 0, 0.12)',
                         padding: isMobile ? '2rem 1.5rem' : '3rem'
                     }}>
                         <div style={{
@@ -185,7 +191,7 @@ const ReportIssue = () => {
                         <h2 style={{
                             fontSize: isMobile ? '1.5rem' : '2rem',
                             fontWeight: 800,
-                            color: '#1f2937',
+                            color: isDarkMode ? '#f1f5f9' : '#1f2937',
                             marginBottom: '0.5rem',
                             textAlign: 'center'
                         }}>
@@ -193,7 +199,7 @@ const ReportIssue = () => {
                         </h2>
                         <p style={{
                             fontSize: isMobile ? '0.9rem' : '1rem',
-                            color: '#6b7280',
+                            color: isDarkMode ? '#94a3b8' : '#6b7280',
                             lineHeight: 1.6,
                             textAlign: 'center',
                             marginBottom: '2rem'
@@ -202,13 +208,13 @@ const ReportIssue = () => {
                         </p>
                         <form onSubmit={handleSubmit}>
                                     {/* Student Information Section */}
-                                    <div style={{ marginBottom: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '12px' }}>
-                                        <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', fontWeight: 700, color: '#1e293b' }}>
+                                    <div style={{ marginBottom: '2rem', padding: '1.5rem', background: isDarkMode ? '#334155' : '#f8fafc', borderRadius: '12px' }}>
+                                        <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', fontWeight: 700, color: isDarkMode ? '#f1f5f9' : '#1e293b' }}>
                                             Student Information
                                         </h3>
                                         
                                         <div style={{ marginBottom: '1rem' }}>
-                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
+                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
                                                 Full Name <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <input
@@ -221,19 +227,21 @@ const ReportIssue = () => {
                                                 style={{
                                                     width: '100%',
                                                     padding: '0.75rem 1rem',
-                                                    border: '2px solid #e5e7eb',
+                                                    border: `2px solid ${isDarkMode ? '#475569' : '#e5e7eb'}`,
                                                     borderRadius: '10px',
                                                     fontSize: '0.95rem',
                                                     outline: 'none',
-                                                    transition: 'all 0.3s'
+                                                    transition: 'all 0.3s',
+                                                    background: isDarkMode ? '#1e293b' : 'white',
+                                                    color: isDarkMode ? '#f1f5f9' : '#1f2937'
                                                 }}
                                                 onFocus={(e) => e.target.style.borderColor = '#ef4444'}
-                                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                                onBlur={(e) => e.target.style.borderColor = isDarkMode ? '#475569' : '#e5e7eb'}
                                             />
                                         </div>
 
                                         <div style={{ marginBottom: '1rem' }}>
-                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
+                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
                                                 Student ID <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <input

@@ -3,8 +3,10 @@ import { Newspaper, ArrowRight, X, Calendar, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from '../../config/api';
+import { useTheme } from '../../context/ThemeContext';
 
 const NewsSection = () => {
+    const { isDarkMode } = useTheme();
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
@@ -54,13 +56,15 @@ const NewsSection = () => {
         <>
             <section style={{
                 padding: '4rem 2rem',
-                background: 'white',
+                background: isDarkMode ? '#1e293b' : 'white',
                 position: 'relative',
                 overflow: 'hidden',
                 borderTop: '4px solid transparent',
                 borderImage: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
                 borderImageSlice: 1,
-                boxShadow: '0 -8px 40px rgba(102, 126, 234, 0.15), 0 8px 40px rgba(102, 126, 234, 0.15), inset 0 1px 0 rgba(102, 126, 234, 0.1)'
+                boxShadow: isDarkMode 
+                    ? '0 -8px 40px rgba(102, 126, 234, 0.2), 0 8px 40px rgba(102, 126, 234, 0.2), inset 0 1px 0 rgba(102, 126, 234, 0.15)'
+                    : '0 -8px 40px rgba(102, 126, 234, 0.15), 0 8px 40px rgba(102, 126, 234, 0.15), inset 0 1px 0 rgba(102, 126, 234, 0.1)'
             }}>
                 {/* Decorative Corner Elements */}
                 <div style={{
@@ -69,7 +73,9 @@ const NewsSection = () => {
                     left: 0,
                     width: '100px',
                     height: '100px',
-                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%)',
+                    background: isDarkMode 
+                        ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, transparent 100%)'
+                        : 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%)',
                     borderRadius: '0 0 100% 0'
                 }} />
                 <div style={{
@@ -78,7 +84,9 @@ const NewsSection = () => {
                     right: 0,
                     width: '100px',
                     height: '100px',
-                    background: 'linear-gradient(225deg, rgba(118, 75, 162, 0.1) 0%, transparent 100%)',
+                    background: isDarkMode 
+                        ? 'linear-gradient(225deg, rgba(118, 75, 162, 0.15) 0%, transparent 100%)'
+                        : 'linear-gradient(225deg, rgba(118, 75, 162, 0.1) 0%, transparent 100%)',
                     borderRadius: '0 0 0 100%'
                 }} />
                 <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
@@ -108,7 +116,7 @@ const NewsSection = () => {
                                 <h2 style={{
                                     fontSize: '2.5rem',
                                     fontWeight: 900,
-                                    color: '#0f172a',
+                                    color: isDarkMode ? '#f1f5f9' : '#0f172a',
                                     margin: 0,
                                     letterSpacing: '-1px'
                                 }}>
@@ -116,7 +124,7 @@ const NewsSection = () => {
                                 </h2>
                                 <p style={{
                                     fontSize: '1rem',
-                                    color: '#64748b',
+                                    color: isDarkMode ? '#94a3b8' : '#64748b',
                                     margin: '0.25rem 0 0 0'
                                 }}>
                                     Stay updated with latest announcements
@@ -169,7 +177,7 @@ const NewsSection = () => {
                             <div
                                 key={announcement._id}
                                 style={{
-                                    background: 'white',
+                                    background: isDarkMode ? '#334155' : 'white',
                                     borderRadius: '20px',
                                     overflow: 'hidden',
                                     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
@@ -249,7 +257,7 @@ const NewsSection = () => {
                                     <h3 style={{
                                         fontSize: '1.5rem',
                                         fontWeight: 900,
-                                        color: '#0f172a',
+                                        color: isDarkMode ? '#f1f5f9' : '#0f172a',
                                         margin: '0 0 0.875rem 0',
                                         lineHeight: '1.2',
                                         letterSpacing: '-0.5px',
@@ -264,7 +272,7 @@ const NewsSection = () => {
                                     {/* Content Preview */}
                                     <p style={{
                                         fontSize: '0.95rem',
-                                        color: '#64748b',
+                                        color: isDarkMode ? '#cbd5e1' : '#64748b',
                                         lineHeight: '1.7',
                                         margin: '0 0 1.5rem 0',
                                         display: '-webkit-box',
@@ -353,7 +361,7 @@ const NewsSection = () => {
                     animation: 'fadeIn 0.3s ease-out'
                 }}>
                     <div style={{
-                        background: 'white',
+                        background: isDarkMode ? '#1e293b' : 'white',
                         borderRadius: '24px',
                         maxWidth: '800px',
                         width: '100%',
@@ -443,7 +451,7 @@ const NewsSection = () => {
                             <h2 style={{
                                 fontSize: '2.5rem',
                                 fontWeight: 900,
-                                color: '#1e293b',
+                                color: isDarkMode ? '#f1f5f9' : '#1e293b',
                                 margin: '0 0 1.5rem 0',
                                 lineHeight: '1.2',
                                 letterSpacing: '-0.5px'
@@ -454,7 +462,7 @@ const NewsSection = () => {
                             {/* Full Content */}
                             <div style={{
                                 fontSize: '1.125rem',
-                                color: '#475569',
+                                color: isDarkMode ? '#cbd5e1' : '#475569',
                                 lineHeight: '1.8',
                                 whiteSpace: 'pre-wrap'
                             }}>
