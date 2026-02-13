@@ -265,7 +265,8 @@ const Requests = () => {
             };
 
             console.log('Sending order with data:', requestData);
-            await axios.post(`${API_URL}/api/requests`, requestData, config);
+            const response = await axios.post(`${API_URL}/api/requests`, requestData, config);
+            console.log('Order sent successfully, response:', response.data);
             
             showNotification(`Order sent successfully to ${selectedUser.username}!`, 'success');
             setShowNewOrderForm(false);
@@ -274,6 +275,7 @@ const Requests = () => {
             
             // Refresh requests
             await fetchRequests();
+            console.log('Requests refreshed');
         } catch (error) {
             console.error('Error sending order:', error);
             console.error('Error response:', error.response?.data);
