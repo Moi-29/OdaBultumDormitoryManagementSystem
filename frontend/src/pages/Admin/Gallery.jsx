@@ -1,4 +1,4 @@
-addimport { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Image as ImageIcon, Plus, Trash2, X, Upload, Link as LinkIcon, CheckSquare, Edit } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
