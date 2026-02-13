@@ -805,25 +805,6 @@ const ProctorDashboard = () => {
 
                             <div>
                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                    Priority
-                                </label>
-                                <select
-                                    value={reportForm.priority}
-                                    onChange={(e) => setReportForm({ ...reportForm, priority: e.target.value })}
-                                    style={{
-                                        width: '100%', padding: '0.75rem', border: '2px solid #e5e7eb',
-                                        borderRadius: '8px', fontSize: '1rem', cursor: 'pointer'
-                                    }}
-                                >
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                    <option value="urgent">Urgent</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
                                     Description <span style={{ color: '#ef4444' }}>*</span>
                                 </label>
                                 <textarea
