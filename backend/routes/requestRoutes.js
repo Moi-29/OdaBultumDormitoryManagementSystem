@@ -7,7 +7,8 @@ const {
     deleteRequest,
     bulkDeleteRequests
 } = require('../controllers/requestController');
-const { protect } = require('../middleware/adminAuth');
+const { protect: adminProtect } = require('../middleware/adminAuth');
+const { protect: multiProtect } = require('../middleware/multiAuthMiddleware');
 
 // Public routes - students can submit and view their own requests
 router.post('/', createRequest);
@@ -28,10 +29,10 @@ router.get('/student/:studentId', async (req, res) => {
     }
 });
 
-// Admin routes - require authentication
-router.get('/', protect, getRequests);
-router.post('/bulk-delete', protect, bulkDeleteRequests);
-router.patch('/:id/status', protect, updateRequestStatus);
-router.delete('/:id', protect, deleteRequest);
+// Protected routes - accessible by admin, proctor, and maintainer
+router.get('/', multiProtect, getRequests);
+router.post('/bulk-delete', adminProtect, bulkDeleteRequests);
+router.patch('/:id/status', multiProtect, updateRequestStatus);
+router.delete('/:id', adminProtect, deleteRequest);
 
 module.exports = router;
