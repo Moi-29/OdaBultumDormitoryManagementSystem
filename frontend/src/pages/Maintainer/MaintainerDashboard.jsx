@@ -321,7 +321,7 @@ const MaintainerDashboard = () => {
                 <nav style={{ flex: 1, padding: '0 1rem' }}>
                     {[
                         { id: 'dashboard', label: 'Dashboard', icon: Home },
-                        { id: 'requests', label: 'My Requests', icon: FileText, badge: requests.filter(r => r.status === 'pending').length },
+                        { id: 'requests', label: 'My Requests', icon: FileText },
                         { id: 'workOrders', label: 'Work Orders', icon: MessageSquare, badge: workOrders.filter(w => !w.isRead).length }
                     ].map(item => {
                         const Icon = item.icon;

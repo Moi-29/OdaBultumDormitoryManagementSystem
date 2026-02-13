@@ -297,7 +297,7 @@ const ProctorDashboard = () => {
                 <nav style={{ flex: 1, padding: '0 1rem' }}>
                     {[
                         { id: 'dashboard', label: 'Dashboard', icon: Home },
-                        { id: 'reports', label: 'My Reports', icon: FileText, badge: reports.filter(r => r.status === 'pending').length },
+                        { id: 'reports', label: 'My Reports', icon: FileText },
                         { id: 'messages', label: 'Messages', icon: MessageSquare, badge: messages.filter(m => !m.isRead).length }
                     ].map(item => {
                         const Icon = item.icon;
