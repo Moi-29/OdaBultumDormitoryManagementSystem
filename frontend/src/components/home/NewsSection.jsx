@@ -137,15 +137,17 @@ const NewsSection = () => {
                     {/* Announcement Cards */}
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: displayedAnnouncements.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(450px, 1fr))',
-                        gap: '2rem'
+                        gridTemplateColumns: displayedAnnouncements.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))',
+                        gap: '1.5rem',
+                        maxWidth: '900px',
+                        margin: '0 auto'
                     }}>
                         {displayedAnnouncements.map((announcement, index) => (
                             <div
                                 key={announcement._id}
                                 style={{
                                     background: 'white',
-                                    borderRadius: '24px',
+                                    borderRadius: '20px',
                                     overflow: 'hidden',
                                     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
                                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -166,7 +168,7 @@ const NewsSection = () => {
                                     <div style={{
                                         position: 'relative',
                                         width: '100%',
-                                        height: '280px',
+                                        height: '200px',
                                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                         overflow: 'hidden'
                                     }}>
@@ -187,28 +189,28 @@ const NewsSection = () => {
                                             bottom: 0,
                                             left: 0,
                                             right: 0,
-                                            height: '120px',
-                                            background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)'
+                                            height: '80px',
+                                            background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)'
                                         }} />
                                     </div>
                                 )}
 
                                 {/* Content Section - BELOW IMAGE */}
-                                <div style={{ padding: '2rem' }}>
+                                <div style={{ padding: '1.5rem' }}>
                                     {/* Date Badge */}
                                     <div style={{
                                         display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: '0.5rem',
-                                        marginBottom: '1.25rem',
-                                        padding: '0.625rem 1.25rem',
+                                        marginBottom: '1rem',
+                                        padding: '0.5rem 1rem',
                                         background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
-                                        borderRadius: '12px',
+                                        borderRadius: '10px',
                                         border: '1px solid #667eea30'
                                     }}>
-                                        <Calendar size={18} color="#667eea" strokeWidth={2.5} />
+                                        <Calendar size={16} color="#667eea" strokeWidth={2.5} />
                                         <span style={{
-                                            fontSize: '0.9rem',
+                                            fontSize: '0.85rem',
                                             color: '#667eea',
                                             fontWeight: 700
                                         }}>
@@ -222,10 +224,10 @@ const NewsSection = () => {
 
                                     {/* Title */}
                                     <h3 style={{
-                                        fontSize: '1.75rem',
+                                        fontSize: '1.5rem',
                                         fontWeight: 900,
                                         color: '#0f172a',
-                                        margin: '0 0 1rem 0',
+                                        margin: '0 0 0.875rem 0',
                                         lineHeight: '1.2',
                                         letterSpacing: '-0.5px',
                                         display: '-webkit-box',
@@ -238,10 +240,10 @@ const NewsSection = () => {
 
                                     {/* Content Preview */}
                                     <p style={{
-                                        fontSize: '1.05rem',
+                                        fontSize: '0.95rem',
                                         color: '#64748b',
-                                        lineHeight: '1.8',
-                                        margin: '0 0 1.75rem 0',
+                                        lineHeight: '1.7',
+                                        margin: '0 0 1.5rem 0',
                                         display: '-webkit-box',
                                         WebkitLineClamp: 3,
                                         WebkitBoxOrient: 'vertical',
@@ -254,17 +256,17 @@ const NewsSection = () => {
                                     <button
                                         onClick={() => handleViewDetails(announcement)}
                                         style={{
-                                            padding: '1rem 2.5rem',
+                                            padding: '0.875rem 2rem',
                                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                             border: 'none',
-                                            borderRadius: '14px',
+                                            borderRadius: '12px',
                                             color: 'white',
                                             fontWeight: 800,
-                                            fontSize: '1rem',
+                                            fontSize: '0.95rem',
                                             cursor: 'pointer',
                                             display: 'inline-flex',
                                             alignItems: 'center',
-                                            gap: '0.75rem',
+                                            gap: '0.625rem',
                                             transition: 'all 0.3s ease',
                                             boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
                                             width: '100%',
@@ -280,7 +282,7 @@ const NewsSection = () => {
                                             e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.4)';
                                         }}
                                     >
-                                        <Eye size={20} strokeWidth={2.5} />
+                                        <Eye size={18} strokeWidth={2.5} />
                                         View Details
                                     </button>
                                 </div>
