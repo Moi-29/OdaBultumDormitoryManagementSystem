@@ -168,6 +168,9 @@ const Requests = () => {
                         setSelectedRequest(null);
                     }
                     
+                    // Notify AdminLayout to update badge count
+                    window.dispatchEvent(new CustomEvent('requestMarkedAsRead'));
+                    
                     showNotification(response.data.message || `Successfully deleted ${selectedItems.length} ${selectedItems.length === 1 ? 'request' : 'requests'}`, 'success');
                 } catch (error) {
                     console.error('Error deleting requests:', error);
