@@ -34,7 +34,7 @@ const AdminLayout = () => {
                 if (response.data) {
                     const requests = Array.isArray(response.data) ? response.data : [];
                     // Count unread requests
-                    const unreadCount = requests.filter(req => !req.isRead).length;
+                    const unreadCount = requests.filter(req => req.isRead === false).length;
                     setRequestCount(unreadCount);
                 } else {
                     setRequestCount(0);

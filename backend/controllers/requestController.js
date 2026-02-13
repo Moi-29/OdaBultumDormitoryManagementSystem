@@ -7,7 +7,17 @@ const Message = require('../models/Message');
 const getRequests = async (req, res) => {
     try {
         const requests = await Request.find().sort({ createdAt: -1 });
-        res.json(requests);
+        
+        // Ensure isRead field exists for all requests (for backward compatibility)
+        const requestsWithIsRead = requests.map(req => {
+            const reqObj = req.toObject();
+            if (reqObj.isRead === undefined || reqObj.isRead === null) {
+                reqObj.isRead = false;
+            }
+            return reqObj;
+        });
+        
+        res.json(requestsWithIsRead);
     } catch (error) {
         console.error('Error fetching requests:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
