@@ -842,264 +842,12 @@ export const translations = {
   },
 
   so: {
-    // Navigation
     home: "Guriga",
     dormitoryView: "Muuqaalka Qolka Hurdada",
-    applicationForm: "Foomka Codsiga",
-    reportIssue: "Soo Sheeg Dhibaatada",
-    studentService: "Adeegga Ardayda",
-    
-    // University
-    universityName: "JAAMACADDA ODA BULTUM",
-    universityMotto: "Waxbarasho Horumarinta Bulshada",
-    
-    // Hero Section
-    welcomeMessage: "Ku Soo Dhawoow Adeegga Ardayda OBU",
-    exploreCampus: "Baadh Xerada",
-    
-    // Dormitory View
-    findDormPlacement: "Hel Goobta Qolkaaga Hurdada",
-    enterUniversityId: "Geli aqoonsigaaga jaamacadda si aad u aragto gurigaaga la qoondeeyay",
-    universityId: "Aqoonsiga Jaamacadda",
-    viewPlacement: "EEGA GOOBTA",
-    searching: "WAA LA RAADIYAA...",
-    dormitoryPlacementDetails: "Faahfaahinta Goobta Qolka Hurdada",
-    yourRoom: "Qolkaaga",
-    fullName: "Magaca Buuxa",
-    sex: "Jinsiga",
-    department: "Waaxda",
-    building: "Dhismaha",
-    roomNumber: "Lambarka Qolka",
-    campus: "Xerada",
-    capacity: "Awooda",
-    students: "Ardayda",
-    print: "Daabac",
-    savePdf: "Kaydi PDF",
-    newSearch: "Raadinta Cusub",
-    
-    // Application Form
-    dormitoryApplicationForm: "Foomka Codsiga Qolka Hurdada",
-    applicationForm: "Foomka Codsiga",
-    completeAllSections: "Buuxi dhammaan qaybaha si sax ah",
-    personal: "Shakhsi",
-    educational: "Waxbarasho",
-    school: "Dugsiga",
-    family: "Qoys",
-    emergency: "Degdeg",
-    agreement: "Heshiis",
-    help: "CAAWIMO",
-    basicInformation: "MACLUUMAADKA AASAASIGA AH",
-    locationAddress: "GOOBTA IYO CINWAANKA",
-    others: "KUWA KALE",
-    campusRelatedInformation: "MACLUUMAADKA LA XIRIIRA XERADA",
-    primarySchool: "DUGSIGA HOOSE",
-    secondarySchool: "DUGSIGA SARE",
-    emergencyContactInformation: "MACLUUMAADKA XIRIIRKA DEGDEGGA AH",
-    saveAndContinue: "Kaydi oo Sii Wad",
-    saving: "Waa La Kaydiyaa...",
-    submitApplication: "Soo Gudbi Codsiga",
-    submittingApplication: "Waa La Soo Gudbinayaa Codsiga...",
-    
-    // Personal Tab Fields
-    name: "Magaca",
-    fatherName: "Magaca Aabbaha",
-    gFatherName: "Magaca Awowga",
-    gender: "Jinsiga",
-    dob: "Taariikhda Dhalashada (GC)",
-    placeOfBirth: "Goobta Dhalashada (EN)",
-    motherTongue: "Afka Hooyo",
-    nationalId: "Aqoonsiga Qaranka",
-    healthStatus: "Xaalada Caafimaadka",
-    maritalStatus: "Xaalada Guurka",
-    citizenship: "Muwaadiniinta",
-    country: "Wadanka",
-    woreda: "Degmada",
-    cityEn: "Magaalada (EN/AM)",
-    kebeleEn: "Xaafadda (EN/AM)",
-    phone: "Telefoonka",
-    email: "Iimeelka",
-    poBox: "Sanduuqa Boostada",
-    economicalStatus: "Xaalada Dhaqaalaha",
-    areaType: "Nooca Aagga",
-    tinNumber: "Lambarka TIN",
-    accountNumber: "Lambarka Xisaabta",
-    
-    // Educational Tab Fields
-    stream: "Qayb",
-    sponsorCategory: "Qaybta Maalgelinta",
-    nationalExamYear: "Sanadka Imtixaanka Qaranka (EC)",
-    entryYear: "Sanadka Gelitaanka",
-    sponsoredBy: "Waxaa Maalgeliyay",
-    examinationId: "Aqoonsiga Imtixaanka",
-    admissionDate: "Taariikhda Gelitaanka",
-    checkedInDate: "Taariikhda Diiwaangelinta",
-    nationalExamResult: "Natiijada Imtixaanka Qaranka",
-    
-    // School Tab Fields
-    schoolName: "Magaca Dugsiga",
-    attendedYear: "Sanadka La Dhigtay (Laga Bilaabo-Ilaa EC)",
-    schoolType: "Nooca Dugsiga",
-    
-    // Family Tab Fields
-    nationality: "Jinsiyadda",
-    region: "Gobolka",
-    zone: "Gobolka Yar",
-    kebele: "Xaafadda",
-    motherName: "Magaca Hooyo",
-    familyPhone: "Lambarka Telefoonka Qoyska",
-    
-    // Emergency Tab Fields
-    relationship: "Xiriirka",
-    job: "Shaqada",
-    homeTown: "Magaalada Dhalashada",
-    
-    // Options
-    male: "Lab",
-    female: "Dheddig",
-    single: "Aan Guursan",
-    married: "Guursaday",
-    divorced: "Furay",
-    widowed: "Carmal",
-    normal: "Caadi",
-    chronic: "Joogto ah",
-    disabled: "Naafada",
-    ethiopian: "Itoobiyaan",
-    ethiopia: "Itoobiya",
-    selectWoreda: "~Dooro Degmada~",
-    unspecified: "Aan La Cayimin",
-    low: "Hoose",
-    medium: "Dhexdhexaad",
-    high: "Sare",
-    selectAreaType: "~ Dooro Nooca Aagga ~",
-    urban: "Magaalo",
-    rural: "Miyiga",
-    notApplicable: "Lama Isticmaalo",
-    naturalScience: "Sayniska Dabiiciga ah",
-    socialScience: "Sayniska Bulshada",
-    government: "Dawladda",
-    private: "Gaarka ah",
-    self: "Nafta",
-    public: "Dadweynaha",
-    
-    // Agreement Tab
-    importantNotice: "⚠️ Ogeysiis Muhiim ah",
-    cannotEditWarning: "Markaad codsigan soo gudbiso, ma awoodi doontid inaad mar labaad wax ka beddesho ilaa maamulaha uu fasax ku siiyo.",
-    reviewCarefully: "Fadlan si taxaddar leh u eeg dhammaan macluumaadka aad gelisay taababbada hore intaadan soo gudbinin. Hubi in dhammaan faahfaahinta ay sax yihiin oo dhammaystiran.",
-    applicationAgreement: "Heshiiska Codsiga",
-    agreementText: "Waxaan halkan ku caddaynayaa in dhammaan macluumaadka lagu bixiyay foomkan codsiga qolka hurdada uu yahay mid run ah, sax ah, oo dhammaystiran sida ugu fiican aqoontayda.",
-    agreeToTerms: "✋ Waan akhriyay waxaanan ku heshiiyay shuruudaha iyo xaaladaha kor ku xusan",
-    
-    // Help Tab
-    needHelp: "Ma u Baahan Tahay Caawimo?",
-    helpDescription: "Haddii aad qabto su'aalo ama aad u baahan tahay caawimo codsigaaga qolka hurdada, fadlan la xiriir Agaasimaha Adeegga Ardayda.",
-    phoneSupport: "📞 Taageerada Telefoonka",
-    emailSupport: "✉️ Taageerada Iimeelka",
-    officeHours: "🏢 Saacadaha Xafiiska",
-    mondayToFriday: "Isniin - Jimce: 8:00 Subax - 5:00 Galabnimo",
-    fillFullInformation: "Fadlan buuxi macluumaadkaaga buuxa",
-    idNo: "Lambarka Aqoonsiga",
-    mealCardNo: "Lambarka Kaarka Cuntada",
-    college: "Kulliyadda",
-    academicYear: "Sanadka Waxbarashada",
-    dormNo: "Lambarka Qolka Hurdada",
-    yourPhoneNumber: "Lambarka Telefoonkaaga",
-    religious: "Diinta",
-    yourNation: "Qabiilkaaga",
-    
-    // Educational Tab
-    campusRelatedInfo: "Macluumaadka La Xiriira Xerada",
-    selectStream: "Dooro qayb",
-    engineering: "Injineernimada",
-    healthScience: "Sayniska Caafimaadka",
-    selectCategory: "Dooro qaybta",
-    selfSponsored: "Nafta oo Maalgelisa",
-    
-    // School Tab
-    primarySchool: "Dugsiga Hoose",
-    city: "Magaalada",
-    selectType: "Dooro nooca",
-    from: "Laga Bilaabo",
-    to: "Ilaa",
-    
-    // Family Tab
-    birthplaceFamily: "Fadlan buuxi goobta dhalashadaada iyo macluumaadka qoyskaaga",
-    
-    // Placeholders
-    enterFullName: "Geli magacaaga buuxa",
-    enterIdNumber: "Geli lambarka aqoonsigaaga",
-    select: "Dooro",
-    enterMealCard: "Geli lambarka kaarka cuntada",
-    enterCollege: "Geli kulliyadaada",
-    enterDepartment: "Geli waaxdaada",
-    enterYear: "Tusaale ahaan, Sanadka 3aad",
-    enterDormNo: "Geli lambarka qolka hurdada",
-    enterPhone: "+251911234567",
-    enterReligion: "Geli diintaada",
-    enterNationality: "Geli jinsiyaddaada",
-    enterRegion: "Geli gobolka",
-    enterCity: "Geli magaalada",
-    enterZone: "Geli gobolka yar",
-    enterWoreda: "Geli degmada",
-    enterSchoolName: "Tusaale ahaan, Dugsiga hoose Abdi Gudina",
-    enterYourRegion: "Geli gobolkaaga",
-    enterYourZone: "Geli gobolkaaga yar",
-    enterYourWoreda: "Geli degmadaada",
-    enterKebele: "Geli xaafaddaada",
-    enterMotherName: "Geli magaca hooyadaa",
-    enterFamilyPhone: "Geli lambarka telefoonka qoyska",
-    
-    // Validation Messages
-    pleaseFillIn: "Fadlan buuxi",
-    applicationSubmittedSuccess: "Codsiga si guul leh ayaa loo soo gudbiyay!",
-    applicationUpdatedSuccess: "Codsiga si guul leh ayaa loo cusboonaysiiyay!",
-    failedToSubmit: "Soo gudbinta codsiga way fashilantay. Fadlan mar kale isku day.",
-    duplicateApplication: "Waxaad horay u soo gudbisay codsi aqoonsigan ardayga.",
-    
-    // Common
-    reportFacilityIssue: "Soo Sheeg Dhibaatada Qalabka",
-    letUsKnowProblems: "Noo sheeg wixii dhibaato ah oo qolkaaga hurdada ku jira",
-    block: "Xaafadda",
-    description: "Sharaxaad",
-    describeIssue: "Sharax dhibaatada...",
-    clear: "Nadiifi",
-    submitReport: "Soo Gudbi Warbixinta",
-    submitting: "Waa La Soo Gudbinayaa...",
-    
-    // Guidelines Section
-    disciplineGuidelines: "Tilmaamaha Edebta & Xerada",
-    guidelinesDescription: "Bulsho ixtiraam leh waxay ku bilaabataa qiyam la wadaago. Dib u eeg tilmaamahayaga guud si aad u hubiso khibrad xarun nabdoon, horumarineed, oo is-waafaqsan qof kasta.",
-    allGuidelinesEnforced: "Dhammaan tilmaamaha si firfircoon ayaa loo fuliyaa",
-    
-    // Footer
-    contact: "Xiriir",
-    motto: "Hal-ku-dheg",
-    copyright: "© 2026 Jaamacadda Oda Bultum. Dhammaan xuquuqaha way dhawran yihiin.",
-    universityDescription: "Xoojinta jiilka soo socda aqoonta, daacadnimada, iyo adeegga bulshada.",
-    location: "Chiro, Oromia, Itoobiya",
-    
-    // Common
     success: "Guul!",
     error: "Khalad",
     loading: "Waa La Rariyaa...",
     mainCampus: "Xerada Weyn"
-  },
-
-  ti: {
-    home: "ገጽ",
-    dormitoryView: "ናይ መደቀሲ ቤት ትርኢት",
-    success: "ዓወት!",
-    error: "ጌጋ",
-    loading: "ይጽዕን ኣሎ...",
-    mainCampus: "ቀንዲ ካምፓስ"
-  },
-
-  ar: {
-    home: "الرئيسية",
-    dormitoryView: "عرض السكن",
-    success: "نجح!",
-    error: "خطأ",
-    loading: "جاري التحميل...",
-    mainCampus: "الحرم الرئيسي"
   }
 };
 
@@ -1490,5 +1238,19 @@ export const homeTranslations = {
     safeSpacesDesc: "Naannoolee ramadaman bakka barattoonni walitti qabamuu, muuxannoo qoodachuu fi naannoo simachuu fi murtii-bilisaa ta'e keessatti deeggarsa argachuu danda'an.",
     diversityTraining: "Leenjii Garaagarummaa",
     diversityTrainingDesc: "Warkshooppii dirqama fi barnoota itti fufiinsa qabu miseensota hawaasaa hundaaf dandeettii aadaa, loogii hin beekne fi hojii hammataa irratti.",
+  }
+,
+
+  so: {
+    heroSubtitle: "Jaamacadda Oda Bultum � Adeegga Ardayda",
+    heroTitle: "Ku Soo Dhawoow Adeegga Ardayda OBU",
+    guidelinesTitle: "Tilmaamaha Edebta & Xerada",
+    studentUnionTitle: "Ururka Ardayda",
+    cafeteriaTitle: "Jadwalka Makhaayadda",
+    cleanWaterTitle: "Biyo Nadiif ah 24/7",
+    healthCenterTitle: "Xarunta Caafimaadka",
+    galleryTitle: "Gaallari OBU",
+    galleryDesc: "Baadh quruxda iyo firfircoonida nolosha Jaamacadda Oda Bultum",
+    diversityTitle: "Midnimo Kala-duwanaanta Dhexdeeda"
   }
 };

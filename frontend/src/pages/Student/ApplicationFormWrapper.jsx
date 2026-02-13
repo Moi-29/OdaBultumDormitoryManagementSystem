@@ -289,7 +289,7 @@ const ApplicationFormWrapper = () => {
                 }}>
                     <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 700, fontSize: '1rem' }}>
-                            {notification.type === 'success' ? 'Success' : 'Error'}
+                            {notification.type === 'success' ? t('success') : t('error')}
                         </div>
                         <div style={{ fontSize: '0.9rem' }}>{notification.message}</div>
                     </div>
@@ -473,11 +473,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Religion
+                                            {t('religious')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Religion"
+                                            placeholder={t('enterReligion')}
                                             value={formData.personalInfo.religion}
                                             onChange={(e) => handleInputChange('personalInfo', 'religion', e.target.value)}
                                             style={{
