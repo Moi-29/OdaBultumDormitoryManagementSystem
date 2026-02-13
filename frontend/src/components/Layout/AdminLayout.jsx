@@ -371,27 +371,15 @@ const NavItem = ({ to, icon, label, active, onClick, badge }) => (
             }}
         >
             {icon}
-            <span style={{ fontWeight: 500, flex: 1 }}>
-                {label}
-                {badge !== null && badge !== undefined && badge > 0 && (
-                    <span style={{
-                        marginLeft: '0.5rem',
-                        color: '#ef4444',
-                        fontWeight: 700,
-                        fontSize: '0.9rem'
-                    }}>
-                        {badge > 99 ? '99+' : badge}
-                    </span>
-                )}
-            </span>
+            <span style={{ fontWeight: 500, flex: 1 }}>{label}</span>
             {badge !== null && badge !== undefined && badge > 0 && (
                 <span style={{
-                    minWidth: '20px',
-                    height: '20px',
-                    padding: '0 6px',
+                    minWidth: '24px',
+                    height: '24px',
+                    padding: '0 8px',
                     background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                     color: 'white',
-                    borderRadius: '10px',
+                    borderRadius: '12px',
                     fontSize: '0.75rem',
                     fontWeight: 700,
                     display: 'flex',
