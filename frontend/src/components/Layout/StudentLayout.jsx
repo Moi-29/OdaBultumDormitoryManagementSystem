@@ -49,31 +49,6 @@ const StudentLayout = () => {
         };
     }, [sidebarOpen, isDesktop]);
 
-    // Initialize with English on mount
-    useEffect(() => {
-        // Force page to be in English on mount
-        const htmlElement = document.documentElement;
-        htmlElement.setAttribute('lang', 'en');
-        
-        // Remove any Google Translate cookies/storage on mount if language is English
-        if (language === 'en' || !language) {
-            // Clear Google Translate cookies
-            document.cookie.split(";").forEach((c) => {
-                if (c.trim().startsWith('googtrans')) {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                }
-            });
-            
-            // Remove Google Translate classes from body
-            document.body.classList.remove('translated-ltr', 'translated-rtl');
-            
-            // Ensure language is set to English
-            if (language !== 'en') {
-                changeLanguage('en');
-            }
-        }
-    }, []);
-
     const navItems = [
         { path: '/student/home', label: t('home'), icon: Home },
         { path: '/student/dormitory', label: t('dormitoryView'), icon: Building2 },
@@ -88,36 +63,10 @@ const StudentLayout = () => {
         }
     };
 
-    // Function to trigger Google Translate
-    const triggerGoogleTranslate = (langCode) => {
-        // Wait for Google Translate to be ready
-        const checkGoogleTranslate = setInterval(() => {
-            const googleTranslateCombo = document.querySelector('.goog-te-combo');
-            if (googleTranslateCombo) {
-                clearInterval(checkGoogleTranslate);
-                googleTranslateCombo.value = langCode;
-                googleTranslateCombo.dispatchEvent(new Event('change'));
-            }
-        }, 100);
-        
-        // Clear interval after 5 seconds if not found
-        setTimeout(() => clearInterval(checkGoogleTranslate), 5000);
-    };
-
     // Handle language change
     const handleLanguageChange = (langCode) => {
         changeLanguage(langCode);
         setShowLanguageMenu(false);
-        
-        // Trigger Google Translate
-        if (langCode === 'en') {
-            // Reset to original English (no translation)
-            // Reload page to clear any Google Translate modifications
-            const currentPath = window.location.pathname + window.location.search;
-            window.location.href = currentPath.split('#')[0].split('?')[0];
-        } else {
-            triggerGoogleTranslate(langCode);
-        }
     };
 
     // Function to render language icon
@@ -197,9 +146,6 @@ const StudentLayout = () => {
             display: 'flex',
             transition: 'background-color 0.3s ease'
         }}>
-            {/* Hidden Google Translate Element */}
-            <div id="google_translate_element" style={{ display: 'none' }}></div>
-            
             {/* Responsive Top Navbar */}
             <nav style={{
                 position: 'fixed',

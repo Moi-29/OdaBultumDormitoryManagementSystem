@@ -34,6 +34,7 @@ const ApplicationFormWrapper = () => {
             nationalId: '',
             healthStatus: '',
             maritalStatus: '',
+            religion: '',
             // Location & Address
             citizenship: '',
             country: '',
@@ -459,6 +460,26 @@ const ApplicationFormWrapper = () => {
                                             placeholder="Wakjira"
                                             value={formData.personalInfo.gFatherName}
                                             onChange={(e) => handleInputChange('personalInfo', 'gFatherName', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.75rem',
+                                                backgroundColor: isDarkMode ? '#0f172a' : '#f3f4f6',
+                                                color: isDarkMode ? '#ffffff' : '#111827',
+                                                border: isDarkMode ? '2px solid #475569' : '2px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
+                                            Religion
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Religion"
+                                            value={formData.personalInfo.religion}
+                                            onChange={(e) => handleInputChange('personalInfo', 'religion', e.target.value)}
                                             style={{
                                                 width: '100%',
                                                 padding: '0.75rem',
