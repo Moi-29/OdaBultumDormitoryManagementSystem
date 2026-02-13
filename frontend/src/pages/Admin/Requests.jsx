@@ -217,23 +217,28 @@ const Requests = () => {
             
             // Verify username exists in the database
             const userModel = activeTab === 'proctors' ? 'proctors' : 'maintainers';
-            const usersResponse = await axios.get(`${API_URL}/api/user-management/${userModel}`, config);
+            console.log('Fetching users from:', `${API_URL}/api/user-management/${userModel}`);
             
-            // Check if response has the expected structure
+            const usersResponse = await axios.get(`${API_URL}/api/user-management/${userModel}`, config);
+            console.log('Users response:', usersResponse.data);
+            
+            // Parse the response - backend returns { success: true, count: X, proctors: [...] } or { success: true, count: X, maintainers: [...] }
             let users = [];
-            if (usersResponse.data.success && usersResponse.data[userModel]) {
-                users = usersResponse.data[userModel];
-            } else if (Array.isArray(usersResponse.data)) {
-                users = usersResponse.data;
-            } else if (usersResponse.data[userModel]) {
-                users = usersResponse.data[userModel];
+            if (usersResponse.data.success) {
+                // Get the array from the correct property (proctors or maintainers)
+                users = usersResponse.data[userModel] || [];
             }
+            
+            console.log('Parsed users:', users);
+            console.log('Looking for username:', newOrderForm.toWhom.trim());
             
             // Find user by username (case-insensitive)
             const selectedUser = users.find(u => 
                 u.username.toLowerCase() === newOrderForm.toWhom.trim().toLowerCase() && 
                 u.status === 'Active'
             );
+            
+            console.log('Selected user:', selectedUser);
             
             if (!selectedUser) {
                 setUsernameError('The username does not exist');
@@ -257,6 +262,7 @@ const Requests = () => {
                 specialization: selectedUser.specialization
             };
 
+            console.log('Sending order with data:', requestData);
             await axios.post(`${API_URL}/api/requests`, requestData, config);
             
             showNotification(`Order sent successfully to ${selectedUser.username}!`, 'success');
@@ -268,6 +274,7 @@ const Requests = () => {
             await fetchRequests();
         } catch (error) {
             console.error('Error sending order:', error);
+            console.error('Error response:', error.response?.data);
             if (error.response?.status === 404) {
                 setUsernameError('The username does not exist');
             } else {
