@@ -31,10 +31,19 @@ const AdminLayout = () => {
                 });
 
                 if (response.data) {
-                    setMaintenanceMode(response.data.maintenanceMode);
+                    // Only update state if the value actually changed to prevent unnecessary re-renders
+                    setMaintenanceMode(prevMode => {
+                        if (prevMode !== response.data.maintenanceMode) {
+                            return response.data.maintenanceMode;
+                        }
+                        return prevMode;
+                    });
                 }
             } catch (error) {
-                console.error('Error checking maintenance mode:', error);
+                // Silently handle errors to avoid console spam
+                if (error.response?.status !== 401) {
+                    console.error('Error checking maintenance mode:', error);
+                }
             }
         };
 
@@ -46,7 +55,7 @@ const AdminLayout = () => {
         };
         window.addEventListener('maintenanceModeChanged', handleMaintenanceModeChange);
         
-        // Check every 30 seconds
+        // Check every 30 seconds silently in the background
         const interval = setInterval(checkMaintenanceMode, 30000);
         
         return () => {
