@@ -62,7 +62,6 @@ const ReportIssue = () => {
                 requestType: 'Report',
                 subject: formData.title,
                 message: formData.issue,
-                priority: 'medium',
                 currentRoom: formData.reportRoomNumber 
                     ? `${formData.reportBlock}-${formData.reportRoomNumber}` 
                     : formData.reportBlock,

@@ -21,10 +21,11 @@ const MaintainerDashboard = () => {
     const [requestForm, setRequestForm] = useState({
         subject: '',
         message: '',
-        priority: 'medium',
         requestType: 'Tool Request'
     });
     const [submitting, setSubmitting] = useState(false);
+    const [selectedWorkOrders, setSelectedWorkOrders] = useState([]);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     useEffect(() => {
         if (!user || user.role !== 'maintainer') {
@@ -126,7 +127,6 @@ const MaintainerDashboard = () => {
                 requestType: requestForm.requestType,
                 subject: requestForm.subject,
                 message: requestForm.message,
-                priority: requestForm.priority,
                 status: 'pending'
             };
 
@@ -138,7 +138,7 @@ const MaintainerDashboard = () => {
             
             showNotification('Request submitted successfully', 'success');
             setShowRequestModal(false);
-            setRequestForm({ subject: '', message: '', priority: 'medium', requestType: 'Tool Request' });
+            setRequestForm({ subject: '', message: '', requestType: 'Tool Request' });
             fetchData();
         } catch (error) {
             console.error('Error submitting request:', error);
@@ -164,6 +164,50 @@ const MaintainerDashboard = () => {
             }
         } catch (error) {
             showNotification(error.response?.data?.message || 'Failed to update work order', 'error');
+        }
+    };
+
+    const handleToggleWorkOrderSelection = (workOrderId) => {
+        setSelectedWorkOrders(prev =>
+            prev.includes(workOrderId)
+                ? prev.filter(id => id !== workOrderId)
+                : [...prev, workOrderId]
+        );
+    };
+
+    const handleSelectAllWorkOrders = () => {
+        if (selectedWorkOrders.length === workOrders.length) {
+            setSelectedWorkOrders([]);
+        } else {
+            setSelectedWorkOrders(workOrders.map(wo => wo._id));
+        }
+    };
+
+    const handleDeleteSelectedWorkOrders = async () => {
+        if (selectedWorkOrders.length === 0) return;
+
+        if (!window.confirm(`Are you sure you want to delete ${selectedWorkOrders.length} ${selectedWorkOrders.length === 1 ? 'work order' : 'work orders'}?`)) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+
+            // Delete each selected work order
+            await Promise.all(
+                selectedWorkOrders.map(id =>
+                    axios.delete(`${API_URL}/api/requests/${id}`, config)
+                )
+            );
+
+            showNotification(`Successfully deleted ${selectedWorkOrders.length} ${selectedWorkOrders.length === 1 ? 'work order' : 'work orders'}`, 'success');
+            setSelectedWorkOrders([]);
+            setIsSelectionMode(false);
+            await fetchData();
+        } catch (error) {
+            console.error('Error deleting work orders:', error);
+            showNotification('Failed to delete some work orders', 'error');
         }
     };
 
@@ -394,8 +438,6 @@ const MaintainerDashboard = () => {
                                             </span>
                                         </div>
                                         <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
-                                            <span>Priority: <strong>{request.priority}</strong></span>
-                                            <span>•</span>
                                             <span>Submitted: {request.submittedOn}</span>
                                         </div>
                                     </div>
@@ -408,9 +450,93 @@ const MaintainerDashboard = () => {
                 {/* Work Orders Tab - Premium Chat Interface */}
                 {activeTab === 'workOrders' && (
                     <div>
-                        <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem', color: '#1e293b' }}>
-                            Assigned Work Orders
-                        </h1>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                            <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, color: '#1e293b' }}>
+                                Assigned Work Orders
+                            </h1>
+                            {workOrders.length > 0 && (
+                                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                    {!isSelectionMode ? (
+                                        <button
+                                            onClick={() => setIsSelectionMode(true)}
+                                            style={{
+                                                padding: '0.75rem 1.5rem',
+                                                background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                boxShadow: '0 4px 12px rgba(234, 88, 12, 0.3)',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                        >
+                                            Select Items
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={handleSelectAllWorkOrders}
+                                                style={{
+                                                    padding: '0.75rem 1.5rem',
+                                                    background: 'white',
+                                                    color: '#ea580c',
+                                                    border: '2px solid #ea580c',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.9rem',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            >
+                                                {selectedWorkOrders.length === workOrders.length ? 'Deselect All' : 'Select All'}
+                                            </button>
+                                            {selectedWorkOrders.length > 0 && (
+                                                <button
+                                                    onClick={handleDeleteSelectedWorkOrders}
+                                                    style={{
+                                                        padding: '0.75rem 1.5rem',
+                                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '12px',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 600,
+                                                        fontSize: '0.9rem',
+                                                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+                                                        transition: 'all 0.3s'
+                                                    }}
+                                                >
+                                                    Delete ({selectedWorkOrders.length})
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    setIsSelectionMode(false);
+                                                    setSelectedWorkOrders([]);
+                                                }}
+                                                style={{
+                                                    padding: '0.75rem 1.5rem',
+                                                    background: '#f1f5f9',
+                                                    color: '#64748b',
+                                                    border: 'none',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.9rem',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
 
                         <div style={{
                             background: 'linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%)',
@@ -509,8 +635,29 @@ const MaintainerDashboard = () => {
                                 ) : (
                                     workOrders.map((workOrder, index) => (
                                         <div key={workOrder._id} style={{
-                                            animation: `messageSlideIn 0.3s ease-out ${index * 0.1}s both`
+                                            animation: `messageSlideIn 0.3s ease-out ${index * 0.1}s both`,
+                                            position: 'relative'
                                         }}>
+                                            {isSelectionMode && (
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: '1rem',
+                                                    right: '1rem',
+                                                    zIndex: 10
+                                                }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedWorkOrders.includes(workOrder._id)}
+                                                        onChange={() => handleToggleWorkOrderSelection(workOrder._id)}
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            cursor: 'pointer',
+                                                            accentColor: '#ea580c'
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
                                             {/* Date Separator */}
                                             {(index === 0 || workOrders[index - 1].submittedOn !== workOrder.submittedOn) && (
                                                 <div style={{
@@ -588,19 +735,6 @@ const MaintainerDashboard = () => {
                                                                 textTransform: 'uppercase'
                                                             }}>
                                                                 {workOrder.status}
-                                                            </span>
-                                                            <span style={{
-                                                                padding: '0.25rem 0.75rem',
-                                                                background: workOrder.priority === 'urgent' ? '#fee2e2' :
-                                                                           workOrder.priority === 'high' ? '#fef3c7' : '#e0e7ff',
-                                                                color: workOrder.priority === 'urgent' ? '#991b1b' :
-                                                                       workOrder.priority === 'high' ? '#92400e' : '#3730a3',
-                                                                borderRadius: '12px',
-                                                                fontSize: '0.7rem',
-                                                                fontWeight: 700,
-                                                                textTransform: 'uppercase'
-                                                            }}>
-                                                                {workOrder.priority}
                                                             </span>
                                                         </div>
                                                         <div style={{
@@ -810,25 +944,6 @@ const MaintainerDashboard = () => {
                                         borderRadius: '8px', fontSize: '1rem'
                                     }}
                                 />
-                            </div>
-
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-                                    Priority
-                                </label>
-                                <select
-                                    value={requestForm.priority}
-                                    onChange={(e) => setRequestForm({ ...requestForm, priority: e.target.value })}
-                                    style={{
-                                        width: '100%', padding: '0.75rem', border: '2px solid #e5e7eb',
-                                        borderRadius: '8px', fontSize: '1rem', cursor: 'pointer'
-                                    }}
-                                >
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                    <option value="urgent">Urgent</option>
-                                </select>
                             </div>
 
                             <div>

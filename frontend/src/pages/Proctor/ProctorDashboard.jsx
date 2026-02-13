@@ -21,10 +21,11 @@ const ProctorDashboard = () => {
     const [reportForm, setReportForm] = useState({
         subject: '',
         message: '',
-        priority: 'medium',
         currentRoom: ''
     });
     const [submitting, setSubmitting] = useState(false);
+    const [selectedMessages, setSelectedMessages] = useState([]);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     useEffect(() => {
         if (!user || user.role !== 'proctor') {
@@ -124,7 +125,6 @@ const ProctorDashboard = () => {
                 requestType: 'Maintenance',
                 subject: reportForm.subject,
                 message: reportForm.message,
-                priority: reportForm.priority,
                 currentRoom: reportForm.currentRoom || '',
                 status: 'pending'
             };
@@ -137,7 +137,7 @@ const ProctorDashboard = () => {
             
             showNotification('Report submitted successfully', 'success');
             setShowReportModal(false);
-            setReportForm({ subject: '', message: '', priority: 'medium', currentRoom: '' });
+            setReportForm({ subject: '', message: '', currentRoom: '' });
             fetchData();
         } catch (error) {
             console.error('Error submitting report:', error);
@@ -145,6 +145,50 @@ const ProctorDashboard = () => {
             showNotification(error.response?.data?.message || 'Failed to submit report', 'error');
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleToggleMessageSelection = (messageId) => {
+        setSelectedMessages(prev =>
+            prev.includes(messageId)
+                ? prev.filter(id => id !== messageId)
+                : [...prev, messageId]
+        );
+    };
+
+    const handleSelectAllMessages = () => {
+        if (selectedMessages.length === messages.length) {
+            setSelectedMessages([]);
+        } else {
+            setSelectedMessages(messages.map(msg => msg._id));
+        }
+    };
+
+    const handleDeleteSelectedMessages = async () => {
+        if (selectedMessages.length === 0) return;
+
+        if (!window.confirm(`Are you sure you want to delete ${selectedMessages.length} ${selectedMessages.length === 1 ? 'message' : 'messages'}?`)) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+
+            // Delete each selected message
+            await Promise.all(
+                selectedMessages.map(id =>
+                    axios.delete(`${API_URL}/api/requests/${id}`, config)
+                )
+            );
+
+            showNotification(`Successfully deleted ${selectedMessages.length} ${selectedMessages.length === 1 ? 'message' : 'messages'}`, 'success');
+            setSelectedMessages([]);
+            setIsSelectionMode(false);
+            await fetchData();
+        } catch (error) {
+            console.error('Error deleting messages:', error);
+            showNotification('Failed to delete some messages', 'error');
         }
     };
 
@@ -363,8 +407,6 @@ const ProctorDashboard = () => {
                                             </span>
                                         </div>
                                         <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: '#64748b' }}>
-                                            <span>Priority: <strong>{report.priority}</strong></span>
-                                            <span>•</span>
                                             <span>Submitted: {report.submittedOn}</span>
                                             {report.currentRoom && (
                                                 <>
@@ -383,9 +425,93 @@ const ProctorDashboard = () => {
                 {/* Messages Tab - Orders from Admin */}
                 {activeTab === 'messages' && (
                     <div>
-                        <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem', color: '#1e293b' }}>
-                            Orders from Admin
-                        </h1>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                            <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, color: '#1e293b' }}>
+                                Orders from Admin
+                            </h1>
+                            {messages.length > 0 && (
+                                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                    {!isSelectionMode ? (
+                                        <button
+                                            onClick={() => setIsSelectionMode(true)}
+                                            style={{
+                                                padding: '0.75rem 1.5rem',
+                                                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                        >
+                                            Select Items
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={handleSelectAllMessages}
+                                                style={{
+                                                    padding: '0.75rem 1.5rem',
+                                                    background: 'white',
+                                                    color: '#3b82f6',
+                                                    border: '2px solid #3b82f6',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.9rem',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            >
+                                                {selectedMessages.length === messages.length ? 'Deselect All' : 'Select All'}
+                                            </button>
+                                            {selectedMessages.length > 0 && (
+                                                <button
+                                                    onClick={handleDeleteSelectedMessages}
+                                                    style={{
+                                                        padding: '0.75rem 1.5rem',
+                                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '12px',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 600,
+                                                        fontSize: '0.9rem',
+                                                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+                                                        transition: 'all 0.3s'
+                                                    }}
+                                                >
+                                                    Delete ({selectedMessages.length})
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    setIsSelectionMode(false);
+                                                    setSelectedMessages([]);
+                                                }}
+                                                style={{
+                                                    padding: '0.75rem 1.5rem',
+                                                    background: '#f1f5f9',
+                                                    color: '#64748b',
+                                                    border: 'none',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.9rem',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
 
                         {loading ? (
                             <div style={{ textAlign: 'center', padding: '4rem' }}>
@@ -424,14 +550,35 @@ const ProctorDashboard = () => {
                                     <div
                                         key={order._id}
                                         style={{
-                                            background: 'white',
+                                            background: selectedMessages.includes(order._id) ? '#eff6ff' : 'white',
                                             borderRadius: '16px',
                                             padding: '1.5rem',
                                             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                                            border: '2px solid #e5e7eb',
-                                            transition: 'all 0.3s'
+                                            border: selectedMessages.includes(order._id) ? '2px solid #3b82f6' : '2px solid #e5e7eb',
+                                            transition: 'all 0.3s',
+                                            position: 'relative'
                                         }}
                                     >
+                                        {isSelectionMode && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '1rem',
+                                                right: '1rem',
+                                                zIndex: 10
+                                            }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedMessages.includes(order._id)}
+                                                    onChange={() => handleToggleMessageSelection(order._id)}
+                                                    style={{
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        cursor: 'pointer',
+                                                        accentColor: '#3b82f6'
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                         <div style={{
                                             display: 'flex',
                                             alignItems: 'center',
@@ -495,30 +642,6 @@ const ProctorDashboard = () => {
                                                 {order.message}
                                             </p>
                                         </div>
-                                        {order.priority && (
-                                            <div style={{
-                                                marginTop: '1rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem'
-                                            }}>
-                                                <AlertCircle size={16} color={
-                                                    order.priority === 'urgent' ? '#dc2626' :
-                                                    order.priority === 'high' ? '#f59e0b' :
-                                                    order.priority === 'medium' ? '#3b82f6' : '#64748b'
-                                                } />
-                                                <span style={{
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: 600,
-                                                    color: order.priority === 'urgent' ? '#dc2626' :
-                                                        order.priority === 'high' ? '#f59e0b' :
-                                                        order.priority === 'medium' ? '#3b82f6' : '#64748b',
-                                                    textTransform: 'capitalize'
-                                                }}>
-                                                    {order.priority} Priority
-                                                </span>
-                                            </div>
-                                        )}
                                     </div>
                                 ))}
                             </div>

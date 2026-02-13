@@ -258,7 +258,6 @@ const Requests = () => {
                 requestType: 'Other',
                 subject: newOrderForm.title,
                 message: newOrderForm.issue,
-                priority: 'high',
                 status: 'pending',
                 blockId: selectedUser.blockId,
                 specialization: selectedUser.specialization
@@ -335,7 +334,6 @@ const Requests = () => {
                     requestType: 'Message',
                     subject: `Message from Admin`,
                     message: chatMessage,
-                    priority: 'medium',
                     status: 'pending',
                     blockId: selectedRequest.blockId,
                     specialization: selectedRequest.specialization
@@ -1110,9 +1108,6 @@ const Requests = () => {
                                                             {request.status}
                                                         </span>
                                                     )}
-                                                    <span style={{ padding: '0.125rem 0.5rem', background: `${getTabColor()}15`, color: getTabColor(), borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
-                                                        {request.priority}
-                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1255,20 +1250,6 @@ const Requests = () => {
                                         {selectedRequest.status === 'rejected' && <XCircle size={14} />}
                                         {selectedRequest.status}
                                     </span>
-                                    {selectedRequest.priority && (
-                                        <span style={{ 
-                                            padding: '0.625rem 1.25rem', 
-                                            background: '#f1f5f9', 
-                                            color: '#64748b', 
-                                            borderRadius: '10px', 
-                                            fontSize: '0.85rem', 
-                                            fontWeight: 700,
-                                            textTransform: 'capitalize',
-                                            border: '1px solid #e2e8f0'
-                                        }}>
-                                            Priority: {selectedRequest.priority}
-                                        </span>
-                                    )}
                                 </div>
                             </div>
                         </div>
