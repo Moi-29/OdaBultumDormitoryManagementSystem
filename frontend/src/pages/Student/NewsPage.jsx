@@ -430,7 +430,7 @@ const NewsPage = () => {
                         {selectedAnnouncement.imageUrl && (
                             <div style={{
                                 position: 'relative',
-                                paddingTop: '50%',
+                                height: '300px',
                                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                 borderRadius: '24px 24px 0 0',
                                 overflow: 'hidden'
@@ -439,9 +439,6 @@ const NewsPage = () => {
                                     src={selectedAnnouncement.imageUrl}
                                     alt={selectedAnnouncement.title}
                                     style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
                                         width: '100%',
                                         height: '100%',
                                         objectFit: 'cover'
