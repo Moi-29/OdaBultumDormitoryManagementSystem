@@ -23,9 +23,7 @@ const Announcements = () => {
         title: '',
         content: '',
         imageUrl: '',
-        imageFile: null,
-        eventDate: '',
-        eventLocation: ''
+        imageFile: null
     });
 
     const showNotification = (message, type = 'success') => {
@@ -61,9 +59,7 @@ const Announcements = () => {
                 title: announcement.title,
                 content: announcement.content,
                 imageUrl: announcement.imageUrl || '',
-                imageFile: null,
-                eventDate: announcement.eventDate ? new Date(announcement.eventDate).toISOString().split('T')[0] : '',
-                eventLocation: announcement.eventLocation || ''
+                imageFile: null
             });
             setSelectedAnnouncement(announcement);
         } else {
@@ -71,9 +67,7 @@ const Announcements = () => {
                 title: '',
                 content: '',
                 imageUrl: '',
-                imageFile: null,
-                eventDate: '',
-                eventLocation: ''
+                imageFile: null
             });
         }
         setShowModal(true);
@@ -517,33 +511,6 @@ const Announcements = () => {
                                         onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
                                         onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                                     />
-                                </div>
-
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                            Event Date
-                                        </label>
-                                        <input
-                                            type="date"
-                                            value={formData.eventDate}
-                                            onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem' }}>
-                                            Event Location
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formData.eventLocation}
-                                            onChange={(e) => setFormData({ ...formData, eventLocation: e.target.value })}
-                                            placeholder="Enter event location"
-                                            style={{ width: '100%', padding: '0.875rem 1.125rem', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '0.95rem', outline: 'none' }}
-                                        />
-                                    </div>
                                 </div>
                             </div>
 
