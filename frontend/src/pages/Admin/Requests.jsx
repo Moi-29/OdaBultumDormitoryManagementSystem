@@ -12,9 +12,8 @@ const Requests = () => {
     const [studentRequests, setStudentRequests] = useState([]);
     const [proctorRequests, setProctorRequests] = useState([]);
     const [maintainerRequests, setMaintainerRequests] = useState([]);
-    const [allProctors, setAllProctors] = useState([]);
-    const [allMaintainers, setAllMaintainers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [usernameError, setUsernameError] = useState('');
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [chatMessage, setChatMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -39,60 +38,16 @@ const Requests = () => {
 
     useEffect(() => {
         fetchRequests();
-        fetchProctorsAndMaintainers();
     }, []);
 
     useEffect(() => {
-        // Refetch users when tab changes to proctor or maintainer
-        if (activeTab === 'proctors' || activeTab === 'maintainers') {
-            fetchProctorsAndMaintainers();
-        }
+        // Clear selection when tab changes
+        setSelectedItems([]);
+        setIsSelectionMode(false);
     }, [activeTab]);
 
-    useEffect(() => {
-        // Refetch users when modal opens to ensure fresh data
-        if (showNewOrderForm) {
-            fetchProctorsAndMaintainers();
-        }
-    }, [showNewOrderForm]);
-
-    useEffect(() => {
-        // Set up periodic refresh every 30 seconds when on proctor/maintainer tabs
-        let intervalId;
-        if (activeTab === 'proctors' || activeTab === 'maintainers') {
-            intervalId = setInterval(() => {
-                fetchProctorsAndMaintainers();
-            }, 30000); // Refresh every 30 seconds
-        }
-        
-        return () => {
-            if (intervalId) {
-                clearInterval(intervalId);
-            }
-        };
-    }, [activeTab]);
-
-    const fetchProctorsAndMaintainers = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            
-            // Fetch proctors
-            const proctorsResponse = await axios.get(`${API_URL}/api/user-management/proctors`, config);
-            const activeProctors = proctorsResponse.data.filter(p => p.status === 'Active');
-            setAllProctors(activeProctors);
-            console.log('Fetched Proctors:', activeProctors.length, activeProctors);
-            
-            // Fetch maintainers
-            const maintainersResponse = await axios.get(`${API_URL}/api/user-management/maintainers`, config);
-            const activeMaintainers = maintainersResponse.data.filter(m => m.status === 'Active');
-            setAllMaintainers(activeMaintainers);
-            console.log('Fetched Maintainers:', activeMaintainers.length, activeMaintainers);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            showNotification('Failed to fetch users. Please try again.', 'error');
-        }
-    };
+    // Remove the periodic refresh and modal open refresh useEffects
+    // No longer needed since we're not fetching users
 
     const fetchRequests = async () => {
         try {
@@ -137,59 +92,16 @@ const Requests = () => {
     };
 
     const getCurrentRequests = () => {
-        let requests = [];
-        let activeUsers = [];
-        
         switch (activeTab) {
             case 'students': 
                 return studentRequests;
             case 'proctors': 
-                requests = proctorRequests;
-                activeUsers = allProctors;
-                break;
+                return proctorRequests;
             case 'maintainers': 
-                requests = maintainerRequests;
-                activeUsers = allMaintainers;
-                break;
+                return maintainerRequests;
             default: 
                 return [];
         }
-        
-        // Merge requests with active users
-        // Create a map of existing requests by user ID
-        const requestMap = new Map();
-        requests.forEach(req => {
-            if (req.fromUserId) {
-                requestMap.set(req.fromUserId.toString(), req);
-            }
-        });
-        
-        // Add active users who don't have requests yet
-        const mergedList = [...requests];
-        activeUsers.forEach(user => {
-            if (!requestMap.has(user._id.toString())) {
-                // Create a placeholder for users without requests
-                mergedList.push({
-                    _id: `user-${user._id}`,
-                    fromUserId: user._id,
-                    fromUserModel: activeTab === 'proctors' ? 'Proctor' : 'Maintainer',
-                    fromUserName: user.username,
-                    proctorName: activeTab === 'proctors' ? user.username : undefined,
-                    maintainerName: activeTab === 'maintainers' ? user.username : undefined,
-                    blockId: user.blockId,
-                    specialization: user.specialization,
-                    subject: 'No conversation yet',
-                    message: 'Start a conversation',
-                    status: 'active',
-                    priority: 'medium',
-                    type: activeTab === 'proctors' ? 'proctor' : 'maintainer',
-                    isNewConversation: true,
-                    createdAt: new Date().toISOString()
-                });
-            }
-        });
-        
-        return mergedList;
     };
 
     const getFilteredRequests = () => {
@@ -273,38 +185,65 @@ const Requests = () => {
         setIsSelectionMode(false);
         setShowNewOrderForm(false);
         setNewOrderForm({ toWhom: '', title: '', issue: '' });
+        setUsernameError('');
     };
 
     const handleNewOrderChange = (e) => {
+        const { name, value } = e.target;
         setNewOrderForm({
             ...newOrderForm,
-            [e.target.name]: e.target.value
+            [name]: value
         });
+        
+        // Clear username error when user types
+        if (name === 'toWhom') {
+            setUsernameError('');
+        }
     };
 
     const handleSubmitNewOrder = async () => {
-        if (!newOrderForm.toWhom || !newOrderForm.title.trim() || !newOrderForm.issue.trim()) {
+        // Validate all fields
+        if (!newOrderForm.toWhom.trim() || !newOrderForm.title.trim() || !newOrderForm.issue.trim()) {
             showNotification('Please fill in all fields', 'error');
             return;
         }
 
         setSubmittingOrder(true);
+        setUsernameError('');
+        
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
             
-            // Find the selected user details
-            const userList = activeTab === 'proctors' ? allProctors : allMaintainers;
-            const selectedUser = userList.find(u => u._id === newOrderForm.toWhom);
+            // Verify username exists in the database
+            const userModel = activeTab === 'proctors' ? 'proctors' : 'maintainers';
+            const usersResponse = await axios.get(`${API_URL}/api/user-management/${userModel}`, config);
+            
+            // Check if response has the expected structure
+            let users = [];
+            if (usersResponse.data.success && usersResponse.data[userModel]) {
+                users = usersResponse.data[userModel];
+            } else if (Array.isArray(usersResponse.data)) {
+                users = usersResponse.data;
+            } else if (usersResponse.data[userModel]) {
+                users = usersResponse.data[userModel];
+            }
+            
+            // Find user by username (case-insensitive)
+            const selectedUser = users.find(u => 
+                u.username.toLowerCase() === newOrderForm.toWhom.trim().toLowerCase() && 
+                u.status === 'Active'
+            );
             
             if (!selectedUser) {
-                showNotification('Selected user not found', 'error');
+                setUsernameError('The username does not exist');
                 setSubmittingOrder(false);
                 return;
             }
 
+            // Create the order/request
             const requestData = {
-                fromUserId: null, // Admin doesn't have a user ID in the system
+                fromUserId: null,
                 fromUserModel: 'Admin',
                 fromUserName: 'Admin',
                 toUserId: selectedUser._id,
@@ -320,15 +259,20 @@ const Requests = () => {
 
             await axios.post(`${API_URL}/api/requests`, requestData, config);
             
-            showNotification('Order sent successfully!', 'success');
+            showNotification(`Order sent successfully to ${selectedUser.username}!`, 'success');
             setShowNewOrderForm(false);
             setNewOrderForm({ toWhom: '', title: '', issue: '' });
+            setUsernameError('');
             
             // Refresh requests
             await fetchRequests();
         } catch (error) {
             console.error('Error sending order:', error);
-            showNotification(error.response?.data?.message || 'Failed to send order', 'error');
+            if (error.response?.status === 404) {
+                setUsernameError('The username does not exist');
+            } else {
+                showNotification(error.response?.data?.message || 'Failed to send order', 'error');
+            }
         } finally {
             setSubmittingOrder(false);
         }
@@ -566,55 +510,15 @@ const Requests = () => {
                                     color: '#64748b',
                                     margin: 0
                                 }}>
-                                    Send an order to {activeTab === 'proctors' ? 'a proctor' : 'a maintainer'} 
-                                    <span style={{ 
-                                        marginLeft: '0.5rem',
-                                        padding: '0.25rem 0.625rem',
-                                        background: `${getTabColor()}15`,
-                                        color: getTabColor(),
-                                        borderRadius: '6px',
-                                        fontSize: '0.8rem',
-                                        fontWeight: 700
-                                    }}>
-                                        {activeTab === 'proctors' ? allProctors.length : allMaintainers.length} Available
-                                    </span>
+                                    Send an order to {activeTab === 'proctors' ? 'a proctor' : 'a maintainer'}
                                 </p>
                             </div>
                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                 <button
-                                    onClick={fetchProctorsAndMaintainers}
-                                    title="Refresh user list"
-                                    style={{
-                                        background: '#f1f5f9',
-                                        border: 'none',
-                                        width: '40px',
-                                        height: '40px',
-                                        borderRadius: '50%',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: getTabColor(),
-                                        transition: 'all 0.2s',
-                                        flexShrink: 0
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = `${getTabColor()}15`;
-                                        e.currentTarget.style.transform = 'rotate(180deg)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = '#f1f5f9';
-                                        e.currentTarget.style.transform = 'rotate(0deg)';
-                                    }}
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-                                    </svg>
-                                </button>
-                                <button
                                     onClick={() => {
                                         setShowNewOrderForm(false);
                                         setNewOrderForm({ toWhom: '', title: '', issue: '' });
+                                        setUsernameError('');
                                     }}
                                     style={{
                                         background: '#f1f5f9',
@@ -647,7 +551,7 @@ const Requests = () => {
                         {/* Modal Body */}
                         <div style={{ padding: '2rem 2.5rem' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                {/* To Whom Dropdown */}
+                                {/* To Whom Input Field */}
                                 <div>
                                     <label style={{
                                         display: 'block',
@@ -658,53 +562,56 @@ const Requests = () => {
                                         textTransform: 'uppercase',
                                         letterSpacing: '0.5px'
                                     }}>
-                                        To Whom <span style={{ color: '#ef4444' }}>*</span>
+                                        Username <span style={{ color: '#ef4444' }}>*</span>
                                     </label>
-                                    {(activeTab === 'proctors' ? allProctors : allMaintainers).length === 0 ? (
-                                        <div style={{
-                                            padding: '1rem',
-                                            background: '#fef3c7',
-                                            border: '1px solid #fbbf24',
+                                    <input
+                                        type="text"
+                                        name="toWhom"
+                                        value={newOrderForm.toWhom}
+                                        onChange={handleNewOrderChange}
+                                        placeholder={`Enter ${activeTab === 'proctors' ? 'proctor' : 'maintainer'} username`}
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.875rem 1.125rem',
+                                            border: `2px solid ${usernameError ? '#ef4444' : '#e5e7eb'}`,
                                             borderRadius: '12px',
-                                            color: '#92400e',
-                                            fontSize: '0.9rem',
-                                            textAlign: 'center'
-                                        }}>
-                                            No active {activeTab === 'proctors' ? 'proctors' : 'maintainers'} found. Please add users in User Management.
-                                        </div>
-                                    ) : (
-                                        <select
-                                            name="toWhom"
-                                            value={newOrderForm.toWhom}
-                                            onChange={handleNewOrderChange}
-                                            style={{
-                                                width: '100%',
-                                                padding: '0.875rem 1.125rem',
-                                                border: '2px solid #e5e7eb',
-                                                borderRadius: '12px',
-                                                fontSize: '0.95rem',
-                                                outline: 'none',
-                                                background: 'white',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                                fontWeight: 500
-                                            }}
-                                            onFocus={(e) => {
+                                            fontSize: '0.95rem',
+                                            outline: 'none',
+                                            background: 'white',
+                                            transition: 'all 0.2s',
+                                            fontWeight: 500
+                                        }}
+                                        onFocus={(e) => {
+                                            if (!usernameError) {
                                                 e.target.style.borderColor = getTabColor();
                                                 e.target.style.boxShadow = `0 0 0 3px ${getTabColor()}15`;
-                                            }}
-                                            onBlur={(e) => {
+                                            }
+                                        }}
+                                        onBlur={(e) => {
+                                            if (!usernameError) {
                                                 e.target.style.borderColor = '#e5e7eb';
                                                 e.target.style.boxShadow = 'none';
-                                            }}
-                                        >
-                                            <option value="">Select {activeTab === 'proctors' ? 'Proctor' : 'Maintainer'}</option>
-                                            {(activeTab === 'proctors' ? allProctors : allMaintainers).map(user => (
-                                                <option key={user._id} value={user._id}>
-                                                    {user.username} {user.blockId ? `- Block ${user.blockId}` : ''} {user.specialization ? `(${user.specialization})` : ''}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            }
+                                        }}
+                                    />
+                                    {usernameError && (
+                                        <div style={{
+                                            marginTop: '0.5rem',
+                                            padding: '0.75rem 1rem',
+                                            background: '#fef2f2',
+                                            border: '1px solid #fecaca',
+                                            borderRadius: '8px',
+                                            color: '#dc2626',
+                                            fontSize: '0.875rem',
+                                            fontWeight: 600,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            animation: 'slideDown 0.3s ease-out'
+                                        }}>
+                                            <XCircle size={16} />
+                                            {usernameError}
+                                        </div>
                                     )}
                                 </div>
 
@@ -805,6 +712,7 @@ const Requests = () => {
                                 onClick={() => {
                                     setShowNewOrderForm(false);
                                     setNewOrderForm({ toWhom: '', title: '', issue: '' });
+                                    setUsernameError('');
                                 }}
                                 style={{
                                     padding: '0.875rem 2rem',

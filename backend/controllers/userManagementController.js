@@ -87,6 +87,7 @@ const createProctor = async (req, res) => {
 // @access  Private (Admin)
 const getProctors = async (req, res) => {
     try {
+        console.log('getProctors called');
         const { status, blockId } = req.query;
 
         let query = {};
@@ -97,6 +98,8 @@ const getProctors = async (req, res) => {
             .select('-password')
             .sort({ createdAt: -1 });
 
+        console.log('Proctors found:', proctors.length);
+
         res.json({
             success: true,
             count: proctors.length,
@@ -104,7 +107,11 @@ const getProctors = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching proctors:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
     }
 };
 
@@ -251,14 +258,6 @@ const deleteProctor = async (req, res) => {
         });
     }
 };
-                message: 'Proctor dismissed successfully'
-            });
-        }
-    } catch (error) {
-        console.error('Error deleting proctor:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
 
 // ============= MAINTAINER MANAGEMENT =============
 
@@ -335,6 +334,7 @@ const createMaintainer = async (req, res) => {
 // @access  Private (Admin)
 const getMaintainers = async (req, res) => {
     try {
+        console.log('getMaintainers called');
         const { status, specialization } = req.query;
 
         let query = {};
@@ -345,6 +345,8 @@ const getMaintainers = async (req, res) => {
             .select('-password')
             .sort({ createdAt: -1 });
 
+        console.log('Maintainers found:', maintainers.length);
+
         res.json({
             success: true,
             count: maintainers.length,
@@ -352,7 +354,11 @@ const getMaintainers = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching maintainers:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
     }
 };
 
@@ -486,14 +492,6 @@ const deleteMaintainer = async (req, res) => {
         });
     }
 };
-            success: true,
-            message: 'Maintainer dismissed successfully'
-        });
-    } catch (error) {
-        console.error('Error deleting maintainer:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
 
 // ============= BLOCK MANAGEMENT =============
 
@@ -502,10 +500,12 @@ const deleteMaintainer = async (req, res) => {
 // @access  Private (Admin)
 const getBlocks = async (req, res) => {
     try {
+        console.log('getBlocks called');
         const Room = require('../models/Room');
         
         // Get unique buildings (blocks) from Room collection
         const rooms = await Room.find().select('building gender');
+        console.log('Rooms found:', rooms.length);
         
         // Group by building to get unique blocks with their gender
         const blockMap = new Map();
@@ -524,6 +524,8 @@ const getBlocks = async (req, res) => {
             a.name.localeCompare(b.name)
         );
 
+        console.log('Blocks found:', blocks.length);
+
         res.json({
             success: true,
             count: blocks.length,
@@ -531,7 +533,11 @@ const getBlocks = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching blocks:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error', 
+            error: error.message 
+        });
     }
 };
 
