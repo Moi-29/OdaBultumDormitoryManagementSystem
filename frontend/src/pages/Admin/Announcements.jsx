@@ -86,21 +86,57 @@ const Announcements = () => {
             return;
         }
 
-        
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
             
-            if (modalMode === 'create') {
-                await axios.post(`${API_URL}/api/announcements`, formData, config);
-                showNotification('Announcement created successfully', 'success');
+            // Prepare data to send
+            const dataToSend = {
+                title: formData.title,
+                content: formData.content
+            };
+
+            // Handle image upload - convert file to base64 if file is selected
+            if (imageUploadType === 'upload' && formData.imageFile) {
+                // Convert file to base64
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    dataToSend.imageUrl = reader.result; // base64 string
+                    
+                    try {
+                        if (modalMode === 'create') {
+                            await axios.post(`${API_URL}/api/announcements`, dataToSend, config);
+                            showNotification('Announcement created successfully', 'success');
+                        } else {
+                            await axios.put(`${API_URL}/api/announcements/${selectedAnnouncement._id}`, dataToSend, config);
+                            showNotification('Announcement updated successfully', 'success');
+                        }
+                        
+                        handleCloseModal();
+                        fetchAnnouncements();
+                    } catch (error) {
+                        console.error('Error saving announcement:', error);
+                        showNotification(error.response?.data?.message || 'Failed to save announcement', 'error');
+                    }
+                };
+                reader.readAsDataURL(formData.imageFile);
             } else {
-                await axios.put(`${API_URL}/api/announcements/${selectedAnnouncement._id}`, formData, config);
-                showNotification('Announcement updated successfully', 'success');
+                // Use URL directly
+                if (formData.imageUrl) {
+                    dataToSend.imageUrl = formData.imageUrl;
+                }
+                
+                if (modalMode === 'create') {
+                    await axios.post(`${API_URL}/api/announcements`, dataToSend, config);
+                    showNotification('Announcement created successfully', 'success');
+                } else {
+                    await axios.put(`${API_URL}/api/announcements/${selectedAnnouncement._id}`, dataToSend, config);
+                    showNotification('Announcement updated successfully', 'success');
+                }
+                
+                handleCloseModal();
+                fetchAnnouncements();
             }
-            
-            handleCloseModal();
-            fetchAnnouncements();
         } catch (error) {
             console.error('Error saving announcement:', error);
             showNotification(error.response?.data?.message || 'Failed to save announcement', 'error');
@@ -690,7 +726,10 @@ const Announcements = () => {
                                     <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                                         <button
                                             type="button"
-                                            onClick={() => setImageUploadType('url')}
+                                            onClick={() => {
+                                                setImageUploadType('url');
+                                                setFormData({ ...formData, imageFile: null });
+                                            }}
                                             style={{ flex: 1, padding: '0.625rem 1rem', background: imageUploadType === 'url' ? '#3b82f6' : 'white', border: `2px solid ${imageUploadType === 'url' ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: imageUploadType === 'url' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
                                         >
                                             <LinkIcon size={16} />
@@ -698,7 +737,10 @@ const Announcements = () => {
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => setImageUploadType('upload')}
+                                            onClick={() => {
+                                                setImageUploadType('upload');
+                                                setFormData({ ...formData, imageUrl: '' });
+                                            }}
                                             style={{ flex: 1, padding: '0.625rem 1rem', background: imageUploadType === 'upload' ? '#3b82f6' : 'white', border: `2px solid ${imageUploadType === 'upload' ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: imageUploadType === 'upload' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
                                         >
                                             <Upload size={16} />
