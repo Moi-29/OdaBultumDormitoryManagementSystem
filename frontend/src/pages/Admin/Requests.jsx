@@ -255,7 +255,7 @@ const Requests = () => {
                 fromUserName: 'Admin',
                 toUserId: selectedUser._id,
                 toUserModel: activeTab === 'proctors' ? 'Proctor' : 'Maintainer',
-                requestType: 'Order',
+                requestType: 'Other',
                 subject: newOrderForm.title,
                 message: newOrderForm.issue,
                 priority: 'high',
