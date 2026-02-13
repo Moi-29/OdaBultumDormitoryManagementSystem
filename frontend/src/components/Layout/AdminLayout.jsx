@@ -10,12 +10,47 @@ const AdminLayout = () => {
     const navigate = useNavigate();
     const [maintenanceMode, setMaintenanceMode] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [requestCount, setRequestCount] = useState(0);
 
     // Get user permissions
     const userPermissions = user?.permissions || [];
     const hasPermission = (permission) => {
         return userPermissions.includes('*') || userPermissions.includes(permission);
     };
+
+    // Fetch request count
+    useEffect(() => {
+        const fetchRequestCount = async () => {
+            try {
+                const userInfo = localStorage.getItem('userInfo');
+                if (!userInfo) return;
+
+                const { token } = JSON.parse(userInfo);
+                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/requests', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.data) {
+                    const requests = Array.isArray(response.data) ? response.data : [];
+                    // Count pending requests
+                    const pendingCount = requests.filter(req => req.status === 'pending').length;
+                    setRequestCount(pendingCount);
+                }
+            } catch (error) {
+                // Silently handle errors
+                if (error.response?.status !== 401) {
+                    console.error('Error fetching request count:', error);
+                }
+            }
+        };
+
+        fetchRequestCount();
+        
+        // Poll every 30 seconds for real-time updates
+        const interval = setInterval(fetchRequestCount, 30000);
+        
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const checkMaintenanceMode = async () => {
@@ -167,7 +202,14 @@ const AdminLayout = () => {
                             <NavItem to="/admin/user-management" icon={<UserCog size={20} />} label="User Management" active={isActive('user-management')} onClick={() => setSidebarOpen(false)} />
                         )}
                         {hasPermission('dashboard.view') && (
-                            <NavItem to="/admin/requests" icon={<MessageSquare size={20} />} label="Requests" active={isActive('requests')} onClick={() => setSidebarOpen(false)} />
+                            <NavItem 
+                                to="/admin/requests" 
+                                icon={<MessageSquare size={20} />} 
+                                label="Requests" 
+                                active={isActive('requests')} 
+                                onClick={() => setSidebarOpen(false)}
+                                badge={requestCount > 0 ? requestCount : null}
+                            />
                         )}
                         {hasPermission('dashboard.view') && (
                             <NavItem to="/admin/settings" icon={<Settings size={20} />} label="Settings" active={isActive('settings')} onClick={() => setSidebarOpen(false)} />
@@ -244,6 +286,17 @@ const AdminLayout = () => {
                         }
                     }
 
+                    @keyframes pulse {
+                        0%, 100% {
+                            transform: scale(1);
+                            opacity: 1;
+                        }
+                        50% {
+                            transform: scale(1.05);
+                            opacity: 0.9;
+                        }
+                    }
+
                     /* Responsive Styles */
                     @media (max-width: 768px) {
                         .mobile-menu-btn {
@@ -299,7 +352,7 @@ const AdminLayout = () => {
     );
 };
 
-const NavItem = ({ to, icon, label, active, onClick }) => (
+const NavItem = ({ to, icon, label, active, onClick, badge }) => (
     <li>
         <Link
             to={to}
@@ -313,11 +366,31 @@ const NavItem = ({ to, icon, label, active, onClick }) => (
                 backgroundColor: active ? 'var(--color-primary-light)' : 'transparent',
                 color: active ? 'var(--color-primary)' : 'var(--text-main)',
                 transition: 'all 0.2s',
-                textDecoration: 'none'
+                textDecoration: 'none',
+                position: 'relative'
             }}
         >
             {icon}
-            <span style={{ fontWeight: 500 }}>{label}</span>
+            <span style={{ fontWeight: 500, flex: 1 }}>{label}</span>
+            {badge !== null && badge !== undefined && badge > 0 && (
+                <span style={{
+                    minWidth: '20px',
+                    height: '20px',
+                    padding: '0 6px',
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    color: 'white',
+                    borderRadius: '10px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+                    animation: badge > 0 ? 'pulse 2s infinite' : 'none'
+                }}>
+                    {badge > 99 ? '99+' : badge}
+                </span>
+            )}
         </Link>
     </li>
 );

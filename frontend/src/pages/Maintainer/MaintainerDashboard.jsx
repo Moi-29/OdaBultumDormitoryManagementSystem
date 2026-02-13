@@ -297,8 +297,8 @@ const MaintainerDashboard = () => {
                 <nav style={{ flex: 1, padding: '0 1rem' }}>
                     {[
                         { id: 'dashboard', label: 'Dashboard', icon: Home },
-                        { id: 'requests', label: 'My Requests', icon: FileText },
-                        { id: 'workOrders', label: 'Work Orders', icon: MessageSquare }
+                        { id: 'requests', label: 'My Requests', icon: FileText, badge: requests.filter(r => r.status === 'pending').length },
+                        { id: 'workOrders', label: 'Work Orders', icon: MessageSquare, badge: workOrders.filter(w => w.status === 'pending').length }
                     ].map(item => {
                         const Icon = item.icon;
                         const isActive = activeTab === item.id;
@@ -309,10 +309,29 @@ const MaintainerDashboard = () => {
                                 border: 'none', borderRadius: '12px', color: 'white',
                                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem',
                                 fontSize: '0.95rem', fontWeight: isActive ? 600 : 500,
-                                transition: 'all 0.3s', textAlign: 'left'
+                                transition: 'all 0.3s', textAlign: 'left', position: 'relative'
                             }}>
                                 <Icon size={20} />
-                                {item.label}
+                                <span style={{ flex: 1 }}>{item.label}</span>
+                                {item.badge > 0 && (
+                                    <span style={{
+                                        minWidth: '20px',
+                                        height: '20px',
+                                        padding: '0 6px',
+                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                        color: 'white',
+                                        borderRadius: '10px',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 700,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        boxShadow: '0 2px 8px rgba(239, 68, 68, 0.5)',
+                                        animation: 'pulse 2s infinite'
+                                    }}>
+                                        {item.badge > 99 ? '99+' : item.badge}
+                                    </span>
+                                )}
                             </button>
                         );
                     })}
@@ -1351,6 +1370,16 @@ const MaintainerDashboard = () => {
                     to {
                         opacity: 1;
                         transform: translateY(0);
+                    }
+                }
+                @keyframes pulse {
+                    0%, 100% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                    50% {
+                        transform: scale(1.05);
+                        opacity: 0.9;
                     }
                 }
                 @keyframes spin {
