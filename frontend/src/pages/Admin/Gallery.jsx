@@ -32,14 +32,22 @@ const Gallery = () => {
     const fetchImages = async () => {
         try {
             const token = localStorage.getItem('token');
+            console.log('Fetching gallery images...');
+            console.log('API URL:', API_URL);
+            console.log('Token exists:', !!token);
+            
             const response = await axios.get(`${API_URL}/api/gallery`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
+            console.log('Gallery response:', response.data);
             setImages(response.data.images || []);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching images:', error);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            console.error('Error message:', error.message);
             showNotification('Failed to load images', 'error');
             setLoading(false);
         }
