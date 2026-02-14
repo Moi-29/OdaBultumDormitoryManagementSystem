@@ -661,11 +661,11 @@ const ApplicationFormWrapper = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Citizenship
+                                            {t('citizenship')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Ethiopian"
+                                            placeholder={t('ethiopian')}
                                             value={formData.personalInfo.citizenship}
                                             onChange={(e) => handleInputChange('personalInfo', 'citizenship', e.target.value)}
                                             style={{
@@ -681,11 +681,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Country
+                                            {t('country')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Ethiopia"
+                                            placeholder={t('ethiopia')}
                                             value={formData.personalInfo.country}
                                             onChange={(e) => handleInputChange('personalInfo', 'country', e.target.value)}
                                             style={{
@@ -701,7 +701,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Woreda
+                                            {t('woreda')}
                                         </label>
                                         <select
                                             value={formData.personalInfo.woreda}
@@ -716,18 +716,18 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="">~Select Woreda~</option>
+                                            <option value="">{t('selectWoreda')}</option>
                                             <option value="Woreda1">Woreda 1</option>
                                             <option value="Woreda2">Woreda 2</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            City (EN/AM)
+                                            {t('cityEn')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.personalInfo.cityEn}
                                             onChange={(e) => handleInputChange('personalInfo', 'cityEn', e.target.value)}
                                             style={{
@@ -743,11 +743,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Kebele (EN/AM)
+                                            {t('kebeleEn')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.personalInfo.kebeleEn}
                                             onChange={(e) => handleInputChange('personalInfo', 'kebeleEn', e.target.value)}
                                             style={{
@@ -763,11 +763,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Phone
+                                            {t('phone')}
                                         </label>
                                         <input
                                             type="tel"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.personalInfo.phone}
                                             onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
                                             style={{
@@ -783,11 +783,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Email
+                                            {t('email')}
                                         </label>
                                         <input
                                             type="email"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.personalInfo.email}
                                             onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
                                             style={{
@@ -803,7 +803,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            PO BOX
+                                            {t('poBox')}
                                         </label>
                                         <input
                                             type="text"
@@ -844,7 +844,7 @@ const ApplicationFormWrapper = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Economical Status
+                                            {t('economicalStatus')}
                                         </label>
                                         <select
                                             value={formData.personalInfo.economicalStatus}
@@ -859,15 +859,15 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="Unspecified">Unspecified</option>
-                                            <option value="Low">Low</option>
-                                            <option value="Medium">Medium</option>
-                                            <option value="High">High</option>
+                                            <option value="Unspecified">{t('unspecified')}</option>
+                                            <option value="Low">{t('low')}</option>
+                                            <option value="Medium">{t('medium')}</option>
+                                            <option value="High">{t('high')}</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Area Type
+                                            {t('areaType')}
                                         </label>
                                         <select
                                             value={formData.personalInfo.areaType}
@@ -882,18 +882,18 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="">~ Select Area Type ~</option>
-                                            <option value="Urban">Urban</option>
-                                            <option value="Rural">Rural</option>
+                                            <option value="">{t('selectAreaType')}</option>
+                                            <option value="Urban">{t('urban')}</option>
+                                            <option value="Rural">{t('rural')}</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            TIN Number
+                                            {t('tinNumber')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.personalInfo.tinNumber}
                                             onChange={(e) => handleInputChange('personalInfo', 'tinNumber', e.target.value)}
                                             style={{
@@ -909,11 +909,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Account Number
+                                            {t('accountNumber')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.personalInfo.accountNumber}
                                             onChange={(e) => handleInputChange('personalInfo', 'accountNumber', e.target.value)}
                                             style={{
@@ -954,7 +954,7 @@ const ApplicationFormWrapper = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Stream
+                                            {t('stream')}
                                         </label>
                                         <select
                                             value={formData.educationalInfo.stream}
@@ -969,14 +969,14 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="Not Applicable">Not Applicable</option>
-                                            <option value="Natural Science">Natural Science</option>
-                                            <option value="Social Science">Social Science</option>
+                                            <option value="Not Applicable">{t('notApplicable')}</option>
+                                            <option value="Natural Science">{t('naturalScience')}</option>
+                                            <option value="Social Science">{t('socialScience')}</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Sponsor Category
+                                            {t('sponsorCategory')}
                                         </label>
                                         <select
                                             value={formData.educationalInfo.sponsorCategory}
@@ -991,14 +991,14 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="Government">Government</option>
-                                            <option value="Private">Private</option>
-                                            <option value="Self">Self</option>
+                                            <option value="Government">{t('government')}</option>
+                                            <option value="Private">{t('private')}</option>
+                                            <option value="Self">{t('self')}</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            National Exam Year (EC)
+                                            {t('nationalExamYear')}
                                         </label>
                                         <input
                                             type="text"
@@ -1018,7 +1018,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Entry Year
+                                            {t('entryYear')}
                                         </label>
                                         <input
                                             type="text"
@@ -1038,7 +1038,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Sponsored By
+                                            {t('sponsoredBy')}
                                         </label>
                                         <input
                                             type="text"
@@ -1057,7 +1057,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Examination ID
+                                            {t('examinationId')}
                                         </label>
                                         <input
                                             type="text"
@@ -1077,7 +1077,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Admission Date
+                                            {t('admissionDate')}
                                         </label>
                                         <input
                                             type="date"
@@ -1115,7 +1115,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            National Exam Result
+                                            {t('nationalExamResult')}
                                         </label>
                                         <input
                                             type="text"
@@ -1391,11 +1391,11 @@ const ApplicationFormWrapper = () => {
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Nationality <span style={{ color: '#F43F5E' }}>*</span>
+                                        {t('nationality')} <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="e.g., Ethiopia"
+                                        placeholder={t('enterNationality')}
                                         value={formData.familyInfo.nationality}
                                         onChange={(e) => handleInputChange('familyInfo', 'nationality', e.target.value)}
                                         style={{
@@ -1411,11 +1411,11 @@ const ApplicationFormWrapper = () => {
                                 </div>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Region <span style={{ color: '#F43F5E' }}>*</span>
+                                        {t('region')} <span style={{ color: '#F43F5E' }}>*</span>
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter your region"
+                                        placeholder={t('enterYourRegion')}
                                         value={formData.familyInfo.region}
                                         onChange={(e) => handleInputChange('familyInfo', 'region', e.target.value)}
                                         style={{
@@ -1431,11 +1431,11 @@ const ApplicationFormWrapper = () => {
                                 </div>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Zone
+                                        {t('zone')}
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter your zone"
+                                        placeholder={t('enterYourZone')}
                                         value={formData.familyInfo.zone}
                                         onChange={(e) => handleInputChange('familyInfo', 'zone', e.target.value)}
                                         style={{
@@ -1471,11 +1471,11 @@ const ApplicationFormWrapper = () => {
                                 </div>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Kebele
+                                        {t('kebele')}
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter your kebele"
+                                        placeholder={t('enterKebele')}
                                         value={formData.familyInfo.kebele}
                                         onChange={(e) => handleInputChange('familyInfo', 'kebele', e.target.value)}
                                         style={{
@@ -1491,11 +1491,11 @@ const ApplicationFormWrapper = () => {
                                 </div>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Mother Name
+                                        {t('motherName')}
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter mother's name"
+                                        placeholder={t('enterMotherName')}
                                         value={formData.familyInfo.motherName}
                                         onChange={(e) => handleInputChange('familyInfo', 'motherName', e.target.value)}
                                         style={{
@@ -1511,11 +1511,11 @@ const ApplicationFormWrapper = () => {
                                 </div>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151' }}>
-                                        Family Phone Number
+                                        {t('familyPhone')}
                                     </label>
                                     <input
                                         type="tel"
-                                        placeholder="+251911234567"
+                                        placeholder={t('enterPhone')}
                                         value={formData.familyInfo.familyPhone}
                                         onChange={(e) => handleInputChange('familyInfo', 'familyPhone', e.target.value)}
                                         style={{
@@ -1553,7 +1553,7 @@ const ApplicationFormWrapper = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Full Name <span style={{ color: '#F43F5E' }}>*</span>
+                                            {t('fullName')} <span style={{ color: '#F43F5E' }}>*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -1572,7 +1572,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Relationship <span style={{ color: '#F43F5E' }}>*</span>
+                                            {t('relationship')} <span style={{ color: '#F43F5E' }}>*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -1591,11 +1591,11 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Phone <span style={{ color: '#F43F5E' }}>*</span>
+                                            {t('phone')} <span style={{ color: '#F43F5E' }}>*</span>
                                         </label>
                                         <input
                                             type="tel"
-                                            placeholder="9xxxxxxxx or 7xxxxxxxx"
+                                            placeholder={t('enterPhone')}
                                             value={formData.emergencyInfo.phone}
                                             onChange={(e) => handleInputChange('emergencyInfo', 'phone', e.target.value)}
                                             style={{
@@ -1611,7 +1611,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Email
+                                            {t('email')}
                                         </label>
                                         <input
                                             type="email"
@@ -1630,7 +1630,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Job <span style={{ color: '#F43F5E' }}>*</span>
+                                            {t('job')} <span style={{ color: '#F43F5E' }}>*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -1671,7 +1671,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Home-Town
+                                            {t('homeTown')}
                                         </label>
                                         <input
                                             type="text"
