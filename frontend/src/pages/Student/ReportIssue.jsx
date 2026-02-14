@@ -4,10 +4,14 @@ import axios from 'axios';
 import API_URL from '../../config/api';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslation } from '../../translations/translations';
 
 const ReportIssue = () => {
     const { user } = useAuth();
     const { isDarkMode } = useTheme();
+    const { language } = useLanguage();
+    const t = (key) => getTranslation(language, key);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [formData, setFormData] = useState({
         fullName: '',
@@ -47,7 +51,7 @@ const ReportIssue = () => {
         if (!formData.fullName.trim() || !formData.studentId.trim() || 
             !formData.block.trim() || !formData.dormNumber.trim() || 
             !formData.reportBlock.trim() || !formData.title.trim() || !formData.issue.trim()) {
-            showNotification('Please fill in all required fields', 'error');
+            showNotification(t('fillAllRequired'), 'error');
             return;
         }
 
@@ -76,7 +80,7 @@ const ReportIssue = () => {
             
             console.log('Response:', response.data);
             
-            showNotification('Report submitted successfully! Admin will review it soon.', 'success');
+            showNotification(t('reportSubmittedSuccess'), 'success');
             
             // Reset form
             setFormData({
@@ -95,7 +99,7 @@ const ReportIssue = () => {
             console.error('Error status:', error.response?.status);
             console.error('Error message:', error.message);
             
-            const errorMessage = error.response?.data?.message || error.message || 'Failed to submit report. Please try again.';
+            const errorMessage = error.response?.data?.message || error.message || t('failedToSubmitReport');
             showNotification(errorMessage, 'error');
         } finally {
             setSubmitting(false);
@@ -195,7 +199,7 @@ const ReportIssue = () => {
                             marginBottom: '0.5rem',
                             textAlign: 'center'
                         }}>
-                            Submit Report
+                            {t('submitReport')}
                         </h2>
                         <p style={{
                             fontSize: isMobile ? '0.9rem' : '1rem',
@@ -204,25 +208,25 @@ const ReportIssue = () => {
                             textAlign: 'center',
                             marginBottom: '2rem'
                         }}>
-                            Fill in all required fields to submit your report
+                            {t('fillAllRequired')}
                         </p>
                         <form onSubmit={handleSubmit}>
                                     {/* Student Information Section */}
                                     <div style={{ marginBottom: '2rem', padding: '1.5rem', background: isDarkMode ? '#334155' : '#f8fafc', borderRadius: '12px' }}>
                                         <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', fontWeight: 700, color: isDarkMode ? '#f1f5f9' : '#1e293b' }}>
-                                            Student Information
+                                            {t('studentInformation')}
                                         </h3>
                                         
                                         <div style={{ marginBottom: '1rem' }}>
                                             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
-                                                Full Name <span style={{ color: '#ef4444' }}>*</span>
+                                                {t('fullName')} <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 name="fullName"
                                                 value={formData.fullName}
                                                 onChange={handleChange}
-                                                placeholder="Enter your full name"
+                                                placeholder={t('enterYourFullName')}
                                                 required
                                                 style={{
                                                     width: '100%',
@@ -242,14 +246,14 @@ const ReportIssue = () => {
 
                                         <div style={{ marginBottom: '1rem' }}>
                                             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
-                                                Student ID <span style={{ color: '#ef4444' }}>*</span>
+                                                {t('universityId')} <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 name="studentId"
                                                 value={formData.studentId}
                                                 onChange={handleChange}
-                                                placeholder="Enter your student ID"
+                                                placeholder={t('enterYourStudentId')}
                                                 required
                                                 style={{
                                                     width: '100%',
@@ -267,8 +271,8 @@ const ReportIssue = () => {
 
                                         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                                             <div>
-                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-                                                    Block <span style={{ color: '#ef4444' }}>*</span>
+                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
+                                                    {t('block')} <span style={{ color: '#ef4444' }}>*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -292,8 +296,8 @@ const ReportIssue = () => {
                                             </div>
 
                                             <div>
-                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-                                                    Dorm Number <span style={{ color: '#ef4444' }}>*</span>
+                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
+                                                    {t('dormNumber')} <span style={{ color: '#ef4444' }}>*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -320,14 +324,14 @@ const ReportIssue = () => {
 
                                     {/* Report Details Section */}
                                     <div style={{ marginBottom: '2rem' }}>
-                                        <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', fontWeight: 700, color: '#1e293b' }}>
-                                            Report Details
+                                        <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', fontWeight: 700, color: isDarkMode ? '#f1f5f9' : '#1e293b' }}>
+                                            {t('reportDetails')}
                                         </h3>
                                         
                                         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                                             <div>
-                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-                                                    Block <span style={{ color: '#ef4444' }}>*</span>
+                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
+                                                    {t('block')} <span style={{ color: '#ef4444' }}>*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -351,8 +355,8 @@ const ReportIssue = () => {
                                             </div>
 
                                             <div>
-                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-                                                    Room Number
+                                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
+                                                    {t('roomNumber')}
                                                 </label>
                                                 <input
                                                     type="text"
@@ -376,15 +380,15 @@ const ReportIssue = () => {
                                         </div>
                                         
                                         <div style={{ marginBottom: '1rem' }}>
-                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-                                                Title <span style={{ color: '#ef4444' }}>*</span>
+                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
+                                                {t('title')} <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 name="title"
                                                 value={formData.title}
                                                 onChange={handleChange}
-                                                placeholder="Brief title of your issue"
+                                                placeholder={t('briefTitle')}
                                                 required
                                                 style={{
                                                     width: '100%',
@@ -401,14 +405,14 @@ const ReportIssue = () => {
                                         </div>
 
                                         <div>
-                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-                                                Issue Description <span style={{ color: '#ef4444' }}>*</span>
+                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: isDarkMode ? '#cbd5e1' : '#374151', marginBottom: '0.5rem' }}>
+                                                {t('issueDescription')} <span style={{ color: '#ef4444' }}>*</span>
                                             </label>
                                             <textarea
                                                 name="issue"
                                                 value={formData.issue}
                                                 onChange={handleChange}
-                                                placeholder="Describe your issue in detail..."
+                                                placeholder={t('describeInDetail')}
                                                 required
                                                 rows={6}
                                                 style={{
@@ -452,7 +456,7 @@ const ReportIssue = () => {
                                         }}
                                     >
                                         <Send size={20} />
-                                        {submitting ? 'Submitting...' : 'Submit Report'}
+                                        {submitting ? t('submitting') : t('submitReport')}
                                     </button>
                                 </form>
                     </div>

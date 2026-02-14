@@ -1160,11 +1160,11 @@ const ApplicationFormWrapper = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            School Name
+                                            {t('schoolName')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.schoolInfo.primary.schoolName}
                                             onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value, 'primary')}
                                             style={{
@@ -1180,7 +1180,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Woreda
+                                            {t('woreda')}
                                         </label>
                                         <select
                                             value={formData.schoolInfo.primary.woreda}
@@ -1195,19 +1195,19 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="">~Select Woreda~</option>
+                                            <option value="">{t('selectWoreda')}</option>
                                             <option value="Woreda1">Woreda 1</option>
                                             <option value="Woreda2">Woreda 2</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Attended Year (From-To(E.C))
+                                            {t('attendedYear')}
                                         </label>
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                                             <input
                                                 type="text"
-                                                placeholder="Unspecified"
+                                                placeholder={t('unspecified')}
                                                 value={formData.schoolInfo.primary.attendedYearFrom}
                                                 onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value, 'primary')}
                                                 style={{
@@ -1222,7 +1222,7 @@ const ApplicationFormWrapper = () => {
                                             />
                                             <input
                                                 type="text"
-                                                placeholder="Unspecified"
+                                                placeholder={t('unspecified')}
                                                 value={formData.schoolInfo.primary.attendedYearTo}
                                                 onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value, 'primary')}
                                                 style={{
@@ -1239,7 +1239,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            School Type
+                                            {t('schoolType')}
                                         </label>
                                         <select
                                             value={formData.schoolInfo.primary.schoolType}
@@ -1254,9 +1254,9 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="Unspecified">Unspecified</option>
-                                            <option value="Public">Public</option>
-                                            <option value="Private">Private</option>
+                                            <option value="Unspecified">{t('unspecified')}</option>
+                                            <option value="Public">{t('public')}</option>
+                                            <option value="Private">{t('private')}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1281,11 +1281,11 @@ const ApplicationFormWrapper = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            School Name
+                                            {t('schoolName')}
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Unspecified"
+                                            placeholder={t('unspecified')}
                                             value={formData.schoolInfo.secondary.schoolName}
                                             onChange={(e) => handleInputChange('schoolInfo', 'schoolName', e.target.value, 'secondary')}
                                             style={{
@@ -1301,7 +1301,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Woreda
+                                            {t('woreda')}
                                         </label>
                                         <select
                                             value={formData.schoolInfo.secondary.woreda}
@@ -1316,19 +1316,19 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="">~Select Woreda~</option>
+                                            <option value="">{t('selectWoreda')}</option>
                                             <option value="Woreda1">Woreda 1</option>
                                             <option value="Woreda2">Woreda 2</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            Attended Year (From-To(E.C))
+                                            {t('attendedYear')}
                                         </label>
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                                             <input
                                                 type="text"
-                                                placeholder="Unspecified"
+                                                placeholder={t('unspecified')}
                                                 value={formData.schoolInfo.secondary.attendedYearFrom}
                                                 onChange={(e) => handleInputChange('schoolInfo', 'attendedYearFrom', e.target.value, 'secondary')}
                                                 style={{
@@ -1343,7 +1343,7 @@ const ApplicationFormWrapper = () => {
                                             />
                                             <input
                                                 type="text"
-                                                placeholder="Unspecified"
+                                                placeholder={t('unspecified')}
                                                 value={formData.schoolInfo.secondary.attendedYearTo}
                                                 onChange={(e) => handleInputChange('schoolInfo', 'attendedYearTo', e.target.value, 'secondary')}
                                                 style={{
@@ -1360,7 +1360,7 @@ const ApplicationFormWrapper = () => {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: isDarkMode ? '#ffffff' : '#374151', fontSize: '0.875rem' }}>
-                                            School Type
+                                            {t('schoolType')}
                                         </label>
                                         <select
                                             value={formData.schoolInfo.secondary.schoolType}
@@ -1375,9 +1375,9 @@ const ApplicationFormWrapper = () => {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            <option value="Unspecified">Unspecified</option>
-                                            <option value="Public">Public</option>
-                                            <option value="Private">Private</option>
+                                            <option value="Unspecified">{t('unspecified')}</option>
+                                            <option value="Public">{t('public')}</option>
+                                            <option value="Private">{t('private')}</option>
                                         </select>
                                     </div>
                                 </div>
