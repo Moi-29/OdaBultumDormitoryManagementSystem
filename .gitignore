@@ -54,6 +54,14 @@ tmp/
 *.bak
 *.backup
 
-# Documentation (if you want to exclude)
+# Documentation - EXCLUDE ALL TO PREVENT CREDENTIAL LEAKS
 *.md
 !README.md
+
+# Security - Never commit these
+*.pem
+*.key
+*.cert
+.env*
+!.env.example
+!.env.production.example
