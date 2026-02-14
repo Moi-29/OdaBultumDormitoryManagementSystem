@@ -1,29 +1,59 @@
-node_modules
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment files - NEVER COMMIT THESE
 .env
 .env.local
 .env.production
 .env.development
-.env.production.example
 *.env
 !.env.example
-npm-debug.log
-yarn-error.log
-dist/
-build/
-.DS_Store
-coverage/
-.vscode/
-.idea/
+!.env.production.example
 
-# Backend environment files - NEVER COMMIT THESE
+# Backend environment files
 backend/.env
 backend/.env.local
 backend/.env.production
-backend/.env.production.example
 backend/.env.development
 
-# Frontend environment files - NEVER COMMIT THESE
+# Frontend environment files
 frontend/.env
 frontend/.env.local
 frontend/.env.production
 frontend/.env.development
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# IDE and OS files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.bak
+*.backup
+
+# Documentation (if you want to exclude)
+*.md
+!README.md
