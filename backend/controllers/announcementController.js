@@ -1,12 +1,31 @@
 const Announcement = require('../models/Announcement');
 const cloudinary = require('../config/cloudinary');
+const cache = require('../utils/cache'); // ⚡ PERFORMANCE: Redis caching
+
+// ⚡ PERFORMANCE: Cache TTL configurations
+const CACHE_TTL = {
+    ANNOUNCEMENTS_LIST: 300, // 5 minutes
+    ANNOUNCEMENT_DETAIL: 600  // 10 minutes
+};
 
 // @desc    Get all announcements
 // @route   GET /api/announcements
 // @access  Private
 const getAnnouncements = async (req, res) => {
     try {
-        const { status, type, targetAudience } = req.query;
+        const { status, type, targetAudience, page = 1, limit = 20 } = req.query;
+        
+        // ⚡ PERFORMANCE: Generate cache key based on query params
+        const cacheKey = `announcements:list:${status || 'all'}:${type || 'all'}:${targetAudience || 'all'}:${page}:${limit}`;
+        
+        // ⚡ PERFORMANCE: Check cache first
+        const cachedData = await cache.get(cacheKey);
+        if (cachedData) {
+            console.log(`✅ Cache HIT: ${cacheKey}`);
+            return res.json(cachedData);
+        }
+        
+        console.log(`❌ Cache MISS: ${cacheKey}`);
         
         let query = {};
         
@@ -14,13 +33,33 @@ const getAnnouncements = async (req, res) => {
         if (type) query.type = type;
         if (targetAudience) query.targetAudience = { $in: [targetAudience, 'all'] };
         
-        const announcements = await Announcement.find(query).sort({ createdAt: -1 });
+        // ⚡ PERFORMANCE: Use lean() for read-only queries (30-50% faster)
+        // ⚡ PERFORMANCE: Add pagination to limit data transfer
+        const skip = (parseInt(page) - 1) * parseInt(limit);
         
-        res.json({
+        const [announcements, total] = await Promise.all([
+            Announcement.find(query)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit))
+                .select('-__v') // ⚡ PERFORMANCE: Exclude unnecessary fields
+                .lean(), // ⚡ PERFORMANCE: Return plain JS objects (faster)
+            Announcement.countDocuments(query)
+        ]);
+        
+        const response = {
             success: true,
             count: announcements.length,
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / parseInt(limit)),
             announcements
-        });
+        };
+        
+        // ⚡ PERFORMANCE: Cache the response
+        await cache.set(cacheKey, response, CACHE_TTL.ANNOUNCEMENTS_LIST);
+        
+        res.json(response);
     } catch (error) {
         console.error('Error fetching announcements:', error);
         res.status(500).json({ success: false, message: 'Server error', error: error.message });
@@ -32,16 +71,33 @@ const getAnnouncements = async (req, res) => {
 // @access  Private
 const getAnnouncementById = async (req, res) => {
     try {
-        const announcement = await Announcement.findById(req.params.id);
+        // ⚡ PERFORMANCE: Cache individual announcements
+        const cacheKey = `announcement:${req.params.id}`;
+        const cachedData = await cache.get(cacheKey);
+        
+        if (cachedData) {
+            console.log(`✅ Cache HIT: ${cacheKey}`);
+            return res.json(cachedData);
+        }
+        
+        // ⚡ PERFORMANCE: Use lean() for read-only query
+        const announcement = await Announcement.findById(req.params.id)
+            .select('-__v')
+            .lean();
         
         if (!announcement) {
             return res.status(404).json({ success: false, message: 'Announcement not found' });
         }
         
-        res.json({
+        const response = {
             success: true,
             announcement
-        });
+        };
+        
+        // ⚡ PERFORMANCE: Cache the response
+        await cache.set(cacheKey, response, CACHE_TTL.ANNOUNCEMENT_DETAIL);
+        
+        res.json(response);
     } catch (error) {
         console.error('Error fetching announcement:', error);
         res.status(500).json({ success: false, message: 'Server error', error: error.message });
@@ -100,6 +156,9 @@ const createAnnouncement = async (req, res) => {
         }
         
         const announcement = await Announcement.create(announcementData);
+        
+        // ⚡ PERFORMANCE: Invalidate cache after creating announcement
+        await cache.delPattern('announcements:*');
         
         res.status(201).json({
             success: true,
@@ -167,6 +226,10 @@ const updateAnnouncement = async (req, res) => {
         
         await announcement.save();
         
+        // ⚡ PERFORMANCE: Invalidate cache after updating announcement
+        await cache.delPattern('announcements:*');
+        await cache.del(`announcement:${req.params.id}`);
+        
         res.json({
             success: true,
             message: 'Announcement updated successfully',
@@ -196,6 +259,10 @@ const deleteAnnouncement = async (req, res) => {
         }
         
         await announcement.deleteOne();
+        
+        // ⚡ PERFORMANCE: Invalidate cache after deleting announcement
+        await cache.delPattern('announcements:*');
+        await cache.del(`announcement:${req.params.id}`);
         
         res.json({
             success: true,
@@ -230,6 +297,12 @@ const bulkDeleteAnnouncements = async (req, res) => {
         }
         
         const result = await Announcement.deleteMany({ _id: { $in: announcementIds } });
+        
+        // ⚡ PERFORMANCE: Invalidate cache after bulk delete
+        await cache.delPattern('announcements:*');
+        for (const id of announcementIds) {
+            await cache.del(`announcement:${id}`);
+        }
         
         res.json({
             success: true,

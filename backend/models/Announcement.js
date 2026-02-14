@@ -62,9 +62,13 @@ const announcementSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for efficient queries
-announcementSchema.index({ status: 1, createdAt: -1 });
-announcementSchema.index({ type: 1, status: 1 });
-announcementSchema.index({ targetAudience: 1, status: 1 });
+// ⚡ PERFORMANCE INDEXES - Optimized for sub-second queries
+announcementSchema.index({ status: 1, createdAt: -1 }); // Primary query pattern
+announcementSchema.index({ type: 1, status: 1, createdAt: -1 }); // Type filtering
+announcementSchema.index({ targetAudience: 1, status: 1, createdAt: -1 }); // Audience filtering
+announcementSchema.index({ priority: 1, status: 1, createdAt: -1 }); // Priority sorting
+announcementSchema.index({ publishedAt: -1 }); // Published date sorting
+announcementSchema.index({ expiresAt: 1 }); // Expiry checking
+announcementSchema.index({ status: 1, publishedAt: -1, priority: -1 }); // Compound for home page
 
 module.exports = mongoose.model('Announcement', announcementSchema);

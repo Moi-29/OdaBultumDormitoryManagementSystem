@@ -16,7 +16,8 @@ const gallerySchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for efficient queries
-gallerySchema.index({ createdAt: -1 });
+// ⚡ PERFORMANCE INDEXES - Optimized for gallery loading
+gallerySchema.index({ createdAt: -1 }); // Primary sort order
+gallerySchema.index({ uploadedBy: 1, createdAt: -1 }); // Filter by uploader
 
 module.exports = mongoose.model('Gallery', gallerySchema);

@@ -63,6 +63,12 @@ const proctorSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// ⚡ PERFORMANCE INDEXES - Optimized for proctor queries
+proctorSchema.index({ username: 1 }, { unique: true }); // Login queries
+proctorSchema.index({ blockId: 1, status: 1 }); // Block assignment queries
+proctorSchema.index({ status: 1 }); // Status filtering
+proctorSchema.index({ createdAt: -1 }); // Creation date sorting
+
 // Hash password before saving
 proctorSchema.pre('save', async function() {
     if (!this.isModified('password')) return;

@@ -1,18 +1,58 @@
 const Gallery = require('../models/Gallery');
 const cloudinary = require('../config/cloudinary');
+const cache = require('../utils/cache'); // ⚡ PERFORMANCE: Redis caching
+
+// ⚡ PERFORMANCE: Cache TTL configurations
+const CACHE_TTL = {
+    GALLERY_LIST: 600, // 10 minutes (images don't change frequently)
+    GALLERY_DETAIL: 1200  // 20 minutes
+};
 
 // @desc    Get all gallery images
 // @route   GET /api/gallery
 // @access  Private
 const getGalleryImages = async (req, res) => {
     try {
-        const images = await Gallery.find().sort({ createdAt: -1 });
+        const { page = 1, limit = 20 } = req.query;
         
-        res.json({
+        // ⚡ PERFORMANCE: Generate cache key
+        const cacheKey = `gallery:list:${page}:${limit}`;
+        
+        // ⚡ PERFORMANCE: Check cache first
+        const cachedData = await cache.get(cacheKey);
+        if (cachedData) {
+            console.log(`✅ Cache HIT: ${cacheKey}`);
+            return res.json(cachedData);
+        }
+        
+        console.log(`❌ Cache MISS: ${cacheKey}`);
+        
+        // ⚡ PERFORMANCE: Add pagination
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        
+        const [images, total] = await Promise.all([
+            Gallery.find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit))
+                .select('-__v') // ⚡ PERFORMANCE: Exclude unnecessary fields
+                .lean(), // ⚡ PERFORMANCE: Return plain JS objects (30-50% faster)
+            Gallery.countDocuments()
+        ]);
+        
+        const response = {
             success: true,
             count: images.length,
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / parseInt(limit)),
             images
-        });
+        };
+        
+        // ⚡ PERFORMANCE: Cache the response
+        await cache.set(cacheKey, response, CACHE_TTL.GALLERY_LIST);
+        
+        res.json(response);
     } catch (error) {
         console.error('Error fetching gallery images:', error);
         res.status(500).json({ success: false, message: 'Server error', error: error.message });
@@ -54,6 +94,9 @@ const addGalleryImage = async (req, res) => {
         const image = await Gallery.create(imageData);
         console.log('Image created successfully:', image._id);
         
+        // ⚡ PERFORMANCE: Invalidate gallery cache after adding image
+        await cache.delPattern('gallery:*');
+        
         res.status(201).json({
             success: true,
             message: 'Image added successfully',
@@ -93,6 +136,9 @@ const updateGalleryImage = async (req, res) => {
         image.imageUrl = imageUrl;
         await image.save();
         
+        // ⚡ PERFORMANCE: Invalidate gallery cache after updating image
+        await cache.delPattern('gallery:*');
+        
         res.json({
             success: true,
             message: 'Image updated successfully',
@@ -124,6 +170,9 @@ const deleteGalleryImage = async (req, res) => {
         console.log(`Deleting image ${req.params.id} from database`);
         await image.deleteOne();
         console.log(`Image ${req.params.id} deleted successfully from database`);
+        
+        // ⚡ PERFORMANCE: Invalidate gallery cache after deleting image
+        await cache.delPattern('gallery:*');
         
         res.json({
             success: true,
@@ -160,6 +209,9 @@ const bulkDeleteGalleryImages = async (req, res) => {
         console.log(`Bulk deleting ${imageIds.length} images from database`);
         const result = await Gallery.deleteMany({ _id: { $in: imageIds } });
         console.log(`Bulk delete completed: ${result.deletedCount} images deleted from database`);
+        
+        // ⚡ PERFORMANCE: Invalidate gallery cache after bulk delete
+        await cache.delPattern('gallery:*');
         
         res.json({
             success: true,

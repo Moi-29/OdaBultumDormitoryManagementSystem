@@ -1,7 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const compression = require('compression'); // ⚡ PERFORMANCE: Response compression
 const connectDB = require('./config/db');
+const { initRedis } = require('./utils/cache'); // ⚡ PERFORMANCE: Redis caching
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +27,18 @@ console.log('📍 JWT_SECRET:', process.env.JWT_SECRET ? '✓ Set' : '✗ Missin
 console.log('📍 ALLOWED_ORIGIN:', process.env.ALLOWED_ORIGIN || 'Not set (will allow all in dev)');
 
 const app = express();
+
+// ⚡ PERFORMANCE MIDDLEWARE - Enable GZIP/Brotli compression
+app.use(compression({
+    level: 6, // Compression level (0-9)
+    threshold: 1024, // Only compress responses larger than 1KB
+    filter: (req, res) => {
+        if (req.headers['x-no-compression']) {
+            return false;
+        }
+        return compression.filter(req, res);
+    }
+}));
 
 // Middleware
 // CORS Configuration - supports both development and production
@@ -217,23 +231,40 @@ app.use('/api/user-management', require('./routes/userManagementRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-    console.log('🚀 ========================================');
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🚀 API URL: http://localhost:${PORT}`);
-    console.log('🚀 ========================================');
-});
+// ⚡ PERFORMANCE: Initialize Redis cache before starting server
+const startServer = async () => {
+    try {
+        // Initialize Redis (optional - will fallback to memory cache if not available)
+        await initRedis();
+        
+        const server = app.listen(PORT, () => {
+            console.log('🚀 ========================================');
+            console.log(`🚀 Server running on port ${PORT}`);
+            console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`🚀 API URL: http://localhost:${PORT}`);
+            console.log('⚡ Performance optimizations: ENABLED');
+            console.log('⚡ Compression: ENABLED');
+            console.log('⚡ Caching: ' + (process.env.REDIS_URL || process.env.REDIS_HOST ? 'REDIS' : 'IN-MEMORY'));
+            console.log('🚀 ========================================');
+        });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    console.error('💥 UNHANDLED REJECTION! Shutting down...');
-    console.error('Error:', err.message);
-    console.error('Stack:', err.stack);
-    server.close(() => {
+        // Handle unhandled promise rejections
+        process.on('unhandledRejection', (err) => {
+            console.error('💥 UNHANDLED REJECTION! Shutting down...');
+            console.error('Error:', err.message);
+            console.error('Stack:', err.stack);
+            server.close(() => {
+                process.exit(1);
+            });
+        });
+    } catch (error) {
+        console.error('❌ Failed to start server:', error);
         process.exit(1);
-    });
-});
+    }
+};
+
+// Start the server
+startServer();
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {

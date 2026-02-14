@@ -63,6 +63,12 @@ const maintainerSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// ⚡ PERFORMANCE INDEXES - Optimized for maintainer queries
+maintainerSchema.index({ username: 1 }, { unique: true }); // Login queries
+maintainerSchema.index({ specialization: 1, status: 1 }); // Specialization queries
+maintainerSchema.index({ status: 1 }); // Status filtering
+maintainerSchema.index({ createdAt: -1 }); // Creation date sorting
+
 // Hash password before saving
 maintainerSchema.pre('save', async function() {
     if (!this.isModified('password')) return;

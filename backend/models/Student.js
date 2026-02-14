@@ -42,5 +42,12 @@ const studentSchema = mongoose.Schema({
     timestamps: true
 });
 
+// ⚡ PERFORMANCE INDEXES - Optimized for student queries
+studentSchema.index({ studentId: 1 }, { unique: true }); // Primary key
+studentSchema.index({ department: 1, year: 1, gender: 1 }); // Allocation queries
+studentSchema.index({ room: 1 }); // Room assignment lookups
+studentSchema.index({ gender: 1, room: 1 }); // Gender-based room queries
+studentSchema.index({ year: 1, department: 1 }); // Year/department filtering
+
 const Student = mongoose.model('Student', studentSchema);
 module.exports = Student;

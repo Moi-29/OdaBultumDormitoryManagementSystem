@@ -47,6 +47,11 @@ const roomSchema = mongoose.Schema({
 
 // Compound index to ensure unique room numbers per building
 roomSchema.index({ building: 1, roomNumber: 1 }, { unique: true });
+// ⚡ PERFORMANCE INDEXES - Optimized for room queries
+roomSchema.index({ gender: 1, status: 1, building: 1 }); // Allocation queries
+roomSchema.index({ building: 1, block: 1, floor: 1 }); // Hierarchical queries
+roomSchema.index({ status: 1, capacity: 1 }); // Availability queries
+roomSchema.index({ gender: 1, status: 1, capacity: 1 }); // Gender-based allocation
 
 const Room = mongoose.model('Room', roomSchema);
 module.exports = Room;

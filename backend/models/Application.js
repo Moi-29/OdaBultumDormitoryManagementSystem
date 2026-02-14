@@ -67,4 +67,10 @@ const applicationSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// ⚡ PERFORMANCE INDEXES - Optimized for application queries
+applicationSchema.index({ studentId: 1 }, { unique: true }); // Primary key
+applicationSchema.index({ submittedOn: -1 }); // Submission date sorting
+applicationSchema.index({ canEdit: 1, submittedOn: -1 }); // Edit permission queries
+applicationSchema.index({ createdAt: -1 }); // Creation date sorting
+
 module.exports = mongoose.model('Application', applicationSchema);

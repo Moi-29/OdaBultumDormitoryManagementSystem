@@ -87,6 +87,13 @@ const adminSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// ⚡ PERFORMANCE INDEXES - Optimized for admin queries
+adminSchema.index({ username: 1 }, { unique: true }); // Login queries
+adminSchema.index({ status: 1, role: 1 }); // Status filtering
+adminSchema.index({ role: 1 }); // Role-based queries
+adminSchema.index({ lastLogin: -1 }); // Recent activity
+adminSchema.index({ createdAt: -1 }); // Creation date sorting
+
 // Hash password before saving
 adminSchema.pre('save', async function() {
     if (!this.isModified('password')) return;
