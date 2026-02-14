@@ -2092,9 +2092,7 @@ export const homeTranslations = {
     location: "ጭሮ፣ ኦሮሚያ፣ ኢትዮጵያ",
     phone: "+251-25-511-XXXX",
     email: "info@obu.edu.et"
-  }
-};
-
+  },
   
   ar: {
     // Welcome Section
@@ -2105,8 +2103,6 @@ export const homeTranslations = {
     learnMore: "اعرف المزيد",
     showMore: "عرض المزيد",
     showLess: "عرض أقل",
-    
-    // Guidelines Section
     guidelinesTitle: "إرشادات الانضباط والحرم الجامعي",
     guidelinesSubtitle: "حياة الحرم الجامعي",
     dormitoryRules: "قواعد وأنظمة السكن",
@@ -2131,8 +2127,6 @@ export const homeTranslations = {
     academicRulesDesc: "اتبع القواعد الأكاديمية وسياسات المؤسسة. سجل خلال الفترات المحددة. احضر الفصول بانتظام. حافظ على الأداء الأكاديمي الأدنى. عدم الأمانة الأكاديمية يؤدي إلى إجراء تأديبي. تصدر تقارير الدرجات كل فصل دراسي. الحق في استئناف القرارات الأكاديمية.",
     penaltiesAppeals: "العقوبات والاستئنافات",
     penaltiesAppealsDesc: "الانتهاكات تؤدي إلى: تحذيرات شفوية (أول مرة بسيطة)، تحذيرات مكتوبة (ملف دائم)، إيقاف (مغادرة الحرم الجامعي فوراً)، أو طرد (منع من إعادة التسجيل). الاستئناف لرئيس الجامعة خلال 5 أيام عمل. قرار الرئيس نهائي.",
-    
-    // Student Union
     studentUnionTitle: "اتحاد الطلاب",
     studentUnionSubtitle: "المجتمع",
     studentUnionDesc: "تمكين الطلاب من خلال القيادة والوحدة والهدف المشترك.",
@@ -2147,8 +2141,6 @@ export const homeTranslations = {
     serviceDesc: "الخدمة بنزاهة وهدف",
     innovation: "الابتكار",
     innovationDesc: "خلق الفرص للجميع",
-    
-    // Cafeteria
     cafeteriaTitle: "جدول الكافتيريا",
     cafeteriaSubtitle: "الطعام",
     cafeteriaDesc: "وجبات مغذية تقدم يومياً لإبقائك نشيطاً ومركزاً.",
@@ -2161,15 +2153,11 @@ export const homeTranslations = {
     dinner: "العشاء",
     dinnerTime: "11:00 – 1:00 ظهراً",
     dinnerDesc: "وجبات ساخنة وخيارات نباتية",
-    
-    // Clean Water
     cleanWaterTitle: "مياه نظيفة 24/7",
     cleanWaterDesc: "مياه شرب آمنة ومفلترة متاحة في جميع أنحاء جميع المساكن، يتم اختبارها بانتظام لصحتك وسلامتك.",
     filtered: "مفلترة",
     testedDaily: "يتم اختبارها يومياً",
     access247: "وصول 24/7",
-    
-    // Health Center
     healthCenterTitle: "مركز الصحة",
     healthCenterSubtitle: "الصحة",
     campusClinic: "عيادة الحرم الجامعي",
@@ -2183,12 +2171,8 @@ export const homeTranslations = {
     mentalHealthSupport: "دعم الصحة النفسية",
     pharmacyServices: "خدمات الصيدلية",
     emergencyCare: "الرعاية الطارئة",
-    
-    // Gallery
     galleryTitle: "معرض جامعة أودا بولتوم",
     galleryDesc: "استكشف جمال وحيوية الحياة في جامعة أودا بولتوم",
-    
-    // Diversity
     diversityTitle: "الوحدة في التنوع",
     diversitySubtitle: "قوتنا",
     diversityDesc: "نعزز الشمولية ونحافظ على عدم التسامح مع التمييز. كل طالب ينتمي هنا.",
@@ -2216,12 +2200,8 @@ export const homeTranslations = {
     safeSpacesDesc: "مناطق مخصصة حيث يمكن للطلاب التجمع ومشاركة التجارب والعثور على الدعم في بيئة ترحيبية وخالية من الأحكام.",
     diversityTraining: "تدريب التنوع",
     diversityTrainingDesc: "ورش عمل إلزامية وتعليم مستمر لجميع أعضاء المجتمع حول الكفاءة الثقافية والتحيز اللاواعي والممارسات الشاملة.",
-    
-    // Hero Section
     heroSubtitle: "جامعة أودا بولتوم — خدمة الطلاب",
     heroTitle: "مرحباً بكم في خدمة طلاب جامعة أودا بولتوم",
-    
-    // Footer
     contact: "اتصل",
     motto: "الشعار",
     copyright: "© 2026 جامعة أودا بولتوم. جميع الحقوق محفوظة.",
