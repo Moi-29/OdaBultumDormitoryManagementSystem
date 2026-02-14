@@ -110,21 +110,29 @@ const StudentLayout = () => {
                 );
             case 'so':
                 return (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ display: 'inline-block' }}>
-                        <rect width="24" height="8" fill="#4189DD"/>
-                        <rect y="8" width="24" height="16" fill="#4189DD"/>
-                        <path d="M12 8 L13.5 12.5 L18 12.5 L14.5 15.5 L16 20 L12 17 L8 20 L9.5 15.5 L6 12.5 L10.5 12.5 Z" fill="white"/>
-                    </svg>
+                    <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_the_Somali_Region_%281994-2008%2C_2018-%29.svg/960px-Flag_of_the_Somali_Region_%281994-2008%2C_2018-%29.svg.png" 
+                        alt="Somali Region Flag"
+                        style={{ 
+                            width: '24px', 
+                            height: '24px', 
+                            objectFit: 'cover',
+                            borderRadius: '2px'
+                        }}
+                    />
                 );
             case 'ti':
                 return (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ display: 'inline-block' }}>
-                        <rect width="24" height="8" fill="#078930"/>
-                        <rect y="8" width="24" height="8" fill="#FCDD09"/>
-                        <rect y="16" width="24" height="8" fill="#DA121A"/>
-                        <circle cx="12" cy="12" r="4" fill="#0F47AF"/>
-                        <path d="M12 8 L13 11 L16 11 L13.5 13 L14.5 16 L12 14 L9.5 16 L10.5 13 L8 11 L11 11 Z" fill="#FCDD09"/>
-                    </svg>
+                    <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Flag_of_the_Tigray_Region.svg" 
+                        alt="Tigray Region Flag"
+                        style={{ 
+                            width: '24px', 
+                            height: '24px', 
+                            objectFit: 'cover',
+                            borderRadius: '2px'
+                        }}
+                    />
                 );
             case 'ar':
                 return (
