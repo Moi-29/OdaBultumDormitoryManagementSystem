@@ -88,43 +88,40 @@ const Announcements = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
             
-            // Prepare data to send
-            const dataToSend = {
-                title: formData.title,
-                content: formData.content
-            };
-
-            // Handle image upload - convert file to base64 if file is selected
+            // Use FormData for file uploads (Cloudinary)
             if (imageUploadType === 'upload' && formData.imageFile) {
-                // Convert file to base64
-                const reader = new FileReader();
-                reader.onloadend = async () => {
-                    dataToSend.imageUrl = reader.result; // base64 string
-                    
-                    try {
-                        if (modalMode === 'create') {
-                            await axios.post(`${API_URL}/api/announcements`, dataToSend, config);
-                            showNotification('Announcement created successfully', 'success');
-                        } else {
-                            await axios.put(`${API_URL}/api/announcements/${selectedAnnouncement._id}`, dataToSend, config);
-                            showNotification('Announcement updated successfully', 'success');
-                        }
-                        
-                        handleCloseModal();
-                        fetchAnnouncements();
-                    } catch (error) {
-                        console.error('Error saving announcement:', error);
-                        showNotification(error.response?.data?.message || 'Failed to save announcement', 'error');
-                    }
+                const formDataToSend = new FormData();
+                formDataToSend.append('image', formData.imageFile);
+                formDataToSend.append('title', formData.title);
+                formDataToSend.append('content', formData.content);
+                
+                const config = { 
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    } 
                 };
-                reader.readAsDataURL(formData.imageFile);
+                
+                if (modalMode === 'create') {
+                    await axios.post(`${API_URL}/api/announcements`, formDataToSend, config);
+                    showNotification('Announcement created successfully', 'success');
+                } else {
+                    await axios.put(`${API_URL}/api/announcements/${selectedAnnouncement._id}`, formDataToSend, config);
+                    showNotification('Announcement updated successfully', 'success');
+                }
             } else {
-                // Use URL directly
+                // Use URL directly or no image
+                const dataToSend = {
+                    title: formData.title,
+                    content: formData.content
+                };
+                
                 if (formData.imageUrl) {
                     dataToSend.imageUrl = formData.imageUrl;
                 }
+                
+                const config = { headers: { Authorization: `Bearer ${token}` } };
                 
                 if (modalMode === 'create') {
                     await axios.post(`${API_URL}/api/announcements`, dataToSend, config);
@@ -133,10 +130,10 @@ const Announcements = () => {
                     await axios.put(`${API_URL}/api/announcements/${selectedAnnouncement._id}`, dataToSend, config);
                     showNotification('Announcement updated successfully', 'success');
                 }
-                
-                handleCloseModal();
-                fetchAnnouncements();
             }
+            
+            handleCloseModal();
+            fetchAnnouncements();
         } catch (error) {
             console.error('Error saving announcement:', error);
             showNotification(error.response?.data?.message || 'Failed to save announcement', 'error');

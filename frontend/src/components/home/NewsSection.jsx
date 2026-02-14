@@ -197,6 +197,7 @@ const NewsSection = () => {
                                         <img
                                             src={announcement.imageUrl}
                                             alt={announcement.title}
+                                            loading="lazy"
                                             style={{
                                                 width: '100%',
                                                 height: '100%',
@@ -406,6 +407,7 @@ const NewsSection = () => {
                                 <img
                                     src={selectedAnnouncement.imageUrl}
                                     alt={selectedAnnouncement.title}
+                                    loading="lazy"
                                     style={{
                                         width: '100%',
                                         height: '100%',

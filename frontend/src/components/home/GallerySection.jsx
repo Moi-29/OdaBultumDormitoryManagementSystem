@@ -238,6 +238,7 @@ const GallerySection = () => {
                         <img
                           src={card.imageUrl}
                           alt="OBU Campus"
+                          loading="lazy"
                           style={{
                             width: '100%',
                             height: '100%',

@@ -1,4 +1,5 @@
 const Gallery = require('../models/Gallery');
+const cloudinary = require('../config/cloudinary');
 
 // @desc    Get all gallery images
 // @route   GET /api/gallery
@@ -25,13 +26,22 @@ const addGalleryImage = async (req, res) => {
     try {
         console.log('Add gallery image request received');
         console.log('Request body:', req.body);
+        console.log('Request file:', req.file);
         console.log('Request user:', req.user);
         
-        const { imageUrl } = req.body;
+        let imageUrl;
         
-        if (!imageUrl) {
-            console.log('Error: No imageUrl provided');
-            return res.status(400).json({ success: false, message: 'Image URL is required' });
+        if (req.file) {
+            // Image uploaded via multer/cloudinary
+            imageUrl = req.file.path;
+            console.log('Image uploaded to Cloudinary:', imageUrl);
+        } else if (req.body.imageUrl) {
+            // Direct URL provided (for backward compatibility)
+            imageUrl = req.body.imageUrl;
+            console.log('Using provided URL:', imageUrl);
+        } else {
+            console.log('Error: No image provided');
+            return res.status(400).json({ success: false, message: 'No image provided' });
         }
         
         const imageData = {
@@ -61,18 +71,26 @@ const addGalleryImage = async (req, res) => {
 // @access  Private (Admin)
 const updateGalleryImage = async (req, res) => {
     try {
-        const { imageUrl } = req.body;
-        
         const image = await Gallery.findById(req.params.id);
         
         if (!image) {
             return res.status(404).json({ success: false, message: 'Image not found' });
         }
         
-        if (imageUrl) {
-            image.imageUrl = imageUrl;
+        let imageUrl = image.imageUrl;
+        
+        if (req.file) {
+            // Delete old image from Cloudinary if it exists
+            if (image.imageUrl.includes('cloudinary.com')) {
+                const publicId = image.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+                await cloudinary.uploader.destroy(publicId).catch(err => console.log('Error deleting old image:', err));
+            }
+            imageUrl = req.file.path;
+        } else if (req.body.imageUrl) {
+            imageUrl = req.body.imageUrl;
         }
         
+        image.imageUrl = imageUrl;
         await image.save();
         
         res.json({
@@ -95,6 +113,12 @@ const deleteGalleryImage = async (req, res) => {
         
         if (!image) {
             return res.status(404).json({ success: false, message: 'Image not found' });
+        }
+        
+        // Delete from Cloudinary if it's a Cloudinary URL
+        if (image.imageUrl.includes('cloudinary.com')) {
+            const publicId = image.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+            await cloudinary.uploader.destroy(publicId).catch(err => console.log('Error deleting from Cloudinary:', err));
         }
         
         console.log(`Deleting image ${req.params.id} from database`);
@@ -120,6 +144,17 @@ const bulkDeleteGalleryImages = async (req, res) => {
         
         if (!imageIds || !Array.isArray(imageIds) || imageIds.length === 0) {
             return res.status(400).json({ success: false, message: 'Image IDs array is required' });
+        }
+        
+        // Get all images to delete from Cloudinary
+        const images = await Gallery.find({ _id: { $in: imageIds } });
+        
+        // Delete from Cloudinary
+        for (const image of images) {
+            if (image.imageUrl.includes('cloudinary.com')) {
+                const publicId = image.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+                await cloudinary.uploader.destroy(publicId).catch(err => console.log('Error deleting from Cloudinary:', err));
+            }
         }
         
         console.log(`Bulk deleting ${imageIds.length} images from database`);
