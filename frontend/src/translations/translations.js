@@ -1672,6 +1672,22 @@ export const homeTranslations = {
     safeSpacesDesc: "Designated areas where students can gather, share experiences, and find support in a welcoming and judgment-free environment.",
     diversityTraining: "Diversity Training",
     diversityTrainingDesc: "Mandatory workshops and ongoing education for all community members on cultural competence, unconscious bias, and inclusive practices.",
+    
+    // Leadership Cards
+    leaderCard1Title: "Prof. Muktar Mohammed — President",
+    leaderCard1Desc: "Prof. Muktar Mohammed provides the highest level of executive leadership that defines the university's institutional vision and strategic trajectory. He guides policy formulation, governance frameworks, and long-term academic development initiatives. His leadership ensures the alignment of teaching, research, and community engagement with national priorities. Through principled stewardship, he fosters a culture of excellence, innovation, and institutional resilience.",
+    leaderCard2Title: "Getachew Gashaw (Assist. Professor) — Director, Academic program and staff development directorate",
+    leaderCard2Desc: "Getachew Gashaw oversees the systematic development and continual enhancement of academic programs within the institution. He leads initiatives aimed at strengthening faculty competence and instructional effectiveness. His directorate promotes curriculum relevance in response to emerging educational and professional demands. Through sustained professional development strategies, he advances academic quality and pedagogical innovation.",
+    leaderCard3Title: "Alemayehu Bayene (Assist. Professor) — Vice President",
+    leaderCard3Desc: "Alemayehu Bayene serves as a pivotal force in the coordination and implementation of the university's strategic directives. He supports executive decision-making by ensuring administrative and academic operations function cohesively. His office facilitates institutional efficiency through structured collaboration across departments. Through operational oversight, he strengthens institutional stability and performance outcomes.",
+    leaderCard4Title: "Mr. Lelisa Shamsedin — Student service directorate",
+    leaderCard4Desc: "Mr. Lelisa Shamsedin directs the institutional services that support student wellbeing and academic engagement. He ensures the effective delivery of programs that address student needs across academic and social dimensions. His leadership enhances student satisfaction through responsive and inclusive service frameworks. Through structured support systems, he promotes a balanced and enabling campus experience.",
+    leaderCard5Title: "Ibsa Ahmed (PhD) — Vice president For Adminstration and development",
+    leaderCard5Desc: "Ibsa Ahmed supervises the administrative and developmental functions that sustain institutional growth and infrastructure. He ensures the strategic utilization of resources to support operational effectiveness. His office drives initiatives that enhance administrative efficiency and organizational advancement. Through forward-looking management practices, he strengthens institutional capacity and development outcomes.",
+    leaderCard6Title: "Ahmedin Abdurahman (PhD) — Director, Quality assurance directorate",
+    leaderCard6Desc: "Ahmedin Abdurahman leads the institutional systems that safeguard academic standards and operational quality. He administers evaluation frameworks to ensure adherence to established benchmarks and regulatory requirements. His directorate promotes continuous improvement through systematic monitoring and assessment. Through quality-focused leadership, he reinforces institutional credibility and accountability.",
+    leaderCard7Title: "Mr. Ararsa Gudisa — Director, University registrar",
+    leaderCard7Desc: "Mr. Ararsa Gudisa manages the university's academic records and regulatory documentation processes. He ensures accuracy and integrity in admissions, enrollment, and certification procedures. His office coordinates academic progression in accordance with institutional regulations. Through meticulous administrative oversight, he maintains institutional trust and compliance.",
   },
   
   am: {
@@ -1802,6 +1818,22 @@ export const homeTranslations = {
     // Gallery
     galleryTitle: "የኦቢዩ ጋለሪ",
     galleryDesc: "በኦዳ ቡልቱም ዩኒቨርሲቲ ውስጥ ያለውን ውበት እና ህይወት ያስሱ",
+    
+    // Leadership Cards
+    leaderCard1Title: "ፕሮፌሰር ሙክታር መሐመድ — ፕሬዝዳንት",
+    leaderCard1Desc: "ፕሮፌሰር ሙክታር መሐመድ የዩኒቨርሲቲውን ተቋማዊ ራዕይ እና ስትራቴጂያዊ አቅጣጫ የሚገልጽ ከፍተኛ ደረጃ የአስፈፃሚ አመራር ይሰጣሉ። የፖሊሲ አወጣጥን፣ የአስተዳደር ማዕቀፎችን እና የረጅም ጊዜ የአካዳሚክ ልማት ተነሳሽነቶችን ይመራሉ። የእሱ አመራር ማስተማር፣ ምርምር እና የማህበረሰብ ተሳትፎ ከብሔራዊ ቅድሚያዎች ጋር እንዲጣጣም ያረጋግጣል። በመርህ አስተዳደር፣ የብቃት፣ የፈጠራ እና የተቋም ጥንካሬ ባህል ያሳድጋል።",
+    leaderCard2Title: "ጌታቸው ጋሻው (ረዳት ፕሮፌሰር) — ዳይሬክተር፣ የአካዳሚክ ፕሮግራም እና የሰራተኞች ልማት ዳይሬክቶሬት",
+    leaderCard2Desc: "ጌታቸው ጋሻው በተቋሙ ውስጥ የአካዳሚክ ፕሮግራሞችን ስልታዊ ልማት እና ቀጣይነት ያለው ማሻሻያ ይቆጣጠራሉ። የፋኩልቲ ብቃትን እና የማስተማር ውጤታማነትን ለማጠናከር ያለመ ተነሳሽነቶችን ይመራሉ። የእሱ ዳይሬክቶሬት ለተፈጠሩ የትምህርት እና ሙያዊ ፍላጎቶች ምላሽ በመስጠት የስርዓተ ትምህርት ተዛማጅነትን ያስተዋውቃል። በቀጣይነት ያለው የሙያ ልማት ስልቶች፣ የአካዳሚክ ጥራት እና የማስተማር ፈጠራን ያሳድጋል።",
+    leaderCard3Title: "ዓለማየሁ ባየነ (ረዳት ፕሮፌሰር) — ምክትል ፕሬዝዳንት",
+    leaderCard3Desc: "ዓለማየሁ ባየነ በዩኒቨርሲቲው ስትራቴጂያዊ መመሪያዎች ማስተባበር እና ትግበራ ውስጥ ወሳኝ ኃይል ሆነው ያገለግላሉ። የአስተዳደር እና የአካዳሚክ ስራዎች በጋራ እንዲሰሩ በማረጋገጥ የአስፈፃሚ ውሳኔ አሰጣጥን ይደግፋሉ። የእሱ ቢሮ በመምሪያዎች መካከል በተዋቀረ ትብብር የተቋም ቅልጥፍናን ያመቻቻል። በስራ ቁጥጥር፣ የተቋም መረጋጋት እና የአፈጻጸም ውጤቶችን ያጠናክራል።",
+    leaderCard4Title: "አቶ ለሊሳ ሻምሰዲን — የተማሪዎች አገልግሎት ዳይሬክቶሬት",
+    leaderCard4Desc: "አቶ ለሊሳ ሻምሰዲን የተማሪዎችን ደህንነት እና የአካዳሚክ ተሳትፎ የሚደግፉ የተቋም አገልግሎቶችን ይመራሉ። በአካዳሚክ እና ማህበራዊ ገጽታዎች ላይ የተማሪዎችን ፍላጎት የሚያሟሉ ፕሮግራሞችን ውጤታማ አቅርቦት ያረጋግጣል። የእሱ አመራር በምላሽ እና አካታች የአገልግሎት ማዕቀፎች የተማሪዎችን እርካታ ያሳድጋል። በተዋቀሩ የድጋፍ ስርዓቶች፣ ሚዛናዊ እና አስችሎ የካምፓስ ልምድን ያስተዋውቃል።",
+    leaderCard5Title: "ኢብሳ አህመድ (ዶክተር) — ምክትል ፕሬዝዳንት ለአስተዳደር እና ልማት",
+    leaderCard5Desc: "ኢብሳ አህመድ የተቋም እድገት እና መሠረተ ልማትን የሚደግፉ የአስተዳደር እና የልማት ተግባራትን ይቆጣጠራሉ። የስራ ውጤታማነትን ለመደገፍ የሀብቶችን ስትራቴጂያዊ አጠቃቀም ያረጋግጣል። የእሱ ቢሮ የአስተዳደር ቅልጥፍናን እና የድርጅት እድገትን የሚያሳድጉ ተነሳሽነቶችን ይመራል። በወደፊት ተኮር የአስተዳደር ልምዶች፣ የተቋም አቅም እና የልማት ውጤቶችን ያጠናክራል።",
+    leaderCard6Title: "አህመዲን አብዱራህማን (ዶክተር) — ዳይሬክተር፣ የጥራት ማረጋገጫ ዳይሬክቶሬት",
+    leaderCard6Desc: "አህመዲን አብዱራህማን የአካዳሚክ ደረጃዎችን እና የስራ ጥራትን የሚጠብቁ የተቋም ስርዓቶችን ይመራሉ። ከተቋቋሙ መመዘኛዎች እና ደንቦች ጋር መከበራቸውን ለማረጋገጥ የግምገማ ማዕቀፎችን ያስተዳድራል። የእሱ ዳይሬክቶሬት በስልታዊ ክትትል እና ግምገማ ቀጣይነት ያለው መሻሻልን ያስተዋውቃል። በጥራት ላይ ያተኮረ አመራር፣ የተቋም ታማኝነት እና ተጠያቂነትን ያጠናክራል።",
+    leaderCard7Title: "አቶ አራርሳ ጉዲሳ — ዳይሬክተር፣ የዩኒቨርሲቲ ምዝገባ",
+    leaderCard7Desc: "አቶ አራርሳ ጉዲሳ የዩኒቨርሲቲውን የአካዳሚክ መዝገቦች እና ደንቦች ሰነዶች ሂደቶችን ያስተዳድራሉ። በመግቢያ፣ በምዝገባ እና በምስክር ወረቀት አሰጣጥ ሂደቶች ውስጥ ትክክለኛነትን እና ታማኝነትን ያረጋግጣል። የእሱ ቢሮ በተቋማዊ ደንቦች መሠረት የአካዳሚክ እድገትን ያስተባብራል። በጥንቃቄ የአስተዳደር ቁጥጥር፣ የተቋም እምነት እና ተገዢነትን ይጠብቃል።",
   },
   
   om: {
@@ -1927,7 +1959,23 @@ export const homeTranslations = {
     safeSpaces: "Bakkeewwan Nageenya",
     safeSpacesDesc: "Naannoolee ramadaman bakka barattoonni walitti qabamuu, muuxannoo qoodachuu fi naannoo simachuu fi murtii-bilisaa ta'e keessatti deeggarsa argachuu danda'an.",
     diversityTraining: "Leenjii Garaagarummaa",
-    diversityTrainingDesc: "Warkshooppii dirqama fi barnoota itti fufiinsa qabu miseensota hawaasaa hundaaf dandeettii aadaa, loogii hin beekne fi hojii hammataa irratti."
+    diversityTrainingDesc: "Warkshooppii dirqama fi barnoota itti fufiinsa qabu miseensota hawaasaa hundaaf dandeettii aadaa, loogii hin beekne fi hojii hammataa irratti.",
+    
+    // Leadership Cards
+    leaderCard1Title: "Pirofeesar Muktar Mohammed — Pirezidaantii",
+    leaderCard1Desc: "Pirofeesar Muktar Mohammed sadarkaa olaanaa hoogganaa raawwachiiftuu kan mul'ata dhaabbataa yuunivarsiitii fi kallattii tarsiimoo ibsu ni kennu. Bocuu imaammata, bu'uura bulchiinsaa fi karoora guddina barnootaa yeroo dheeraa ni qajeelcha. Hoggansi isaa barsiisuu, qorannoo fi hirmaannaa hawaasaa wajjiin dursa biyyoolessaa akka walsimu ni mirkaneessa. Karaa bulchiinsa seera qabeessaan, aadaa olaantummaa, kalaqaa fi dandamachuu dhaabbataa ni guddisa.",
+    leaderCard2Title: "Getachew Gashaw (Pirofeesar Gargaaraa) — Daayireektara, Daayireektoreeta sagantaa barnootaa fi guddina hojjettootaa",
+    leaderCard2Desc: "Getachew Gashaw guddina sirna qabeessa fi fooyya'iinsa itti fufiinsa qabu sagantaalee barnootaa dhaabbata keessatti ni hordofa. Dandeettii barsiisotaa fi bu'a qabeessummaa barsiisuu cimsuu kan kaayyeffatu karoora ni qajeelcha. Daayireektoreeti isaa fedhii barnootaa fi ogummaa ka'umsa qabu deebii kennuuf walitti dhufeenya sagantaa barnootaa ni guddisa. Karaa tarsiimoo guddina ogummaa itti fufiinsa qabuun, qulqullina barnootaa fi kalaqaa barsiisuu ni guddisa.",
+    leaderCard3Title: "Alemayehu Bayene (Pirofeesar Gargaaraa) — Itti Aanaa Pirezidaantii",
+    leaderCard3Desc: "Alemayehu Bayene humna murteessaa ta'ee qajeelfama tarsiimoo yuunivarsiitii walitti qindeessuu fi hojiirra oolchuutti ni tajaajila. Hojiin bulchiinsaa fi barnootaa walitti dhufeenya qabuun akka hojjetan mirkaneessuudhaan murtoo raawwachiiftuu ni deeggara. Waajjirri isaa bu'a qabeessummaa dhaabbataa karaa tumsa qindaa'e kutaalee gidduutti ni haala mijeessa. Karaa hordoffii hojii, tasgabbii dhaabbataa fi bu'aa raawwii ni cimsaa.",
+    leaderCard4Title: "Obbo Lelisa Shamsedin — Daayireektoreeta tajaajila barattootaa",
+    leaderCard4Desc: "Obbo Lelisa Shamsedin tajaajila dhaabbataa fayyaa barattootaa fi hirmaannaa barnootaa deeggaru ni qajeelcha. Dhiyeessii bu'a qabeessa sagantaalee fedhii barattootaa gama barnootaa fi hawaasummaa irratti guutu ni mirkaneessa. Hoggansi isaa itti quufinsa barattootaa karaa bu'uura tajaajilaa deebii kennuu fi hammataa ta'e ni guddisa. Karaa sirna deeggarsa qindaa'e, muuxannoo kaampasii madaalu fi dandeessisu ni guddisa.",
+    leaderCard5Title: "Ibsa Ahmed (PhD) — Itti Aanaa Pirezidaantii Bulchiinsaa fi Guddina",
+    leaderCard5Desc: "Ibsa Ahmed hojiiwwan bulchiinsaa fi guddina guddina dhaabbataa fi bu'uura bu'uuraa deeggaran ni hordofa. Fayyadama tarsiimoo qabeenya bu'a qabeessummaa hojii deeggaruuf ni mirkaneessa. Waajjirri isaa karoora bu'a qabeessummaa bulchiinsaa fi guddina dhaabbataa guddisan ni qajeelcha. Karaa gocha bulchiinsa fuulduratti xiyyeeffate, dandeettii dhaabbataa fi bu'aa guddina ni cimsaa.",
+    leaderCard6Title: "Ahmedin Abdurahman (PhD) — Daayireektara, Daayireektoreeta mirkaneessa qulqullinaa",
+    leaderCard6Desc: "Ahmedin Abdurahman sirna dhaabbataa sadarkaa barnootaa fi qulqullina hojii eegan ni qajeelcha. Bu'uura madaallii ulaagaalee hundeeffamanii fi ulaagaalee dambiiwwan waliin akka walsimu mirkaneessuuf ni bulcha. Daayireektoreeti isaa fooyya'iinsa itti fufiinsa qabu karaa hordoffii fi madaallii sirna qabeessaan ni guddisa. Karaa hogganaa qulqullinatti xiyyeeffate, amanamummaa dhaabbataa fi itti gaafatamummaa ni cimsaa.",
+    leaderCard7Title: "Obbo Ararsa Gudisa — Daayireektara, Galmee yuunivarsiitii",
+    leaderCard7Desc: "Obbo Ararsa Gudisa galmee barnootaa yuunivarsiitii fi adeemsa sanadoota dambiiwwan ni bulcha. Sirrii ta'uu fi amanamummaa adeemsa seensaa, galmaa'uu fi ragaa kennuu keessatti ni mirkaneessa. Waajjirri isaa adeemsa barnootaa akkaataa dambiilee dhaabbataatti ni qindeessa. Karaa hordoffii bulchiinsa of eeggannoo qabuun, amantaa dhaabbataa fi walsimannaa ni eega.",
   },
   
   so: {
@@ -2046,7 +2094,23 @@ export const homeTranslations = {
     universityDescription: "Xoojinta jiilka soo socda iyada oo loo marayo aqoonta, daacadnimada, iyo adeegga bulshada.",
     location: "Chiro, Oromia, Itoobiya",
     phone: "+251-25-511-XXXX",
-    email: "info@obu.edu.et"
+    email: "info@obu.edu.et",
+    
+    // Leadership Cards
+    leaderCard1Title: "Prof. Muktar Mohammed — Madaxweyne",
+    leaderCard1Desc: "Prof. Muktar Mohammed wuxuu bixiyaa heerka ugu sarreeya ee hogaanka fulinta ee qeexaya aragtida hay'adeed ee jaamacadda iyo jihada istiraatiijiyadeed. Wuxuu hagaa soo saarista siyaasadda, qaababka maamulka iyo hindisaha horumarinta waxbarashada muddada dheer. Hogaankiisu wuxuu hubiyaa isku dubaridka waxbarashada, cilmi-baarista iyo ka-qaybgalka bulshada ee mudnaanada qaranka. Iyada oo loo marayo maareynta mabda'a leh, wuxuu kobciyaa dhaqanka fiicnaanta, hal-abuurka iyo adkaysiga hay'adeed.",
+    leaderCard2Title: "Getachew Gashaw (Kaaliye Bare) — Agaasime, Agaasimaha barnaamijka waxbarashada iyo horumarinta shaqaalaha",
+    leaderCard2Desc: "Getachew Gashaw wuxuu kormeeraa horumarinta habaysan iyo wanaajinta joogtada ah ee barnaamijyada waxbarashada gudaha hay'adda. Wuxuu hogaamiyaa hindisayaasha ujeedkoodu yahay xoojinta kartida macallimiinta iyo waxqabadka waxbarashada. Agaasimadiisu waxay kor u qaadaa ku habboonaanta manhajka marka laga jawaabayo baahiyaha waxbarashada iyo xirfadeed ee soo koraya. Iyada oo loo marayo istiraatiijiyadaha horumarinta xirfadeed ee joogtada ah, wuxuu kor u qaadaa tayada waxbarashada iyo hal-abuurka waxbarashada.",
+    leaderCard3Title: "Alemayehu Bayene (Kaaliye Bare) — Madaxtooyadda",
+    leaderCard3Desc: "Alemayehu Bayene wuxuu u adeegaa sidii xoog muhiim ah isku-dubaridka iyo fulinta tilmaamaha istiraatiijiyadeed ee jaamacadda. Wuxuu taageeraa go'aan-qaadashada fulinta isagoo hubinaya in hawlaha maamulka iyo waxbarashada ay si wada jir ah u shaqeeyaan. Xafiiskiisu wuxuu fududeeyaa waxtarka hay'adeed iyada oo loo marayo iskaashi habaysan oo waaxaha dhexdooda ah. Iyada oo loo marayo kormeerka hawlaha, wuxuu xoojiyaa xasiloonida hay'adeed iyo natiijooyinka waxqabadka.",
+    leaderCard4Title: "Md. Lelisa Shamsedin — Agaasimaha adeegga ardayda",
+    leaderCard4Desc: "Md. Lelisa Shamsedin wuxuu hogaamiyaa adeegyada hay'adeed ee taageeraya fayoobida ardayda iyo ka-qaybgalka waxbarashada. Wuxuu hubiyaa bixinta wax ku oolka ah ee barnaamijyada u jawaaba baahiyaha ardayda dhinacyada waxbarashada iyo bulshada. Hogaankiisu wuxuu kor u qaadaa qanacsanaanta ardayda iyada oo loo marayo qaababka adeegga jawaab celinta iyo dhammaystiran. Iyada oo loo marayo nidaamyada taageerada habaysan, wuxuu kor u qaadaa khibrad xereed oo dheeli tiran oo awood siinaya.",
+    leaderCard5Title: "Ibsa Ahmed (PhD) — Madaxtooyadda Maamulka iyo Horumarinta",
+    leaderCard5Desc: "Ibsa Ahmed wuxuu kormeeraa hawlaha maamulka iyo horumarinta ee taageeraya kobaca hay'adeed iyo kaabayaasha. Wuxuu hubiyaa isticmaalka istiraatiijiyadeed ee kheyraadka si loo taageero waxqabadka hawlaha. Xafiiskiisu wuxuu wadaa hindisayaasha kor u qaada waxtarka maamulka iyo horumarinta ururka. Iyada oo loo marayo dhaqamada maamulka mustaqbalka u eegaya, wuxuu xoojiyaa awoodda hay'adeed iyo natiijooyinka horumarinta.",
+    leaderCard6Title: "Ahmedin Abdurahman (PhD) — Agaasime, Agaasimaha hubinta tayada",
+    leaderCard6Desc: "Ahmedin Abdurahman wuxuu hogaamiyaa nidaamyada hay'adeed ee ilaaliya heerarka waxbarashada iyo tayada hawlaha. Wuxuu maamulaa qaababka qiimaynta si loo hubiyo raacitaanka heerarka la aasaasay iyo shuruudaha sharciga. Agaasimadiisu waxay kor u qaadaa horumar joogto ah iyada oo loo marayo kormeer habaysan iyo qiimeyn. Iyada oo loo marayo hogaan tayada u xiran, wuxuu xoojiyaa kalsoonida hay'adeed iyo iska kaashashada.",
+    leaderCard7Title: "Md. Ararsa Gudisa — Agaasime, Diiwaan-gelaha jaamacadda",
+    leaderCard7Desc: "Md. Ararsa Gudisa wuxuu maamulaa diiwaannada waxbarashada jaamacadda iyo habka dukumeentiyada sharciga. Wuxuu hubiyaa saxnaanta iyo daacadnimada habka gelitaanka, diiwaan-gelinta iyo shahaadaynta. Xafiiskiisu wuxuu isku-dubaridaa horumarinta waxbarashada sida waafaqsan xeerarka hay'adda. Iyada oo loo marayo kormeer maamul oo taxaddar leh, wuxuu ilaaliyaa kalsoonida hay'adeed iyo raacitaanka.",
   },
   
   ti: {
@@ -2181,7 +2245,23 @@ export const homeTranslations = {
     universityDescription: "ንዝመጽእ ወለዶ ብፍልጠት፣ ብታማኒነትን ብኣገልግሎት ንማሕበረሰብን ምሕያል።",
     location: "ጭሮ፣ ኦሮሚያ፣ ኢትዮጵያ",
     phone: "+251-25-511-XXXX",
-    email: "info@obu.edu.et"
+    email: "info@obu.edu.et",
+    
+    // Leadership Cards
+    leaderCard1Title: "ፕሮፌሰር ሙክታር መሐመድ — ፕሬዝዳንት",
+    leaderCard1Desc: "ፕሮፌሰር ሙክታር መሐመድ ንተቋማዊ ራእይ ዩኒቨርሲቲን ስትራተጂያዊ ኣንፈትን ዝገልጽ ልዑል ደረጃ ኣፈጻጽማዊ መራሕነት የቕርብ። ንምውጻእ ፖሊሲ፣ ማዕቀፋት ኣስተዳደርን ተበግሶታት ምዕባለ ትምህርታዊ ነዊሕ ግዜን የመርሕ። መራሕነቱ ምስ ቅድሚያታት ሃገራዊ ምትእስሳር ምምሃር፣ ምርምርን ተሳትፎ ማሕበረሰብን የረጋግጽ። ብመርሕ ኣስተዳደር፣ ባህሊ ብቕዓት፣ ፈጠራን ጽንዓት ተቋማዊን የዕቢ።",
+    leaderCard2Title: "ጌታቸው ጋሻው (ረዳት ፕሮፌሰር) — ዳይሬክተር፣ ዳይሬክቶሬት መደብ ትምህርታውን ምዕባለ ሰራሕተኛታትን",
+    leaderCard2Desc: "ጌታቸው ጋሻው ንስልታዊ ምዕባለን ቀጻሊ ምምሕያሽን መደባት ትምህርታዊ ኣብ ውሽጢ ትካል የቖጻጸር። ንብቕዓት መምህራንን ውጽኢታውነት ምምሃርን ንምጽንባር ዝዓለመ ተበግሶታት የመርሕ። ዳይሬክቶሬቱ ንዝተፈጠሩ ሕቶታት ትምህርታውን ሞያውን ምላሽ ብምሃብ ተዛማድነት ስርዓተ ትምህርቲ የስፋሕፍሕ። ብስትራተጂታት ምዕባለ ሞያዊ ቀጻሊ፣ ጽሬት ትምህርታውን ፈጠራ ምምሃርን የዕቢ።",
+    leaderCard3Title: "ዓለማየሁ ባየነ (ረዳት ፕሮፌሰር) — ምክትል ፕሬዝዳንት",
+    leaderCard3Desc: "ዓለማየሁ ባየነ ከም ወሳኒ ሓይሊ ኣብ ምትሕብባርን ምትግባርን መምርሒታት ስትራተጂያዊ ዩኒቨርሲቲ የገልግል። ንስርሓት ኣስተዳደርን ትምህርታውን ብሓባር ክሰርሑ ብምርግጋጽ ምውሳን ኣፈጻጽማዊ የድግፍ። ቤት ጽሕፈቱ ውጽኢታውነት ተቋማዊ ብስልታዊ ምትሕብባር ኣብ መንጎ ክፍልታት የመቻቸው። ብቖጻጸራ ስራሕ፣ ረጋጋይነት ተቋማውን ውጽኢታት ኣፈጻጽማን የጽንብር።",
+    leaderCard4Title: "ኣቶ ለሊሳ ሻምሰዲን — ዳይሬክቶሬት ኣገልግሎት ተምሃሮ",
+    leaderCard4Desc: "ኣቶ ለሊሳ ሻምሰዲን ንኣገልግሎታት ተቋማዊ ንጽቡቕ ሕይወት ተምሃሮን ተሳትፎ ትምህርታውን ዝድግፉ የመርሕ። ንውጽኢታዊ ምቕራብ መደባት ንሕቶታት ተምሃሮ ኣብ ገጽታታት ትምህርታውን ማሕበራውን ዝምልኡ የረጋግጽ። መራሕነቱ ንዕግበት ተምሃሮ ብማዕቀፋት ኣገልግሎት ምላሽ ዝህብን ሓቛፊን የዕቢ። ብስርዓታት ደገፍ ስልታዊ፣ ሚዛናውን ዘኽእልን ተመክሮ ካምፓስ የስፋሕፍሕ።",
+    leaderCard5Title: "ኢብሳ አህመድ (ዶክተር) — ምክትል ፕሬዝዳንት ንኣስተዳደርን ምዕባለን",
+    leaderCard5Desc: "ኢብሳ አህመድ ንተግባራት ኣስተዳደርን ምዕባለን ንዕብየት ተቋማውን መሰረታዊ ትሕተ ቅርጺን ዝድግፉ የቖጻጸር። ንስትራተጂያዊ ኣጠቓቕማ ጸጋታት ንውጽኢታውነት ስራሕ ንምድጋፍ የረጋግጽ። ቤት ጽሕፈቱ ንተበግሶታት ንውጽኢታውነት ኣስተዳደርን ምዕባለ ትካልን ዘዕብዩ የመርሕ። ብልምድታት ኣስተዳደር ንቕድሚት ዝተኮሩ፣ ዓቕሚ ተቋማውን ውጽኢታት ምዕባለን የጽንብር።",
+    leaderCard6Title: "አህመዲን አብዱራህማን (ዶክተር) — ዳይሬክተር፣ ዳይሬክቶሬት ምርግጋጽ ጽሬት",
+    leaderCard6Desc: "አህመዲን አብዱራህማን ንስርዓታት ተቋማዊ ንደረጃታት ትምህርታውን ጽሬት ስራሕን ዝሕልዉ የመርሕ። ንማዕቀፋት ግምገማ ንምርግጋጽ ምትእስሳር ምስ መዐቀኒታት ዝተመስረቱን ሕቶታት ደንባውን የኽውን። ዳይሬክቶሬቱ ንቀጻሊ ምምሕያሽ ብስልታዊ ምክትታልን ግምገማን የስፋሕፍሕ። ብመራሕነት ኣብ ጽሬት ዝተኮረ፣ ታማኒነት ተቋማውን ተሓታትነትን የጽንብር።",
+    leaderCard7Title: "ኣቶ አራርሳ ጉዲሳ — ዳይሬክተር፣ ምዝገባ ዩኒቨርሲቲ",
+    leaderCard7Desc: "ኣቶ አራርሳ ጉዲሳ ንመዝገባት ትምህርታዊ ዩኒቨርሲቲን ኣሰራርሓታት ሰነዳት ደንባውን የኽውን። ንትኽክለኛነትን ታማኒነትን ኣብ ኣሰራርሓታት ምእታው፣ ምዝገባን ምስክር ወረቐትን የረጋግጽ። ቤት ጽሕፈቱ ንምዕባለ ትምህርታዊ ብመሰረት ደንብታት ተቋማዊ የስምምዕ። ብጥንቃቐ ቖጻጸራ ኣስተዳደር፣ ምትእምማን ተቋማውን ምትእስሳርን የሕልው።",
   },
   
   ar: {
@@ -2298,6 +2378,22 @@ export const homeTranslations = {
     universityDescription: "تمكين الجيل القادم من خلال المعرفة والنزاهة والخدمة للمجتمع.",
     location: "شيرو، أوروميا، إثيوبيا",
     phone: "+251-25-511-XXXX",
-    email: "info@obu.edu.et"
+    email: "info@obu.edu.et",
+    
+    // Leadership Cards
+    leaderCard1Title: "البروفيسور مختار محمد — الرئيس",
+    leaderCard1Desc: "يوفر البروفيسور مختار محمد أعلى مستوى من القيادة التنفيذية التي تحدد الرؤية المؤسسية للجامعة والمسار الاستراتيجي. يوجه صياغة السياسات وأطر الحوكمة ومبادرات التنمية الأكاديمية طويلة الأجل. تضمن قيادته مواءمة التدريس والبحث والمشاركة المجتمعية مع الأولويات الوطنية. من خلال الإشراف المبدئي، يعزز ثقافة التميز والابتكار والمرونة المؤسسية.",
+    leaderCard2Title: "جيتاتشيو جاشاو (أستاذ مساعد) — مدير، مديرية البرنامج الأكاديمي وتطوير الموظفين",
+    leaderCard2Desc: "يشرف جيتاتشيو جاشاو على التطوير المنهجي والتحسين المستمر للبرامج الأكاديمية داخل المؤسسة. يقود المبادرات التي تهدف إلى تعزيز كفاءة أعضاء هيئة التدريس والفعالية التعليمية. تعزز مديريته ملاءمة المناهج استجابة للمتطلبات التعليمية والمهنية الناشئة. من خلال استراتيجيات التطوير المهني المستدام، يعزز الجودة الأكاديمية والابتكار التربوي.",
+    leaderCard3Title: "أليمايهو بايين (أستاذ مساعد) — نائب الرئيس",
+    leaderCard3Desc: "يعمل أليمايهو بايين كقوة محورية في تنسيق وتنفيذ التوجيهات الاستراتيجية للجامعة. يدعم صنع القرار التنفيذي من خلال ضمان عمل العمليات الإدارية والأكاديمية بشكل متماسك. يسهل مكتبه الكفاءة المؤسسية من خلال التعاون المنظم عبر الأقسام. من خلال الإشراف التشغيلي، يعزز الاستقرار المؤسسي ونتائج الأداء.",
+    leaderCard4Title: "السيد ليليسا شمسدين — مديرية خدمات الطلاب",
+    leaderCard4Desc: "يدير السيد ليليسا شمسدين الخدمات المؤسسية التي تدعم رفاهية الطلاب والمشاركة الأكاديمية. يضمن التقديم الفعال للبرامج التي تلبي احتياجات الطلاب عبر الأبعاد الأكاديمية والاجتماعية. تعزز قيادته رضا الطلاب من خلال أطر خدمة سريعة الاستجابة وشاملة. من خلال أنظمة الدعم المنظمة، يعزز تجربة حرم جامعي متوازنة وممكنة.",
+    leaderCard5Title: "إبسا أحمد (دكتوراه) — نائب الرئيس للإدارة والتنمية",
+    leaderCard5Desc: "يشرف إبسا أحمد على الوظائف الإدارية والتنموية التي تدعم النمو المؤسسي والبنية التحتية. يضمن الاستخدام الاستراتيجي للموارد لدعم الفعالية التشغيلية. يقود مكتبه المبادرات التي تعزز الكفاءة الإدارية والتقدم التنظيمي. من خلال ممارسات الإدارة التطلعية، يعزز القدرة المؤسسية ونتائج التنمية.",
+    leaderCard6Title: "أحمدين عبد الرحمن (دكتوراه) — مدير، مديرية ضمان الجودة",
+    leaderCard6Desc: "يقود أحمدين عبد الرحمن الأنظمة المؤسسية التي تحمي المعايير الأكاديمية والجودة التشغيلية. يدير أطر التقييم لضمان الالتزام بالمعايير المعمول بها والمتطلبات التنظيمية. تعزز مديريته التحسين المستمر من خلال المراقبة والتقييم المنهجي. من خلال القيادة التي تركز على الجودة، يعزز المصداقية المؤسسية والمساءلة.",
+    leaderCard7Title: "السيد أرارسا جوديسا — مدير، مسجل الجامعة",
+    leaderCard7Desc: "يدير السيد أرارسا جوديسا السجلات الأكاديمية للجامعة وعمليات التوثيق التنظيمية. يضمن الدقة والنزاهة في إجراءات القبول والتسجيل والشهادات. ينسق مكتبه التقدم الأكاديمي وفقًا للوائح المؤسسية. من خلال الإشراف الإداري الدقيق، يحافظ على الثقة المؤسسية والامتثال.",
   }
 };
