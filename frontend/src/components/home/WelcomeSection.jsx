@@ -61,8 +61,6 @@ const WelcomeSection = () => {
       description: t('card6Desc') || "Holistic health and wellness initiatives for student well-being."
     }
   ];
-      id: 7,
-  ];
 
   return (
     <SectionWrapper 
