@@ -114,6 +114,10 @@ const WelcomeSection = () => {
             object-position: center 40%;
           }
           
+          .fifth-card .card-image-section img {
+            object-position: center 35%;
+          }
+          
           .image-card:hover .card-image-section img {
             transform: scale(1.05);
           }
@@ -303,7 +307,7 @@ const WelcomeSection = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.9 + index * 0.15 }}
-              className="image-card"
+              className={`image-card ${card.id === 5 ? 'fifth-card' : ''}`}
               style={{
                 height: '450px'
               }}
