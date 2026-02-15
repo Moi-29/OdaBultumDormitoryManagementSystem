@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowUp, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowUp, Mail, MapPin } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { translations, getTranslation } from "../../translations/translations";
 
@@ -24,7 +24,6 @@ const Footer = () => {
               <h5 className="font-body font-semibold text-white/90 mb-4">{t('contact')}</h5>
               <div className="space-y-2 text-sm font-body">
                 <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-gold" /> {t('location')}</div>
-                <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gold" /> {t('phone')}</div>
                 <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-gold" /> {t('email')}</div>
               </div>
             </div>
