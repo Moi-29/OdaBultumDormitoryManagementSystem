@@ -10,6 +10,7 @@ import imageThree from "../../assets/three.jpg";
 import imageFour from "../../assets/four.jpg";
 import imageFive from "../../assets/five.jpg";
 import imageSix from "../../assets/six.jpg";
+import imageSeven from "../../assets/one.jpg"; // Placeholder - replace with seven.jpg when available
 
 const WelcomeSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -17,7 +18,7 @@ const WelcomeSection = () => {
   const { language } = useLanguage();
   const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
 
-  // Card data structure - 6 cards total
+  // Card data structure - 7 cards total
   const cards = [
     // Top row - 3 cards
     {
@@ -47,7 +48,7 @@ const WelcomeSection = () => {
       description: t('card4Desc') || "A dedicated administrative leader, Mr. Lelisa Shamsedin is responsible for the comprehensive management of student-focused operations. His role encompasses high-level coordination of essential services designed to enhance the student experience. Under his leadership, the Directorate focuses on operational efficiency, student advocacy, and the development of a vibrant and inclusive university culture.",
       featured: true
     },
-    // Bottom row - 2 cards
+    // Bottom row - 3 cards
     {
       id: 5,
       image: imageFive,
@@ -59,6 +60,12 @@ const WelcomeSection = () => {
       image: imageSix,
       title: t('card6Title') || "Wellness Programs",
       description: t('card6Desc') || "Holistic health and wellness initiatives for student well-being."
+    },
+    {
+      id: 7,
+      image: imageSeven,
+      title: t('card7Title') || "Career Development",
+      description: t('card7Desc') || "Professional development and career preparation opportunities."
     }
   ];
 
@@ -287,9 +294,9 @@ const WelcomeSection = () => {
           <div></div>
         </div>
 
-        {/* Bottom Row - 2 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {cards.slice(4, 6).map((card, index) => (
+        {/* Bottom Row - 3 Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {cards.slice(4, 7).map((card, index) => (
             <motion.div
               key={card.id}
               initial={{ opacity: 0, y: 50 }}
