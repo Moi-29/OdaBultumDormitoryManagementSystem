@@ -75,7 +75,7 @@ const WelcomeSection = () => {
       style={{ 
         backgroundColor: isDarkMode ? '#0f172a' : '#f8f9fa',
         transition: 'background-color 0.3s ease',
-        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.15)'
       }}
     >
       <style>
@@ -89,12 +89,12 @@ const WelcomeSection = () => {
             border-radius: 16px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: white;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 4px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25), 0 3px 10px rgba(0, 0, 0, 0.2);
           }
           
           .image-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.25), 0 8px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 12px 35px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.25);
           }
           
           .card-image-section {
