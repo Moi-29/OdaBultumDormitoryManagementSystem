@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import heroImg from "../../assets/Hero-Section.jpg";
 import { useLanguage } from "../../context/LanguageContext";
 import { homeTranslations } from "../../translations/translations";
@@ -75,52 +74,6 @@ const HeroSection = () => {
         >
           {t('heroTitle')}
         </motion.h1>
-
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          style={{
-            fontFamily: "'Montserrat', sans-serif",
-            background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%)',
-            color: '#1a1a1a',
-            fontWeight: 700,
-            letterSpacing: '0.1em',
-            boxShadow: '0 8px 32px rgba(212, 175, 55, 0.4), 0 0 60px rgba(255, 215, 0, 0.2)',
-            border: '2px solid rgba(255, 215, 0, 0.3)'
-          }}
-          className="mt-8 px-8 py-3.5 rounded-full text-sm
-            hover:scale-105 transition-all duration-300"
-          onClick={() => document.getElementById("guidelines")?.scrollIntoView({ behavior: "smooth" })}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '0 12px 48px rgba(212, 175, 55, 0.6), 0 0 80px rgba(255, 215, 0, 0.4)';
-            e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = '0 8px 32px rgba(212, 175, 55, 0.4), 0 0 60px rgba(255, 215, 0, 0.2)';
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
-        >
-          {t('exploreCampus')}
-        </motion.button>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          style={{
-            filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8))'
-          }}
-        >
-          <ChevronDown 
-            className="w-6 h-6" 
-            style={{ 
-              color: '#FFD700',
-              filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.6))'
-            }} 
-          />
-        </motion.div>
       </div>
     </section>
   );
