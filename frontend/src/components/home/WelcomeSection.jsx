@@ -4,7 +4,12 @@ import SectionWrapper from "../SectionWrapper";
 import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { homeTranslations } from "../../translations/translations";
-import placeholderImage from "../../assets/Directorate.jpg";
+import imageOne from "../../assets/one.jpg";
+import imageTwo from "../../assets/two.jpg";
+import imageThree from "../../assets/three.jpg";
+import imageFour from "../../assets/four.jpg";
+import imageFive from "../../assets/five.jpg";
+import imageSix from "../../assets/six.jpg";
 
 const WelcomeSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -12,55 +17,51 @@ const WelcomeSection = () => {
   const { language } = useLanguage();
   const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
 
-  // Card data structure - 7 cards total
+  // Card data structure - 6 cards total
   const cards = [
     // Top row - 3 cards
     {
       id: 1,
-      image: placeholderImage,
+      image: imageOne,
       title: t('card1Title') || "Leadership Excellence",
       description: t('card1Desc') || "Dedicated leadership driving student success and campus innovation."
     },
     {
       id: 2,
-      image: placeholderImage,
+      image: imageTwo,
       title: t('card2Title') || "Student Services",
       description: t('card2Desc') || "Comprehensive support services for academic and personal growth."
     },
     {
       id: 3,
-      image: placeholderImage,
+      image: imageThree,
       title: t('card3Title') || "Campus Life",
       description: t('card3Desc') || "Vibrant community fostering diversity and student engagement."
     },
     // Middle row - 1 large featured card
     {
       id: 4,
-      image: placeholderImage,
+      image: imageFour,
       title: t('card4Title') || "MR. LELISA SHAMSEDIN",
       subtitle: t('card4Subtitle') || "Director of Student Services",
       description: t('card4Desc') || "A dedicated administrative leader, Mr. Lelisa Shamsedin is responsible for the comprehensive management of student-focused operations. His role encompasses high-level coordination of essential services designed to enhance the student experience. Under his leadership, the Directorate focuses on operational efficiency, student advocacy, and the development of a vibrant and inclusive university culture.",
       featured: true
     },
-    // Bottom row - 3 cards
+    // Bottom row - 2 cards
     {
       id: 5,
-      image: placeholderImage,
+      image: imageFive,
       title: t('card5Title') || "Academic Support",
       description: t('card5Desc') || "Resources and guidance to help students achieve their academic goals."
     },
     {
       id: 6,
-      image: placeholderImage,
+      image: imageSix,
       title: t('card6Title') || "Wellness Programs",
       description: t('card6Desc') || "Holistic health and wellness initiatives for student well-being."
-    },
-    {
-      id: 7,
-      image: placeholderImage,
-      title: t('card7Title') || "Career Development",
-      description: t('card7Desc') || "Professional development and career preparation opportunities."
     }
+  ];
+      id: 7,
   ];
 
   return (
@@ -285,9 +286,9 @@ const WelcomeSection = () => {
           </div>
         </motion.div>
 
-        {/* Bottom Row - 3 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {cards.slice(4, 7).map((card, index) => (
+        {/* Bottom Row - 2 Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {cards.slice(4, 6).map((card, index) => (
             <motion.div
               key={card.id}
               initial={{ opacity: 0, y: 50 }}
