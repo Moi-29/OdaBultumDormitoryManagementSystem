@@ -124,7 +124,7 @@ const Dashboard = () => {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Current Term</div>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fbbf24' }}>Spring 2024</div>
+                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fbbf24' }}>2026</div>
                     </div>
                 </div>
                 <div style={{ position: 'absolute', top: '-20%', right: '-5%', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(251, 191, 36, 0.1)' }} />
