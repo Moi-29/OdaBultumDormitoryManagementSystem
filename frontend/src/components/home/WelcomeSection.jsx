@@ -10,7 +10,7 @@ import imageThree from "../../assets/three.jpg";
 import imageFour from "../../assets/four.jpg";
 import imageFive from "../../assets/five.jpg";
 import imageSix from "../../assets/six.jpg";
-import imageSeven from "../../assets/one.jpg"; // Placeholder - replace with seven.jpg when available
+import imageSeven from "../../assets/seven.jpg";
 
 const WelcomeSection = () => {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
