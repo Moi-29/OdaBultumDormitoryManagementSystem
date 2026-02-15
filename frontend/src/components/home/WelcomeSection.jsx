@@ -121,11 +121,11 @@ const WelcomeSection = () => {
           }
           
           .featured-card .card-image-section {
-            height: 350px;
+            height: 250px;
           }
           
           .featured-card .card-text-section {
-            padding: 2.5rem;
+            padding: 2rem;
           }
         `}
       </style>
@@ -222,7 +222,7 @@ const WelcomeSection = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="image-card featured-card mb-6"
           style={{
-            height: '600px'
+            height: '450px'
           }}
         >
           <div className="card-image-section">
@@ -238,7 +238,7 @@ const WelcomeSection = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
               style={{
                 fontFamily: "'Playfair Display', serif",
-                fontSize: 'clamp(2rem, 4vw, 3rem)',
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
                 fontWeight: 700,
                 marginBottom: '0.5rem',
                 letterSpacing: '0.03em',
@@ -254,9 +254,9 @@ const WelcomeSection = () => {
               transition={{ duration: 0.8, delay: 0.7 }}
               style={{
                 fontFamily: "'Montserrat', sans-serif",
-                fontSize: '1rem',
+                fontSize: '0.85rem',
                 fontWeight: 500,
-                marginBottom: '1rem',
+                marginBottom: '0.75rem',
                 letterSpacing: '1px',
                 textTransform: 'uppercase',
                 color: '#d4af37'
@@ -270,8 +270,8 @@ const WelcomeSection = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '1.05rem',
-                lineHeight: 1.7,
+                fontSize: '0.95rem',
+                lineHeight: 1.6,
                 color: '#4b5563'
               }}
             >
