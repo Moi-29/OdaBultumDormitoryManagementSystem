@@ -1673,6 +1673,9 @@ export const homeTranslations = {
     diversityTraining: "Diversity Training",
     diversityTrainingDesc: "Mandatory workshops and ongoing education for all community members on cultural competence, unconscious bias, and inclusive practices.",
     
+    // Leadership Section
+    leadershipTitle: "Leadership",
+    
     // Leadership Cards
     leaderCard1Title: "Prof. Muktar Mohammed — President",
     leaderCard1Desc: "Visionary architect of institutional excellence, orchestrating transformative academic leadership through strategic governance and principled stewardship.",
@@ -1819,6 +1822,9 @@ export const homeTranslations = {
     galleryTitle: "የኦቢዩ ጋለሪ",
     galleryDesc: "በኦዳ ቡልቱም ዩኒቨርሲቲ ውስጥ ያለውን ውበት እና ህይወት ያስሱ",
     
+    // Leadership Section
+    leadershipTitle: "አመራር",
+    
     // Leadership Cards
     leaderCard1Title: "ፕሮፌሰር ሙክታር መሐመድ — ፕሬዝዳንት",
     leaderCard1Desc: "የተቋማዊ ብቃት ራዕይ አርክቴክት፣ በስትራቴጂያዊ አስተዳደር እና በመርህ አስተዳደር ለውጥ የአካዳሚክ አመራርን ያስተባብራል።",
@@ -1961,6 +1967,9 @@ export const homeTranslations = {
     diversityTraining: "Leenjii Garaagarummaa",
     diversityTrainingDesc: "Warkshooppii dirqama fi barnoota itti fufiinsa qabu miseensota hawaasaa hundaaf dandeettii aadaa, loogii hin beekne fi hojii hammataa irratti.",
     
+    // Leadership Section
+    leadershipTitle: "Hogganaa",
+    
     // Leadership Cards
     leaderCard1Title: "Pirofeesar Muktar Mohammed — Pirezidaantii",
     leaderCard1Desc: "Arkiteektii olaantummaa dhaabbataa mul'ataa, hogganaa barnootaa jijjiirraa karaa bulchiinsa tarsiimoo fi bulchiinsa seera qabeessaan walitti qindeessa.",
@@ -2095,6 +2104,9 @@ export const homeTranslations = {
     location: "Chiro, Oromia, Itoobiya",
     phone: "+251-25-511-XXXX",
     email: "info@obu.edu.et",
+    
+    // Leadership Section
+    leadershipTitle: "Hogaanka",
     
     // Leadership Cards
     leaderCard1Title: "Prof. Muktar Mohammed — Madaxweyne",
@@ -2247,6 +2259,9 @@ export const homeTranslations = {
     phone: "+251-25-511-XXXX",
     email: "info@obu.edu.et",
     
+    // Leadership Section
+    leadershipTitle: "መራሕነት",
+    
     // Leadership Cards
     leaderCard1Title: "ፕሮፌሰር ሙክታር መሐመድ — ፕሬዝዳንት",
     leaderCard1Desc: "ናይ ተቋማዊ ብቕዓት ራእይ ሃንደሳ፣ ለውጢ ኣካዳሚያዊ መራሕነት ብስትራተጂያዊ ኣስተዳደርን መርሕ ኣጽዋርን የስምምዕ።",
@@ -2379,6 +2394,9 @@ export const homeTranslations = {
     location: "شيرو، أوروميا، إثيوبيا",
     phone: "+251-25-511-XXXX",
     email: "info@obu.edu.et",
+    
+    // Leadership Section
+    leadershipTitle: "القيادة",
     
     // Leadership Cards
     leaderCard1Title: "البروفيسور مختار محمد — الرئيس",

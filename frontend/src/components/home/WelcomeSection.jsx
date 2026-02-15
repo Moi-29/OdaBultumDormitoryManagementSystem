@@ -165,7 +165,7 @@ const WelcomeSection = () => {
               textTransform: 'uppercase'
             }}
           >
-            {t('leadershipTitle') || "Leadership"}
+            {t('leadershipTitle')}
           </h2>
           <div 
             style={{
