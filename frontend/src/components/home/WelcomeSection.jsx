@@ -77,49 +77,55 @@ const WelcomeSection = () => {
           @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap');
           
           .image-card {
-            position: relative;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
             border-radius: 16px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
           }
           
           .image-card:hover {
             transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
           }
           
-          .image-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
-            z-index: 1;
-            transition: opacity 0.3s ease;
+          .card-image-section {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
           }
           
-          .image-card:hover::before {
-            opacity: 0.9;
+          .card-image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
           }
           
-          .card-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+          .image-card:hover .card-image-section img {
+            transform: scale(1.05);
+          }
+          
+          .card-text-section {
+            background: white;
             padding: 1.5rem;
-            z-index: 2;
-            color: white;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
           }
           
           .featured-card {
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
           }
           
-          .featured-card::before {
-            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%);
+          .featured-card .card-image-section {
+            height: 350px;
+          }
+          
+          .featured-card .card-text-section {
+            padding: 2.5rem;
           }
         `}
       </style>
@@ -172,29 +178,24 @@ const WelcomeSection = () => {
               transition={{ duration: 0.6, delay: index * 0.15 }}
               className="image-card"
               style={{
-                height: '320px',
-                boxShadow: isDarkMode 
-                  ? '0 10px 40px rgba(0,0,0,0.5)'
-                  : '0 10px 40px rgba(0,0,0,0.15)'
+                height: '450px'
               }}
             >
-              <img 
-                src={card.image} 
-                alt={card.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-              />
-              <div className="card-content">
+              <div className="card-image-section">
+                <img 
+                  src={card.image} 
+                  alt={card.title}
+                />
+              </div>
+              <div className="card-text-section">
                 <h3 
                   style={{
                     fontFamily: "'Montserrat', sans-serif",
                     fontSize: '1.25rem',
                     fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    letterSpacing: '0.5px'
+                    marginBottom: '0.75rem',
+                    letterSpacing: '0.5px',
+                    color: '#1f2937'
                   }}
                 >
                   {card.title}
@@ -202,9 +203,9 @@ const WelcomeSection = () => {
                 <p 
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: '0.95rem',
-                    lineHeight: 1.5,
-                    opacity: 0.95
+                    fontSize: '1rem',
+                    lineHeight: 1.6,
+                    color: '#4b5563'
                   }}
                 >
                   {card.description}
@@ -221,34 +222,28 @@ const WelcomeSection = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="image-card featured-card mb-6"
           style={{
-            height: '500px',
-            boxShadow: isDarkMode 
-              ? '0 25px 80px rgba(212, 175, 55, 0.3)'
-              : '0 25px 80px rgba(139, 115, 85, 0.25)'
+            height: '600px'
           }}
         >
-          <img 
-            src={cards[3].image} 
-            alt={cards[3].title}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
-            }}
-          />
-          <div className="card-content" style={{ padding: '2.5rem' }}>
+          <div className="card-image-section">
+            <img 
+              src={cards[3].image} 
+              alt={cards[3].title}
+            />
+          </div>
+          <div className="card-text-section">
             <motion.h2
               initial={{ opacity: 0, x: -30 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.6 }}
               style={{
                 fontFamily: "'Playfair Display', serif",
-                fontSize: 'clamp(2rem, 4vw, 3.5rem)',
+                fontSize: 'clamp(2rem, 4vw, 3rem)',
                 fontWeight: 700,
-                marginBottom: '0.75rem',
+                marginBottom: '0.5rem',
                 letterSpacing: '0.03em',
-                textShadow: '2px 2px 8px rgba(0,0,0,0.5)',
-                lineHeight: 1.2
+                lineHeight: 1.2,
+                color: '#111827'
               }}
             >
               {cards[3].title}
@@ -259,7 +254,7 @@ const WelcomeSection = () => {
               transition={{ duration: 0.8, delay: 0.7 }}
               style={{
                 fontFamily: "'Montserrat', sans-serif",
-                fontSize: '1.1rem',
+                fontSize: '1rem',
                 fontWeight: 500,
                 marginBottom: '1rem',
                 letterSpacing: '1px',
@@ -275,10 +270,9 @@ const WelcomeSection = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '1.1rem',
+                fontSize: '1.05rem',
                 lineHeight: 1.7,
-                opacity: 0.95,
-                maxWidth: '900px'
+                color: '#4b5563'
               }}
             >
               {cards[3].description}
@@ -296,29 +290,24 @@ const WelcomeSection = () => {
               transition={{ duration: 0.6, delay: 0.9 + index * 0.15 }}
               className="image-card"
               style={{
-                height: '320px',
-                boxShadow: isDarkMode 
-                  ? '0 10px 40px rgba(0,0,0,0.5)'
-                  : '0 10px 40px rgba(0,0,0,0.15)'
+                height: '450px'
               }}
             >
-              <img 
-                src={card.image} 
-                alt={card.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-              />
-              <div className="card-content">
+              <div className="card-image-section">
+                <img 
+                  src={card.image} 
+                  alt={card.title}
+                />
+              </div>
+              <div className="card-text-section">
                 <h3 
                   style={{
                     fontFamily: "'Montserrat', sans-serif",
                     fontSize: '1.25rem',
                     fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    letterSpacing: '0.5px'
+                    marginBottom: '0.75rem',
+                    letterSpacing: '0.5px',
+                    color: '#1f2937'
                   }}
                 >
                   {card.title}
@@ -326,9 +315,9 @@ const WelcomeSection = () => {
                 <p 
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: '0.95rem',
-                    lineHeight: 1.5,
-                    opacity: 0.95
+                    fontSize: '1rem',
+                    lineHeight: 1.6,
+                    color: '#4b5563'
                   }}
                 >
                   {card.description}
