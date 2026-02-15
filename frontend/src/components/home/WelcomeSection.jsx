@@ -115,7 +115,7 @@ const WelcomeSection = () => {
           }
           
           .fifth-card .card-image-section img {
-            object-position: center 35%;
+            object-position: center 50%;
           }
           
           .image-card:hover .card-image-section img {
