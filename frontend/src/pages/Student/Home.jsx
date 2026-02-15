@@ -28,8 +28,8 @@ const Home = () => {
         <HeroSection />
         <WelcomeSection />
         <Suspense fallback={<SectionLoader />}>
-          <NewsSection />
           <GuidelinesSection />
+          <NewsSection />
           <StudentUnionSection />
           <DiversitySection />
           <CafeteriaSection />
