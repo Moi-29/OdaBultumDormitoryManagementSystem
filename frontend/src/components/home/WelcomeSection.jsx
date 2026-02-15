@@ -111,7 +111,7 @@ const WelcomeSection = () => {
           }
           
           .featured-card .card-image-section img {
-            object-position: center 25%;
+            object-position: center 20%;
           }
           
           .fifth-card .card-image-section img {
