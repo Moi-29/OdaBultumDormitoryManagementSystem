@@ -24,48 +24,48 @@ const WelcomeSection = () => {
     {
       id: 1,
       image: imageOne,
-      title: t('card1Title') || "Prof. Muktar Mohammed — President",
-      description: t('card1Desc') || "Prof. Muktar Mohammed provides the highest level of executive leadership that defines the university's institutional vision and strategic trajectory. He guides policy formulation, governance frameworks, and long-term academic development initiatives. His leadership ensures the alignment of teaching, research, and community engagement with national priorities. Through principled stewardship, he fosters a culture of excellence, innovation, and institutional resilience."
+      title: "Prof. Muktar Mohammed — President",
+      description: "Prof. Muktar Mohammed provides the highest level of executive leadership that defines the university's institutional vision and strategic trajectory. He guides policy formulation, governance frameworks, and long-term academic development initiatives. His leadership ensures the alignment of teaching, research, and community engagement with national priorities. Through principled stewardship, he fosters a culture of excellence, innovation, and institutional resilience."
     },
     {
       id: 2,
       image: imageTwo,
-      title: t('card2Title') || "Getachew Gashaw (Assist. Professor) — Director, Academic program and staff development directorate",
-      description: t('card2Desc') || "Getachew Gashaw oversees the systematic development and continual enhancement of academic programs within the institution. He leads initiatives aimed at strengthening faculty competence and instructional effectiveness. His directorate promotes curriculum relevance in response to emerging educational and professional demands. Through sustained professional development strategies, he advances academic quality and pedagogical innovation."
+      title: "Getachew Gashaw (Assist. Professor) — Director, Academic program and staff development directorate",
+      description: "Getachew Gashaw oversees the systematic development and continual enhancement of academic programs within the institution. He leads initiatives aimed at strengthening faculty competence and instructional effectiveness. His directorate promotes curriculum relevance in response to emerging educational and professional demands. Through sustained professional development strategies, he advances academic quality and pedagogical innovation."
     },
     {
       id: 3,
       image: imageThree,
-      title: t('card3Title') || "Alemayehu Bayene (Assist. Professor) — Vice President",
-      description: t('card3Desc') || "Alemayehu Bayene serves as a pivotal force in the coordination and implementation of the university's strategic directives. He supports executive decision-making by ensuring administrative and academic operations function cohesively. His office facilitates institutional efficiency through structured collaboration across departments. Through operational oversight, he strengthens institutional stability and performance outcomes."
+      title: "Alemayehu Bayene (Assist. Professor) — Vice President",
+      description: "Alemayehu Bayene serves as a pivotal force in the coordination and implementation of the university's strategic directives. He supports executive decision-making by ensuring administrative and academic operations function cohesively. His office facilitates institutional efficiency through structured collaboration across departments. Through operational oversight, he strengthens institutional stability and performance outcomes."
     },
     // Middle row - 1 large featured card
     {
       id: 4,
       image: imageFour,
-      title: t('card4Title') || "Mr. Lelisa Shamsedin — Student service directorate",
-      subtitle: t('card4Subtitle') || "",
-      description: t('card4Desc') || "Mr. Lelisa Shamsedin directs the institutional services that support student wellbeing and academic engagement. He ensures the effective delivery of programs that address student needs across academic and social dimensions. His leadership enhances student satisfaction through responsive and inclusive service frameworks. Through structured support systems, he promotes a balanced and enabling campus experience.",
+      title: "Mr. Lelisa Shamsedin — Student service directorate",
+      subtitle: "",
+      description: "Mr. Lelisa Shamsedin directs the institutional services that support student wellbeing and academic engagement. He ensures the effective delivery of programs that address student needs across academic and social dimensions. His leadership enhances student satisfaction through responsive and inclusive service frameworks. Through structured support systems, he promotes a balanced and enabling campus experience.",
       featured: true
     },
     // Bottom row - 3 cards
     {
       id: 5,
       image: imageFive,
-      title: t('card5Title') || "Ibsa Ahmed (PhD) — Vice president For Adminstration and development",
-      description: t('card5Desc') || "Ibsa Ahmed supervises the administrative and developmental functions that sustain institutional growth and infrastructure. He ensures the strategic utilization of resources to support operational effectiveness. His office drives initiatives that enhance administrative efficiency and organizational advancement. Through forward-looking management practices, he strengthens institutional capacity and development outcomes."
+      title: "Ibsa Ahmed (PhD) — Vice president For Adminstration and development",
+      description: "Ibsa Ahmed supervises the administrative and developmental functions that sustain institutional growth and infrastructure. He ensures the strategic utilization of resources to support operational effectiveness. His office drives initiatives that enhance administrative efficiency and organizational advancement. Through forward-looking management practices, he strengthens institutional capacity and development outcomes."
     },
     {
       id: 6,
       image: imageSix,
-      title: t('card6Title') || "Ahmedin Abdurahman (PhD) — Director, Quality assurance directorate",
-      description: t('card6Desc') || "Ahmedin Abdurahman leads the institutional systems that safeguard academic standards and operational quality. He administers evaluation frameworks to ensure adherence to established benchmarks and regulatory requirements. His directorate promotes continuous improvement through systematic monitoring and assessment. Through quality-focused leadership, he reinforces institutional credibility and accountability."
+      title: "Ahmedin Abdurahman (PhD) — Director, Quality assurance directorate",
+      description: "Ahmedin Abdurahman leads the institutional systems that safeguard academic standards and operational quality. He administers evaluation frameworks to ensure adherence to established benchmarks and regulatory requirements. His directorate promotes continuous improvement through systematic monitoring and assessment. Through quality-focused leadership, he reinforces institutional credibility and accountability."
     },
     {
       id: 7,
       image: imageSeven,
-      title: t('card7Title') || "Mr. Ararsa Gudisa — Director, University registrar",
-      description: t('card7Desc') || "Mr. Ararsa Gudisa manages the university's academic records and regulatory documentation processes. He ensures accuracy and integrity in admissions, enrollment, and certification procedures. His office coordinates academic progression in accordance with institutional regulations. Through meticulous administrative oversight, he maintains institutional trust and compliance."
+      title: "Mr. Ararsa Gudisa — Director, University registrar",
+      description: "Mr. Ararsa Gudisa manages the university's academic records and regulatory documentation processes. He ensures accuracy and integrity in admissions, enrollment, and certification procedures. His office coordinates academic progression in accordance with institutional regulations. Through meticulous administrative oversight, he maintains institutional trust and compliance."
     }
   ];
 
