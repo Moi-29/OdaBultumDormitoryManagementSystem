@@ -74,7 +74,8 @@ const WelcomeSection = () => {
       className="relative py-16 md:py-24 overflow-hidden" 
       style={{ 
         backgroundColor: isDarkMode ? '#0f172a' : '#f8f9fa',
-        transition: 'background-color 0.3s ease'
+        transition: 'background-color 0.3s ease',
+        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1)'
       }}
     >
       <style>
@@ -88,12 +89,12 @@ const WelcomeSection = () => {
             border-radius: 16px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 4px 15px rgba(0, 0, 0, 0.15);
           }
           
           .image-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.25), 0 8px 25px rgba(0, 0, 0, 0.2);
           }
           
           .card-image-section {
@@ -164,7 +165,7 @@ const WelcomeSection = () => {
               textTransform: 'uppercase'
             }}
           >
-            {t('leadershipTitle') || "Leadership & Excellence"}
+            {t('leadershipTitle') || "Leadership"}
           </h2>
           <div 
             style={{
