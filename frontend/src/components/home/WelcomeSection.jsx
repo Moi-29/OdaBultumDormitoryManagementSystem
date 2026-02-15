@@ -192,12 +192,13 @@ const WelcomeSection = () => {
               <div className="card-text-section">
                 <h3 
                   style={{
-                    fontFamily: "'Montserrat', sans-serif",
-                    fontSize: '1.25rem',
-                    fontWeight: 600,
+                    fontFamily: index === 0 ? "'Playfair Display', serif" : "'Montserrat', sans-serif",
+                    fontSize: index === 0 ? 'clamp(1.5rem, 3vw, 2rem)' : '1.25rem',
+                    fontWeight: index === 0 ? 700 : 600,
                     marginBottom: '0.75rem',
-                    letterSpacing: '0.5px',
-                    color: '#1f2937'
+                    letterSpacing: index === 0 ? '0.03em' : '0.5px',
+                    color: '#1f2937',
+                    lineHeight: 1.2
                   }}
                 >
                   {card.title}
@@ -241,13 +242,13 @@ const WelcomeSection = () => {
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.8, delay: 0.6 }}
                 style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-                  fontWeight: 700,
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: '1.25rem',
+                  fontWeight: 600,
                   marginBottom: '0.5rem',
-                  letterSpacing: '0.03em',
+                  letterSpacing: '0.5px',
                   lineHeight: 1.2,
-                  color: '#111827'
+                  color: '#1f2937'
                 }}
               >
                 {cards[3].title}
