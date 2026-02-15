@@ -102,6 +102,10 @@ const WelcomeSection = () => {
             transition: transform 0.4s ease;
           }
           
+          .featured-card .card-image-section img {
+            object-position: center 30%;
+          }
+          
           .image-card:hover .card-image-section img {
             transform: scale(1.05);
           }
