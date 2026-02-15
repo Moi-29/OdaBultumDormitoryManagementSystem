@@ -217,70 +217,74 @@ const WelcomeSection = () => {
           ))}
         </div>
 
-        {/* Middle Row - 1 Large Featured Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="image-card featured-card mb-6"
-          style={{
-            height: '450px'
-          }}
-        >
-          <div className="card-image-section">
-            <img 
-              src={cards[3].image} 
-              alt={cards[3].title}
-            />
-          </div>
-          <div className="card-text-section">
-            <motion.h2
-              initial={{ opacity: 0, x: -30 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-                fontWeight: 700,
-                marginBottom: '0.5rem',
-                letterSpacing: '0.03em',
-                lineHeight: 1.2,
-                color: '#111827'
-              }}
-            >
-              {cards[3].title}
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, x: -30 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontSize: '0.85rem',
-                fontWeight: 500,
-                marginBottom: '0.75rem',
-                letterSpacing: '1px',
-                textTransform: 'uppercase',
-                color: '#d4af37'
-              }}
-            >
-              {cards[3].subtitle}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '0.95rem',
-                lineHeight: 1.6,
-                color: '#4b5563'
-              }}
-            >
-              {cards[3].description}
-            </motion.p>
-          </div>
-        </motion.div>
+        {/* Middle Row - 1 Featured Card (Centered, Same Width as Others) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div></div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="image-card featured-card"
+            style={{
+              height: '450px'
+            }}
+          >
+            <div className="card-image-section">
+              <img 
+                src={cards[3].image} 
+                alt={cards[3].title}
+              />
+            </div>
+            <div className="card-text-section">
+              <motion.h2
+                initial={{ opacity: 0, x: -30 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  letterSpacing: '0.03em',
+                  lineHeight: 1.2,
+                  color: '#111827'
+                }}
+              >
+                {cards[3].title}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, x: -30 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                style={{
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                  marginBottom: '0.75rem',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  color: '#d4af37'
+                }}
+              >
+                {cards[3].subtitle}
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: '0.95rem',
+                  lineHeight: 1.6,
+                  color: '#4b5563'
+                }}
+              >
+                {cards[3].description}
+              </motion.p>
+            </div>
+          </motion.div>
+          <div></div>
+        </div>
 
         {/* Bottom Row - 2 Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
