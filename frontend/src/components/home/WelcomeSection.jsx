@@ -200,11 +200,11 @@ const WelcomeSection = () => {
                 <h3 
                   style={{
                     fontFamily: index === 0 ? "'Playfair Display', serif" : "'Montserrat', sans-serif",
-                    fontSize: index === 0 ? 'clamp(1.5rem, 3vw, 2rem)' : '1.25rem',
+                    fontSize: index === 0 ? 'clamp(1.35rem, 2.5vw, 1.75rem)' : '1.25rem',
                     fontWeight: index === 0 ? 700 : 600,
                     marginBottom: '0.75rem',
                     letterSpacing: index === 0 ? '0.03em' : '0.5px',
-                    color: '#1f2937',
+                    color: index === 0 ? '#f4c430' : '#d4af37',
                     lineHeight: 1.2
                   }}
                 >
@@ -255,7 +255,7 @@ const WelcomeSection = () => {
                   marginBottom: '0.5rem',
                   letterSpacing: '0.5px',
                   lineHeight: 1.2,
-                  color: '#1f2937'
+                  color: '#d4af37'
                 }}
               >
                 {cards[3].title}
@@ -321,7 +321,7 @@ const WelcomeSection = () => {
                     fontWeight: 600,
                     marginBottom: '0.75rem',
                     letterSpacing: '0.5px',
-                    color: '#1f2937'
+                    color: '#d4af37'
                   }}
                 >
                   {card.title}
