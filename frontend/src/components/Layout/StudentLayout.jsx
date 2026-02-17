@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Building2, FileText, AlertCircle, Sun, Moon, Menu } from 'lucide-react';
+import { Home, Building2, FileText, AlertCircle, Sun, Moon, Menu, FileCheck } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { getTranslation } from '../../translations/translations';
@@ -53,6 +53,7 @@ const StudentLayout = () => {
         { path: '/student/home', label: t('home'), icon: Home },
         { path: '/student/dormitory', label: t('dormitoryView'), icon: Building2 },
         { path: '/student/application', label: t('applicationForm'), icon: FileText },
+        { path: '/student/permission', label: 'Permission', icon: FileCheck },
         { path: '/student/report', label: t('reportIssue'), icon: AlertCircle }
     ];
 

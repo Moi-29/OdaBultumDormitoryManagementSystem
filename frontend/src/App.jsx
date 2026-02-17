@@ -7,6 +7,7 @@ import NewsPage from './pages/Student/NewsPage';
 import DormitoryView from './pages/Student/DormitoryView';
 import ApplicationFormWrapper from './pages/Student/ApplicationFormWrapper';
 import ReportIssueWrapper from './pages/Student/ReportIssueWrapper';
+import Permission from './pages/Student/Permission';
 import AdminLayout from './components/Layout/AdminLayout';
 import Dashboard from './pages/Admin/Dashboard';
 import Students from './pages/Admin/Students';
@@ -14,6 +15,7 @@ import Dorms from './pages/Admin/Dorms';
 import Reports from './pages/Admin/Reports';
 import Applications from './pages/Admin/Applications';
 import Requests from './pages/Admin/Requests';
+import Permissions from './pages/Admin/Permissions';
 import Announcements from './pages/Admin/Announcements';
 import Gallery from './pages/Admin/Gallery';
 import Settings from './pages/Admin/Settings';
@@ -84,6 +86,7 @@ function App() {
             <Route path="news" element={<NewsPage />} />
             <Route path="dormitory" element={<DormitoryView />} />
             <Route path="application" element={<ApplicationFormWrapper />} />
+            <Route path="permission" element={<Permission />} />
             <Route path="report" element={<ReportIssueWrapper />} />
           </Route>
 
@@ -127,6 +130,11 @@ function App() {
             <Route path="requests" element={
               <ProtectedRoute requiredPermission="dashboard.view">
                 <Requests />
+              </ProtectedRoute>
+            } />
+            <Route path="permissions" element={
+              <ProtectedRoute requiredPermission="dashboard.view">
+                <Permissions />
               </ProtectedRoute>
             } />
             <Route path="announcements" element={
