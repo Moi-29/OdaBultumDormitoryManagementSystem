@@ -4,6 +4,7 @@ import WelcomeSection from "../../components/home/WelcomeSection";
 import { useTheme } from "../../context/ThemeContext";
 
 const GuidelinesSection = lazy(() => import("../../components/home/GuidelinesSection"));
+const LeadershipSection = lazy(() => import("../../components/home/LeadershipSection"));
 const NewsSection = lazy(() => import("../../components/home/NewsSection"));
 const StudentUnionSection = lazy(() => import("../../components/home/StudentUnionSection"));
 const DiversitySection = lazy(() => import("../../components/home/DiversitySection"));
@@ -26,7 +27,8 @@ const Home = () => {
     <div className="min-h-screen" style={{ marginLeft: 0, backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', transition: 'background-color 0.3s ease' }}>
       <main>
         <HeroSection />
-        <WelcomeSection />
+        <LeadershipSection />
+        {/* <WelcomeSection /> */}
         <Suspense fallback={<SectionLoader />}>
           <GuidelinesSection />
           <NewsSection />
