@@ -121,7 +121,8 @@ const StudentPortal = () => {
                             personalInfo: response.data.application.personalInfo || formData.personalInfo,
                             educationalInfo: response.data.application.educationalInfo || formData.educationalInfo,
                             schoolInfo: response.data.application.schoolInfo || formData.schoolInfo,
-                            familyInfo: response.data.application.familyInfo || formData.familyInfo
+                            familyInfo: response.data.application.familyInfo || formData.familyInfo,
+                            emergencyInfo: response.data.application.emergencyInfo || formData.emergencyInfo
                         });
                         // Store the application ID for updating
                         setFormData(prev => ({
@@ -269,6 +270,9 @@ const StudentPortal = () => {
                     familyInfo: {
                         nationality: '', region: '', zone: '', woreda: '', kebele: '',
                         motherName: '', familyPhone: ''
+                    },
+                    emergencyInfo: {
+                        fullName: '', relationship: '', job: '', homeTown: ''
                     }
                 });
                 setActiveTab('personal');

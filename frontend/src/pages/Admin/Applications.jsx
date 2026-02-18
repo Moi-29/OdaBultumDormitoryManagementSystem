@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ClipboardList, Eye, X, User, GraduationCap, Home, Users, Search, Filter, Download, Trash2, CheckCircle2, Calendar, Phone, Mail, MapPin, Award, BookOpen, Building, FileText } from 'lucide-react';
+import { ClipboardList, Eye, X, User, GraduationCap, Home, Users, Search, Filter, Download, Trash2, CheckCircle2, Calendar, Phone, Mail, MapPin, Award, BookOpen, Building, FileText, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -110,6 +110,12 @@ const Applications = () => {
                         kebele: 'Areda',
                         motherName: 'Almaz Tesfaye',
                         familyPhone: '+251922334455'
+                    },
+                    emergencyInfo: {
+                        fullName: 'Kebede Alemu',
+                        relationship: 'Father',
+                        job: 'Farmer',
+                        homeTown: 'Tulu Bolo'
                     }
                 },
                 {
@@ -160,6 +166,12 @@ const Applications = () => {
                         kebele: '05',
                         motherName: 'Tigist Haile',
                         familyPhone: '+251933445566'
+                    },
+                    emergencyInfo: {
+                        fullName: 'Ketema Bekele',
+                        relationship: 'Father',
+                        job: 'Teacher',
+                        homeTown: 'Addis Ababa'
                     }
                 }
             ];
@@ -1240,7 +1252,8 @@ const Applications = () => {
                                 { id: 'personal', label: 'Personal', icon: <User size={18} />, color: '#10b981' },
                                 { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} />, color: '#3b82f6' },
                                 { id: 'school', label: 'School', icon: <Home size={18} />, color: '#f59e0b' },
-                                { id: 'family', label: 'Family', icon: <Users size={18} />, color: '#8b5cf6' }
+                                { id: 'family', label: 'Family', icon: <Users size={18} />, color: '#8b5cf6' },
+                                { id: 'emergency', label: 'Emergency', icon: <AlertTriangle size={18} />, color: '#ef4444' }
                             ].map(tab => (
                                 <button
                                     key={tab.id}
@@ -1499,6 +1512,43 @@ const Applications = () => {
                                         <FormField label="Kebele" value={selectedApplication.familyInfo.kebele} />
                                         <FormField label="Your Mother Name" value={selectedApplication.familyInfo.motherName} required />
                                         <FormField label="Family Phone Number" value={selectedApplication.familyInfo.familyPhone} required />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Emergency Tab */}
+                            {activeTab === 'emergency' && selectedApplication.emergencyInfo && (
+                                <div>
+                                    <div style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        marginBottom: '2rem',
+                                        padding: '0.75rem 1.5rem',
+                                        background: 'linear-gradient(135deg, #ef444420 0%, #ef444410 100%)',
+                                        borderRadius: '12px',
+                                        border: '1px solid #ef444430'
+                                    }}>
+                                        <AlertTriangle size={20} color="#ef4444" />
+                                        <h3 style={{ 
+                                            margin: 0, 
+                                            color: '#1e293b', 
+                                            fontSize: '1.15rem', 
+                                            fontWeight: 700,
+                                            letterSpacing: '-0.3px'
+                                        }}>
+                                            Emergency Contact Information
+                                        </h3>
+                                    </div>
+                                    <div style={{ 
+                                        display: 'grid', 
+                                        gridTemplateColumns: 'repeat(2, 1fr)', 
+                                        gap: '1.75rem'
+                                    }}>
+                                        <FormField label="Full Name" value={selectedApplication.emergencyInfo.fullName} required />
+                                        <FormField label="Relationship" value={selectedApplication.emergencyInfo.relationship} required />
+                                        <FormField label="Job" value={selectedApplication.emergencyInfo.job} required />
+                                        <FormField label="Home-Town" value={selectedApplication.emergencyInfo.homeTown} required />
                                     </div>
                                 </div>
                             )}

@@ -62,6 +62,12 @@ const applicationSchema = new mongoose.Schema({
         kebele: String,
         motherName: String,
         familyPhone: String
+    },
+    emergencyInfo: {
+        fullName: String,
+        relationship: String,
+        job: String,
+        homeTown: String
     }
 }, {
     timestamps: true
