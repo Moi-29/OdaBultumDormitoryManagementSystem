@@ -83,15 +83,6 @@ const applicationSchema = new mongoose.Schema({
             attendedYearFrom: String,
             attendedYearTo: String,
             schoolType: String
-        },
-        // Preparatory School
-        preparatory: {
-            schoolName: String,
-            schoolNameAm: String,
-            woreda: String,
-            attendedYearFrom: String,
-            attendedYearTo: String,
-            schoolType: String
         }
     },
     familyInfo: {
