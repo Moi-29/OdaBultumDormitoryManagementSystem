@@ -464,7 +464,7 @@ const Applications = () => {
                 doc.setTextColor(255, 255, 255);
                 doc.text('ID NO:', sidebarWidth / 2, 70, { align: 'center' });
                 doc.setFontSize(11);
-                doc.text(app.personalInfo?.idNo || app.studentId || '-', sidebarWidth / 2, 76, { align: 'center' });
+                doc.text(app.personalInfo?.nationalId || app.studentId || '-', sidebarWidth / 2, 76, { align: 'center' });
                 
                 // STATUS badge in sidebar
                 const badgeY = 85;
@@ -491,16 +491,16 @@ const Applications = () => {
                 doc.setTextColor(0, 0, 0);
                 doc.setFontSize(14);
                 doc.setFont('helvetica', 'bold');
-                doc.text(`STUDENT RECORD: ${app.personalInfo?.idNo || app.studentId || '-'}`, contentX, yPos);
+                doc.text(`STUDENT RECORD: ${app.personalInfo?.nationalId || app.studentId || '-'}`, contentX, yPos);
                 yPos += 12;
                 
                 // Student Name
                 doc.setFontSize(16);
                 doc.setFont('helvetica', 'bold');
-                doc.text((app.personalInfo?.fullName || app.studentName || '-').toUpperCase(), contentX, yPos);
+                doc.text((app.personalInfo?.name || app.studentName || '-').toUpperCase(), contentX, yPos);
                 
                 // Sponsor badge next to name
-                const nameWidth = doc.getTextWidth((app.personalInfo?.fullName || app.studentName || '-').toUpperCase());
+                const nameWidth = doc.getTextWidth((app.personalInfo?.name || app.studentName || '-').toUpperCase());
                 doc.setFillColor(...gold);
                 doc.roundedRect(contentX + nameWidth + 5, yPos - 5, 35, 8, 2, 2, 'F');
                 doc.setTextColor(0, 0, 0);
@@ -518,30 +518,47 @@ const Applications = () => {
                 doc.text('PERSONAL INFORMATION', contentX + 3, yPos + 5.5);
                 yPos += 12;
                 
-                // Personal info fields - ALL FIELDS
+                // Personal info fields - ALL NEW FIELDS
                 doc.setFontSize(8);
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(60, 60, 60);
                 
+                // Basic Information
                 const personalFields = [
-                    ['FULL NAME:', app.personalInfo?.fullName || '-'],
-                    ['ID NO:', app.personalInfo?.idNo || '-'],
-                    ['SEX:', app.personalInfo?.sex || '-'],
-                    ['MEAL CARD NO:', app.personalInfo?.mealCardNo || '-'],
-                    ['COLLEGE:', app.personalInfo?.college || '-'],
-                    ['DEPARTMENT:', app.personalInfo?.department || '-'],
-                    ['ACADEMIC YEAR:', app.personalInfo?.academicYear || '-'],
-                    ['DORM NO:', app.personalInfo?.dormNo || '-'],
+                    ['NAME:', app.personalInfo?.name || '-'],
+                    ['FATHER NAME:', app.personalInfo?.fatherName || '-'],
+                    ['G.FATHER NAME:', app.personalInfo?.gFatherName || '-'],
+                    ['GENDER:', app.personalInfo?.gender || '-'],
+                    ['DATE OF BIRTH:', app.personalInfo?.dob || '-'],
+                    ['PLACE OF BIRTH:', app.personalInfo?.placeOfBirth || '-'],
+                    ['MOTHER TONGUE:', app.personalInfo?.motherTongue || '-'],
+                    ['NATIONAL ID:', app.personalInfo?.nationalId || '-'],
+                    ['HEALTH STATUS:', app.personalInfo?.healthStatus || '-'],
+                    ['MARITAL STATUS:', app.personalInfo?.maritalStatus || '-'],
+                    ['RELIGIOUS:', app.personalInfo?.religion || '-'],
+                    ['CITIZENSHIP:', app.personalInfo?.citizenship || '-'],
+                    ['COUNTRY:', app.personalInfo?.country || '-'],
+                    ['WOREDA:', app.personalInfo?.woreda || '-'],
+                    ['CITY (EN):', app.personalInfo?.cityEn || '-'],
+                    ['KEBELE (EN):', app.personalInfo?.kebeleEn || '-'],
                     ['PHONE:', app.personalInfo?.phone || '-'],
-                    ['RELIGIOUS:', app.personalInfo?.religious || '-'],
-                    ['NATION:', app.personalInfo?.nation || '-']
+                    ['EMAIL:', app.personalInfo?.email || '-'],
+                    ['P.O. BOX:', app.personalInfo?.poBox || '-'],
+                    ['ECONOMICAL STATUS:', app.personalInfo?.economicalStatus || '-'],
+                    ['AREA TYPE:', app.personalInfo?.areaType || '-'],
+                    ['TIN NUMBER:', app.personalInfo?.tinNumber || '-'],
+                    ['ACCOUNT NUMBER:', app.personalInfo?.accountNumber || '-']
                 ];
                 
                 personalFields.forEach(([label, value]) => {
+                    if (yPos > pageHeight - 30) {
+                        doc.addPage();
+                        yPos = 15;
+                    }
                     doc.setFont('helvetica', 'bold');
                     doc.text(label, contentX, yPos);
                     doc.setFont('helvetica', 'normal');
-                    doc.text(value, contentX + 40, yPos);
+                    doc.text(value, contentX + 50, yPos);
                     yPos += 5;
                 });
                 
@@ -581,41 +598,83 @@ const Applications = () => {
                     yPos += 3;
                 }
                 
-                // SCHOOL INFORMATION Section
+                // SCHOOL INFORMATION Section - Primary and Secondary
                 if (app.schoolInfo) {
-                    doc.setFillColor(...lightGray);
-                    doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(9);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('SCHOOL INFORMATION', contentX + 3, yPos + 5.5);
-                    yPos += 12;
-                    
-                    doc.setFontSize(8);
-                    const schoolFields = [
-                        ['SCHOOL NAME:', app.schoolInfo.schoolName || '-'],
-                        ['REGION:', app.schoolInfo.region || '-'],
-                        ['CITY:', app.schoolInfo.city || '-'],
-                        ['ZONE:', app.schoolInfo.zone || '-'],
-                        ['SCHOOL TYPE:', app.schoolInfo.schoolType || '-'],
-                        ['WOREDA:', app.schoolInfo.woreda || '-'],
-                        ['ATTENDED YEAR FROM:', app.schoolInfo.attendedYearFrom || '-'],
-                        ['ATTENDED YEAR TO:', app.schoolInfo.attendedYearTo || '-']
-                    ];
-                    
-                    schoolFields.forEach(([label, value]) => {
+                    // Primary School
+                    if (app.schoolInfo.primary) {
+                        if (yPos > pageHeight - 50) {
+                            doc.addPage();
+                            yPos = 15;
+                        }
+                        doc.setFillColor(...lightGray);
+                        doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFontSize(9);
                         doc.setFont('helvetica', 'bold');
-                        doc.text(label, contentX, yPos);
-                        doc.setFont('helvetica', 'normal');
-                        doc.text(value, contentX + 45, yPos);
-                        yPos += 5;
-                    });
+                        doc.text('PRIMARY SCHOOL', contentX + 3, yPos + 5.5);
+                        yPos += 12;
+                        
+                        doc.setFontSize(8);
+                        const primaryFields = [
+                            ['SCHOOL NAME:', app.schoolInfo.primary.schoolName || '-'],
+                            ['WOREDA:', app.schoolInfo.primary.woreda || '-'],
+                            ['SCHOOL TYPE:', app.schoolInfo.primary.schoolType || '-'],
+                            ['ATTENDED YEAR FROM:', app.schoolInfo.primary.attendedYearFrom || '-'],
+                            ['ATTENDED YEAR TO:', app.schoolInfo.primary.attendedYearTo || '-']
+                        ];
+                        
+                        primaryFields.forEach(([label, value]) => {
+                            doc.setFont('helvetica', 'bold');
+                            doc.text(label, contentX, yPos);
+                            doc.setFont('helvetica', 'normal');
+                            doc.text(value, contentX + 45, yPos);
+                            yPos += 5;
+                        });
+                        
+                        yPos += 3;
+                    }
                     
-                    yPos += 3;
+                    // Secondary School
+                    if (app.schoolInfo.secondary) {
+                        if (yPos > pageHeight - 50) {
+                            doc.addPage();
+                            yPos = 15;
+                        }
+                        doc.setFillColor(...lightGray);
+                        doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFontSize(9);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('SECONDARY SCHOOL', contentX + 3, yPos + 5.5);
+                        yPos += 12;
+                        
+                        doc.setFontSize(8);
+                        const secondaryFields = [
+                            ['SCHOOL NAME:', app.schoolInfo.secondary.schoolName || '-'],
+                            ['WOREDA:', app.schoolInfo.secondary.woreda || '-'],
+                            ['SCHOOL TYPE:', app.schoolInfo.secondary.schoolType || '-'],
+                            ['ATTENDED YEAR FROM:', app.schoolInfo.secondary.attendedYearFrom || '-'],
+                            ['ATTENDED YEAR TO:', app.schoolInfo.secondary.attendedYearTo || '-']
+                        ];
+                        
+                        secondaryFields.forEach(([label, value]) => {
+                            doc.setFont('helvetica', 'bold');
+                            doc.text(label, contentX, yPos);
+                            doc.setFont('helvetica', 'normal');
+                            doc.text(value, contentX + 45, yPos);
+                            yPos += 5;
+                        });
+                        
+                        yPos += 3;
+                    }
                 }
                 
                 // FAMILY INFORMATION Section
                 if (app.familyInfo) {
+                    if (yPos > pageHeight - 50) {
+                        doc.addPage();
+                        yPos = 15;
+                    }
                     doc.setFillColor(...lightGray);
                     doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
                     doc.setTextColor(0, 0, 0);
@@ -636,6 +695,43 @@ const Applications = () => {
                     ];
                     
                     familyFields.forEach(([label, value]) => {
+                        doc.setFont('helvetica', 'bold');
+                        doc.text(label, contentX, yPos);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(value, contentX + 40, yPos);
+                        yPos += 5;
+                    });
+                    
+                    yPos += 3;
+                }
+                
+                // EMERGENCY CONTACT Section
+                if (app.emergencyInfo) {
+                    if (yPos > pageHeight - 50) {
+                        doc.addPage();
+                        yPos = 15;
+                    }
+                    doc.setFillColor(...lightGray);
+                    doc.roundedRect(contentX, yPos, contentWidth, 8, 2, 2, 'F');
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('EMERGENCY CONTACT', contentX + 3, yPos + 5.5);
+                    yPos += 12;
+                    
+                    doc.setFontSize(8);
+                    const emergencyFields = [
+                        ['FULL NAME:', app.emergencyInfo.fullName || '-'],
+                        ['RELATIONSHIP:', app.emergencyInfo.relationship || '-'],
+                        ['PHONE:', app.emergencyInfo.phone || '-'],
+                        ['EMAIL:', app.emergencyInfo.email || '-'],
+                        ['JOB:', app.emergencyInfo.job || '-'],
+                        ['WOREDA:', app.emergencyInfo.woreda || '-'],
+                        ['HOME TOWN:', app.emergencyInfo.homeTown || '-'],
+                        ['KEBELE:', app.emergencyInfo.kebele || '-']
+                    ];
+                    
+                    emergencyFields.forEach(([label, value]) => {
                         doc.setFont('helvetica', 'bold');
                         doc.text(label, contentX, yPos);
                         doc.setFont('helvetica', 'normal');
@@ -671,20 +767,40 @@ const Applications = () => {
         try {
             showNotification('Generating CSV...', 'info');
             
-            // Define CSV headers with clear naming convention
+            // Define CSV headers with clear naming convention - ALL NEW FIELDS
             const headers = [
-                // Personal Information
-                'personal_fullName',
-                'personal_idNo',
-                'personal_sex',
-                'personal_mealCardNo',
-                'personal_college',
-                'personal_department',
-                'personal_academicYear',
-                'personal_dormNo',
+                // Personal Information - Basic
+                'personal_name',
+                'personal_fatherName',
+                'personal_gFatherName',
+                'personal_nameAm',
+                'personal_fatherNameAm',
+                'personal_gFatherNameAm',
+                'personal_gender',
+                'personal_dob',
+                'personal_placeOfBirth',
+                'personal_placeOfBirthAm',
+                'personal_motherTongue',
+                'personal_nationalId',
+                'personal_healthStatus',
+                'personal_maritalStatus',
+                'personal_religion',
+                // Personal Information - Location & Address
+                'personal_citizenship',
+                'personal_country',
+                'personal_woreda',
+                'personal_cityEn',
+                'personal_cityAm',
+                'personal_kebeleEn',
+                'personal_kebeleAm',
                 'personal_phone',
-                'personal_religious',
-                'personal_nation',
+                'personal_email',
+                'personal_poBox',
+                // Personal Information - Others
+                'personal_economicalStatus',
+                'personal_areaType',
+                'personal_tinNumber',
+                'personal_accountNumber',
                 // Educational Information
                 'education_stream',
                 'education_sponsorCategory',
@@ -695,15 +811,20 @@ const Applications = () => {
                 'education_admissionDate',
                 'education_checkedInDate',
                 'education_nationalExamResult',
-                // School Information
-                'school_schoolName',
-                'school_region',
-                'school_city',
-                'school_zone',
-                'school_schoolType',
-                'school_woreda',
-                'school_attendedYearFrom',
-                'school_attendedYearTo',
+                // School Information - Primary
+                'school_primary_schoolName',
+                'school_primary_schoolNameAm',
+                'school_primary_woreda',
+                'school_primary_attendedYearFrom',
+                'school_primary_attendedYearTo',
+                'school_primary_schoolType',
+                // School Information - Secondary
+                'school_secondary_schoolName',
+                'school_secondary_schoolNameAm',
+                'school_secondary_woreda',
+                'school_secondary_attendedYearFrom',
+                'school_secondary_attendedYearTo',
+                'school_secondary_schoolType',
                 // Family Information
                 'family_nationality',
                 'family_region',
@@ -712,26 +833,55 @@ const Applications = () => {
                 'family_kebele',
                 'family_motherName',
                 'family_familyPhone',
+                // Emergency Information
+                'emergency_fullName',
+                'emergency_relationship',
+                'emergency_phone',
+                'emergency_email',
+                'emergency_job',
+                'emergency_woreda',
+                'emergency_homeTown',
+                'emergency_kebele',
                 // Metadata
                 'submittedOn',
                 'canEdit'
             ];
             
-            // Build CSV rows
+            // Build CSV rows - ALL NEW FIELDS
             const rows = appsToExport.map(app => {
                 return [
-                    // Personal Information
-                    app.personalInfo?.fullName || '',
-                    app.personalInfo?.idNo || '',
-                    app.personalInfo?.sex || '',
-                    app.personalInfo?.mealCardNo || '',
-                    app.personalInfo?.college || '',
-                    app.personalInfo?.department || '',
-                    app.personalInfo?.academicYear || '',
-                    app.personalInfo?.dormNo || '',
+                    // Personal Information - Basic
+                    app.personalInfo?.name || '',
+                    app.personalInfo?.fatherName || '',
+                    app.personalInfo?.gFatherName || '',
+                    app.personalInfo?.nameAm || '',
+                    app.personalInfo?.fatherNameAm || '',
+                    app.personalInfo?.gFatherNameAm || '',
+                    app.personalInfo?.gender || '',
+                    app.personalInfo?.dob || '',
+                    app.personalInfo?.placeOfBirth || '',
+                    app.personalInfo?.placeOfBirthAm || '',
+                    app.personalInfo?.motherTongue || '',
+                    app.personalInfo?.nationalId || '',
+                    app.personalInfo?.healthStatus || '',
+                    app.personalInfo?.maritalStatus || '',
+                    app.personalInfo?.religion || '',
+                    // Personal Information - Location & Address
+                    app.personalInfo?.citizenship || '',
+                    app.personalInfo?.country || '',
+                    app.personalInfo?.woreda || '',
+                    app.personalInfo?.cityEn || '',
+                    app.personalInfo?.cityAm || '',
+                    app.personalInfo?.kebeleEn || '',
+                    app.personalInfo?.kebeleAm || '',
                     app.personalInfo?.phone || '',
-                    app.personalInfo?.religious || '',
-                    app.personalInfo?.nation || '',
+                    app.personalInfo?.email || '',
+                    app.personalInfo?.poBox || '',
+                    // Personal Information - Others
+                    app.personalInfo?.economicalStatus || '',
+                    app.personalInfo?.areaType || '',
+                    app.personalInfo?.tinNumber || '',
+                    app.personalInfo?.accountNumber || '',
                     // Educational Information
                     app.educationalInfo?.stream || '',
                     app.educationalInfo?.sponsorCategory || '',
@@ -742,15 +892,20 @@ const Applications = () => {
                     app.educationalInfo?.admissionDate || '',
                     app.educationalInfo?.checkedInDate || '',
                     app.educationalInfo?.nationalExamResult || '',
-                    // School Information
-                    app.schoolInfo?.schoolName || '',
-                    app.schoolInfo?.region || '',
-                    app.schoolInfo?.city || '',
-                    app.schoolInfo?.zone || '',
-                    app.schoolInfo?.schoolType || '',
-                    app.schoolInfo?.woreda || '',
-                    app.schoolInfo?.attendedYearFrom || '',
-                    app.schoolInfo?.attendedYearTo || '',
+                    // School Information - Primary
+                    app.schoolInfo?.primary?.schoolName || '',
+                    app.schoolInfo?.primary?.schoolNameAm || '',
+                    app.schoolInfo?.primary?.woreda || '',
+                    app.schoolInfo?.primary?.attendedYearFrom || '',
+                    app.schoolInfo?.primary?.attendedYearTo || '',
+                    app.schoolInfo?.primary?.schoolType || '',
+                    // School Information - Secondary
+                    app.schoolInfo?.secondary?.schoolName || '',
+                    app.schoolInfo?.secondary?.schoolNameAm || '',
+                    app.schoolInfo?.secondary?.woreda || '',
+                    app.schoolInfo?.secondary?.attendedYearFrom || '',
+                    app.schoolInfo?.secondary?.attendedYearTo || '',
+                    app.schoolInfo?.secondary?.schoolType || '',
                     // Family Information
                     app.familyInfo?.nationality || '',
                     app.familyInfo?.region || '',
@@ -759,6 +914,15 @@ const Applications = () => {
                     app.familyInfo?.kebele || '',
                     app.familyInfo?.motherName || '',
                     app.familyInfo?.familyPhone || '',
+                    // Emergency Information
+                    app.emergencyInfo?.fullName || '',
+                    app.emergencyInfo?.relationship || '',
+                    app.emergencyInfo?.phone || '',
+                    app.emergencyInfo?.email || '',
+                    app.emergencyInfo?.job || '',
+                    app.emergencyInfo?.woreda || '',
+                    app.emergencyInfo?.homeTown || '',
+                    app.emergencyInfo?.kebele || '',
                     // Metadata
                     app.submittedOn || '',
                     app.canEdit ? 'Yes' : 'No'
