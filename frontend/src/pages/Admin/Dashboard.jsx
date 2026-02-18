@@ -5,6 +5,7 @@ import {
     UserPlus, FileText, Calendar, Activity
 } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -30,10 +31,10 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
         try {
             // Fetch students
-            const { data: students } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/students');
+            const { data: students } = await axios.get(`${API_URL}/api/students`);
             
             // Fetch rooms
-            const { data: rooms } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms');
+            const { data: rooms } = await axios.get(`${API_URL}/api/dorms`);
 
             // Calculate statistics
             const assignedStudents = students.filter(s => s.room).length;

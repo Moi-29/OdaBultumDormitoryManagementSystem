@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FileText, Filter, X, Users as UsersIcon, RefreshCw } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 import Notification from '../../components/Notification';
 import { useNotification } from '../../hooks/useNotification';
 
@@ -45,14 +46,14 @@ const Reports = () => {
             const token = localStorage.getItem('token');
             
             // Fetch students to get unique departments
-            const studentsRes = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/students', {
+            const studentsRes = await axios.get(`${API_URL}/api/students`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const uniqueDepts = [...new Set(studentsRes.data.map(s => s.department))].filter(Boolean).sort();
             setDepartments(uniqueDepts);
             
             // Fetch rooms to get blocks - use correct endpoint
-            const roomsRes = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', {
+            const roomsRes = await axios.get(`${API_URL}/api/dorms`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
@@ -110,7 +111,7 @@ const Reports = () => {
         try {
             const queryString = buildQueryString();
             console.log('Generating PDF with query:', queryString);
-            const response = await fetch(`https://odabultumdormitorymanagementsystem.onrender.com/api/students/report/pdf${queryString}`, {
+            const response = await fetch(`${API_URL}/api/students/report/pdf${queryString}`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/pdf' }
             });
@@ -151,7 +152,7 @@ const Reports = () => {
         try {
             const queryString = buildQueryString();
             console.log('Generating CSV with query:', queryString);
-            const response = await fetch(`https://odabultumdormitorymanagementsystem.onrender.com/api/students/report/csv${queryString}`, {
+            const response = await fetch(`${API_URL}/api/students/report/csv${queryString}`, {
                 method: 'GET',
                 headers: { 'Accept': 'text/csv' }
             });

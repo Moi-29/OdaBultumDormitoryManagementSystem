@@ -4,6 +4,7 @@ import axios from 'axios';
 import Notification from '../../components/Notification';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { useNotification, useConfirmDialog } from '../../hooks/useNotification';
+import API_URL from '../../config/api';
 
 const Dorms = () => {
     const [rooms, setRooms] = useState([]);
@@ -70,7 +71,7 @@ const Dorms = () => {
             if (isAutoRefresh) {
                 setRefreshing(true);
             }
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms');
+            const { data } = await axios.get(`${API_URL}/api/dorms`);
             
             // Auto-update room status based on occupancy
             const updatedRooms = data.map(room => {
@@ -107,7 +108,7 @@ const Dorms = () => {
             if (!userInfo) return;
 
             const { token } = JSON.parse(userInfo);
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings', {
+            const { data } = await axios.get(`${API_URL}/api/settings`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -144,7 +145,7 @@ const Dorms = () => {
                 const blockRooms = rooms.filter(r => r.building === editingBlock.name);
                 await Promise.all(
                     blockRooms.map(room => 
-                        axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${room._id}`, {
+                        axios.put(`${API_URL}/api/dorms/${room._id}`, {
                             ...room,
                             building: blockForm.name,
                             gender: blockForm.gender
@@ -161,23 +162,39 @@ const Dorms = () => {
         } else {
             // Create a new block by creating a placeholder room
             try {
+                // Find the highest room number in this building to avoid conflicts
+                const existingRooms = rooms.filter(r => r.building === blockForm.name);
+                let newRoomNumber = '101';
+                
+                if (existingRooms.length > 0) {
+                    // Find the highest room number and increment
+                    const roomNumbers = existingRooms.map(r => parseInt(r.roomNumber) || 0);
+                    const maxRoomNumber = Math.max(...roomNumbers);
+                    newRoomNumber = String(maxRoomNumber + 1);
+                }
+                
                 // Create first room in the new block
-                await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', {
+                const roomData = {
                     building: blockForm.name,
-                    roomNumber: '101',
+                    roomNumber: newRoomNumber,
                     floor: 1,
                     type: 'Quad',
                     capacity: 4,
                     gender: blockForm.gender,
                     status: 'Available'
-                });
+                };
+                
+                console.log('Creating room with data:', roomData);
+                await axios.post(`${API_URL}/api/dorms`, roomData);
                 
                 fetchRooms();
                 setShowBlockModal(false);
                 setActiveTab(blockForm.name);
                 showNotification(`Block "${blockForm.name}" created successfully! You can now add more rooms.`, 'success');
             } catch (error) {
-                showNotification('Failed to create block: ' + (error.response?.data?.message || error.message), 'error');
+                console.error('Error creating block:', error);
+                const errorMessage = error.response?.data?.message || error.message || 'Failed to create block';
+                showNotification('Failed to create block: ' + errorMessage, 'error');
             }
         }
     };
@@ -196,7 +213,7 @@ const Dorms = () => {
             if (!confirmed) return;
             
             try {
-                await Promise.all(blockRooms.map(room => axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${room._id}`)));
+                await Promise.all(blockRooms.map(room => axios.delete(`${API_URL}/api/dorms/${room._id}`)));
                 fetchRooms();
                 setActiveTab(blocks[0]?.name || '');
                 showNotification('Block and all rooms deleted successfully', 'success');
@@ -236,18 +253,39 @@ const Dorms = () => {
 
     const handleSaveRoom = async (e) => {
         e.preventDefault();
+        
+        // Validate required fields
+        if (!roomForm.building || !roomForm.roomNumber) {
+            showNotification('Building and Room Number are required', 'error');
+            return;
+        }
+        
+        // Check if room number already exists in this building (for new rooms)
+        if (!editingRoom) {
+            const existingRoom = rooms.find(r => 
+                r.building === roomForm.building && 
+                r.roomNumber === roomForm.roomNumber
+            );
+            if (existingRoom) {
+                showNotification(`Room ${roomForm.roomNumber} already exists in ${roomForm.building}`, 'error');
+                return;
+            }
+        }
+        
         try {
             if (editingRoom) {
-                await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${editingRoom._id}`, roomForm);
+                await axios.put(`${API_URL}/api/dorms/${editingRoom._id}`, roomForm);
                 showNotification('Room updated successfully', 'success');
             } else {
-                await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/dorms', roomForm);
+                await axios.post(`${API_URL}/api/dorms`, roomForm);
                 showNotification('Room created successfully', 'success');
             }
             fetchRooms();
             setShowRoomModal(false);
         } catch (error) {
-            showNotification(error.response?.data?.message || 'Operation failed', 'error');
+            console.error('Error saving room:', error);
+            const errorMessage = error.response?.data?.message || error.message || 'Operation failed';
+            showNotification(errorMessage, 'error');
         }
     };
 
@@ -263,7 +301,7 @@ const Dorms = () => {
         if (!confirmed) return;
         
         try {
-            await axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/dorms/${roomId}`);
+            await axios.delete(`${API_URL}/api/dorms/${roomId}`);
             fetchRooms();
             showNotification('Room deleted successfully', 'success');
         } catch (error) {

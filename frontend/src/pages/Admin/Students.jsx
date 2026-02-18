@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Users, UserPlus, Search, Edit, Trash2, ExternalLink, CheckSquare, XSquare, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 import BulkImportAllocation from '../../components/BulkImportAllocation';
 import { Link } from 'react-router-dom';
-import API_URL from '../../config/api';
 
 const Students = () => {
     const [students, setStudents] = useState([]);

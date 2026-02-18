@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Settings as SettingsIcon, User, Lock, Bell, Database, Shield, Save, RefreshCw, Trash2, Download, Upload } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 import { useAuth } from '../../context/AuthContext';
 import Notification from '../../components/Notification';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -54,7 +55,7 @@ const Settings = () => {
                 if (!userInfo) return;
 
                 const { token } = JSON.parse(userInfo);
-                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings', {
+                const response = await axios.get(`${API_URL}/api/settings`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -88,12 +89,12 @@ const Settings = () => {
                 const { token } = JSON.parse(userInfo);
                 
                 // Get backup stats
-                const backupResponse = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/backup/stats', {
+                const backupResponse = await axios.get(`${API_URL}/api/backup/stats`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 // Get cache stats
-                const cacheResponse = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/cache/stats', {
+                const cacheResponse = await axios.get(`${API_URL}/api/cache/stats`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -139,7 +140,7 @@ const Settings = () => {
             const { token } = JSON.parse(userInfo);
 
             const response = await axios.put(
-                'https://odabultumdormitorymanagementsystem.onrender.com/api/auth/profile',
+                `${API_URL}/api/auth/profile`,
                 {
                     username: profileData.username,
                     email: profileData.email
@@ -202,7 +203,7 @@ const Settings = () => {
             const { token } = JSON.parse(userInfo);
 
             const response = await axios.put(
-                'https://odabultumdormitorymanagementsystem.onrender.com/api/auth/change-password',
+                `${API_URL}/api/auth/change-password`,
                 {
                     currentPassword: passwordData.currentPassword,
                     newPassword: passwordData.newPassword
@@ -246,7 +247,7 @@ const Settings = () => {
             const { token } = JSON.parse(userInfo);
 
             const response = await axios.put(
-                'https://odabultumdormitorymanagementsystem.onrender.com/api/settings',
+                `${API_URL}/api/settings`,
                 systemSettings,
                 {
                     headers: {
@@ -286,7 +287,7 @@ const Settings = () => {
             
             console.log('📦 Requesting database backup...');
             
-            const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/backup/database', {
+            const response = await axios.get(`${API_URL}/api/backup/database`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -345,7 +346,7 @@ const Settings = () => {
             console.log('🧹 Clearing cache...');
             
             // Clear server-side cache
-            const response = await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/cache/clear', {}, {
+            const response = await axios.post(`${API_URL}/api/cache/clear`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

@@ -3,6 +3,7 @@ import { LayoutDashboard, Users, Building, FileText, LogOut, Settings, Shield, A
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 
 const AdminLayout = () => {
     const location = useLocation();
@@ -27,7 +28,7 @@ const AdminLayout = () => {
                     return;
                 }
                 
-                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/requests', {
+                const response = await axios.get(`${API_URL}/api/requests`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
@@ -68,7 +69,7 @@ const AdminLayout = () => {
                 const token = localStorage.getItem('token');
                 if (!token) return;
 
-                const response = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/settings', {
+                const response = await axios.get(`${API_URL}/api/settings`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

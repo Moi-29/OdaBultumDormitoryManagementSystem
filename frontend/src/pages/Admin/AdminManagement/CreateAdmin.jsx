@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save, Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../../config/api';
 import Notification from '../../../components/Notification';
 import { useNotification } from '../../../hooks/useNotification';
 
@@ -28,7 +29,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
     const fetchPermissions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles/permissions/available', {
+            const { data } = await axios.get(`${API_URL}/api/admin/roles/permissions/available`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setPermissions(data.data);
@@ -100,7 +101,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                 // It's a role name, we need to find or create it
                 try {
                     // Fetch all existing roles
-                    const rolesResponse = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles', {
+                    const rolesResponse = await axios.get(`${API_URL}/api/admin/roles`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     
@@ -115,7 +116,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                         
                         // If custom permissions are provided, update the role
                         if (formData.customPermissions && formData.customPermissions.length > 0) {
-                            await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles/${roleId}`, {
+                            await axios.put(`${API_URL}/api/admin/roles/${roleId}`, {
                                 permissions: [...new Set([...existingRole.permissions, ...formData.customPermissions])]
                             }, {
                                 headers: { Authorization: `Bearer ${token}` }
@@ -123,7 +124,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                         }
                     } else {
                         // Create new role with the provided name and permissions
-                        const newRoleResponse = await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles', {
+                        const newRoleResponse = await axios.post(`${API_URL}/api/admin/roles`, {
                             name: formData.role.trim(),
                             description: `${formData.role.trim()} role`,
                             permissions: formData.customPermissions || []
@@ -152,7 +153,7 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                 customPermissions: formData.customPermissions || []
             };
             
-            await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/admins', adminData, {
+            await axios.post(`${API_URL}/api/admin/admins`, adminData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             

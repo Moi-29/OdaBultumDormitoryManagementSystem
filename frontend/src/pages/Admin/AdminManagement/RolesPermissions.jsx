@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Users, Shield } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../../config/api';
 import Notification from '../../../components/Notification';
 import ConfirmDialog from '../../../components/ConfirmDialog';
 import { useNotification, useConfirmDialog } from '../../../hooks/useNotification';
@@ -21,7 +22,7 @@ const RolesPermissions = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles', {
+            const { data } = await axios.get(`${API_URL}/api/admin/roles`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Filter out Super Admin role
@@ -47,7 +48,7 @@ const RolesPermissions = () => {
         
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles/${roleId}`, {
+            await axios.delete(`${API_URL}/api/admin/roles/${roleId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchRoles();
@@ -275,7 +276,7 @@ const RoleModal = ({ role, onClose, onSuccess }) => {
     const fetchPermissions = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles/permissions/available', {
+            const { data } = await axios.get(`${API_URL}/api/admin/roles/permissions/available`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setAvailablePermissions(data.data);
@@ -321,11 +322,11 @@ const RoleModal = ({ role, onClose, onSuccess }) => {
         try {
             const token = localStorage.getItem('token');
             if (role) {
-                await axios.put(`https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles/${role._id}`, formData, {
+                await axios.put(`${API_URL}/api/admin/roles/${role._id}`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
-                await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/roles', formData, {
+                await axios.post(`${API_URL}/api/admin/roles`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }

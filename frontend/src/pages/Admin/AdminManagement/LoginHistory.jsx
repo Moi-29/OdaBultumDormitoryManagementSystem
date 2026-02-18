@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Clock, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../../config/api';
 
 const LoginHistory = () => {
     const [history, setHistory] = useState([]);
@@ -21,7 +22,7 @@ const LoginHistory = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/login-history', {
+            const { data } = await axios.get(`${API_URL}/api/admin/login-history`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: pagination.page,

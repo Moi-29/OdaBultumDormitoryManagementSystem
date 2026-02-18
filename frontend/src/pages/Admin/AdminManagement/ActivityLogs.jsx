@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Activity, Filter } from 'lucide-react';
 import axios from 'axios';
+import API_URL from '../../../config/api';
 
 const ActivityLogs = () => {
     const [logs, setLogs] = useState([]);
@@ -20,7 +21,7 @@ const ActivityLogs = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const { data } = await axios.get('https://odabultumdormitorymanagementsystem.onrender.com/api/admin/activity-logs', {
+            const { data } = await axios.get(`${API_URL}/api/admin/activity-logs`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: pagination.page,

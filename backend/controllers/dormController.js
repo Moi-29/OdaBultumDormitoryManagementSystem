@@ -29,7 +29,16 @@ const getRoomById = asyncHandler(async (req, res) => {
 // @route   POST /api/dorms
 // @access  Private/Admin
 const createRoom = asyncHandler(async (req, res) => {
+    console.log('📝 Creating room with data:', req.body);
+    
     let { building, block, floor, roomNumber, type, capacity, gender } = req.body;
+
+    // Validate required fields
+    if (!building || !roomNumber || !floor || !gender) {
+        console.error('❌ Missing required fields:', { building, roomNumber, floor, gender });
+        res.status(400);
+        throw new Error('Building, room number, floor, and gender are required');
+    }
 
     // If capacity is not provided, use system default
     if (!capacity) {
@@ -37,22 +46,27 @@ const createRoom = asyncHandler(async (req, res) => {
         capacity = settings?.maxStudentsPerRoom || 4;
     }
 
-    const room = await Room.create({
-        building,
-        block,
-        floor,
-        roomNumber,
-        type,
-        capacity,
-        gender,
-        status: 'Available'
-    });
+    try {
+        const room = await Room.create({
+            building,
+            block,
+            floor,
+            roomNumber,
+            type,
+            capacity,
+            gender,
+            status: 'Available'
+        });
 
-    if (room) {
+        console.log('✅ Room created successfully:', room._id);
         res.status(201).json(room);
-    } else {
-        res.status(400);
-        throw new Error('Invalid room data');
+    } catch (error) {
+        console.error('❌ Error creating room:', error.message);
+        if (error.code === 11000) {
+            res.status(400);
+            throw new Error(`Room ${roomNumber} already exists in ${building}`);
+        }
+        throw error;
     }
 });
 
