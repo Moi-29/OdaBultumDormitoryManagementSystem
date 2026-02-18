@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import HeroSection from "../../components/home/HeroSection";
-import WelcomeSection from "../../components/home/WelcomeSection";
 import { useTheme } from "../../context/ThemeContext";
 
 const GuidelinesSection = lazy(() => import("../../components/home/GuidelinesSection"));
@@ -28,7 +27,6 @@ const Home = () => {
       <main>
         <HeroSection />
         <LeadershipSection />
-        {/* <WelcomeSection /> */}
         <Suspense fallback={<SectionLoader />}>
           <GuidelinesSection />
           <NewsSection />

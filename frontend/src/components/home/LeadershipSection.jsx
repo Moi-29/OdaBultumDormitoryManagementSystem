@@ -1,34 +1,38 @@
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
+import { homeTranslations } from "../../translations/translations";
 import oneImg from "../../assets/one.jpg";
 import twoImg from "../../assets/two.jpg";
-import threeImg from "../../assets/three.jpg";
+import threeImg from "../../assets/threes.jpg";
 import fourImg from "../../assets/four.jpg";
-import fiveImg from "../../assets/five.jpg";
-import sixImg from "../../assets/six.jpg";
-import sevenImg from "../../assets/seven.jpg";
+import fiveImg from "../../assets/fives.jpg";
+import sixImg from "../../assets/sixs.jpg";
+import sevenImg from "../../assets/sevens.jpg";
 
 const LeadershipSection = () => {
   const { isDarkMode } = useTheme();
+  const { language } = useLanguage();
+  const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
 
   const leaders = {
     president: {
       name: "Prof. Muktar Mohammed",
       position: "President",
       image: oneImg,
-      description: "Prof. Muktar Mohammed serves as the President of Oda Bultum University, bringing visionary leadership and academic excellence to the institution. With extensive experience in higher education administration, he has been instrumental in advancing the university's mission of providing quality education and fostering innovation. Under his leadership, the university continues to grow and excel in academic programs, research initiatives, and community engagement."
+      descriptionKey: "leaderCard1Desc"
     },
     vicePresidents: [
       {
         name: "Mr. Ibsa Ahmed",
         position: "Vice President for Administration and Development",
         image: twoImg,
-        description: "Mr. Ibsa Ahmed oversees the administrative operations and development initiatives of the university. His strategic approach to resource management and infrastructure development has significantly enhanced the university's operational efficiency. He is committed to creating a conducive environment for learning and ensuring sustainable growth across all university facilities and services."
+        descriptionKey: "leaderCard2Desc"
       },
       {
         name: "Alemayehu Bayene (Assist. Professor)",
         position: "Vice President for Academic, Research, Technology Transfer and Community",
         image: threeImg,
-        description: "Assist. Professor Alemayehu Bayene leads the academic, research, and community engagement portfolios of the university. His dedication to academic excellence and innovation has strengthened the university's research capacity and community partnerships. He works tirelessly to ensure that academic programs meet international standards while addressing local community needs through technology transfer and collaborative initiatives."
+        descriptionKey: "leaderCard3Desc"
       }
     ],
     directors: [
@@ -36,13 +40,13 @@ const LeadershipSection = () => {
         name: "Mr. Lelisa Shamsedin",
         position: "Student Service Directorate",
         image: fourImg,
-        description: "Mr. Lelisa Shamsedin heads the Student Service Directorate, dedicated to enhancing student life and welfare. His leadership ensures that students receive comprehensive support services, from accommodation to counseling. He is passionate about creating a vibrant campus environment where students can thrive academically and personally, fostering a sense of community and belonging."
+        descriptionKey: "leaderCard4Desc"
       },
       {
         name: "Mr. Ararsa Gudisa",
         position: "Director, University Registrar",
         image: sevenImg,
-        description: "Mr. Ararsa Gudisa serves as the Director of the University Registrar, managing all academic records and registration processes. His meticulous attention to detail and commitment to efficiency ensures smooth academic operations. He oversees student admissions, course registrations, and maintains the integrity of academic records, providing essential support to students throughout their academic journey."
+        descriptionKey: "leaderCard7Desc"
       }
     ],
     seniorDirectors: [
@@ -50,13 +54,13 @@ const LeadershipSection = () => {
         name: "Ahmedin Abdurahman (PhD)",
         position: "Director, Quality Assurance Directorate",
         image: sixImg,
-        description: "Dr. Ahmedin Abdurahman leads the Quality Assurance Directorate, ensuring that the university maintains the highest standards of academic excellence. His expertise in quality management systems has been crucial in achieving accreditation and continuous improvement. He works closely with all departments to implement best practices and foster a culture of quality across the institution."
+        descriptionKey: "leaderCard6Desc"
       },
       {
         name: "Getachew Gashaw (Assist. Professor)",
         position: "Director, Academic Program and Staff Development Directorate",
         image: fiveImg,
-        description: "Assist. Professor Getachew Gashaw directs the Academic Program and Staff Development Directorate, focusing on curriculum development and faculty enhancement. His innovative approach to academic program design and staff training has elevated the quality of education. He is committed to professional development and ensuring that faculty members have the resources and support needed to excel in teaching and research."
+        descriptionKey: "leaderCard5Desc"
       }
     ]
   };
@@ -76,7 +80,7 @@ const LeadershipSection = () => {
             className="text-4xl md:text-5xl font-bold mb-4"
             style={{ color: isDarkMode ? '#f1f5f9' : '#1e293b' }}
           >
-            University Leadership
+            {t('leadershipTitle')}
           </h2>
           <div 
             className="w-24 h-1 mx-auto mb-6"
@@ -86,7 +90,11 @@ const LeadershipSection = () => {
             className="text-lg max-w-3xl mx-auto"
             style={{ color: isDarkMode ? '#cbd5e1' : '#64748b' }}
           >
-            Meet the dedicated leaders who guide Oda Bultum University towards excellence in education, research, and community service.
+            {language === 'en' && "Meet the dedicated leaders who guide Oda Bultum University towards excellence in education, research, and community service."}
+            {language === 'am' && "በትምህርት፣ በምርምር እና በማህበረሰብ አገልግሎት ውስጥ ኦዳ ቡልቱም ዩኒቨርሲቲን ወደ ብቃት የሚመሩ ራሳቸውን የሰጡ መሪዎችን ያግኙ።"}
+            {language === 'om' && "Hoggantoota of kennee Yuunivarsiitii Odaa Bultum gara olaantummaa barnootaa, qorannoo fi tajaajila hawaasaa qajeelchan waliin wal qunnamaa."}
+            {language === 'so' && "La kulanka hogaamiyeyaasha dadaalka badan ee Jaamacadda Oda Bultum u hagaya fiicnaanta waxbarashada, cilmi-baarista, iyo adeegga bulshada."}
+            {language === 'ti' && "ንዩኒቨርሲቲ ኦዳ ቡልቱም ናብ ብቕዓት ትምህርቲ፣ ምርምር፣ ከምኡ'ውን ኣገልግሎት ሕብረተሰብ ዘመርሑ ተወፋይ መራሕቲ ተራኸቡ።"}
           </p>
         </div>
 
@@ -105,13 +113,25 @@ const LeadershipSection = () => {
                 className="text-sm font-semibold mb-3 uppercase tracking-wider"
                 style={{ color: '#d4af37' }}
               >
-                Leadership Message
+                {language === 'en' && "Leadership Message"}
+                {language === 'am' && "የአመራር መልእክት"}
+                {language === 'om' && "Ergaa Hogganaa"}
+                {language === 'so' && "Fariinta Hogaanka"}
+                {language === 'ti' && "መልእኽቲ መሪሕነት"}
               </div>
               <p 
                 className="text-base leading-relaxed"
-                style={{ color: isDarkMode ? '#cbd5e1' : '#475569' }}
+                style={{ 
+                  color: isDarkMode ? '#cbd5e1' : '#475569',
+                  textAlign: 'justify',
+                  hyphens: 'auto'
+                }}
               >
-                {leaders.president.description.substring(0, leaders.president.description.length / 2)}
+                {language === 'en' && "Prof. Muktar Mohammed serves as the President of Oda Bultum University, bringing visionary leadership and transformative academic excellence to the institution. With extensive experience in higher education administration and a deep commitment to educational innovation, he orchestrates strategic governance that positions the university as a beacon of knowledge and community development. His leadership philosophy centers on fostering academic excellence, promoting research innovation, and ensuring equitable access to quality education."}
+                {language === 'am' && "ፕሮፌሰር ሙክታር መሐመድ የኦዳ ቡልቱም ዩኒቨርሲቲ ፕሬዝዳንት ሆነው ያገለግላሉ፣ ራዕይ ያለው አመራር እና ለውጥ ያመጣ የአካዳሚክ ብቃት ወደ ተቋሙ ያመጣሉ። በከፍተኛ ትምህርት አስተዳደር ውስጥ ሰፊ ልምድ እና ለትምህርታዊ ፈጠራ ጥልቅ ቁርጠኝነት ያላቸው፣ ዩኒቨርሲቲውን እንደ እውቀት እና የማህበረሰብ ልማት መብራት የሚያስቀምጥ ስትራቴጂያዊ አስተዳደር ያስተባብራሉ።"}
+                {language === 'om' && "Pirofeesar Muktar Mohammed Pirezidaantii Yuunivarsiitii Odaa Bultum ta'uun tajaajilu, hogganaa mul'ataa fi olaantummaa barnootaa jijjiirraa gara dhaabbataatti fidu. Muuxannoo bal'aa bulchiinsa barnootaa olaanaa fi kutannoo gadi fagoo kalaqaa barnootaa qabaachuun, bulchiinsa tarsiimoo yuunivarsiitichaa akka ibsaa beekumsaa fi guddina hawaasaatti kan ramadu walitti qindeessa."}
+                {language === 'so' && "Prof. Muktar Mohammed wuxuu u adeegaa Madaxweynaha Jaamacadda Oda Bultum, isagoo keenaya hogaan aragti leh iyo fiicnaan waxbarasho oo isbeddel leh ee hay'adda. Khibrad ballaaran oo maamulka waxbarashada sare iyo go'aan qoto dheer oo ku saabsan hal-abuurka waxbarasho, wuxuu isku dubaridaa maamulka istiraatiijiyadeed kaas oo jaamacadda u dhiga sidii laambad aqoon iyo horumarinta bulshada."}
+                {language === 'ti' && "ፕሮፌሰር ሙክታር መሐመድ ናይ ዩኒቨርሲቲ ኦዳ ቡልቱም ፕሬዚደንት ኮይኖም የገልግሉ፣ ራእይ ዘለዎ መሪሕነትን ለውጢ ዘምጽእ ኣካዳሚያዊ ብቕዓትን ናብቲ ትካል የምጽኡ። ኣብ ላዕለዋይ ትምህርቲ ምምሕዳር ሰፊሕ ተመኩሮን ንትምህርታዊ ምህዞን ዓሚቕ ተወፋይነትን ዘለዎም፣ ነታ ዩኒቨርሲቲ ከም መብራህቲ ፍልጠትን ምዕባለ ሕብረተሰብን ዘቐምጥ ስትራተጂያዊ ኣስተዳደር የስምምዑ።"}
               </p>
             </div>
 
@@ -153,13 +173,25 @@ const LeadershipSection = () => {
                 className="text-sm font-semibold mb-3 uppercase tracking-wider"
                 style={{ color: '#d4af37' }}
               >
-                Vision & Excellence
+                {language === 'en' && "Vision & Excellence"}
+                {language === 'am' && "ራዕይ እና ብቃት"}
+                {language === 'om' && "Mul'ata fi Olaantummaa"}
+                {language === 'so' && "Aragtida & Fiicnaanta"}
+                {language === 'ti' && "ራእይን ብቕዓትን"}
               </div>
               <p 
                 className="text-base leading-relaxed"
-                style={{ color: isDarkMode ? '#cbd5e1' : '#475569' }}
+                style={{ 
+                  color: isDarkMode ? '#cbd5e1' : '#475569',
+                  textAlign: 'justify',
+                  hyphens: 'auto'
+                }}
               >
-                {leaders.president.description.substring(leaders.president.description.length / 2)}
+                {language === 'en' && "Under his stewardship, the university has expanded its academic programs, strengthened research capacity, and deepened community partnerships. His mission is to cultivate a learning environment that empowers students to become ethical leaders and change-makers. With unwavering dedication to institutional integrity and student success, he guides the university toward achieving international recognition while remaining deeply rooted in serving local and regional development needs. His vision encompasses building a world-class institution that combines academic rigor with social responsibility."}
+                {language === 'am' && "በእሳቸው አስተዳደር ስር ዩኒቨርሲቲው የአካዳሚክ ፕሮግራሞቹን አስፋፍቷል፣ የምርምር አቅሙን አጠናክሯል እና የማህበረሰብ ሽርክናዎችን አጠናክሯል። ተልእኳቸው ተማሪዎች ሥነ ምግባራዊ መሪዎች እና ለውጥ አምጪዎች እንዲሆኑ የሚያበረታታ የመማሪያ አካባቢ መፍጠር ነው። ለተቋማዊ ታማኝነት እና ለተማሪዎች ስኬት ያለማቋረጥ በመሰጠት፣ ዩኒቨርሲቲውን ወደ ዓለም አቀፍ እውቅና ለማግኘት በሚመራበት ጊዜ በአካባቢያዊ እና በክልላዊ የልማት ፍላጎቶች አገልግሎት ላይ ጥልቅ ሥር ይዞ ይቆያል።"}
+                {language === 'om' && "Bulchiinsa isaa jalatti, yuunivarsiitichi sagantaalee barnootaa isaa bal'isee, dandeettii qorannoo cimsee fi michummaa hawaasaa gadi fageeessee jira. Ergaan isaa naannoo barumsaa barattoonni akka hoggantoota naamusa qabeessaa fi jijjiirraa fiddaniitti humneessu uumuudha. Amanamummaa dhaabbataa fi milkaa'ina barattootaaf kutannoo hin jijjiiramne qabaachuun, yuunivarsiitichaa gara beekamtii addunyaa argachuutti kan qajeelchu yoo ta'u, fedhii guddina naannoo fi naannichaa tajaajiluu keessatti hundee gadi fagoo ta'ee hafa."}
+                {language === 'so' && "Maamulkiisa hoostiisa, jaamacaddu waxay balaadhisay barnaamijyadeeda tacliinta, xoojisay awoodda cilmi-baarista, iyo qotondheerisay iskaashiga bulshada. Hadafkiisu waa in la abuuro jawi waxbarasho oo ardayda u awood siya inay noqdaan hogaamiye anshax leh iyo isbeddel keenayaal. Dadaal aan kala go'in ah oo daacadnimada hay'adda iyo guusha ardayda, wuxuu jaamacadda u hagaa xagga helitaanka aqoonsiga caalamiga ah halka uu ku sii xidhan yahay adeegida baahiyaha horumarinta maxalliga iyo gobolka."}
+                {language === 'ti' && "ኣብ ትሕቲ ኣስተዳደሩ፣ እታ ዩኒቨርሲቲ ናይ ትምህርቲ ፕሮግራማታ ኣስፊሓ፣ ናይ ምርምር ዓቕሚ ኣጠናኺራ፣ ከምኡ'ውን ናይ ሕብረተሰብ ሽርክነታት ኣዕሚቓ። ተልእኾኡ ተምሃሮ ስነ-ምግባራዊ መራሕቲን ለውጢ ኣምጽእትን ክኾኑ ዘበርታትዕ ናይ ትምህርቲ ሃዋሁ ምፍጣር እዩ። ንትካላዊ ታማኒነትን ዓወት ተምሃሮን ዘይተቐያየር ተወፋይነት ብምሃብ፣ ነታ ዩኒቨርሲቲ ናብ ዓለምለኻዊ ኣፍልጦ ምብጻሕ እናመርሐ፣ ንናይ ከባቢን ዞባውን ምዕባለ ፍላጎታት ኣገልግሎት ኣብ ምሃብ ዓሚቕ ሱር ዘለዎ ይቕጽል።"}
               </p>
             </div>
           </div>
@@ -210,7 +242,7 @@ const LeadershipSection = () => {
                   className="text-sm leading-relaxed text-justify"
                   style={{ color: isDarkMode ? '#cbd5e1' : '#64748b' }}
                 >
-                  {vp.description}
+                  {t(vp.descriptionKey)}
                 </p>
               </div>
             </div>
@@ -262,7 +294,7 @@ const LeadershipSection = () => {
                   className="text-sm leading-relaxed text-justify"
                   style={{ color: isDarkMode ? '#cbd5e1' : '#64748b' }}
                 >
-                  {director.description}
+                  {t(director.descriptionKey)}
                 </p>
               </div>
             </div>
@@ -314,7 +346,7 @@ const LeadershipSection = () => {
                   className="text-sm leading-relaxed text-justify"
                   style={{ color: isDarkMode ? '#cbd5e1' : '#64748b' }}
                 >
-                  {director.description}
+                  {t(director.descriptionKey)}
                 </p>
               </div>
             </div>

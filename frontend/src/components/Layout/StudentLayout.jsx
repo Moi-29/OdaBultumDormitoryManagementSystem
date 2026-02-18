@@ -53,7 +53,7 @@ const StudentLayout = () => {
         { path: '/student/home', label: t('home'), icon: Home },
         { path: '/student/dormitory', label: t('dormitoryView'), icon: Building2 },
         { path: '/student/application', label: t('applicationForm'), icon: FileText },
-        { path: '/student/permission', label: 'Permission', icon: FileCheck },
+        { path: '/student/permission', label: t('permission'), icon: FileCheck },
         { path: '/student/report', label: t('reportIssue'), icon: AlertCircle }
     ];
 

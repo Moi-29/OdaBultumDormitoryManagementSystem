@@ -4,6 +4,7 @@ export const translations = {
     home: "Home",
     dormitoryView: "Dormitory View",
     applicationForm: "Application Form",
+    permission: "Permission",
     reportIssue: "Report Issue",
     studentService: "Student Service",
     
@@ -286,6 +287,56 @@ export const translations = {
     error: "Error",
     loading: "Loading...",
     mainCampus: "Main Campus",
+    
+    // Permission Section
+    permissionRequest: "Permission Request",
+    permissionRequestSubtitle: "Request permission to leave campus for religious purposes",
+    requestPermission: "Request Permission",
+    myPermissions: "My Permission Requests",
+    permissionForm: "Permission Form",
+    permissionAgreement: "Permission Agreement",
+    fillAllFields: "Please fill in all fields",
+    permissionSubmitted: "Permission request submitted successfully!",
+    permissionFailed: "Failed to submit permission request",
+    downloadSuccess: "PDF downloaded successfully",
+    downloadFailed: "Failed to download PDF",
+    
+    // Form Fields
+    fullName: "Full Name",
+    studentId: "Student ID",
+    department: "Department",
+    year: "Year",
+    sex: "Sex",
+    male: "Male",
+    female: "Female",
+    date: "Date",
+    submitRequest: "Submit Request",
+    submitting: "Submitting...",
+    cancel: "Cancel",
+    iAgree: "I Agree & Submit",
+    
+    // Agreement Text
+    agreementIntro: "I, {name}, hereby request permission to leave the campus for religious purposes. I understand and agree to the following terms and conditions:",
+    agreementTerm1: "I will leave the campus for religious purposes only.",
+    agreementTerm2: "I will return to the dormitory no later than 9:00 PM on the same day.",
+    agreementTerm3: "I take full responsibility for my safety and well-being while off campus.",
+    agreementTerm4: "I understand that any incidents, accidents, or issues that occur while I am off campus are my sole responsibility.",
+    agreementTerm5: "I will comply with all university rules and regulations during my absence.",
+    agreementTerm6: "I will inform the dormitory administration immediately if I am unable to return by the specified time.",
+    agreementAcknowledge: "I acknowledge that I have read, understood, and agree to abide by all the terms stated above.",
+    
+    // Status
+    status: "Status",
+    pending: "Pending",
+    approved: "Approved",
+    rejected: "Rejected",
+    requestDate: "Request Date",
+    noPermissions: "No permission requests found",
+    viewDetails: "View Details",
+    downloadPDF: "Download PDF",
+    
+    // Messages
+    permissionInfo: "Submit a permission request to leave campus for religious purposes. You must return by 9:00 PM.",
   },
 
   am: {
@@ -293,6 +344,7 @@ export const translations = {
     home: "መነሻ",
     dormitoryView: "የመኝታ ቤት እይታ",
     applicationForm: "የማመልከቻ ቅጽ",
+    permission: "ፈቃድ",
     reportIssue: "ችግር ሪፖርት ያድርጉ",
     studentService: "የተማሪ አገልግሎት",
     
@@ -583,6 +635,56 @@ export const translations = {
     error: "ስህተት",
     loading: "በመጫን ላይ...",
     mainCampus: "ዋና ካምፓስ",
+    
+    // Permission Section (Amharic)
+    permissionRequest: "የፈቃድ ጥያቄ",
+    permissionRequestSubtitle: "ለሃይማኖታዊ ዓላማዎች ካምፓስ ለመልቀቅ ፈቃድ ይጠይቁ",
+    requestPermission: "ፈቃድ ይጠይቁ",
+    myPermissions: "የእኔ የፈቃድ ጥያቄዎች",
+    permissionForm: "የፈቃድ ቅጽ",
+    permissionAgreement: "የፈቃድ ስምምነት",
+    fillAllFields: "እባክዎ ሁሉንም መስኮች ይሙሉ",
+    permissionSubmitted: "የፈቃድ ጥያቄ በተሳካ ሁኔታ ገብቷል!",
+    permissionFailed: "የፈቃድ ጥያቄ ማስገባት አልተሳካም",
+    downloadSuccess: "ፒዲኤፍ በተሳካ ሁኔታ ወርዷል",
+    downloadFailed: "ፒዲኤፍ ማውረድ አልተሳካም",
+    
+    // Form Fields (Amharic)
+    fullName: "ሙሉ ስም",
+    studentId: "የተማሪ መታወቂያ",
+    department: "ክፍል",
+    year: "ዓመት",
+    sex: "ጾታ",
+    male: "ወንድ",
+    female: "ሴት",
+    date: "ቀን",
+    submitRequest: "ጥያቄ አስገባ",
+    submitting: "በማስገባት ላይ...",
+    cancel: "ሰርዝ",
+    iAgree: "ተስማምቻለሁ እና አስገባ",
+    
+    // Agreement Text (Amharic)
+    agreementIntro: "እኔ {name} ለሃይማኖታዊ ዓላማዎች ካምፓስ ለመልቀቅ ፈቃድ እጠይቃለሁ። የሚከተሉትን ውሎች እና ሁኔታዎች ተረድቻለሁ እና እስማማለሁ፡",
+    agreementTerm1: "ካምፓስን ለሃይማኖታዊ ዓላማዎች ብቻ እለቃለሁ።",
+    agreementTerm2: "በተመሳሳይ ቀን ከምሽቱ 9:00 ሰዓት በፊት ወደ መኝታ ቤት እመለሳለሁ።",
+    agreementTerm3: "ከካምፓስ ውጭ በሆንኩበት ጊዜ ለደህንነቴ እና ለደህንነቴ ሙሉ ኃላፊነት እወስዳለሁ።",
+    agreementTerm4: "ከካምፓስ ውጭ በሆንኩበት ጊዜ የሚከሰቱ ማንኛውም ክስተቶች፣ አደጋዎች ወይም ጉዳዮች የእኔ ብቸኛ ኃላፊነት መሆናቸውን ተረድቻለሁ።",
+    agreementTerm5: "በእኔ ቅድሚያ ሁሉንም የዩኒቨርሲቲ ደንቦች እና ደንቦች እከተላለሁ።",
+    agreementTerm6: "በተወሰነው ጊዜ መመለስ ካልቻልኩ ወዲያውኑ የመኝታ ቤት አስተዳደርን አሳውቃለሁ።",
+    agreementAcknowledge: "ከላይ የተገለጹትን ሁሉንም ውሎች አንብቤ፣ ተረድቼ እና ለማክበር እስማማለሁ።",
+    
+    // Status (Amharic)
+    status: "ሁኔታ",
+    pending: "በመጠባበቅ ላይ",
+    approved: "ጸድቋል",
+    rejected: "ተቀባይነት አላገኘም",
+    requestDate: "የጥያቄ ቀን",
+    noPermissions: "ምንም የፈቃድ ጥያቄዎች አልተገኙም",
+    viewDetails: "ዝርዝሮችን ይመልከቱ",
+    downloadPDF: "ፒዲኤፍ አውርድ",
+    
+    // Messages (Amharic)
+    permissionInfo: "ለሃይማኖታዊ ዓላማዎች ካምፓስ ለመልቀቅ የፈቃድ ጥያቄ ያስገቡ። በምሽቱ 9:00 ሰዓት መመለስ አለብዎት።",
   },
 
   om: {
@@ -590,6 +692,7 @@ export const translations = {
     home: "Mana",
     dormitoryView: "Ilaalcha Kutaa Ciisaa",
     applicationForm: "Unka Iyyannoo",
+    permission: "Hayyama",
     reportIssue: "Rakkoo Gabaasi",
     studentService: "Tajaajila Barataa",
     
@@ -881,12 +984,63 @@ export const translations = {
     error: "Dogongora",
     loading: "Fe'aa jira...",
     mainCampus: "Kaampasii Guddaa",
+    
+    // Permission Section (Oromo)
+    permissionRequest: "Gaafii Hayyamaa",
+    permissionRequestSubtitle: "Kaayyoo amantaatiif kaampasii dhiisuuf hayyama gaafadhu",
+    requestPermission: "Hayyama Gaafadhu",
+    myPermissions: "Gaaffiiwwan Hayyamaa Koo",
+    permissionForm: "Unka Hayyamaa",
+    permissionAgreement: "Waliigaltee Hayyamaa",
+    fillAllFields: "Maaloo dirreewwan hunda guuti",
+    permissionSubmitted: "Gaafiin hayyamaa milkaa'inaan dhiyaate!",
+    permissionFailed: "Gaafii hayyamaa dhiyeessuun hin milkoofne",
+    downloadSuccess: "PDF milkaa'inaan bu'e",
+    downloadFailed: "PDF bu'uun hin milkoofne",
+    
+    // Form Fields (Oromo)
+    fullName: "Maqaa Guutuu",
+    studentId: "Eenyummaa Barattootaa",
+    department: "Damee",
+    year: "Bara",
+    sex: "Saala",
+    male: "Dhiira",
+    female: "Dhalaa",
+    date: "Guyyaa",
+    submitRequest: "Gaafii Dhiyeessi",
+    submitting: "Dhiyeessaa jira...",
+    cancel: "Haqii",
+    iAgree: "Walii galeera & Dhiyeessi",
+    
+    // Agreement Text (Oromo)
+    agreementIntro: "Ani {name}, kaayyoo amantaatiif kaampasii dhiisuuf hayyama gaafadha. Waliigalteewwan armaan gadii hubadheera fi walii galeera:",
+    agreementTerm1: "Kaampasii kaayyoo amantaatiif qofa nan dhiisa.",
+    agreementTerm2: "Guyyaa sana sa'aatii 9:00 galgalaa dura gara kutaa ciisaatti nan deebi'a.",
+    agreementTerm3: "Yeroo kaampasii ala jiru nageenya koo fi fayyaa koof itti gaafatamummaa guutuu nan fudhata.",
+    agreementTerm4: "Yeroo kaampasii ala jiru taatee, balaa ykn dhimmi kamiyyuu kan mudatu itti gaafatamummaa koo qofa ta'uu isaa hubadheera.",
+    agreementTerm5: "Yeroo hin jirre keessa seera fi dambiiwwan yuunivarsiitii hunda nan eega.",
+    agreementTerm6: "Yeroo murtaa'een deebi'uu yoo hin dandeenye battalumatti bulchiinsa kutaa ciisaa nan beeksisa.",
+    agreementAcknowledge: "Waliigalteewwan armaan olii hunda dubbisee, hubadheera fi eeguuf walii galeera.",
+    
+    // Status (Oromo)
+    status: "Haala",
+    pending: "Eegaa jira",
+    approved: "Fudhatameera",
+    rejected: "Diddameera",
+    requestDate: "Guyyaa Gaafii",
+    noPermissions: "Gaaffiiwwan hayyamaa hin argamne",
+    viewDetails: "Bal'inaan Ilaali",
+    downloadPDF: "PDF Bu'i",
+    
+    // Messages (Oromo)
+    permissionInfo: "Kaayyoo amantaatiif kaampasii dhiisuuf gaafii hayyamaa dhiyeessi. Sa'aatii 9:00 galgalaa deebi'uu qabda.",
   },
 
   so: {
     home: "Guriga",
     dormitoryView: "Muuqaalka Qolka Hurdada",
     applicationForm: "Foomka Codsiga",
+    permission: "Fasax",
     reportIssue: "Soo Sheeg Dhibaatada",
     studentService: "Adeegga Ardayda",
     universityName: "JAAMACADDA ODA BULTUM",
@@ -1099,13 +1253,64 @@ export const translations = {
     mainCampus: "Xerada Weyn",
     learnMore: "Wax Badan Baro",
     showMore: "Wax Badan Tus",
-    showLess: "Wax Yar Tus"
+    showLess: "Wax Yar Tus",
+    
+    // Permission Section (Somali)
+    permissionRequest: "Codsiga Fasaxa",
+    permissionRequestSubtitle: "Codso fasax aad uga baxdo xerada ujeedooyinka diinta",
+    requestPermission: "Fasax Codso",
+    myPermissions: "Codsiyada Fasaxayga",
+    permissionForm: "Foomka Fasaxa",
+    permissionAgreement: "Heshiiska Fasaxa",
+    fillAllFields: "Fadlan buuxi dhammaan goobaha",
+    permissionSubmitted: "Codsiga fasaxa si guul leh ayaa loo gudbiyay!",
+    permissionFailed: "Gudbinta codsiga fasaxa waa lagu guuldarraystay",
+    downloadSuccess: "PDF si guul leh ayaa loo soo dejiyay",
+    downloadFailed: "Soo dejinta PDF waa lagu guuldarraystay",
+    
+    // Form Fields (Somali)
+    fullName: "Magaca Buuxa",
+    studentId: "Aqoonsiga Ardayga",
+    department: "Waaxda",
+    year: "Sannad",
+    sex: "Jinsiga",
+    male: "Lab",
+    female: "Dhedig",
+    date: "Taariikhda",
+    submitRequest: "Codsi Gudbi",
+    submitting: "Waa La Gudbinayaa...",
+    cancel: "Jooji",
+    iAgree: "Waan Aqbalay & Gudbi",
+    
+    // Agreement Text (Somali)
+    agreementIntro: "Aniga {name}, waxaan codsanayaa fasax aan uga baxo xerada ujeedooyinka diinta. Waxaan fahmay oo aan ku heshiiyay shuruudaha soo socda:",
+    agreementTerm1: "Waxaan ka baxayaa xerada ujeedooyinka diinta oo keliya.",
+    agreementTerm2: "Waxaan ku soo noqonayaa qolka hurdada ka hor 9:00 PM isla maalinta.",
+    agreementTerm3: "Waxaan qaadanayaa mas'uuliyadda buuxda badbaadada iyo fayoobiga intaan xerada ka baxsanahay.",
+    agreementTerm4: "Waxaan fahmay in dhacdo kasta, shil, ama arrin dhacda intaan xerada ka baxsanahay ay tahay mas'uuliyadayda keliya.",
+    agreementTerm5: "Waxaan raaci doonaa dhammaan xeerarka iyo shuruudaha jaamacadda inta aan maqnahay.",
+    agreementTerm6: "Waxaan si degdeg ah u wargelinayaa maamulka qolka hurdada haddii aanan awoodin inaan ku soo noqdo waqtiga la cayimay.",
+    agreementAcknowledge: "Waxaan qirayaa inaan akhriyay, fahmay, oo aan ku heshiiyay inaan raaco dhammaan shuruudaha kor ku xusan.",
+    
+    // Status (Somali)
+    status: "Xaalad",
+    pending: "La Sugayo",
+    approved: "La Ansixiyay",
+    rejected: "La Diiday",
+    requestDate: "Taariikhda Codsiga",
+    noPermissions: "Lama helin codsiyada fasaxa",
+    viewDetails: "Faahfaahinta Arag",
+    downloadPDF: "PDF Soo Deji",
+    
+    // Messages (Somali)
+    permissionInfo: "Gudbi codsi fasax si aad uga baxdo xerada ujeedooyinka diinta. Waa inaad ku soo noqotaa 9:00 PM.",
   },
 
   ti: {
     home: "ገጽ",
     dormitoryView: "ናይ መደቀሲ ቤት ትርኢት",
     applicationForm: "ናይ መመልከቲ ቅጥዒ",
+    permission: "ፍቓድ",
     reportIssue: "ጸገም ሪፖርት ግበር",
     studentService: "ናይ ተምሃሮ ኣገልግሎት",
     universityName: "ዩኒቨርሲቲ ኦዳ ቡልቱም",
@@ -1318,6 +1523,56 @@ export const translations = {
     mainCampus: "ቀንዲ ካምፓስ",
     learnMore: "ተወሳኺ ፍለጥ",
     showMore: "ተወሳኺ ኣርኢ",
+    
+    // Permission Section (Tigrinya)
+    permissionRequest: "ሕቶ ፍቓድ",
+    permissionRequestSubtitle: "ንሃይማኖታዊ ዕላማታት ካምፓስ ንምግዳል ፍቓድ ሕተት",
+    requestPermission: "ፍቓድ ሕተት",
+    myPermissions: "ናይ ፍቓድ ሕቶታተይ",
+    permissionForm: "ቅጥዒ ፍቓድ",
+    permissionAgreement: "ስምምዕ ፍቓድ",
+    fillAllFields: "በጃኻ ኩሎም ቦታታት ምላእ",
+    permissionSubmitted: "ሕቶ ፍቓድ ብዓወት ቀሪቡ!",
+    permissionFailed: "ሕቶ ፍቓድ ምቕራብ ኣይተዓወተን",
+    downloadSuccess: "PDF ብዓወት ወሪዱ",
+    downloadFailed: "PDF ምውራድ ኣይተዓወተን",
+    
+    // Form Fields (Tigrinya)
+    fullName: "ምሉእ ስም",
+    studentId: "መለለዪ ተማሃራይ",
+    department: "ክፍሊ",
+    year: "ዓመት",
+    sex: "ጾታ",
+    male: "ተባዕታይ",
+    female: "ኣንስተይቲ",
+    date: "ዕለት",
+    submitRequest: "ሕቶ ኣቕርብ",
+    submitting: "ይቐርብ ኣሎ...",
+    cancel: "ሰርዝ",
+    iAgree: "ተሰማሚዐ እየ & ኣቕርብ",
+    
+    // Agreement Text (Tigrinya)
+    agreementIntro: "ኣነ {name}፣ ንሃይማኖታዊ ዕላማታት ካምፓስ ንምግዳል ፍቓድ እሕተት። ነዞም ዝስዕቡ ውዕላትን ኩነታትን ተረዲኤን ተሰማሚዐን እየ:",
+    agreementTerm1: "ካምፓስ ንሃይማኖታዊ ዕላማታት ጥራይ እገድል።",
+    agreementTerm2: "ብሓደ መዓልቲ ካብ ምሸት 9:00 ሰዓት ቅድሚ ናብ መደቀሲ ቤት እምለስ።",
+    agreementTerm3: "ካብ ካምፓስ ወጻኢ ኣብ ዝህልወሉ እዋን ንድሕንነተይን ጥዕናይን ምሉእ ሓላፍነት እወስድ።",
+    agreementTerm4: "ካብ ካምፓስ ወጻኢ ኣብ ዝህልወሉ እዋን ዝኾነ ፍጻመ፣ ሓደጋ ወይ ጉዳይ ዝኸውን ናተይ ጥራይ ሓላፍነት ምዃኑ ተረዲኤ እየ።",
+    agreementTerm5: "ኣብ ምህላወይ ኩሎም ሕግታትን ደንብታት ዩኒቨርሲቲን ክኽተል እየ።",
+    agreementTerm6: "ብዝተወሰነ ግዜ ክምለስ እንተዘይክኢለ ብቕልጡፍ ንኣስተዳደር መደቀሲ ቤት ከበሃህል እየ።",
+    agreementAcknowledge: "ኣብ ላዕሊ ዝተገለጹ ኩሎም ውዕላት ኣንቢበ፣ ተረዲኤን ንምኽታል ተሰማሚዐን እየ።",
+    
+    // Status (Tigrinya)
+    status: "ኩነታት",
+    pending: "ይጽበ ኣሎ",
+    approved: "ተቐቢሉ",
+    rejected: "ተነጺጉ",
+    requestDate: "ዕለት ሕቶ",
+    noPermissions: "ሕቶታት ፍቓድ ኣይተረኽበን",
+    viewDetails: "ዝርዝር ርአ",
+    downloadPDF: "PDF ኣውርድ",
+    
+    // Messages (Tigrinya)
+    permissionInfo: "ንሃይማኖታዊ ዕላማታት ካምፓስ ንምግዳል ሕቶ ፍቓድ ኣቕርብ። ብምሸት 9:00 ሰዓት ክትምለስ ኣለካ።",
     showLess: "ውሑድ ኣርኢ"
   },
 
@@ -1674,23 +1929,29 @@ export const homeTranslations = {
     diversityTrainingDesc: "Mandatory workshops and ongoing education for all community members on cultural competence, unconscious bias, and inclusive practices.",
     
     // Leadership Section
-    leadershipTitle: "Leadership",
+    leadershipTitle: "University Leadership",
     
-    // Leadership Cards
+    // Leadership Cards - Comprehensive Descriptions
     leaderCard1Title: "Prof. Muktar Mohammed — President",
-    leaderCard1Desc: "Visionary architect of institutional excellence, orchestrating transformative academic leadership through strategic governance and principled stewardship.",
+    leaderCard1Desc: "Prof. Muktar Mohammed serves as the President of Oda Bultum University, bringing visionary leadership and transformative academic excellence to the institution. With extensive experience in higher education administration and a deep commitment to educational innovation, he orchestrates strategic governance that positions the university as a beacon of knowledge and community development. His leadership philosophy centers on fostering academic excellence, promoting research innovation, and ensuring equitable access to quality education. Under his stewardship, the university has expanded its academic programs, strengthened research capacity, and deepened community partnerships. His mission is to cultivate a learning environment that empowers students to become ethical leaders and change-makers. With unwavering dedication to institutional integrity and student success, he guides the university toward achieving international recognition while remaining deeply rooted in serving local and regional development needs. His vision encompasses building a world-class institution that combines academic rigor with social responsibility, preparing graduates who are not only professionally competent but also socially conscious and committed to nation-building.",
+    
     leaderCard2Title: "Mr. Ibsa Ahmed — Vice President for Administration and Development",
-    leaderCard2Desc: "Distinguished administrative strategist, orchestrating institutional infrastructure and developmental initiatives through visionary resource management and operational excellence.",
+    leaderCard2Desc: "Mr. Ibsa Ahmed serves as Vice President for Administration and Development, overseeing the comprehensive management of institutional infrastructure, resource allocation, and developmental initiatives. His strategic approach to administrative excellence has transformed the university's operational efficiency and sustainability. With exceptional skills in financial management, infrastructure planning, and human resource development, he ensures that all university facilities and services operate at optimal levels. His leadership is characterized by transparency, accountability, and innovative problem-solving. He is deeply motivated by the belief that strong administrative foundations are essential for academic excellence. His mission focuses on creating a conducive environment for teaching, learning, and research through efficient resource management and continuous infrastructure improvement. He spearheads major development projects, from campus expansion to technological upgrades, always with an eye toward sustainability and long-term institutional growth. His vision is to establish Oda Bultum University as a model of administrative excellence in Ethiopian higher education, where every administrative process supports and enhances the academic mission, and where resources are managed with utmost integrity and strategic foresight.",
+    
     leaderCard3Title: "Alemayehu Bayene (Assist. Professor) — Vice President for Academic, Research, Technology Transfer and Community",
-    leaderCard3Desc: "Scholarly catalyst bridging academia and society, advancing research innovation, technological dissemination, and community engagement through integrated strategic leadership.",
-    leaderCard4Title: "Mr. Lelisa Shamsedin — Student service directorate",
-    leaderCard4Desc: "Champion of holistic student development, architecting comprehensive support ecosystems that nurture academic excellence and personal flourishing.",
-    leaderCard5Title: "Getachew Gashaw (Assist. Professor) — Director, Academic program and staff development directorate",
-    leaderCard5Desc: "Architect of pedagogical excellence, cultivating faculty distinction and curricular innovation through strategic professional development and academic program enhancement.",
-    leaderCard6Title: "Ahmedin Abdurahman (PhD) — Director, Quality assurance directorate",
-    leaderCard6Desc: "Guardian of academic integrity, establishing rigorous quality frameworks that elevate institutional standards to international benchmarks of excellence.",
-    leaderCard7Title: "Mr. Ararsa Gudisa — Director, University registrar",
-    leaderCard7Desc: "Custodian of academic records, maintaining impeccable standards in documentation, certification, and regulatory compliance through sophisticated systems management.",
+    leaderCard3Desc: "Assist. Professor Alemayehu Bayene leads the academic, research, and community engagement portfolios with scholarly distinction and innovative vision. His multifaceted role encompasses curriculum development, research promotion, technology transfer, and community partnership building. With strong academic credentials and practical experience in bridging theory and practice, he champions the integration of cutting-edge research with community needs. His leadership skills include strategic planning, stakeholder engagement, and fostering interdisciplinary collaboration. Motivated by a passion for knowledge creation and social impact, he works tirelessly to ensure that academic programs meet international standards while addressing local development challenges. His mission is to transform the university into a hub of research excellence and innovation, where faculty and students engage in meaningful research that contributes to national development. He promotes technology transfer initiatives that connect university research with industry and community applications. His vision encompasses building a vibrant research culture, establishing strong industry partnerships, and ensuring that the university serves as an engine of innovation and social transformation for the region and beyond.",
+    
+    leaderCard4Title: "Mr. Lelisa Shamsedin — Student Service Directorate",
+    leaderCard4Desc: "Mr. Lelisa Shamsedin heads the Student Service Directorate with unwavering commitment to holistic student development and welfare. His comprehensive approach to student services encompasses accommodation, counseling, health services, recreational facilities, and student advocacy. With exceptional interpersonal skills and deep understanding of student needs, he creates support systems that enable students to thrive academically, socially, and personally. His leadership is characterized by accessibility, empathy, and proactive problem-solving. Motivated by the belief that student success extends beyond academics, he champions initiatives that promote mental health, cultural diversity, and student leadership development. His mission is to ensure that every student has access to quality support services and feels valued as part of the university community. He works closely with student organizations, addressing concerns promptly and advocating for student interests at all institutional levels. His vision is to establish a student-centered campus culture where comprehensive support services, vibrant extracurricular activities, and inclusive community building create an environment where every student can discover their potential, develop their talents, and prepare for meaningful careers and civic engagement.",
+    
+    leaderCard5Title: "Getachew Gashaw (Assist. Professor) — Director, Academic Program and Staff Development Directorate",
+    leaderCard5Desc: "Assist. Professor Getachew Gashaw directs the Academic Program and Staff Development Directorate with scholarly expertise and commitment to pedagogical excellence. His role encompasses curriculum design, program evaluation, faculty development, and quality enhancement of teaching and learning. With strong academic background and understanding of contemporary educational trends, he leads initiatives that ensure academic programs remain relevant, rigorous, and responsive to societal needs. His skills include instructional design, assessment methodology, and professional development facilitation. Motivated by passion for educational innovation and faculty empowerment, he creates opportunities for continuous professional growth. His mission focuses on cultivating teaching excellence, promoting innovative pedagogies, and ensuring that faculty members have the competencies and resources needed to deliver transformative education. He coordinates training programs, mentorship initiatives, and collaborative learning communities that enhance teaching effectiveness. His vision is to establish a culture of continuous improvement where faculty members are lifelong learners, where innovative teaching methods are celebrated and supported, and where academic programs consistently produce graduates who are critical thinkers, effective communicators, and ethical professionals ready to contribute meaningfully to society.",
+    
+    leaderCard6Title: "Ahmedin Abdurahman (PhD) — Director, Quality Assurance Directorate",
+    leaderCard6Desc: "Dr. Ahmedin Abdurahman leads the Quality Assurance Directorate with scholarly rigor and unwavering commitment to institutional excellence. His comprehensive approach to quality management encompasses program review, accreditation processes, performance monitoring, and continuous improvement initiatives. With expertise in quality assurance frameworks and assessment methodologies, he establishes systems that ensure the university maintains the highest academic standards. His leadership skills include data analysis, stakeholder consultation, and strategic quality planning. Motivated by dedication to academic integrity and institutional reputation, he works meticulously to align university practices with national and international quality benchmarks. His mission is to embed a culture of quality across all university operations, where excellence is not just an aspiration but a measurable reality. He coordinates self-assessment processes, facilitates external reviews, and implements quality enhancement plans that drive institutional improvement. His vision encompasses achieving and maintaining national and international accreditation, establishing robust quality assurance mechanisms that are transparent and evidence-based, and positioning Oda Bultum University as a model of quality excellence in Ethiopian higher education.",
+    
+    leaderCard7Title: "Mr. Ararsa Gudisa — Director, University Registrar",
+    leaderCard7Desc: "Mr. Ararsa Gudisa serves as Director of the University Registrar with meticulous attention to detail and commitment to academic record integrity. His comprehensive responsibilities include student admissions, registration management, academic record keeping, transcript processing, and graduation certification. With exceptional organizational skills and deep understanding of academic regulations, he ensures that all registrar functions operate with precision and efficiency. His leadership is characterized by accuracy, confidentiality, and student-centered service delivery. Motivated by commitment to institutional integrity and student success, he implements systems that safeguard academic records while providing accessible and responsive services. His mission focuses on maintaining impeccable standards in all registrar operations, ensuring compliance with university policies and national regulations, and providing timely and accurate information to students, faculty, and external stakeholders. He oversees the implementation of modern student information systems, streamlines registration processes, and ensures that academic credentials are issued with the highest level of accuracy and security. His vision is to establish a registrar office that exemplifies professionalism, efficiency, and technological sophistication, where every student interaction is positive, every record is maintained with utmost integrity, and every process supports the academic mission of the university.",
   },
   
   am: {
@@ -1827,19 +2088,19 @@ export const homeTranslations = {
     
     // Leadership Cards
     leaderCard1Title: "ፕሮፌሰር ሙክታር መሐመድ — ፕሬዝዳንት",
-    leaderCard1Desc: "የተቋማዊ ብቃት ራዕይ አርክቴክት፣ በስትራቴጂያዊ አስተዳደር እና በመርህ አስተዳደር ለውጥ የአካዳሚክ አመራርን ያስተባብራል።",
+    leaderCard1Desc: "ፕሮፌሰር ሙክታር መሐመድ የኦዳ ቡልቱም ዩኒቨርሲቲ ፕሬዝዳንት ሆነው ያገለግላሉ፣ ራዕይ ያለው አመራር እና ለውጥ ያመጣ የአካዳሚክ ብቃት ወደ ተቋሙ ያመጣሉ። በከፍተኛ ትምህርት አስተዳደር ውስጥ ሰፊ ልምድ እና ለትምህርታዊ ፈጠራ ጥልቅ ቁርጠኝነት ያላቸው፣ ዩኒቨርሲቲውን እንደ እውቀት እና የማህበረሰብ ልማት መብራት የሚያስቀምጥ ስትራቴጂያዊ አስተዳደር ያስተባብራሉ። የአመራር ፍልስፍናቸው የአካዳሚክ ብቃትን ማሳደግ፣ የምርምር ፈጠራን ማስተዋወቅ እና ለጥራት ትምህርት እኩል መዳረሻን ማረጋገጥ ላይ ያተኩራል። በእሳቸው አስተዳደር ስር ዩኒቨርሲቲው የአካዳሚክ ፕሮግራሞቹን አስፋፍቷል፣ የምርምር አቅሙን አጠናክሯል እና የማህበረሰብ ሽርክናዎችን አጠናክሯል። ተልእኳቸው ተማሪዎች ሥነ ምግባራዊ መሪዎች እና ለውጥ አምጪዎች እንዲሆኑ የሚያበረታታ የመማሪያ አካባቢ መፍጠር ነው። ለተቋማዊ ታማኝነት እና ለተማሪዎች ስኬት ያለማቋረጥ በመሰጠት፣ ዩኒቨርሲቲውን ወደ ዓለም አቀፍ እውቅና ለማግኘት በሚመራበት ጊዜ በአካባቢያዊ እና በክልላዊ የልማት ፍላጎቶች አገልግሎት ላይ ጥልቅ ሥር ይዞ ይቆያል። ራዕያቸው የአካዳሚክ ጥብቅነትን ከማህበራዊ ኃላፊነት ጋር የሚያጣምር የዓለም ደረጃ ተቋም መገንባትን ያካትታል።",
     leaderCard2Title: "አቶ ኢብሳ አህመድ — ምክትል ፕሬዝዳንት ለአስተዳደር እና ልማት",
-    leaderCard2Desc: "ልዩ የአስተዳደር ስትራቴጂስት፣ በራዕይ የሀብት አስተዳደር እና በስራ ብቃት የተቋም መሠረተ ልማት እና የልማት ተነሳሽነቶችን ያስተባብራል።",
+    leaderCard2Desc: "አቶ ኢብሳ አህመድ ምክትል ፕሬዝዳንት ለአስተዳደር እና ልማት ሆነው ያገለግላሉ፣ የተቋማዊ መሠረተ ልማት፣ የሀብት ክፍፍል እና የልማት ተነሳሽነቶችን አጠቃላይ አስተዳደር ይቆጣጠራሉ። ለአስተዳደር ብቃት ያላቸው ስትራቴጂያዊ አቀራረብ የዩኒቨርሲቲውን የስራ ቅልጥፍና እና ዘላቂነት ለውጧል። በፋይናንስ አስተዳደር፣ በመሠረተ ልማት እቅድ እና በሰው ሀብት ልማት ውስጥ ልዩ ክህሎት ያላቸው፣ ሁሉም የዩኒቨርሲቲ መገልገያዎች እና አገልግሎቶች በተሻለ ደረጃ እንዲሰሩ ያረጋግጣሉ። አመራራቸው በግልጽነት፣ በተጠያቂነት እና በፈጠራ ችግር መፍታት ይታወቃል። ጠንካራ የአስተዳደር መሠረቶች ለአካዳሚክ ብቃት አስፈላጊ ናቸው በሚል እምነት በጥልቅ ተነሳሽነት አላቸው። ተልእኳቸው በብቃት ያለው የሀብት አስተዳደር እና ቀጣይነት ያለው የመሠረተ ልማት ማሻሻያ ለማስተማር፣ ለመማር እና ለምርምር ምቹ አካባቢ መፍጠር ላይ ያተኩራል። ከካምፓስ መስፋፋት እስከ የቴክኖሎጂ ማሻሻያ ድረስ ዋና ዋና የልማት ፕሮጀክቶችን ይመራሉ፣ ሁልጊዜ ዘላቂነት እና የረጅም ጊዜ የተቋም እድገትን በማየት። ራዕያቸው ኦዳ ቡልቱም ዩኒቨርሲቲን በኢትዮጵያ ከፍተኛ ትምህርት ውስጥ እንደ የአስተዳደር ብቃት ምሳሌ ማቋቋም ነው፣ እያንዳንዱ የአስተዳደር ሂደት የአካዳሚክ ተልእኮን የሚደግፍ እና የሚያሳድግ፣ እና ሀብቶች በከፍተኛ ታማኝነት እና ስትራቴጂያዊ ራቅ ባለ አስተሳሰብ የሚተዳደሩበት።",
     leaderCard3Title: "ዓለማየሁ ባየነ (ረዳት ፕሮፌሰር) — ምክትል ፕሬዝዳንት ለአካዳሚክ፣ ምርምር፣ የቴክኖሎጂ ሽግግር እና ማህበረሰብ",
-    leaderCard3Desc: "አካዳሚያን እና ማህበረሰብን የሚያገናኝ የምሁራዊ አነቃቂ፣ በተቀናጀ ስትራቴጂያዊ አመራር የምርምር ፈጠራን፣ የቴክኖሎጂ ስርጭትን እና የማህበረሰብ ተሳትፎን ያሳድጋል።",
+    leaderCard3Desc: "ረዳት ፕሮፌሰር ዓለማየሁ ባየነ የአካዳሚክ፣ ምርምር እና የማህበረሰብ ተሳትፎ ፖርትፎሊዮዎችን በምሁራዊ ልዩነት እና በፈጠራ ራዕይ ይመራሉ። ባለብዙ ገጽታ ሚናቸው የስርዓተ ትምህርት ልማት፣ የምርምር ማስተዋወቂያ፣ የቴክኖሎጂ ሽግግር እና የማህበረሰብ ሽርክና ግንባታን ያካትታል። ጠንካራ የአካዳሚክ ብቃት እና ንድፈ ሃሳብን እና ተግባርን በማገናኘት ላይ ተግባራዊ ልምድ ያላቸው፣ የቅርብ ጊዜ ምርምርን ከማህበረሰብ ፍላጎቶች ጋር ማዋሃድን ይደግፋሉ። የአመራር ክህሎታቸው ስትራቴጂያዊ እቅድ፣ የባለድርሻ አካላት ተሳትፎ እና የመስክ ትብብርን ማሳደግን ያካትታል። በእውቀት ፈጠራ እና በማህበራዊ ተፅእኖ ላይ ባለው ፍቅር ተነሳሽነት፣ የአካዳሚክ ፕሮግራሞች ዓለም አቀፍ ደረጃዎችን እያሟሉ የአካባቢ የልማት ተግዳሮቶችን እንዲፈቱ ያለማቋረጥ ይሰራሉ። ተልእኳቸው ዩኒቨርሲቲውን ወደ የምርምር ብቃት እና ፈጠራ ማዕከል መቀየር ነው፣ መምህራን እና ተማሪዎች ለሀገር ልማት አስተዋፅዖ በሚያደርግ ትርጉም ባለው ምርምር ውስጥ የሚሳተፉበት። የዩኒቨርሲቲ ምርምርን ከኢንዱስትሪ እና ከማህበረሰብ አፕሊኬሽኖች ጋር የሚያገናኙ የቴክኖሎጂ ሽግግር ተነሳሽነቶችን ያስተዋውቃል። ራዕያቸው ደማቅ የምርምር ባህል መገንባት፣ ጠንካራ የኢንዱስትሪ ሽርክናዎችን ማቋቋም እና ዩኒቨርሲቲው ለክልሉ እና ከዚያ በላይ እንደ ፈጠራ እና ማህበራዊ ለውጥ ሞተር እንዲያገለግል ማረጋገጥን ያካትታል።",
     leaderCard4Title: "አቶ ለሊሳ ሻምሰዲን — የተማሪዎች አገልግሎት ዳይሬክቶሬት",
-    leaderCard4Desc: "የአጠቃላይ የተማሪ ልማት ሻምፒዮን፣ የአካዳሚክ ብቃትን እና የግል እድገትን የሚያሳድጉ አጠቃላይ የድጋፍ ስነ-ምህዳሮችን ይገነባል።",
+    leaderCard4Desc: "አቶ ለሊሳ ሻምሰዲን የተማሪዎች አገልግሎት ዳይሬክቶሬትን ለአጠቃላይ የተማሪ ልማት እና ደህንነት ያለማቋረጥ ቁርጠኝነት ይመራሉ። ለተማሪ አገልግሎቶች አጠቃላይ አቀራረባቸው መኖሪያ፣ ምክክር፣ የጤና አገልግሎቶች፣ የመዝናኛ መገልገያዎች እና የተማሪ ድጋፍን ያካትታል። ልዩ የግለሰቦች መካከል ክህሎት እና የተማሪዎችን ፍላጎት ጥልቅ ግንዛቤ ያላቸው፣ ተማሪዎች በአካዳሚክ፣ በማህበራዊ እና በግል እንዲበለጽጉ የሚያስችሉ የድጋፍ ስርዓቶችን ይፈጥራሉ። አመራራቸው በተደራሽነት፣ በመተሳሰብ እና በንቁ ችግር መፍታት ይታወቃል። የተማሪዎች ስኬት ከአካዳሚክ በላይ ይዘልቃል በሚል እምነት ተነሳሽነት፣ የአእምሮ ጤና፣ የባህል ልዩነት እና የተማሪ አመራር ልማትን የሚያስተዋውቁ ተነሳሽነቶችን ይደግፋሉ። ተልእኳቸው እያንዳንዱ ተማሪ ለጥራት ድጋፍ አገልግሎቶች መዳረሻ እንዳለው እና እንደ የዩኒቨርሲቲ ማህበረሰብ አካል ዋጋ እንዳለው ማረጋገጥ ነው። ከተማሪ ድርጅቶች ጋር በቅርበት ይሰራሉ፣ ስጋቶችን በፍጥነት ይፈታሉ እና በሁሉም የተቋም ደረጃዎች ለተማሪዎች ጥቅም ይደግፋሉ። ራዕያቸው አጠቃላይ የድጋፍ አገልግሎቶች፣ ደማቅ ከትምህርት ውጭ እንቅስቃሴዎች እና አካታች የማህበረሰብ ግንባታ እያንዳንዱ ተማሪ አቅሙን እንዲያገኝ፣ ተሰጥኦቸውን እንዲያዳብር እና ለትርጉም ያላቸው ሙያዎች እና ለዜጎች ተሳትፎ እንዲዘጋጅ የሚያስችል አካባቢ የሚፈጥርበት በተማሪ ላይ ያተኮረ የካምፓስ ባህል ማቋቋም ነው።",
     leaderCard5Title: "ጌታቸው ጋሻው (ረዳት ፕሮፌሰር) — ዳይሬክተር፣ የአካዳሚክ ፕሮግራም እና የሰራተኞች ልማት ዳይሬክቶሬት",
-    leaderCard5Desc: "የማስተማሪያ ብቃት አርክቴክት፣ በስትራቴጂያዊ ሙያዊ ልማት እና የአካዳሚክ ፕሮግራም ማሻሻያ የፋኩልቲ ልዩነትን እና የስርዓተ ትምህርት ፈጠራን ያሳድጋል።",
+    leaderCard5Desc: "ረዳት ፕሮፌሰር ጌታቸው ጋሻው የአካዳሚክ ፕሮግራም እና የሰራተኞች ልማት ዳይሬክቶሬትን በምሁራዊ እውቀት እና ለማስተማሪያ ብቃት ቁርጠኝነት ይመራሉ። ሚናቸው የስርዓተ ትምህርት ዲዛይን፣ የፕሮግራም ግምገማ፣ የፋኩልቲ ልማት እና የማስተማር እና የመማር ጥራት ማሻሻያን ያካትታል። ጠንካራ የአካዳሚክ ዳራ እና የዘመናዊ የትምህርት አዝማሚያዎችን ግንዛቤ ያላቸው፣ የአካዳሚክ ፕሮግራሞች ተዛማጅ፣ ጥብቅ እና ለማህበረሰብ ፍላጎቶች ምላሽ ሰጪ እንዲሆኑ የሚያረጋግጡ ተነሳሽነቶችን ይመራሉ። ክህሎታቸው የትምህርት ዲዛይን፣ የግምገማ ዘዴ እና የሙያ ልማት አመቻቸትን ያካትታል። በትምህርታዊ ፈጠራ እና በፋኩልቲ ማብቃት ላይ ባለው ፍቅር ተነሳሽነት፣ ለቀጣይ ሙያዊ እድገት እድሎችን ይፈጥራሉ። ተልእኳቸው የማስተማር ብቃትን ማሳደግ፣ ፈጠራ ማስተማሪያ ዘዴዎችን ማስተዋወቅ እና የፋኩልቲ አባላት ለውጥ ያመጣ ትምህርት ለመስጠት የሚያስፈልጉ ብቃቶች እና ሀብቶች እንዳላቸው ማረጋገጥ ላይ ያተኩራል። የስልጠና ፕሮግራሞችን፣ የመምህርነት ተነሳሽነቶችን እና የማስተማር ውጤታማነትን የሚያሳድጉ የትብብር የመማሪያ ማህበረሰቦችን ያስተባብራሉ። ራዕያቸው የፋኩልቲ አባላት የዕድሜ ልክ ተማሪዎች የሆኑበት፣ ፈጠራ የማስተማር ዘዴዎች የሚከበሩበት እና የሚደገፉበት፣ እና የአካዳሚክ ፕሮግራሞች በቋሚነት ወሳኝ አስተሳሰብ ያላቸው፣ ውጤታማ ተግባቢዎች እና ለማህበረሰብ ትርጉም ባለው መንገድ አስተዋፅዖ ለማድረግ ዝግጁ የሆኑ ሥነ ምግባራዊ ባለሙያዎች የሆኑ ተመራቂዎችን የሚያፈሩበት ቀጣይነት ያለው የማሻሻያ ባህል ማቋቋም ነው።",
     leaderCard6Title: "አህመዲን አብዱራህማን (ዶክተር) — ዳይሬክተር፣ የጥራት ማረጋገጫ ዳይሬክቶሬት",
-    leaderCard6Desc: "የአካዳሚክ ታማኝነት ጠባቂ፣ የተቋም ደረጃዎችን ወደ ዓለም አቀፍ የብቃት መመዘኛዎች የሚያሳድጉ ጥብቅ የጥራት ማዕቀፎችን ያቋቁማል።",
+    leaderCard6Desc: "ዶክተር አህመዲን አብዱራህማን የጥራት ማረጋገጫ ዳይሬክቶሬትን በምሁራዊ ጥብቅነት እና ለተቋማዊ ብቃት ያለማቋረጥ ቁርጠኝነት ይመራሉ። ለጥራት አስተዳደር አጠቃላይ አቀራረባቸው የፕሮግራም ግምገማ፣ የማረጋገጫ ሂደቶች፣ የአፈጻጸም ክትትል እና ቀጣይነት ያለው የማሻሻያ ተነሳሽነቶችን ያካትታል። በጥራት ማረጋገጫ ማዕቀፎች እና የግምገማ ዘዴዎች ላይ እውቀት ያላቸው፣ ዩኒቨርሲቲው ከፍተኛውን የአካዳሚክ ደረጃዎችን እንዲጠብቅ የሚያረጋግጡ ስርዓቶችን ያቋቁማሉ። የአመራር ክህሎታቸው የመረጃ ትንተና፣ የባለድርሻ አካላት ምክክር እና ስትራቴጂያዊ የጥራት እቅድን ያካትታል። ለአካዳሚክ ታማኝነት እና ለተቋማዊ ስም ባለው ቁርጠኝነት ተነሳሽነት፣ የዩኒቨርሲቲ ልምዶችን ከሀገራዊ እና ዓለም አቀፍ የጥራት መመዘኛዎች ጋር ለማስተካከል በጥንቃቄ ይሰራሉ። ተልእኳቸው በሁሉም የዩኒቨርሲቲ ስራዎች ላይ የጥራት ባህልን ማስገባት ነው፣ ብቃት ምኞት ብቻ ሳይሆን ሊለካ የሚችል እውነታ የሆነበት። የራስ-ግምገማ ሂደቶችን ያስተባብራሉ፣ ውጫዊ ግምገማዎችን ያመቻቻሉ እና የተቋማዊ ማሻሻያን የሚያመጡ የጥራት ማሻሻያ እቅዶችን ይተገብራሉ። ራዕያቸው ሀገራዊ እና ዓለም አቀፍ እውቅና ማግኘት እና መጠበቅ፣ ግልጽ እና በማስረጃ ላይ የተመሰረቱ ጠንካራ የጥራት ማረጋገጫ ዘዴዎችን ማቋቋም እና ኦዳ ቡልቱም ዩኒቨርሲቲን በኢትዮጵያ ከፍተኛ ትምህርት ውስጥ እንደ የጥራት ብቃት ምሳሌ ማስቀመጥን ያካትታል።",
     leaderCard7Title: "አቶ አራርሳ ጉዲሳ — ዳይሬክተር፣ የዩኒቨርሲቲ ምዝገባ",
-    leaderCard7Desc: "የአካዳሚክ መዝገቦች ጠባቂ፣ በሰነድ፣ በምስክር ወረቀት እና በደንብ ማክበር ውስጥ በውስብስብ የስርዓት አስተዳደር የማይበላሽ ደረጃዎችን ይጠብቃል።",
+    leaderCard7Desc: "አቶ አራርሳ ጉዲሳ የዩኒቨርሲቲ ምዝገባ ዳይሬክተር ሆነው ለዝርዝር ትኩረት እና ለአካዳሚክ መዝገብ ታማኝነት ቁርጠኝነት ያገለግላሉ። አጠቃላይ ኃላፊነታቸው የተማሪዎች መግቢያ፣ የምዝገባ አስተዳደር፣ የአካዳሚክ መዝገብ አያያዝ፣ የግልባጭ ሂደት እና የምረቃ ማረጋገጫን ያካትታል። ልዩ የአደረጃጀት ክህሎት እና የአካዳሚክ ደንቦችን ጥልቅ ግንዛቤ ያላቸው፣ ሁሉም የምዝገባ ተግባራት በትክክለኛነት እና በብቃት እንዲሰሩ ያረጋግጣሉ። አመራራቸው በትክክለኛነት፣ በሚስጥራዊነት እና በተማሪ ላይ ያተኮረ የአገልግሎት አሰጣጥ ይታወቃል። ለተቋማዊ ታማኝነት እና ለተማሪዎች ስኬት ባለው ቁርጠኝነት ተነሳሽነት፣ የአካዳሚክ መዝገቦችን የሚጠብቁ እና ተደራሽ እና ምላሽ ሰጪ አገልግሎቶችን የሚሰጡ ስርዓቶችን ይተገብራሉ። ተልእኳቸው በሁሉም የምዝገባ ስራዎች ውስጥ የማይበላሽ ደረጃዎችን መጠበቅ፣ ከዩኒቨርሲቲ ፖሊሲዎች እና ከሀገራዊ ደንቦች ጋር መገዛትን ማረጋገጥ እና ለተማሪዎች፣ ለፋኩልቲ እና ለውጫዊ ባለድርሻ አካላት በጊዜ እና ትክክለኛ መረጃ መስጠት ላይ ያተኩራል። የዘመናዊ የተማሪ መረጃ ስርዓቶችን አተገባበር ይቆጣጠራሉ፣ የምዝገባ ሂደቶችን ያቀላጥፋሉ እና የአካዳሚክ ምስክርነቶች በከፍተኛ ደረጃ ትክክለኛነት እና ደህንነት እንዲሰጡ ያረጋግጣሉ። ራዕያቸው ሙያዊነትን፣ ብቃትን እና የቴክኖሎጂ ውስብስብነትን የሚያሳይ የምዝገባ ቢሮ ማቋቋም ነው፣ እያንዳንዱ የተማሪ ግንኙነት አዎንታዊ የሆነበት፣ እያንዳንዱ መዝገብ በከፍተኛ ታማኝነት የሚጠበቅበት እና እያንዳንዱ ሂደት የዩኒቨርሲቲውን የአካዳሚክ ተልእኮ የሚደግፍበት።",
   },
   
   om: {

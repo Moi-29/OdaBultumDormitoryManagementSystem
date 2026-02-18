@@ -278,16 +278,13 @@ exports.generatePermissionPDF = async (req, res) => {
     }
 };
 
-// Generate PDF for all permissions
+// Generate PDF for all permissions - TABLE FORMAT
 exports.generateAllPermissionsPDF = async (req, res) => {
+    console.log('=== NEW TABLE FORMAT PDF GENERATION ===');
     try {
         const { status, startDate, endDate } = req.query;
         
-        let query = {};
-        
-        if (status) {
-            query.status = status;
-        }
+        let query = {}; // Get ALL permissions regardless of status
         
         if (startDate || endDate) {
             query.date = {};
@@ -295,20 +292,25 @@ exports.generateAllPermissionsPDF = async (req, res) => {
             if (endDate) query.date.$lte = new Date(endDate);
         }
         
-        const permissions = await Permission.find(query).sort({ createdAt: -1 });
+        const permissions = await Permission.find(query).sort({ 
+            department: 1,  // Sort by department alphabetically
+            year: 1,        // Then by year
+            fullName: 1     // Then by name alphabetically
+        });
+        console.log(`Found ${permissions.length} permissions for TABLE PDF`);
         
         if (permissions.length === 0) {
-            return res.status(404).json({ message: 'No permissions found' });
+            return res.status(404).json({ message: 'No permission requests found' });
         }
         
         const doc = new PDFDocument({ 
-            margin: 40,
+            margin: 30,
             size: 'A4',
             bufferPages: true
         });
         
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=all-permissions.pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=all-permissions-approved.pdf');
         
         doc.pipe(res);
         
@@ -322,85 +324,166 @@ exports.generateAllPermissionsPDF = async (req, res) => {
         // Logo
         const logoPath = path.join(__dirname, '../assets/obu-logo.png');
         if (fs.existsSync(logoPath)) {
-            doc.image(logoPath, doc.page.width / 2 - 30, 30, { width: 60 });
+            doc.image(logoPath, doc.page.width / 2 - 25, 25, { width: 50 });
         }
         
         // University Name
-        doc.moveDown(4);
-        doc.fontSize(16).font('Helvetica-Bold').fillColor(primaryColor);
+        doc.moveDown(3.5);
+        doc.fontSize(14).font('Helvetica-Bold').fillColor(primaryColor);
         doc.text('ODA BULTUM UNIVERSITY', { align: 'center' });
-        doc.fontSize(11).font('Helvetica').fillColor(textColor);
+        doc.fontSize(10).font('Helvetica').fillColor(textColor);
         doc.text('Student Service Directorate', { align: 'center' });
-        doc.moveDown(0.5);
+        doc.moveDown(0.3);
         
         // Horizontal line
-        doc.moveTo(40, doc.y).lineTo(doc.page.width - 40, doc.y).stroke(primaryColor);
-        doc.moveDown(0.8);
+        doc.moveTo(30, doc.y).lineTo(doc.page.width - 30, doc.y).stroke(primaryColor);
+        doc.moveDown(0.5);
         
         // Document Title
-        doc.fontSize(14).font('Helvetica-Bold').fillColor(primaryColor);
-        doc.text('PERMISSION REQUESTS REPORT', { align: 'center' });
-        doc.moveDown(0.5);
+        doc.fontSize(12).font('Helvetica-Bold').fillColor(primaryColor);
+        doc.text('APPROVED PERMISSION REQUESTS', { align: 'center' });
+        doc.moveDown(0.8);
         
-        // Summary
-        doc.fontSize(9).font('Helvetica').fillColor(textColor);
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center' });
-        doc.moveDown(0.5);
+        // Agreement Description
+        doc.fontSize(9).font('Helvetica-Bold').fillColor(textColor);
+        doc.text('Permission Agreement:', 30);
+        doc.moveDown(0.3);
         
-        doc.fontSize(10).font('Helvetica-Bold').fillColor(textColor);
-        doc.text(`Total Permissions: ${permissions.length}`, 40);
+        doc.fontSize(8).font('Helvetica').fillColor(textColor);
+        const agreementText = 'The following students have been granted permission to leave the campus for religious purposes. Each student understands and agrees to: (1) Leave the campus for religious purposes only, (2) Return to the dormitory no later than 9:00 PM on the same day, (3) Maintain proper conduct and represent the university appropriately, (4) Carry this permission document at all times during the absence, (5) Notify the dormitory administration immediately in case of any emergency or delay, (6) Accept full responsibility for their safety and actions while off-campus.';
+        
+        doc.text(agreementText, 30, doc.y, { 
+            width: doc.page.width - 60, 
+            align: 'justify',
+            lineGap: 2
+        });
         doc.moveDown(1);
         
-        // Permissions List
+        // Summary Info
+        doc.fontSize(8).font('Helvetica').fillColor(textColor);
+        doc.text(`Total Students: ${permissions.length} | Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 30, doc.y, { align: 'center' });
+        doc.moveDown(0.8);
+        
+        // ===== TABLE GENERATION =====
+        const tableTop = doc.y;
+        const tableLeft = 30;
+        const tableWidth = doc.page.width - 60;
+        const colWidths = [30, 110, 65, 95, 45, 35, 65, 60]; // Total: 505
+        const rowHeight = 20;
+        
+        // Function to draw table header
+        function drawTableHeader(yPosition) {
+            let xPos = tableLeft;
+            
+            // Header background
+            doc.rect(tableLeft, yPosition, tableWidth, rowHeight).fillAndStroke(primaryColor, primaryColor);
+            
+            // Draw vertical lines for header
+            xPos = tableLeft;
+            for (let i = 0; i <= colWidths.length; i++) {
+                doc.moveTo(xPos, yPosition).lineTo(xPos, yPosition + rowHeight).stroke('white');
+                if (i < colWidths.length) xPos += colWidths[i];
+            }
+            
+            // Header text
+            doc.fontSize(8).font('Helvetica-Bold').fillColor('white');
+            xPos = tableLeft;
+            
+            doc.text('No.', xPos, yPosition + 6, { width: colWidths[0], align: 'center' });
+            xPos += colWidths[0];
+            doc.text('Full Name', xPos + 2, yPosition + 6, { width: colWidths[1] - 4, align: 'left' });
+            xPos += colWidths[1];
+            doc.text('ID', xPos + 2, yPosition + 6, { width: colWidths[2] - 4, align: 'left' });
+            xPos += colWidths[2];
+            doc.text('Department', xPos + 2, yPosition + 6, { width: colWidths[3] - 4, align: 'left' });
+            xPos += colWidths[3];
+            doc.text('Year', xPos, yPosition + 6, { width: colWidths[4], align: 'center' });
+            xPos += colWidths[4];
+            doc.text('Sex', xPos, yPosition + 6, { width: colWidths[5], align: 'center' });
+            xPos += colWidths[5];
+            doc.text('Date', xPos, yPosition + 6, { width: colWidths[6], align: 'center' });
+            xPos += colWidths[6];
+            doc.text('Status', xPos, yPosition + 6, { width: colWidths[7], align: 'center' });
+        }
+        
+        // Draw initial header
+        drawTableHeader(tableTop);
+        
+        let currentY = tableTop + rowHeight;
+        
+        // Table Rows
         permissions.forEach((permission, index) => {
-            if (index > 0) {
-                doc.moveDown(0.3);
-                doc.moveTo(40, doc.y).lineTo(doc.page.width - 40, doc.y).stroke('#bdc3c7');
-                doc.moveDown(0.3);
-            }
-            
             // Check if we need a new page
-            if (doc.y > 700) {
+            if (currentY > doc.page.height - 100) {
                 doc.addPage();
+                currentY = 50;
+                drawTableHeader(currentY);
+                currentY += rowHeight;
             }
             
-            // Permission entry
-            const entryY = doc.y;
-            
-            // Number
-            doc.fontSize(9).font('Helvetica-Bold').fillColor(primaryColor);
-            doc.text(`${index + 1}.`, 40, entryY);
-            
-            // Student info
-            doc.fontSize(10).font('Helvetica-Bold').fillColor(textColor);
-            doc.text(`${permission.fullName} (${permission.studentId})`, 55, entryY);
-            
-            doc.fontSize(8).font('Helvetica').fillColor('#7f8c8d');
-            doc.text(`${permission.department} | ${permission.year} | ${permission.sex}`, 55, entryY + 12);
-            doc.text(`Date: ${new Date(permission.date).toLocaleDateString()} | Submitted: ${new Date(permission.createdAt).toLocaleDateString()}`, 55, entryY + 22);
-            
-            // Status
-            const statusColor = permission.status === 'approved' ? '#27ae60' : permission.status === 'rejected' ? '#e74c3c' : '#f39c12';
-            doc.fontSize(8).font('Helvetica-Bold').fillColor(statusColor);
-            doc.text(`Status: ${permission.status.toUpperCase()}`, doc.page.width - 150, entryY + 5);
-            
-            if (permission.adminNotes) {
-                doc.fontSize(8).font('Helvetica').fillColor(textColor);
-                doc.text(`Notes: ${permission.adminNotes}`, 55, entryY + 35, { width: doc.page.width - 100 });
-                doc.y = entryY + 50;
-            } else {
-                doc.y = entryY + 35;
+            // Alternating row colors
+            if (index % 2 === 0) {
+                doc.rect(tableLeft, currentY, tableWidth, rowHeight).fill('#f9f9f9');
             }
+            
+            // Draw row border (horizontal line)
+            doc.rect(tableLeft, currentY, tableWidth, rowHeight).stroke('#cccccc');
+            
+            // Draw vertical lines for each cell
+            let xPos = tableLeft;
+            for (let i = 0; i <= colWidths.length; i++) {
+                doc.moveTo(xPos, currentY).lineTo(xPos, currentY + rowHeight).stroke('#cccccc');
+                if (i < colWidths.length) xPos += colWidths[i];
+            }
+            
+            // Row data
+            doc.fontSize(7.5).font('Helvetica').fillColor(textColor);
+            xPos = tableLeft;
+            
+            // No.
+            doc.text(`${index + 1}`, xPos, currentY + 6, { width: colWidths[0], align: 'center' });
+            xPos += colWidths[0];
+            
+            // Full Name
+            doc.text(permission.fullName || '', xPos + 2, currentY + 6, { width: colWidths[1] - 4, align: 'left', ellipsis: true });
+            xPos += colWidths[1];
+            
+            // ID
+            doc.text(permission.studentId || '', xPos + 2, currentY + 6, { width: colWidths[2] - 4, align: 'left' });
+            xPos += colWidths[2];
+            
+            // Department
+            doc.text(permission.department || '', xPos + 2, currentY + 6, { width: colWidths[3] - 4, align: 'left', ellipsis: true });
+            xPos += colWidths[3];
+            
+            // Year
+            doc.text(permission.year || '', xPos, currentY + 6, { width: colWidths[4], align: 'center' });
+            xPos += colWidths[4];
+            
+            // Sex
+            doc.text(permission.sex || '', xPos, currentY + 6, { width: colWidths[5], align: 'center' });
+            xPos += colWidths[5];
+            
+            // Date
+            const dateStr = permission.date ? new Date(permission.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }) : '';
+            doc.text(dateStr, xPos, currentY + 6, { width: colWidths[6], align: 'center' });
+            xPos += colWidths[6];
+            
+            // Status - ALWAYS APPROVED
+            doc.fontSize(7.5).font('Helvetica-Bold').fillColor('#27ae60');
+            doc.text('Approved', xPos, currentY + 6, { width: colWidths[7], align: 'center' });
+            
+            currentY += rowHeight;
         });
         
-        // Footer on last page - Fixed position
-        const footerY = doc.page.height - 50;
-        doc.fontSize(8).font('Helvetica-Oblique').fillColor('#7f8c8d');
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, 40, footerY, { align: 'center', width: doc.page.width - 80 });
-        doc.fontSize(8).font('Helvetica-Oblique').fillColor('#7f8c8d');
-        doc.text('Oda Bultum University - Student Service Directorate', 40, footerY + 12, { align: 'center', width: doc.page.width - 80 });
+        // Footer
+        const footerY = doc.page.height - 40;
+        doc.fontSize(7).font('Helvetica-Oblique').fillColor('#7f8c8d');
+        doc.text('This document is computer generated and valid without signature', 30, footerY, { align: 'center', width: doc.page.width - 60 });
+        doc.text('Oda Bultum University - Student Service Directorate', 30, footerY + 10, { align: 'center', width: doc.page.width - 60 });
         
         doc.end();
+        console.log('=== TABLE PDF GENERATION COMPLETE ===');
     } catch (error) {
         console.error('Error generating all permissions PDF:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
