@@ -9,6 +9,7 @@ import html2canvas from 'html2canvas';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { getTranslation } from '../../translations/translations';
+import API_URL from '../../config/api';
 
 const DormitoryView = () => {
     const { isDarkMode } = useTheme();
@@ -29,7 +30,7 @@ const DormitoryView = () => {
         setLoading(true);
 
         try {
-            const { data } = await axios.post('https://odabultumdormitorymanagementsystem.onrender.com/api/students/lookup', {
+            const { data } = await axios.post(`${API_URL}/api/students/lookup`, {
                 studentId
             });
 
