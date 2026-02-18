@@ -1305,46 +1305,111 @@ const Applications = () => {
                             padding: '2.5rem',
                             background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)'
                         }}>
-                            {/* Personal Tab */}
-                            {activeTab === 'personal' && (
+                            {/* Personal Tab - Matching Student Form Structure */}
+                            {activeTab === 'personal' && selectedApplication.personalInfo && (
                                 <div>
+                                    {/* Basic Information Section */}
                                     <div style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '0.75rem',
-                                        marginBottom: '2rem',
-                                        padding: '0.75rem 1.5rem',
-                                        background: 'linear-gradient(135deg, #10b98120 0%, #10b98110 100%)',
+                                        border: '2px solid #3b82f6',
                                         borderRadius: '12px',
-                                        border: '1px solid #10b98130'
+                                        padding: '1.5rem',
+                                        marginBottom: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <User size={20} color="#10b981" />
-                                        <h3 style={{ 
-                                            margin: 0, 
-                                            color: '#1e293b', 
-                                            fontSize: '1.15rem', 
-                                            fontWeight: 700,
-                                            letterSpacing: '-0.3px'
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
                                         }}>
-                                            Personal Information
+                                            <User size={20} />
+                                            Basic Information
                                         </h3>
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="Name" value={selectedApplication.personalInfo.name} />
+                                            <FormField label="Father Name" value={selectedApplication.personalInfo.fatherName} />
+                                            <FormField label="G.Father Name" value={selectedApplication.personalInfo.gFatherName} />
+                                            <FormField label="Religious" value={selectedApplication.personalInfo.religion} />
+                                            <FormField label="Gender" value={selectedApplication.personalInfo.gender} />
+                                            <FormField label="Date of Birth" value={selectedApplication.personalInfo.dob} />
+                                            <FormField label="Place of Birth" value={selectedApplication.personalInfo.placeOfBirth} />
+                                            <FormField label="Mother Tongue" value={selectedApplication.personalInfo.motherTongue} />
+                                            <FormField label="National ID" value={selectedApplication.personalInfo.nationalId} />
+                                            <FormField label="Health Status" value={selectedApplication.personalInfo.healthStatus} />
+                                            <FormField label="Marital Status" value={selectedApplication.personalInfo.maritalStatus} />
+                                        </div>
                                     </div>
-                                    <div style={{ 
-                                        display: 'grid', 
-                                        gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.75rem'
+
+                                    {/* Location & Address Section */}
+                                    <div style={{
+                                        border: '2px solid #3b82f6',
+                                        borderRadius: '12px',
+                                        padding: '1.5rem',
+                                        marginBottom: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <FormField label="Full Name" value={selectedApplication.personalInfo.fullName} required />
-                                        <FormField label="ID No." value={selectedApplication.personalInfo.idNo} required />
-                                        <FormField label="Sex" value={selectedApplication.personalInfo.sex} required />
-                                        <FormField label="Meal card No." value={selectedApplication.personalInfo.mealCardNo} />
-                                        <FormField label="College" value={selectedApplication.personalInfo.college} required />
-                                        <FormField label="Department" value={selectedApplication.personalInfo.department} required />
-                                        <FormField label="Academic Year" value={selectedApplication.personalInfo.academicYear} required />
-                                        <FormField label="Dorm No." value={selectedApplication.personalInfo.dormNo} />
-                                        <FormField label="Your Phone Number" value={selectedApplication.personalInfo.phone} required />
-                                        <FormField label="Religious" value={selectedApplication.personalInfo.religious} />
-                                        <FormField label="Your Nation" value={selectedApplication.personalInfo.nation} />
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}>
+                                            📍 Location & Address
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="Citizenship" value={selectedApplication.personalInfo.citizenship} />
+                                            <FormField label="Country" value={selectedApplication.personalInfo.country} />
+                                            <FormField label="Woreda" value={selectedApplication.personalInfo.woreda} />
+                                            <FormField label="City (En)" value={selectedApplication.personalInfo.cityEn} />
+                                            <FormField label="Kebele (En)" value={selectedApplication.personalInfo.kebeleEn} />
+                                            <FormField label="Phone" value={selectedApplication.personalInfo.phone} />
+                                            <FormField label="Email" value={selectedApplication.personalInfo.email} />
+                                            <FormField label="P.O. Box" value={selectedApplication.personalInfo.poBox} />
+                                        </div>
+                                    </div>
+
+                                    {/* Others Section */}
+                                    <div style={{
+                                        border: '2px solid #3b82f6',
+                                        borderRadius: '12px',
+                                        padding: '1.5rem',
+                                        backgroundColor: 'white'
+                                    }}>
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}>
+                                            ••• Others
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="Economical Status" value={selectedApplication.personalInfo.economicalStatus} />
+                                            <FormField label="Area Type" value={selectedApplication.personalInfo.areaType} />
+                                            <FormField label="TIN Number" value={selectedApplication.personalInfo.tinNumber} />
+                                            <FormField label="Account Number" value={selectedApplication.personalInfo.accountNumber} />
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1353,123 +1418,256 @@ const Applications = () => {
                             {activeTab === 'educational' && selectedApplication.educationalInfo && (
                                 <div>
                                     <div style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '0.75rem',
-                                        marginBottom: '2rem',
-                                        padding: '0.75rem 1.5rem',
-                                        background: 'linear-gradient(135deg, #3b82f620 0%, #3b82f610 100%)',
+                                        border: '2px solid #3b82f6',
                                         borderRadius: '12px',
-                                        border: '1px solid #3b82f630'
+                                        padding: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <GraduationCap size={20} color="#3b82f6" />
-                                        <h3 style={{ 
-                                            margin: 0, 
-                                            color: '#1e293b', 
-                                            fontSize: '1.15rem', 
-                                            fontWeight: 700,
-                                            letterSpacing: '-0.3px'
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
                                         }}>
+                                            <GraduationCap size={20} />
                                             Campus Related Information
                                         </h3>
-                                    </div>
-                                    <div style={{ 
-                                        display: 'grid', 
-                                        gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.75rem'
-                                    }}>
-                                        <FormField label="Stream" value={selectedApplication.educationalInfo.stream} required />
-                                        <FormField label="Sponsor Category" value={selectedApplication.educationalInfo.sponsorCategory} required />
-                                        <FormField label="National Exam Year (EC)" value={selectedApplication.educationalInfo.nationalExamYear} required />
-                                        <FormField label="Entry Year" value={selectedApplication.educationalInfo.entryYear} required />
-                                        <FormField label="Sponsored By" value={selectedApplication.educationalInfo.sponsoredBy} />
-                                        <FormField label="Examination ID" value={selectedApplication.educationalInfo.examinationId} />
-                                        <FormField label="Admission Date" value={selectedApplication.educationalInfo.admissionDate} required />
-                                        <FormField label="Checked-In Date" value={selectedApplication.educationalInfo.checkedInDate} />
-                                        <FormField label="National Exam Result" value={selectedApplication.educationalInfo.nationalExamResult} />
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="Stream" value={selectedApplication.educationalInfo.stream} />
+                                            <FormField label="Sponsor Category" value={selectedApplication.educationalInfo.sponsorCategory} />
+                                            <FormField label="National Exam Year" value={selectedApplication.educationalInfo.nationalExamYear} />
+                                            <FormField label="Entry Year" value={selectedApplication.educationalInfo.entryYear} />
+                                            <FormField label="Sponsored By" value={selectedApplication.educationalInfo.sponsoredBy} />
+                                            <FormField label="Examination ID" value={selectedApplication.educationalInfo.examinationId} />
+                                            <FormField label="Admission Date" value={selectedApplication.educationalInfo.admissionDate} />
+                                            <FormField label="Checked-In Date" value={selectedApplication.educationalInfo.checkedInDate} />
+                                            <FormField label="National Exam Result" value={selectedApplication.educationalInfo.nationalExamResult} />
+                                        </div>
                                     </div>
                                 </div>
                             )}
 
-                            {/* School Tab */}
+                            {/* School Tab - Three Sections */}
                             {activeTab === 'school' && selectedApplication.schoolInfo && (
                                 <div>
+                                    {/* Primary School */}
                                     <div style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '0.75rem',
-                                        marginBottom: '2rem',
-                                        padding: '0.75rem 1.5rem',
-                                        background: 'linear-gradient(135deg, #f59e0b20 0%, #f59e0b10 100%)',
+                                        border: '2px solid #3b82f6',
                                         borderRadius: '12px',
-                                        border: '1px solid #f59e0b30'
+                                        padding: '1.5rem',
+                                        marginBottom: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <Home size={20} color="#f59e0b" />
-                                        <h3 style={{ 
-                                            margin: 0, 
-                                            color: '#1e293b', 
-                                            fontSize: '1.15rem', 
-                                            fontWeight: 700,
-                                            letterSpacing: '-0.3px'
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
                                         }}>
-                                            Primary School Information
+                                            <Home size={20} />
+                                            Primary School
                                         </h3>
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="School Name" value={selectedApplication.schoolInfo.primary?.schoolName} />
+                                            <FormField label="Woreda" value={selectedApplication.schoolInfo.primary?.woreda} />
+                                            <FormField label="School Type" value={selectedApplication.schoolInfo.primary?.schoolType} />
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    marginBottom: '0.75rem', 
+                                                    fontWeight: 600, 
+                                                    color: '#1e293b', 
+                                                    fontSize: '0.875rem'
+                                                }}>
+                                                    Attended Year (From - To)
+                                                </label>
+                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                    <input
+                                                        type="text"
+                                                        value={selectedApplication.schoolInfo.primary?.attendedYearFrom || ''}
+                                                        readOnly
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.75rem',
+                                                            border: '2px solid #e5e7eb',
+                                                            borderRadius: '8px',
+                                                            background: '#f3f4f6',
+                                                            color: '#111827',
+                                                            fontSize: '0.875rem'
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={selectedApplication.schoolInfo.primary?.attendedYearTo || ''}
+                                                        readOnly
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.75rem',
+                                                            border: '2px solid #e5e7eb',
+                                                            borderRadius: '8px',
+                                                            background: '#f3f4f6',
+                                                            color: '#111827',
+                                                            fontSize: '0.875rem'
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{ 
-                                        display: 'grid', 
-                                        gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.75rem'
+
+                                    {/* Secondary School */}
+                                    <div style={{
+                                        border: '2px solid #3b82f6',
+                                        borderRadius: '12px',
+                                        padding: '1.5rem',
+                                        marginBottom: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <FormField label="School Name" value={selectedApplication.schoolInfo.schoolName} required />
-                                        <FormField label="Region" value={selectedApplication.schoolInfo.region} />
-                                        <FormField label="City" value={selectedApplication.schoolInfo.city} />
-                                        <FormField label="Zone" value={selectedApplication.schoolInfo.zone} />
-                                        <FormField label="School Type" value={selectedApplication.schoolInfo.schoolType} required />
-                                        <FormField label="Woreda" value={selectedApplication.schoolInfo.woreda} />
-                                        <div style={{ gridColumn: 'span 2' }}>
-                                            <label style={{ 
-                                                display: 'block', 
-                                                marginBottom: '0.75rem', 
-                                                fontWeight: 600, 
-                                                color: '#1e293b', 
-                                                fontSize: '0.95rem',
-                                                letterSpacing: '-0.2px'
-                                            }}>
-                                                Attended Year (From - To E.C)
-                                            </label>
-                                            <div style={{ display: 'flex', gap: '1.25rem' }}>
-                                                <input
-                                                    type="text"
-                                                    value={selectedApplication.schoolInfo.attendedYearFrom}
-                                                    readOnly
-                                                    style={{
-                                                        flex: 1,
-                                                        padding: '0.875rem 1rem',
-                                                        border: '2px solid #e5e7eb',
-                                                        borderRadius: '10px',
-                                                        background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)',
-                                                        color: '#1e293b',
-                                                        fontSize: '0.95rem',
-                                                        fontWeight: 500,
-                                                        transition: 'all 0.2s'
-                                                    }}
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={selectedApplication.schoolInfo.attendedYearTo}
-                                                    readOnly
-                                                    style={{
-                                                        flex: 1,
-                                                        padding: '0.875rem 1rem',
-                                                        border: '2px solid #e5e7eb',
-                                                        borderRadius: '10px',
-                                                        background: 'linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%)',
-                                                        color: '#1e293b',
-                                                        fontSize: '0.95rem',
-                                                        fontWeight: 500,
-                                                        transition: 'all 0.2s'
-                                                    }}
-                                                />
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}>
+                                            <Home size={20} />
+                                            Secondary School
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="School Name" value={selectedApplication.schoolInfo.secondary?.schoolName} />
+                                            <FormField label="Woreda" value={selectedApplication.schoolInfo.secondary?.woreda} />
+                                            <FormField label="School Type" value={selectedApplication.schoolInfo.secondary?.schoolType} />
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    marginBottom: '0.75rem', 
+                                                    fontWeight: 600, 
+                                                    color: '#1e293b', 
+                                                    fontSize: '0.875rem'
+                                                }}>
+                                                    Attended Year (From - To)
+                                                </label>
+                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                    <input
+                                                        type="text"
+                                                        value={selectedApplication.schoolInfo.secondary?.attendedYearFrom || ''}
+                                                        readOnly
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.75rem',
+                                                            border: '2px solid #e5e7eb',
+                                                            borderRadius: '8px',
+                                                            background: '#f3f4f6',
+                                                            color: '#111827',
+                                                            fontSize: '0.875rem'
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={selectedApplication.schoolInfo.secondary?.attendedYearTo || ''}
+                                                        readOnly
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.75rem',
+                                                            border: '2px solid #e5e7eb',
+                                                            borderRadius: '8px',
+                                                            background: '#f3f4f6',
+                                                            color: '#111827',
+                                                            fontSize: '0.875rem'
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Preparatory School */}
+                                    <div style={{
+                                        border: '2px solid #3b82f6',
+                                        borderRadius: '12px',
+                                        padding: '1.5rem',
+                                        backgroundColor: 'white'
+                                    }}>
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}>
+                                            <Home size={20} />
+                                            Preparatory School
+                                        </h3>
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="School Name" value={selectedApplication.schoolInfo.preparatory?.schoolName} />
+                                            <FormField label="Woreda" value={selectedApplication.schoolInfo.preparatory?.woreda} />
+                                            <FormField label="School Type" value={selectedApplication.schoolInfo.preparatory?.schoolType} />
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    marginBottom: '0.75rem', 
+                                                    fontWeight: 600, 
+                                                    color: '#1e293b', 
+                                                    fontSize: '0.875rem'
+                                                }}>
+                                                    Attended Year (From - To)
+                                                </label>
+                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                    <input
+                                                        type="text"
+                                                        value={selectedApplication.schoolInfo.preparatory?.attendedYearFrom || ''}
+                                                        readOnly
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.75rem',
+                                                            border: '2px solid #e5e7eb',
+                                                            borderRadius: '8px',
+                                                            background: '#f3f4f6',
+                                                            color: '#111827',
+                                                            fontSize: '0.875rem'
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={selectedApplication.schoolInfo.preparatory?.attendedYearTo || ''}
+                                                        readOnly
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.75rem',
+                                                            border: '2px solid #e5e7eb',
+                                                            borderRadius: '8px',
+                                                            background: '#f3f4f6',
+                                                            color: '#111827',
+                                                            fontSize: '0.875rem'
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1480,38 +1678,36 @@ const Applications = () => {
                             {activeTab === 'family' && selectedApplication.familyInfo && (
                                 <div>
                                     <div style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '0.75rem',
-                                        marginBottom: '2rem',
-                                        padding: '0.75rem 1.5rem',
-                                        background: 'linear-gradient(135deg, #8b5cf620 0%, #8b5cf610 100%)',
+                                        border: '2px solid #3b82f6',
                                         borderRadius: '12px',
-                                        border: '1px solid #8b5cf630'
+                                        padding: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <Users size={20} color="#8b5cf6" />
-                                        <h3 style={{ 
-                                            margin: 0, 
-                                            color: '#1e293b', 
-                                            fontSize: '1.15rem', 
-                                            fontWeight: 700,
-                                            letterSpacing: '-0.3px'
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
                                         }}>
+                                            <Users size={20} />
                                             Birth Place & Family Information
                                         </h3>
-                                    </div>
-                                    <div style={{ 
-                                        display: 'grid', 
-                                        gridTemplateColumns: 'repeat(3, 1fr)', 
-                                        gap: '1.75rem'
-                                    }}>
-                                        <FormField label="Nationality" value={selectedApplication.familyInfo.nationality} required />
-                                        <FormField label="Region" value={selectedApplication.familyInfo.region} required />
-                                        <FormField label="Zone" value={selectedApplication.familyInfo.zone} />
-                                        <FormField label="Woreda (district)" value={selectedApplication.familyInfo.woreda} />
-                                        <FormField label="Kebele" value={selectedApplication.familyInfo.kebele} />
-                                        <FormField label="Your Mother Name" value={selectedApplication.familyInfo.motherName} required />
-                                        <FormField label="Family Phone Number" value={selectedApplication.familyInfo.familyPhone} required />
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="Nationality" value={selectedApplication.familyInfo.nationality} />
+                                            <FormField label="Region" value={selectedApplication.familyInfo.region} />
+                                            <FormField label="Zone" value={selectedApplication.familyInfo.zone} />
+                                            <FormField label="Woreda" value={selectedApplication.familyInfo.woreda} />
+                                            <FormField label="Kebele" value={selectedApplication.familyInfo.kebele} />
+                                            <FormField label="Mother Name" value={selectedApplication.familyInfo.motherName} />
+                                            <FormField label="Family Phone" value={selectedApplication.familyInfo.familyPhone} />
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -1520,35 +1716,37 @@ const Applications = () => {
                             {activeTab === 'emergency' && selectedApplication.emergencyInfo && (
                                 <div>
                                     <div style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '0.75rem',
-                                        marginBottom: '2rem',
-                                        padding: '0.75rem 1.5rem',
-                                        background: 'linear-gradient(135deg, #ef444420 0%, #ef444410 100%)',
+                                        border: '2px solid #3b82f6',
                                         borderRadius: '12px',
-                                        border: '1px solid #ef444430'
+                                        padding: '1.5rem',
+                                        backgroundColor: 'white'
                                     }}>
-                                        <AlertTriangle size={20} color="#ef4444" />
-                                        <h3 style={{ 
-                                            margin: 0, 
-                                            color: '#1e293b', 
-                                            fontSize: '1.15rem', 
-                                            fontWeight: 700,
-                                            letterSpacing: '-0.3px'
+                                        <h3 style={{
+                                            color: '#3b82f6',
+                                            fontSize: '1.1rem',
+                                            fontWeight: 600,
+                                            marginBottom: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
                                         }}>
+                                            <AlertTriangle size={20} />
                                             Emergency Contact Information
                                         </h3>
-                                    </div>
-                                    <div style={{ 
-                                        display: 'grid', 
-                                        gridTemplateColumns: 'repeat(2, 1fr)', 
-                                        gap: '1.75rem'
-                                    }}>
-                                        <FormField label="Full Name" value={selectedApplication.emergencyInfo.fullName} required />
-                                        <FormField label="Relationship" value={selectedApplication.emergencyInfo.relationship} required />
-                                        <FormField label="Job" value={selectedApplication.emergencyInfo.job} required />
-                                        <FormField label="Home-Town" value={selectedApplication.emergencyInfo.homeTown} required />
+                                        <div style={{ 
+                                            display: 'grid', 
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                            gap: '1.25rem'
+                                        }}>
+                                            <FormField label="Full Name" value={selectedApplication.emergencyInfo.fullName} />
+                                            <FormField label="Relationship" value={selectedApplication.emergencyInfo.relationship} />
+                                            <FormField label="Phone" value={selectedApplication.emergencyInfo.phone} />
+                                            <FormField label="Email" value={selectedApplication.emergencyInfo.email} />
+                                            <FormField label="Job" value={selectedApplication.emergencyInfo.job} />
+                                            <FormField label="Woreda" value={selectedApplication.emergencyInfo.woreda} />
+                                            <FormField label="Home Town" value={selectedApplication.emergencyInfo.homeTown} />
+                                            <FormField label="Kebele" value={selectedApplication.emergencyInfo.kebele} />
+                                        </div>
                                     </div>
                                 </div>
                             )}

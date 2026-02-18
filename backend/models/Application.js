@@ -21,17 +21,38 @@ const applicationSchema = new mongoose.Schema({
         default: false
     },
     personalInfo: {
-        fullName: String,
-        idNo: String,
-        sex: String,
-        mealCardNo: String,
-        college: String,
-        department: String,
-        academicYear: String,
-        dormNo: String,
+        // Basic Information
+        name: String,
+        fatherName: String,
+        gFatherName: String,
+        nameAm: String,
+        fatherNameAm: String,
+        gFatherNameAm: String,
+        gender: String,
+        dob: String,
+        placeOfBirth: String,
+        placeOfBirthAm: String,
+        motherTongue: String,
+        nationalId: String,
+        healthStatus: String,
+        maritalStatus: String,
+        religion: String,
+        // Location & Address
+        citizenship: String,
+        country: String,
+        woreda: String,
+        cityEn: String,
+        cityAm: String,
+        kebeleEn: String,
+        kebeleAm: String,
         phone: String,
-        religious: String,
-        nation: String
+        email: String,
+        poBox: String,
+        // Others
+        economicalStatus: String,
+        areaType: String,
+        tinNumber: String,
+        accountNumber: String
     },
     educationalInfo: {
         stream: String,
@@ -45,14 +66,33 @@ const applicationSchema = new mongoose.Schema({
         nationalExamResult: String
     },
     schoolInfo: {
-        schoolName: String,
-        region: String,
-        city: String,
-        zone: String,
-        schoolType: String,
-        woreda: String,
-        attendedYearFrom: String,
-        attendedYearTo: String
+        // Primary School
+        primary: {
+            schoolName: String,
+            schoolNameAm: String,
+            woreda: String,
+            attendedYearFrom: String,
+            attendedYearTo: String,
+            schoolType: String
+        },
+        // Secondary School
+        secondary: {
+            schoolName: String,
+            schoolNameAm: String,
+            woreda: String,
+            attendedYearFrom: String,
+            attendedYearTo: String,
+            schoolType: String
+        },
+        // Preparatory School
+        preparatory: {
+            schoolName: String,
+            schoolNameAm: String,
+            woreda: String,
+            attendedYearFrom: String,
+            attendedYearTo: String,
+            schoolType: String
+        }
     },
     familyInfo: {
         nationality: String,
@@ -66,8 +106,15 @@ const applicationSchema = new mongoose.Schema({
     emergencyInfo: {
         fullName: String,
         relationship: String,
+        phone: String,
+        email: String,
         job: String,
-        homeTown: String
+        woreda: String,
+        homeTown: String,
+        kebele: String
+    },
+    agreement: {
+        accepted: Boolean
     }
 }, {
     timestamps: true
