@@ -82,6 +82,12 @@ const StudentPortal = () => {
             kebele: '',
             motherName: '',
             familyPhone: ''
+        },
+        emergencyInfo: {
+            fullName: '',
+            relationship: '',
+            job: '',
+            homeTown: ''
         }
     });
 
@@ -167,7 +173,7 @@ const StudentPortal = () => {
 
     // Handle Save & Continue - Navigate to next tab
     const handleSaveAndContinue = () => {
-        const tabs = ['personal', 'educational', 'school', 'family'];
+        const tabs = ['personal', 'educational', 'school', 'family', 'emergency'];
         const currentIndex = tabs.indexOf(activeTab);
         
         // Validate current tab's required fields
@@ -213,7 +219,8 @@ const StudentPortal = () => {
                 personalInfo: formData.personalInfo,
                 educationalInfo: formData.educationalInfo,
                 schoolInfo: formData.schoolInfo,
-                familyInfo: formData.familyInfo
+                familyInfo: formData.familyInfo,
+                emergencyInfo: formData.emergencyInfo
             };
 
             let response;
@@ -1594,7 +1601,8 @@ const StudentPortal = () => {
                                 { id: 'personal', label: 'Personal', icon: <User size={18} /> },
                                 { id: 'educational', label: 'Educational', icon: <GraduationCap size={18} /> },
                                 { id: 'school', label: 'School', icon: <Home size={18} /> },
-                                { id: 'family', label: 'Family', icon: <Users size={18} /> }
+                                { id: 'family', label: 'Family', icon: <Users size={18} /> },
+                                { id: 'emergency', label: 'Emergency', icon: <AlertTriangle size={18} /> }
                             ].map(tab => (
                                 <button
                                     key={tab.id}
@@ -2132,6 +2140,69 @@ const StudentPortal = () => {
                                 </div>
                             )}
 
+                            {/* Emergency Tab */}
+                            {activeTab === 'emergency' && (
+                                <div>
+                                    <h3 style={{ marginBottom: '1.5rem', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>
+                                        III. Emergency Contact Information
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Full Name <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter emergency contact full name"
+                                                value={formData.emergencyInfo.fullName}
+                                                onChange={(e) => handleInputChange('emergencyInfo', 'fullName', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Relationship <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g., Father, Mother, Guardian"
+                                                value={formData.emergencyInfo.relationship}
+                                                onChange={(e) => handleInputChange('emergencyInfo', 'relationship', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Job <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter occupation"
+                                                value={formData.emergencyInfo.job}
+                                                onChange={(e) => handleInputChange('emergencyInfo', 'job', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                                                Home-Town <span style={{ color: '#ef4444' }}>*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="Enter home town"
+                                                value={formData.emergencyInfo.homeTown}
+                                                onChange={(e) => handleInputChange('emergencyInfo', 'homeTown', e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                         {/* Modal Footer */}
                         <div style={{
                             padding: '1.5rem 2rem',
@@ -2187,7 +2258,7 @@ const StudentPortal = () => {
                                     if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
                                 }}
                             >
-                                {activeTab === 'family' ? 'Review & Submit' : 'Save & Continue'}
+                                {activeTab === 'emergency' ? 'Review & Submit' : 'Save & Continue'}
                             </button>
                         </div>
                         </div>
