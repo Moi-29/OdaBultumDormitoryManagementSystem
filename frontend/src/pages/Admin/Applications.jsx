@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ClipboardList, Eye, Lock, Unlock, X, User, GraduationCap, Home, Users, Search, Filter, Download, Trash2, CheckCircle2, Calendar, Phone, Mail, MapPin, Award, BookOpen, Building, FileText } from 'lucide-react';
+import { ClipboardList, Eye, X, User, GraduationCap, Home, Users, Search, Filter, Download, Trash2, CheckCircle2, Calendar, Phone, Mail, MapPin, Award, BookOpen, Building, FileText } from 'lucide-react';
 import axios from 'axios';
 import API_URL from '../../config/api';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -1054,13 +1054,7 @@ const Applications = () => {
                                     Student Name
                                 </th>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
-                                    Student ID
-                                </th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: '#475569' }}>
                                     Submitted On
-                                </th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569' }}>
-                                    Edit Permission
                                 </th>
                                 <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569' }}>
                                     Actions
@@ -1092,35 +1086,8 @@ const Applications = () => {
                                     <td style={{ padding: '1rem', fontWeight: 500 }}>
                                         {app.studentName}
                                     </td>
-                                    <td style={{ padding: '1rem', color: '#3b82f6', fontWeight: 600 }}>
-                                        {app.studentId}
-                                    </td>
                                     <td style={{ padding: '1rem', color: '#64748b' }}>
                                         {app.submittedOn}
-                                    </td>
-                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <button
-                                            onClick={(e) => toggleEditPermission(app._id, e)}
-                                            type="button"
-                                            style={{
-                                                background: 'none',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                                padding: '0.5rem',
-                                                borderRadius: '6px',
-                                                transition: 'all 0.2s',
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem'
-                                            }}
-                                            title={app.canEdit ? 'Disable editing' : 'Enable editing'}
-                                        >
-                                            {app.canEdit ? (
-                                                <Unlock size={20} color="#10b981" />
-                                            ) : (
-                                                <Lock size={20} color="#64748b" />
-                                            )}
-                                        </button>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
                                         <button
