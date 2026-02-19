@@ -21,6 +21,7 @@ import Gallery from './pages/Admin/Gallery';
 import Settings from './pages/Admin/Settings';
 import AdminManagement from './pages/Admin/AdminManagement';
 import UserManagement from './pages/Admin/UserManagement';
+import HomeContentManagement from './pages/Admin/HomeContentManagement';
 import ProctorDashboard from './pages/Proctor/ProctorDashboard';
 import MaintainerDashboard from './pages/Maintainer/MaintainerDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -160,6 +161,11 @@ function App() {
             <Route path="user-management" element={
               <ProtectedRoute requiredPermission="admins.view">
                 <UserManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="home-content" element={
+              <ProtectedRoute requiredPermission="dashboard.view">
+                <HomeContentManagement />
               </ProtectedRoute>
             } />
             <Route index element={<SmartRedirect />} />

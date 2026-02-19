@@ -1,11 +1,40 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import heroImg from "../../assets/Hero-Section.jpg";
 import { useLanguage } from "../../context/LanguageContext";
 import { homeTranslations } from "../../translations/translations";
+import API_URL from "../../config/api";
 
 const HeroSection = () => {
   const { language } = useLanguage();
   const t = (key) => homeTranslations[language]?.[key] || homeTranslations.en[key] || key;
+  
+  const [content, setContent] = useState({
+    heroTitle: t('heroTitle'),
+    heroSubtitle: t('heroSubtitle'),
+    heroDescription: '',
+    heroImage: heroImg
+  });
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const { data } = await axios.get(`${API_URL}/api/home-content`);
+        setContent({
+          heroTitle: data.heroTitle || t('heroTitle'),
+          heroSubtitle: data.heroSubtitle || t('heroSubtitle'),
+          heroDescription: data.heroDescription || '',
+          heroImage: data.heroImage || heroImg
+        });
+      } catch (error) {
+        console.error('Error fetching hero content:', error);
+        // Keep default content if fetch fails
+      }
+    };
+
+    fetchContent();
+  }, []);
   
   return (
     <section className="relative w-full h-[calc(100vh-81px)] overflow-hidden">
@@ -24,7 +53,7 @@ const HeroSection = () => {
         transition={{ duration: 1.5, ease: "easeOut" }}
       >
         <img
-          src={heroImg}
+          src={content.heroImage}
           alt="Oda Bultum University Campus"
           className="w-full h-full object-cover"
         />
@@ -52,7 +81,7 @@ const HeroSection = () => {
           }}
           className="text-sm md:text-base uppercase mb-4"
         >
-          {t('heroSubtitle')}
+          {content.heroSubtitle}
         </motion.p>
 
         <motion.h1
@@ -72,7 +101,7 @@ const HeroSection = () => {
           }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-5xl leading-tight"
         >
-          {t('heroTitle')}
+          {content.heroTitle}
         </motion.h1>
       </div>
     </section>

@@ -234,6 +234,7 @@ app.use('/api/proctor', require('./routes/proctorRoutes'));
 app.use('/api/maintainer', require('./routes/maintainerRoutes'));
 app.use('/api/user-management', require('./routes/userManagementRoutes'));
 app.use('/api/permissions', require('./routes/permissionRoutes'));
+app.use('/api/home-content', require('./routes/homeContentRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
