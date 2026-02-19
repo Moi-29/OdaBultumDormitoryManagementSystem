@@ -21,6 +21,14 @@ const createProctor = async (req, res) => {
             });
         }
 
+        // Validate password length
+        if (password.length < 8) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Password must be at least 8 characters long' 
+            });
+        }
+
         // Check if username already exists
         const existingProctor = await Proctor.findOne({ username: username.toLowerCase() });
         if (existingProctor) {
@@ -74,6 +82,24 @@ const createProctor = async (req, res) => {
     } catch (error) {
         console.error('Error creating proctor:', error);
         console.error('Error stack:', error.stack);
+        
+        // Handle duplicate key error
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username already exists'
+            });
+        }
+        
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({
+                success: false,
+                message: messages.join(', ')
+            });
+        }
+        
         res.status(500).json({ 
             success: false,
             message: 'Server error', 
@@ -278,12 +304,29 @@ const createMaintainer = async (req, res) => {
             });
         }
 
+        // Validate password length
+        if (password.length < 8) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Password must be at least 8 characters long' 
+            });
+        }
+
         // Check if username already exists
         const existingMaintainer = await Maintainer.findOne({ username: username.toLowerCase() });
         if (existingMaintainer) {
             return res.status(400).json({ 
                 success: false,
                 message: 'Username already exists' 
+            });
+        }
+
+        // Validate specialization if provided
+        const validSpecializations = ['plumbing', 'electrical', 'carpentry', 'general', 'hvac', 'cleaning', 'painting'];
+        if (specialization && !validSpecializations.includes(specialization)) {
+            return res.status(400).json({ 
+                success: false,
+                message: `Invalid specialization. Must be one of: ${validSpecializations.join(', ')}` 
             });
         }
 
@@ -321,6 +364,24 @@ const createMaintainer = async (req, res) => {
     } catch (error) {
         console.error('Error creating maintainer:', error);
         console.error('Error stack:', error.stack);
+        
+        // Handle duplicate key error
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username already exists'
+            });
+        }
+        
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({
+                success: false,
+                message: messages.join(', ')
+            });
+        }
+        
         res.status(500).json({ 
             success: false,
             message: 'Server error', 

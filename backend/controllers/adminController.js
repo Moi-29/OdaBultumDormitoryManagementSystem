@@ -29,8 +29,8 @@ exports.login = async (req, res) => {
             });
         }
         
-        // Find admin by email (which can be username or email)
-        const admin = await Admin.findOne({ email })
+        // Find admin by username (email field is used as username)
+        const admin = await Admin.findOne({ username: email.toLowerCase() })
             .select('+password')
             .populate('role');
         
@@ -139,7 +139,7 @@ exports.login = async (req, res) => {
             admin: {
                 id: admin._id,
                 fullName: admin.fullName,
-                email: admin.email,
+                email: admin.username, // Return username as email for frontend compatibility
                 role: admin.role,
                 permissions: [...(admin.role?.permissions || []), ...(admin.customPermissions || [])]
             }
@@ -166,7 +166,7 @@ exports.getAllAdmins = async (req, res) => {
         if (search) {
             query.$or = [
                 { fullName: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } },
+                { username: { $regex: search, $options: 'i' } },
                 { department: { $regex: search, $options: 'i' } }
             ];
         }
@@ -185,13 +185,20 @@ exports.getAllAdmins = async (req, res) => {
             .select('-password')
             .sort({ createdAt: -1 })
             .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit)
+            .lean(); // Use lean for better performance
+        
+        // Transform username to email for frontend compatibility
+        const transformedAdmins = admins.map(admin => ({
+            ...admin,
+            email: admin.username // Add email field from username
+        }));
         
         const count = await Admin.countDocuments(query);
         
         res.status(200).json({
             success: true,
-            data: admins,
+            data: transformedAdmins,
             pagination: {
                 total: count,
                 page: parseInt(page),
@@ -214,8 +221,9 @@ exports.getAdmin = async (req, res) => {
     try {
         const admin = await Admin.findById(req.params.id)
             .populate('role')
-            .populate('createdBy', 'fullName email')
-            .select('-password');
+            .populate('createdBy', 'fullName username')
+            .select('-password')
+            .lean(); // Use lean for transformation
         
         if (!admin) {
             return res.status(404).json({
@@ -223,6 +231,9 @@ exports.getAdmin = async (req, res) => {
                 message: 'Admin not found'
             });
         }
+        
+        // Transform username to email for frontend compatibility
+        admin.email = admin.username;
         
         res.status(200).json({
             success: true,
@@ -252,22 +263,33 @@ exports.createAdmin = async (req, res) => {
             });
         }
         
-        // Validate password
-        const passwordValidation = await validatePassword(password);
-        if (!passwordValidation.valid) {
-            return res.status(400).json({
-                success: false,
-                message: 'Password does not meet security requirements',
-                errors: passwordValidation.errors
-            });
+        // Validate password - wrap in try-catch to handle SecuritySettings not found
+        try {
+            const passwordValidation = await validatePassword(password);
+            if (!passwordValidation.valid) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Password does not meet security requirements',
+                    errors: passwordValidation.errors
+                });
+            }
+        } catch (validationError) {
+            // If SecuritySettings not found, use basic validation
+            console.warn('SecuritySettings not found, using basic password validation');
+            if (password.length < 8) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Password must be at least 8 characters long'
+                });
+            }
         }
         
-        // Check if email already exists
-        const existingAdmin = await Admin.findOne({ email });
+        // Check if username already exists (email field is used as username)
+        const existingAdmin = await Admin.findOne({ username: email.toLowerCase() });
         if (existingAdmin) {
             return res.status(400).json({
                 success: false,
-                message: 'Email already in use'
+                message: 'Username already in use'
             });
         }
         
@@ -280,10 +302,10 @@ exports.createAdmin = async (req, res) => {
             });
         }
         
-        // Create admin
+        // Create admin (use email as username since model requires username field)
         const admin = await Admin.create({
             fullName,
-            email,
+            username: email.toLowerCase(), // Use email as username
             password,
             phone,
             department,
@@ -306,7 +328,11 @@ exports.createAdmin = async (req, res) => {
         // Return admin without password
         const adminData = await Admin.findById(admin._id)
             .populate('role')
-            .select('-password');
+            .select('-password')
+            .lean(); // Use lean for transformation
+        
+        // Transform username to email for frontend compatibility
+        adminData.email = adminData.username;
         
         res.status(201).json({
             success: true,
@@ -315,9 +341,28 @@ exports.createAdmin = async (req, res) => {
         });
     } catch (error) {
         console.error('Create admin error:', error);
+        
+        // Handle duplicate key error
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username already exists'
+            });
+        }
+        
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({
+                success: false,
+                message: messages.join(', ')
+            });
+        }
+        
         res.status(500).json({
             success: false,
-            message: 'Error creating admin'
+            message: 'Error creating admin',
+            error: error.message
         });
     }
 };
@@ -348,7 +393,7 @@ exports.updateAdmin = async (req, res) => {
         
         // Update fields
         if (fullName) admin.fullName = fullName;
-        if (email) admin.email = email;
+        if (email) admin.username = email.toLowerCase(); // Update username field
         if (phone) admin.phone = phone;
         if (department) admin.department = department;
         if (role) admin.role = role;
@@ -370,7 +415,11 @@ exports.updateAdmin = async (req, res) => {
         
         const updatedAdmin = await Admin.findById(admin._id)
             .populate('role')
-            .select('-password');
+            .select('-password')
+            .lean(); // Use lean for transformation
+        
+        // Transform username to email for frontend compatibility
+        updatedAdmin.email = updatedAdmin.username;
         
         res.status(200).json({
             success: true,
@@ -415,7 +464,7 @@ exports.deleteAdmin = async (req, res) => {
             performedBy: req.admin._id,
             targetAdmin: admin._id,
             actionType: 'ADMIN_DELETED',
-            description: `Deleted admin: ${admin.fullName} (${admin.email})`,
+            description: `Deleted admin: ${admin.fullName} (${admin.username})`,
             ipAddress: req.ip,
             userAgent: req.headers['user-agent']
         });

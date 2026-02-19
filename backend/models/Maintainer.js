@@ -31,7 +31,7 @@ const maintainerSchema = new mongoose.Schema({
     },
     specialization: {
         type: String,
-        enum: ['plumbing', 'electrical', 'carpentry', 'general', 'hvac', 'cleaning'],
+        enum: ['plumbing', 'electrical', 'carpentry', 'general', 'hvac', 'cleaning', 'painting'],
         default: 'general'
     },
     status: {
