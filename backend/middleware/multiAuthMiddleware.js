@@ -88,6 +88,12 @@ const protect = async (req, res, next) => {
                 blockId: decoded.blockId // For proctors
             };
 
+            console.log('User authenticated:', {
+                id: req.user.id,
+                role: req.user.role,
+                username: req.user.username
+            });
+
             // For admins, attach permissions
             if (decoded.role === 'admin') {
                 req.admin = user;
@@ -95,6 +101,7 @@ const protect = async (req, res, next) => {
                     ...(user.role?.permissions || []),
                     ...(user.customPermissions || [])
                 ];
+                console.log('Admin permissions:', req.user.permissions);
             }
 
             next();
@@ -117,12 +124,26 @@ const protect = async (req, res, next) => {
 // Restrict to specific roles
 const restrictTo = (...roles) => {
     return (req, res, next) => {
+        console.log('restrictTo middleware:', {
+            requiredRoles: roles,
+            userRole: req.user?.role,
+            userId: req.user?.id,
+            username: req.user?.username
+        });
+        
         if (!roles.includes(req.user.role)) {
+            console.log('Access denied - role mismatch');
             return res.status(403).json({
                 success: false,
-                message: 'You do not have permission to perform this action'
+                message: 'You do not have permission to perform this action',
+                debug: {
+                    required: roles,
+                    current: req.user.role
+                }
             });
         }
+        
+        console.log('Access granted');
         next();
     };
 };

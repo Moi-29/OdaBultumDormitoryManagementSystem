@@ -90,6 +90,11 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
         if (!validate()) return;
         
         setLoading(true);
+        
+        // Store current token to ensure it doesn't get replaced
+        const currentToken = localStorage.getItem('token');
+        const currentUser = localStorage.getItem('user');
+        
         try {
             const token = localStorage.getItem('token');
             let roleId = formData.role;
@@ -157,12 +162,22 @@ const CreateAdmin = ({ onClose, onSuccess }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
+            // CRITICAL: Restore original token and user to prevent session hijacking
+            localStorage.setItem('token', currentToken);
+            localStorage.setItem('user', currentUser);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
+            
             showNotification('Admin created successfully!', 'success');
             onSuccess();
         } catch (error) {
             console.error('Failed to create admin:', error);
             const errorMsg = error.response?.data?.message || 'Failed to create admin. Please try again.';
             showNotification(`Error: ${errorMsg}`, 'error');
+            
+            // CRITICAL: Restore original token and user even on error
+            localStorage.setItem('token', currentToken);
+            localStorage.setItem('user', currentUser);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
         } finally {
             setLoading(false);
         }
